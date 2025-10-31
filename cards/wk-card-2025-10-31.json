@@ -1,0 +1,62 @@
+{
+  "week": 10,
+  "date": "2025-10-31",
+  "source": "VegasInsider",
+  "timestamp_local_pt": "2025-10-31T16:00:00-07:00",
+  "weather_source": "accuweather_stadium_poi",
+  "games": [
+    {
+      "rotation": "317-318",
+      "matchup": "North Carolina @ Syracuse",
+      "kickoff_et": "19:30",
+      "stadium": "JMA Wireless Dome",
+      "dome": true,
+      "entry_gates_checklist": {
+        "injuries_confirmed": true,
+        "weather_confirmed": true,
+        "steam_ok": true
+      },
+      "sides": {
+        "spread_entry": {
+          "pick": "Syracuse -1",
+          "size_units": 0.75,
+          "target_price_max_juice": -115
+        },
+        "moneyline_entry": {
+          "pick": "Syracuse ML",
+          "target_price_max": -125,
+          "size_units": 0.75
+        },
+        "total_entry": {
+          "pick": "Over 45",
+          "target_price_max_juice": -110,
+          "size_units": 0.75
+        }
+      }
+    },
+    {
+      "rotation": "319-320",
+      "matchup": "Sam Houston St @ Louisiana Tech",
+      "kickoff_et": "20:00",
+      "stadium": "Joe Aillet Stadium",
+      "dome": false,
+      "entry_gates_checklist": {
+        "injuries_confirmed": true,
+        "weather_confirmed": true,
+        "steam_ok": true
+      },
+      "sides": {
+        "spread_entry": {
+          "pick": "Sam Houston +16.5",
+          "size_units": 1.25,
+          "target_price_max_juice": -115
+        },
+        "moneyline_entry": {
+          "pick": "Sam Houston ML",
+          "target_min_price": "+550",
+          "size_units": 0.25
+        }
+      }
+    }
+  ]
+}

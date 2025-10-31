@@ -1,0 +1,24 @@
+[project]
+name = "walters-analyzer"
+version = "0.1.0"
+description = "Billy Walters Sports Analyzer (WSA) — CLI + scraping skeleton using uv."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{name = "Andy + ChatGPT", email = "noreply@example.com"}]
+dependencies = []
+
+[project.scripts]
+walters-analyzer = "walters_analyzer.cli:main"
+
+[project.optional-dependencies]
+scraping = [
+  "scrapy>=2.11",
+  "scrapy-playwright>=0.0.33",
+  "playwright>=1.47.0",
+  "beautifulsoup4>=4.12",
+  "tenacity>=8.2"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
