@@ -1,0 +1,5 @@
+{
+  "cmd": "uv run walters-analyzer scrape-weather --card ./cards/wk-card-2025-10-31.json",
+  "description": "Fetch weather data for all games in the week 10 card using AccuWeather API"
+}
+

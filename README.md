@@ -7,6 +7,7 @@ This repo includes:
 - **Scrapers**: 
   - Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
   - ESPN injury report scraper for player status tracking
+  - AccuWeather API integration for game weather analysis
 - **Claude**: `/commands` and `/hooks` placeholders
 - **Env**: `env.template` for required keys
 
@@ -41,6 +42,7 @@ cp env.template .env
 Required environment variables:
 - `OV_CUSTOMER_ID`: Your overtime.ag customer ID
 - `OV_CUSTOMER_PASSWORD`: Your overtime.ag password
+- `ACCUWEATHER_API_KEY`: Your AccuWeather API key (for weather analysis)
 
 ## Usage
 
@@ -98,6 +100,38 @@ uv run walters-analyzer scrape-injuries --sport cfb --output-dir ./injury_data
 
 See [INJURY_SCRAPER.md](INJURY_SCRAPER.md) for complete documentation, gate integration examples, and position impact guidelines.
 
+### Fetch Weather Data (AccuWeather API)
+
+Critical for outdoor games - weather impacts scoring, passing efficiency, and field goals:
+
+```powershell
+# Fetch weather for entire betting card
+uv run walters-analyzer scrape-weather --card ./cards/wk-card-2025-10-31.json
+
+# Fetch weather for single stadium
+uv run walters-analyzer scrape-weather --stadium "Lambeau Field" --location "Green Bay, WI" --sport nfl
+
+# Indoor stadium (weather irrelevant)
+uv run walters-analyzer scrape-weather --stadium "US Bank Stadium" --location "Minneapolis, MN" --dome
+
+# Custom output directory
+uv run walters-analyzer scrape-weather --card ./cards/wk-card.json --output-dir ./weather_data
+```
+
+**Why Weather Matters:**
+- Wind >15mph drastically reduces passing efficiency and FG accuracy
+- Precipitation affects ball handling, reduces scoring by 3-7 points
+- Temperature extremes impact player performance
+- Billy Walters methodology emphasizes weather as a critical betting edge
+
+**Weather Impact Score (0-100):**
+- 0-20: Minimal impact
+- 21-50: Moderate (adjust totals 1-3 points)
+- 51-75: High (significant adjustment needed)
+- 76-100: Extreme (consider skipping bet or heavy Under)
+
+See [WEATHER_ANALYZER.md](WEATHER_ANALYZER.md) for complete Billy Walters weather methodology, case studies, and advanced usage.
+
 ### Output Files
 Scraped data is saved to `data/overtime_live/` (or custom directory) in three formats:
 - **JSONL**: `overtime-live-{timestamp}.jsonl` - Line-delimited JSON
@@ -149,3 +183,17 @@ scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
 - Check `snapshots/` directory for debug screenshots
 - Review logs for timeout or selector errors
 - Ensure stable internet connection
+
+### Weather API Issues
+- Ensure `ACCUWEATHER_API_KEY` is set in `.env`
+- Free tier limited to 50 calls/day
+- Check API status at https://developer.accuweather.com/
+
+## Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick setup and first scrape guide
+- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical details of scraper implementation
+- **[INJURY_SCRAPER.md](INJURY_SCRAPER.md)** - Injury report scraper documentation
+- **[WEATHER_ANALYZER.md](WEATHER_ANALYZER.md)** - Weather analysis using Billy Walters methodology
+- **[EXAMPLE_OUTPUT.md](EXAMPLE_OUTPUT.md)** - Sample outputs and data formats
+- **[CLAUDE.md](CLAUDE.md)** - Commands and hooks for automation

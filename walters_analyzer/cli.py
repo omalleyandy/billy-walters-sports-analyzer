@@ -23,6 +23,20 @@ def main():
     injuries.add_argument("--output-dir", default="data/injuries",
                           help="Output directory for injury data")
     
+    weather = sub.add_parser("scrape-weather", help="Fetch weather data from AccuWeather API")
+    weather.add_argument("--card", type=str, 
+                        help="Path to wk-card JSON to fetch weather for all games")
+    weather.add_argument("--stadium", type=str,
+                        help="Stadium name (use with --location)")
+    weather.add_argument("--location", type=str,
+                        help="City/location for weather search")
+    weather.add_argument("--dome", action="store_true",
+                        help="Stadium is indoor (weather irrelevant)")
+    weather.add_argument("--sport", choices=["nfl", "cfb"], default="cfb",
+                        help="Sport type")
+    weather.add_argument("--output-dir", default="data/weather",
+                        help="Output directory for weather data")
+    
     args = parser.parse_args()
 
     if args.cmd == "wk-card":
@@ -108,6 +122,135 @@ def main():
             print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)
             print("Run: uv pip install scrapy scrapy-playwright", file=sys.stderr)
             sys.exit(1)
+    
+    elif args.cmd == "scrape-weather":
+        from walters_analyzer.weather_fetcher import fetch_game_weather
+        from walters_analyzer.weather_pipeline import WeatherDataPipeline
+        from rich.console import Console
+        from rich.table import Table
+        
+        console = Console()
+        pipeline = WeatherDataPipeline(output_dir=args.output_dir)
+        
+        # Determine sport format
+        sport = "college_football" if args.sport == "cfb" else "nfl"
+        
+        if args.card:
+            # Fetch weather for all games in a card
+            card_path = pathlib.Path(args.card)
+            if not card_path.exists():
+                console.print(f"[red]ERROR: Card not found: {card_path}[/red]")
+                sys.exit(2)
+            
+            card = load_card(card_path)
+            console.print(f"[cyan]Fetching weather for {len(card.get('games', []))} games from card...[/cyan]")
+            
+            for game in card.get("games", []):
+                stadium = game.get("stadium", "Unknown")
+                matchup = game.get("matchup", "Unknown")
+                is_dome = game.get("dome", False)
+                
+                console.print(f"\n[yellow]→[/yellow] {matchup} @ {stadium}")
+                
+                if is_dome:
+                    console.print("  [dim]Indoor stadium - weather irrelevant[/dim]")
+                
+                # Extract location from stadium or matchup
+                # Simple heuristic: use stadium name for search
+                location = stadium
+                
+                weather_data = fetch_game_weather(
+                    stadium=stadium,
+                    location=location,
+                    is_dome=is_dome,
+                    game_date=card.get("date"),
+                    game_time=game.get("kickoff_et"),
+                    sport=sport,
+                    use_cache=True
+                )
+                
+                if weather_data:
+                    pipeline.add_item(weather_data)
+                    
+                    # Display summary
+                    impact = weather_data.get("weather_impact_score", 0)
+                    temp = weather_data.get("temperature_f")
+                    wind = weather_data.get("wind_speed_mph")
+                    precip = weather_data.get("precipitation_prob")
+                    adjustment = weather_data.get("betting_adjustment", "N/A")
+                    
+                    impact_color = "green" if impact < 20 else "yellow" if impact < 50 else "red"
+                    
+                    console.print(f"  [bold]Weather:[/bold] {weather_data.get('weather_description')}")
+                    console.print(f"  Temp: {temp}°F | Wind: {wind} mph | Precip: {precip}%")
+                    console.print(f"  [{impact_color}]Impact Score: {impact}[/{impact_color}] | {adjustment}")
+                else:
+                    console.print("  [red]Failed to fetch weather data[/red]")
+        
+        elif args.stadium and args.location:
+            # Fetch weather for a single game/location
+            console.print(f"[cyan]Fetching weather for {args.stadium}...[/cyan]")
+            
+            weather_data = fetch_game_weather(
+                stadium=args.stadium,
+                location=args.location,
+                is_dome=args.dome,
+                sport=sport,
+                use_cache=True
+            )
+            
+            if weather_data:
+                pipeline.add_item(weather_data)
+                
+                # Display detailed report
+                table = Table(title=f"Weather Report: {args.stadium}")
+                table.add_column("Metric", style="cyan")
+                table.add_column("Value", style="white")
+                
+                table.add_row("Location", weather_data.get("location", "N/A"))
+                table.add_row("Conditions", weather_data.get("weather_description", "N/A"))
+                table.add_row("Temperature", f"{weather_data.get('temperature_f')}°F")
+                table.add_row("Feels Like", f"{weather_data.get('feels_like_f')}°F")
+                table.add_row("Wind Speed", f"{weather_data.get('wind_speed_mph')} mph")
+                table.add_row("Wind Gusts", f"{weather_data.get('wind_gust_mph')} mph")
+                table.add_row("Precipitation", f"{weather_data.get('precipitation_prob')}%")
+                table.add_row("Precip Type", weather_data.get("precipitation_type", "None"))
+                
+                impact = weather_data.get("weather_impact_score", 0)
+                impact_str = f"{impact}/100"
+                if impact > 75:
+                    impact_str += " (EXTREME)"
+                elif impact > 50:
+                    impact_str += " (HIGH)"
+                elif impact > 20:
+                    impact_str += " (MODERATE)"
+                else:
+                    impact_str += " (LOW)"
+                
+                table.add_row("Impact Score", impact_str)
+                table.add_row("Betting Adjustment", weather_data.get("betting_adjustment", "N/A"))
+                
+                console.print(table)
+            else:
+                console.print("[red]Failed to fetch weather data[/red]")
+                sys.exit(1)
+        else:
+            console.print("[red]ERROR: Must provide either --card or both --stadium and --location[/red]")
+            parser.print_help()
+            sys.exit(2)
+        
+        # Write output files
+        if pipeline.buffer:
+            try:
+                jsonl_path, parquet_path = pipeline.write_files()
+                console.print(f"\n[green]✓ Weather data written:[/green]")
+                console.print(f"  - JSONL: {jsonl_path}")
+                console.print(f"  - Parquet: {parquet_path}")
+            except Exception as e:
+                console.print(f"[red]ERROR writing output files: {e}[/red]")
+                sys.exit(1)
+        else:
+            console.print("[yellow]No weather data to write[/yellow]")
 
 if __name__ == "__main__":
     main()

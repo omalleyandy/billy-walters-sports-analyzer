@@ -1,0 +1,5 @@
+{
+  "cmd": "uv run walters-analyzer scrape-weather --stadium \"Lambeau Field\" --location \"Green Bay, WI\" --sport nfl",
+  "description": "Fetch weather data for a single stadium (example: Lambeau Field)"
+}
+
