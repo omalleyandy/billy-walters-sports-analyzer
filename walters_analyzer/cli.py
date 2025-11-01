@@ -89,10 +89,11 @@ def main():
         env["ESPN_SPORT"] = espn_sport
         env["ESPN_LEAGUE"] = espn_league
         
+        # Use proper Scrapy settings (not FEEDS which doesn't support parquet)
+        # The InjuryPipeline handles output in both JSONL and Parquet formats
         cmd = [
             "scrapy", "crawl", "espn_injuries",
-            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.jsonl]=jsonlines",
-            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.parquet]=parquet",
+            "-s", f"INJURY_OUT_DIR={args.output_dir}",
         ]
         
         # Run scrapy

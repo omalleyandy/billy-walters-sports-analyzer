@@ -60,6 +60,10 @@ class ESPNInjurySpider(scrapy.Spider):
         "AUTOTHROTTLE_START_DELAY": 1.0,
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
+        # Use custom pipeline for JSONL + Parquet output
+        "ITEM_PIPELINES": {
+            "scrapers.overtime_live.pipelines.InjuryPipeline": 300,
+        },
     }
 
     def start_requests(self):
