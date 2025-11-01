@@ -125,3 +125,59 @@ class CSVPipeline:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(flattened_rows)
+
+
+class InjuryPipeline:
+    """
+    Export injury report items to both JSONL and Parquet formats.
+    Handles the InjuryReportItem structure.
+    """
+    def __init__(self, out_dir: str = "data/injuries"):
+        self.out_dir = out_dir
+        os.makedirs(self.out_dir, exist_ok=True)
+        self._buffer: List[Dict[str, Any]] = []
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        out_dir = crawler.settings.get("INJURY_OUT_DIR", "data/injuries")
+        return cls(out_dir)
+
+    def process_item(self, item, spider):
+        self._buffer.append(item)
+        return item
+
+    def close_spider(self, spider):
+        if not self._buffer:
+            spider.logger.warning("No injury data collected")
+            return
+        
+        ts = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+        
+        # Write JSONL
+        jsonl_path = os.path.join(self.out_dir, f"injuries-{ts}.jsonl")
+        with open(jsonl_path, "wb") as f:
+            for row in self._buffer:
+                f.write(orjson.dumps(row))
+                f.write(b"\n")
+        spider.logger.info(f"Wrote {len(self._buffer)} injuries to {jsonl_path}")
+
+        # Write Parquet
+        table = pa.table({
+            "source": [r.get("source") for r in self._buffer],
+            "sport": [r.get("sport") for r in self._buffer],
+            "league": [r.get("league") for r in self._buffer],
+            "collected_at": [r.get("collected_at") for r in self._buffer],
+            "team": [r.get("team") for r in self._buffer],
+            "team_abbr": [r.get("team_abbr") for r in self._buffer],
+            "player_name": [r.get("player_name") for r in self._buffer],
+            "position": [r.get("position") for r in self._buffer],
+            "injury_status": [r.get("injury_status") for r in self._buffer],
+            "injury_type": [r.get("injury_type") for r in self._buffer],
+            "date_reported": [r.get("date_reported") for r in self._buffer],
+            "game_date": [r.get("game_date") for r in self._buffer],
+            "opponent": [r.get("opponent") for r in self._buffer],
+            "notes": [r.get("notes") for r in self._buffer],
+        })
+        pq_path = os.path.join(self.out_dir, f"injuries-{ts}.parquet")
+        pq.write_table(table, pq_path)
+        spider.logger.info(f"Wrote {len(self._buffer)} injuries to {pq_path}")
