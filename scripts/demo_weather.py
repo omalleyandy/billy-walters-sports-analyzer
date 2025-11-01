@@ -90,9 +90,9 @@ def demo_multiple_games():
             
             table.add_row(
                 weather['stadium'],
-                f"{weather['temperature_f']:.0f}",
-                f"{weather['wind_speed_mph']:.0f}",
-                f"{weather['precipitation_prob']}",
+                f"{weather['temperature_f']:.0f}" if weather['temperature_f'] is not None else "N/A",
+                f"{weather['wind_speed_mph']:.0f}" if weather['wind_speed_mph'] is not None else "N/A",
+                f"{weather['precipitation_prob']}" if weather['precipitation_prob'] is not None else "N/A",
                 impact_str,
                 weather['betting_adjustment'][:30] + "..." if len(weather['betting_adjustment']) > 30 else weather['betting_adjustment']
             )

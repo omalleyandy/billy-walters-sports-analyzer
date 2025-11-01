@@ -229,7 +229,10 @@ class PregameOddsSpider(scrapy.Spider):
 
         try:
             # Click sport selector using JavaScript for reliability
-            await page.evaluate(f'() => {{ const el = document.querySelector("{selector}"); if(el) el.click(); }}')
+            # Escape quotes properly for JavaScript string
+            escaped_selector = selector.replace('"', '\\"')
+            js_code = f'() => {{ const el = document.querySelector("{escaped_selector}"); if(el) el.click(); }}'
+            await page.evaluate(js_code)
             await page.wait_for_timeout(2500)
         except Exception as e:
             self.logger.error(f"Failed to select {sport}: {e}")

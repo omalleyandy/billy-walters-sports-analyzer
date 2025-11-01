@@ -37,6 +37,15 @@ def main():
     weather.add_argument("--output-dir", default="data/weather",
                         help="Output directory for weather data")
     
+    massey = sub.add_parser("scrape-massey", help="Scrape Massey Ratings for college football")
+    massey.add_argument("--data-type", choices=["all", "ratings", "games", "matchups"], 
+                       default="all",
+                       help="Type of data to scrape: all, ratings, games, or matchups")
+    massey.add_argument("--season", type=str, default="2025",
+                       help="Season year (default: 2025)")
+    massey.add_argument("--output-dir", default="data/massey_ratings",
+                       help="Output directory for Massey Ratings data")
+    
     args = parser.parse_args()
 
     if args.cmd == "wk-card":
@@ -77,7 +86,7 @@ def main():
         # Run scrapy
         try:
             result = subprocess.run(cmd, check=True)
-            print(f"\n✓ Scraping completed. Check {args.output_dir}/ for output files.")
+            print(f"\n[SUCCESS] Scraping completed. Check {args.output_dir}/ for output files.")
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"ERROR: Scraping failed with exit code {e.returncode}", file=sys.stderr)
@@ -113,7 +122,7 @@ def main():
         # Run scrapy
         try:
             result = subprocess.run(cmd, env=env, check=True)
-            print(f"\n✓ Injury scraping completed. Check {args.output_dir}/ for output files.")
+            print(f"\n[SUCCESS] Injury scraping completed. Check {args.output_dir}/ for output files.")
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"ERROR: Injury scraping failed with exit code {e.returncode}", file=sys.stderr)
@@ -243,7 +252,7 @@ def main():
         if pipeline.buffer:
             try:
                 jsonl_path, parquet_path = pipeline.write_files()
-                console.print(f"\n[green]✓ Weather data written:[/green]")
+                console.print(f"\n[green][SUCCESS] Weather data written:[/green]")
                 console.print(f"  - JSONL: {jsonl_path}")
                 console.print(f"  - Parquet: {parquet_path}")
             except Exception as e:
@@ -251,6 +260,40 @@ def main():
                 sys.exit(1)
         else:
             console.print("[yellow]No weather data to write[/yellow]")
+    
+    elif args.cmd == "scrape-massey":
+        print(f"Starting Massey Ratings scraper for: {args.data_type}")
+        
+        # Build scrapy command
+        cmd = [
+            "scrapy", "crawl", "massey_ratings",
+            "-a", f"data_type={args.data_type}",
+            "-a", f"season={args.season}",
+            "-s", f"MASSEY_OUT_DIR={args.output_dir}"
+        ]
+        
+        # Run scrapy
+        try:
+            result = subprocess.run(cmd, check=True)
+            print(f"\n[SUCCESS] Massey Ratings scraping completed. Check {args.output_dir}/ for output files.")
+            
+            # Display summary of what was scraped
+            output_dir = pathlib.Path(args.output_dir)
+            if output_dir.exists():
+                files = list(output_dir.glob("massey-*.jsonl")) + list(output_dir.glob("massey-*.parquet")) + list(output_dir.glob("massey-*.csv"))
+                if files:
+                    print("\nOutput files:")
+                    for f in sorted(files):
+                        print(f"  - {f}")
+            
+            sys.exit(result.returncode)
+        except subprocess.CalledProcessError as e:
+            print(f"ERROR: Massey Ratings scraping failed with exit code {e.returncode}", file=sys.stderr)
+            sys.exit(e.returncode)
+        except FileNotFoundError:
+            print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)
+            print("Run: uv sync", file=sys.stderr)
+            sys.exit(1)
 
 if __name__ == "__main__":
     main()

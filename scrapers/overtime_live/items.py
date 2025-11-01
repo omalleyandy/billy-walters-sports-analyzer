@@ -211,3 +211,119 @@ class WeatherReportItem:
             return "No significant adjustment"
         
         return " | ".join(adjustments)
+
+
+@dataclass
+class MasseyRatingsItem:
+    """
+    Massey Ratings data for college football teams and games.
+    
+    Includes power ratings, game predictions, and matchup analysis
+    for identifying betting edges using Billy Walters methodology.
+    """
+    source: str                         # "masseyratings"
+    sport: str                          # "college_football"
+    collected_at: str                   # ISO8601Z timestamp
+    data_type: str                      # "rating", "game", "matchup"
+    season: Optional[str]               # "2025" or "cf2025"
+    
+    # Team rating data (when data_type="rating")
+    team_name: Optional[str]            # Full team name
+    team_abbr: Optional[str]            # Team abbreviation
+    rank: Optional[int]                 # Overall rank (1-133)
+    rating: Optional[float]             # Power rating value
+    offensive_rating: Optional[float]   # Offensive power rating
+    defensive_rating: Optional[float]   # Defensive power rating
+    sos: Optional[float]                # Strength of schedule
+    record: Optional[str]               # Win-loss record (e.g., "8-2")
+    conference: Optional[str]           # Conference (e.g., "SEC", "Big Ten")
+    
+    # Game prediction data (when data_type="game")
+    game_date: Optional[str]            # Game date (ISO format)
+    game_time: Optional[str]            # Game time
+    away_team: Optional[str]            # Away team name
+    home_team: Optional[str]            # Home team name
+    away_rank: Optional[int]            # Away team rank
+    home_rank: Optional[int]            # Home team rank
+    predicted_spread: Optional[float]   # Predicted spread (negative = home favored)
+    predicted_total: Optional[float]    # Predicted total points
+    predicted_away_score: Optional[float]  # Predicted away team score
+    predicted_home_score: Optional[float]  # Predicted home team score
+    confidence: Optional[str]           # Prediction confidence level
+    
+    # Matchup analysis data (when data_type="matchup")
+    matchup_id: Optional[str]           # Unique matchup identifier
+    score_distribution: Optional[Dict[str, Any]]  # Score probability distribution
+    margin_distribution: Optional[Dict[str, Any]] # Margin probability distribution
+    total_distribution: Optional[Dict[str, Any]]  # Total probability distribution
+    
+    # Betting edge analysis (computed)
+    market_spread: Optional[float]      # Current market spread
+    market_total: Optional[float]       # Current market total
+    spread_edge: Optional[float]        # Difference vs. market (betting opportunity)
+    total_edge: Optional[float]         # Total difference vs. market
+    edge_confidence: Optional[str]      # "High", "Medium", "Low"
+    
+    # Additional metadata
+    notes: Optional[str]                # Additional context
+    raw_data: Optional[Dict[str, Any]]  # Raw scraped data for debugging
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+    
+    def calculate_betting_edge(self, market_spread: float, market_total: float) -> Dict[str, Any]:
+        """
+        Calculate betting edge vs. market using Massey predictions.
+        
+        Billy Walters methodology:
+        - Look for 2+ point spread discrepancies
+        - Look for 3+ point total discrepancies
+        - Higher confidence on larger edges with supporting data
+        
+        Returns dict with spread_edge, total_edge, and recommendations.
+        """
+        edge_analysis = {
+            "spread_edge": None,
+            "total_edge": None,
+            "spread_recommendation": "No bet",
+            "total_recommendation": "No bet",
+            "confidence": "Low"
+        }
+        
+        # Spread edge calculation
+        if self.predicted_spread is not None and market_spread is not None:
+            spread_diff = abs(self.predicted_spread - market_spread)
+            edge_analysis["spread_edge"] = spread_diff
+            
+            if spread_diff >= 3.0:
+                edge_analysis["confidence"] = "High"
+                if self.predicted_spread < market_spread:
+                    edge_analysis["spread_recommendation"] = f"Bet HOME ({self.home_team})"
+                else:
+                    edge_analysis["spread_recommendation"] = f"Bet AWAY ({self.away_team})"
+            elif spread_diff >= 2.0:
+                edge_analysis["confidence"] = "Medium"
+                if self.predicted_spread < market_spread:
+                    edge_analysis["spread_recommendation"] = f"Consider HOME ({self.home_team})"
+                else:
+                    edge_analysis["spread_recommendation"] = f"Consider AWAY ({self.away_team})"
+        
+        # Total edge calculation
+        if self.predicted_total is not None and market_total is not None:
+            total_diff = abs(self.predicted_total - market_total)
+            edge_analysis["total_edge"] = total_diff
+            
+            if total_diff >= 4.0:
+                edge_analysis["confidence"] = "High"
+                if self.predicted_total < market_total:
+                    edge_analysis["total_recommendation"] = "Bet UNDER"
+                else:
+                    edge_analysis["total_recommendation"] = "Bet OVER"
+            elif total_diff >= 3.0:
+                edge_analysis["confidence"] = "Medium"
+                if self.predicted_total < market_total:
+                    edge_analysis["total_recommendation"] = "Consider UNDER"
+                else:
+                    edge_analysis["total_recommendation"] = "Consider OVER"
+        
+        return edge_analysis

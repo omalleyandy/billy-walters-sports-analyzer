@@ -1,0 +1,4 @@
+{
+  "cmd": "uv run python scripts/analyze_massey_edges.py --min-edge 2.0"
+}
+

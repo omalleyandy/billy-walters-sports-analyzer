@@ -32,7 +32,7 @@ class AccuWeatherClient:
     - Daily Forecast: Get daily overview
     """
     
-    BASE_URL = "http://dataservice.accuweather.com"
+    BASE_URL = "https://dataservice.accuweather.com"
     
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("ACCUWEATHER_API_KEY")
@@ -300,6 +300,10 @@ def extract_weather_data(
         "location_key": location_data.get("Key"),
         "forecast_url": f"https://www.accuweather.com/en/us/{city.lower().replace(' ', '-')}/{location_data.get('Key')}/hourly-weather-forecast/{location_data.get('Key')}"
     }
+    
+    # Add placeholder values for required fields before creating WeatherReportItem
+    weather_item["weather_impact_score"] = 0
+    weather_item["betting_adjustment"] = ""
     
     # Calculate Billy Walters impact scores
     from scrapers.overtime_live.items import WeatherReportItem

@@ -181,3 +181,171 @@ class InjuryPipeline:
         pq_path = os.path.join(self.out_dir, f"injuries-{ts}.parquet")
         pq.write_table(table, pq_path)
         spider.logger.info(f"Wrote {len(self._buffer)} injuries to {pq_path}")
+
+
+class MasseyRatingsPipeline:
+    """
+    Export Massey Ratings data to JSONL, Parquet, and CSV formats.
+    Handles team ratings, game predictions, and matchup analysis.
+    """
+    def __init__(self, out_dir: str = "data/massey_ratings"):
+        self.out_dir = out_dir
+        os.makedirs(self.out_dir, exist_ok=True)
+        self._buffer: List[Dict[str, Any]] = []
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        out_dir = crawler.settings.get("MASSEY_OUT_DIR", "data/massey_ratings")
+        return cls(out_dir)
+
+    def process_item(self, item, spider):
+        self._buffer.append(item)
+        return item
+
+    def close_spider(self, spider):
+        if not self._buffer:
+            spider.logger.warning("No Massey Ratings data collected")
+            return
+        
+        ts = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+        
+        # Separate items by type for better organization
+        ratings_items = [r for r in self._buffer if r.get("data_type") == "rating"]
+        games_items = [r for r in self._buffer if r.get("data_type") == "game"]
+        matchup_items = [r for r in self._buffer if r.get("data_type") == "matchup"]
+        
+        # Write JSONL (all data combined)
+        jsonl_path = os.path.join(self.out_dir, f"massey-{ts}.jsonl")
+        with open(jsonl_path, "wb") as f:
+            for row in self._buffer:
+                f.write(orjson.dumps(row))
+                f.write(b"\n")
+        spider.logger.info(f"Wrote {len(self._buffer)} items to {jsonl_path}")
+        
+        # Write separate Parquet files by type
+        if ratings_items:
+            self._write_ratings_parquet(ratings_items, ts, spider)
+        
+        if games_items:
+            self._write_games_parquet(games_items, ts, spider)
+        
+        if matchup_items:
+            self._write_matchups_parquet(matchup_items, ts, spider)
+        
+        # Write CSV for easy analysis
+        if games_items:
+            self._write_games_csv(games_items, ts, spider)
+
+    def _write_ratings_parquet(self, items: List[Dict[str, Any]], timestamp: str, spider):
+        """Write team ratings to Parquet."""
+        try:
+            table = pa.table({
+                "source": [r.get("source") for r in items],
+                "sport": [r.get("sport") for r in items],
+                "collected_at": [r.get("collected_at") for r in items],
+                "season": [r.get("season") for r in items],
+                "rank": [r.get("rank") for r in items],
+                "team_name": [r.get("team_name") for r in items],
+                "team_abbr": [r.get("team_abbr") for r in items],
+                "rating": [r.get("rating") for r in items],
+                "offensive_rating": [r.get("offensive_rating") for r in items],
+                "defensive_rating": [r.get("defensive_rating") for r in items],
+                "sos": [r.get("sos") for r in items],
+                "record": [r.get("record") for r in items],
+                "conference": [r.get("conference") for r in items],
+            })
+            pq_path = os.path.join(self.out_dir, f"massey-ratings-{timestamp}.parquet")
+            pq.write_table(table, pq_path)
+            spider.logger.info(f"Wrote {len(items)} team ratings to {pq_path}")
+        except Exception as e:
+            spider.logger.error(f"Failed to write ratings parquet: {e}")
+
+    def _write_games_parquet(self, items: List[Dict[str, Any]], timestamp: str, spider):
+        """Write game predictions to Parquet."""
+        try:
+            table = pa.table({
+                "source": [r.get("source") for r in items],
+                "sport": [r.get("sport") for r in items],
+                "collected_at": [r.get("collected_at") for r in items],
+                "season": [r.get("season") for r in items],
+                "game_date": [r.get("game_date") for r in items],
+                "game_time": [r.get("game_time") for r in items],
+                "away_team": [r.get("away_team") for r in items],
+                "home_team": [r.get("home_team") for r in items],
+                "away_rank": [r.get("away_rank") for r in items],
+                "home_rank": [r.get("home_rank") for r in items],
+                "predicted_spread": [r.get("predicted_spread") for r in items],
+                "predicted_total": [r.get("predicted_total") for r in items],
+                "predicted_away_score": [r.get("predicted_away_score") for r in items],
+                "predicted_home_score": [r.get("predicted_home_score") for r in items],
+                "confidence": [r.get("confidence") for r in items],
+                "matchup_id": [r.get("matchup_id") for r in items],
+                "market_spread": [r.get("market_spread") for r in items],
+                "market_total": [r.get("market_total") for r in items],
+                "spread_edge": [r.get("spread_edge") for r in items],
+                "total_edge": [r.get("total_edge") for r in items],
+                "edge_confidence": [r.get("edge_confidence") for r in items],
+            })
+            pq_path = os.path.join(self.out_dir, f"massey-games-{timestamp}.parquet")
+            pq.write_table(table, pq_path)
+            spider.logger.info(f"Wrote {len(items)} game predictions to {pq_path}")
+        except Exception as e:
+            spider.logger.error(f"Failed to write games parquet: {e}")
+
+    def _write_matchups_parquet(self, items: List[Dict[str, Any]], timestamp: str, spider):
+        """Write matchup analysis to Parquet."""
+        try:
+            table = pa.table({
+                "source": [r.get("source") for r in items],
+                "sport": [r.get("sport") for r in items],
+                "collected_at": [r.get("collected_at") for r in items],
+                "season": [r.get("season") for r in items],
+                "matchup_id": [r.get("matchup_id") for r in items],
+                "away_team": [r.get("away_team") for r in items],
+                "home_team": [r.get("home_team") for r in items],
+                "score_distribution_json": [orjson.dumps(r.get("score_distribution") or {}).decode() for r in items],
+                "margin_distribution_json": [orjson.dumps(r.get("margin_distribution") or {}).decode() for r in items],
+                "total_distribution_json": [orjson.dumps(r.get("total_distribution") or {}).decode() for r in items],
+            })
+            pq_path = os.path.join(self.out_dir, f"massey-matchups-{timestamp}.parquet")
+            pq.write_table(table, pq_path)
+            spider.logger.info(f"Wrote {len(items)} matchup analyses to {pq_path}")
+        except Exception as e:
+            spider.logger.error(f"Failed to write matchups parquet: {e}")
+
+    def _write_games_csv(self, items: List[Dict[str, Any]], timestamp: str, spider):
+        """Write game predictions to CSV for easy viewing."""
+        try:
+            csv_path = os.path.join(self.out_dir, f"massey-games-{timestamp}.csv")
+            
+            # Flatten for CSV
+            flattened_rows = []
+            for row in items:
+                flat = {
+                    "date": row.get("game_date"),
+                    "time": row.get("game_time"),
+                    "away_team": row.get("away_team"),
+                    "home_team": row.get("home_team"),
+                    "predicted_away_score": row.get("predicted_away_score"),
+                    "predicted_home_score": row.get("predicted_home_score"),
+                    "predicted_spread": row.get("predicted_spread"),
+                    "predicted_total": row.get("predicted_total"),
+                    "confidence": row.get("confidence"),
+                    "market_spread": row.get("market_spread"),
+                    "market_total": row.get("market_total"),
+                    "spread_edge": row.get("spread_edge"),
+                    "total_edge": row.get("total_edge"),
+                    "edge_confidence": row.get("edge_confidence"),
+                }
+                flattened_rows.append(flat)
+            
+            # Write CSV
+            if flattened_rows:
+                fieldnames = list(flattened_rows[0].keys())
+                with open(csv_path, "w", newline="", encoding="utf-8") as f:
+                    writer = csv.DictWriter(f, fieldnames=fieldnames)
+                    writer.writeheader()
+                    writer.writerows(flattened_rows)
+                spider.logger.info(f"Wrote {len(flattened_rows)} games to {csv_path}")
+        except Exception as e:
+            spider.logger.error(f"Failed to write games CSV: {e}")

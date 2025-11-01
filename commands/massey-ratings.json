@@ -1,0 +1,4 @@
+{
+  "cmd": "uv run walters-analyzer scrape-massey --data-type ratings"
+}
+

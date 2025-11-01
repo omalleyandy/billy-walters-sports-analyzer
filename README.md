@@ -100,6 +100,41 @@ uv run walters-analyzer scrape-injuries --sport cfb --output-dir ./injury_data
 
 See [INJURY_SCRAPER.md](INJURY_SCRAPER.md) for complete documentation, gate integration examples, and position impact guidelines.
 
+### Scrape Massey Ratings (College Football Power Ratings)
+
+Collect objective power ratings, game predictions, and matchup analysis to identify betting edges:
+
+```powershell
+# Scrape everything (ratings + games)
+uv run walters-analyzer scrape-massey
+
+# Scrape only team power ratings
+uv run walters-analyzer scrape-massey --data-type ratings
+
+# Scrape only game predictions
+uv run walters-analyzer scrape-massey --data-type games
+
+# Specify season
+uv run walters-analyzer scrape-massey --season 2025
+
+# Custom output directory
+uv run walters-analyzer scrape-massey --output-dir ./massey_data
+```
+
+**Why Massey Ratings Matter:**
+- **Objective benchmark**: Mathematical model free from human bias
+- **Find edges**: Compare Massey spreads to market odds (2+ pt discrepancy = opportunity)
+- **Validate your model**: Cross-reference your predictions against proven system
+- **Billy Walters methodology**: Use multiple data sources to identify market inefficiencies
+
+**Data Collected:**
+- Team power ratings (overall, offensive, defensive)
+- Predicted scores, spreads, and totals for all games
+- Win probabilities and confidence levels
+- Strength of schedule (SoS) metrics
+
+See [MASSEY_RATINGS.md](MASSEY_RATINGS.md) for complete documentation, edge detection strategies, and integration with Billy Walters principles.
+
 ### Fetch Weather Data (AccuWeather API)
 
 Critical for outdoor games - weather impacts scoring, passing efficiency, and field goals:
