@@ -17,6 +17,12 @@ def main():
     scrape.add_argument("--output-dir", default="data/overtime_live",
                         help="Output directory for scraped data")
     
+    injuries = sub.add_parser("scrape-injuries", help="Scrape injury reports from ESPN")
+    injuries.add_argument("--sport", choices=["nfl", "cfb"], default="cfb",
+                          help="Sport to scrape: nfl or cfb (college football)")
+    injuries.add_argument("--output-dir", default="data/injuries",
+                          help="Output directory for injury data")
+    
     args = parser.parse_args()
 
     if args.cmd == "wk-card":
@@ -61,6 +67,41 @@ def main():
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"ERROR: Scraping failed with exit code {e.returncode}", file=sys.stderr)
+            sys.exit(e.returncode)
+        except FileNotFoundError:
+            print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)
+            print("Run: uv pip install scrapy scrapy-playwright", file=sys.stderr)
+            sys.exit(1)
+    
+    elif args.cmd == "scrape-injuries":
+        # Map sport argument to ESPN's URL format
+        sport_map = {
+            "nfl": ("football", "nfl"),
+            "cfb": ("football", "college-football")
+        }
+        espn_sport, espn_league = sport_map[args.sport]
+        
+        print(f"Starting ESPN injury report scraper for {args.sport.upper()}...")
+        
+        # Build scrapy command with environment variables for ESPN spider
+        import os
+        env = os.environ.copy()
+        env["ESPN_SPORT"] = espn_sport
+        env["ESPN_LEAGUE"] = espn_league
+        
+        cmd = [
+            "scrapy", "crawl", "espn_injuries",
+            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.jsonl]=jsonlines",
+            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.parquet]=parquet",
+        ]
+        
+        # Run scrapy
+        try:
+            result = subprocess.run(cmd, env=env, check=True)
+            print(f"\n✓ Injury scraping completed. Check {args.output_dir}/ for output files.")
+            sys.exit(result.returncode)
+        except subprocess.CalledProcessError as e:
+            print(f"ERROR: Injury scraping failed with exit code {e.returncode}", file=sys.stderr)
             sys.exit(e.returncode)
         except FileNotFoundError:
             print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)

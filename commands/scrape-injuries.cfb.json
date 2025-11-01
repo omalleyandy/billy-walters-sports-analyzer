@@ -1,0 +1,4 @@
+{
+  "cmd": "uv run walters-analyzer scrape-injuries --sport cfb --output-dir data/injuries"
+}
+

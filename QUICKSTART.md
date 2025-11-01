@@ -45,11 +45,24 @@ uv run walters-analyzer scrape-overtime --sport cfb
 uv run walters-analyzer scrape-overtime --live
 ```
 
+### Injury Reports (Critical for Gate Checks!)
+```powershell
+# College Football injuries (default)
+uv run walters-analyzer scrape-injuries --sport cfb
+
+# NFL injuries
+uv run walters-analyzer scrape-injuries --sport nfl
+```
+
+💡 **Why scrape injuries?** Key player absences (especially QBs) can move lines 3-7 points. Always check injuries before betting!
+
 ---
 
 ## 📁 Output Files
 
-After each scrape, you'll find 3 files in `data/overtime_live/`:
+### Odds Data
+
+After each odds scrape, you'll find 3 files in `data/overtime_live/`:
 
 1. **CSV** (`overtime-live-{timestamp}.csv`) 
    - Open in Excel
@@ -65,6 +78,31 @@ After each scrape, you'll find 3 files in `data/overtime_live/`:
    - Efficient columnar format
    - Best for data analysis with pandas/polars
    - Smallest file size
+
+### Injury Data
+
+After each injury scrape, you'll find 2 files in `data/injuries/`:
+
+1. **JSONL** (`injuries-{timestamp}.jsonl`)
+   - One injury per line
+   - Player name, position, status, injury type
+   - Easy to filter and process
+
+2. **Parquet** (`injuries-{timestamp}.parquet`)
+   - Efficient format for analytics
+   - Best for combining with odds data
+
+**Example injury record:**
+```json
+{
+  "player_name": "Jalen Milroe",
+  "position": "QB",
+  "team": "Alabama Crimson Tide",
+  "injury_status": "Questionable",
+  "injury_type": "Ankle",
+  "impact_score": 50
+}
+```
 
 ---
 
@@ -170,17 +208,21 @@ total_over_price: -110
 ## 💡 Example Workflow
 
 ```powershell
-# Morning: Scrape pre-game odds
-uv run walters-analyzer scrape-overtime --sport nfl
+# Wednesday/Thursday: Scrape injury reports
+uv run walters-analyzer scrape-injuries --sport cfb
 
-# Analyze in Excel or Python
-# ...
+# Friday morning: Scrape pre-game odds
+uv run walters-analyzer scrape-overtime --sport cfb
 
-# During games: Check live betting
+# Analyze injuries + odds together
+# Filter out teams with key injuries (QB, OL, etc.)
+# Identify value opportunities
+
+# Saturday: Check live betting during games
 uv run walters-analyzer scrape-overtime --live
 
 # Compare pre-game vs live odds
-# Identify value opportunities
+# Track CLV (Closing Line Value)
 ```
 
 ---

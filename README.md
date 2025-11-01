@@ -2,9 +2,11 @@
 
 Canonical, uv-based repo scaffold so we stay in sync. One env per project.
 This repo includes:
-- **CLI**: `walters-analyzer` with `wk-card` and `scrape-overtime` commands
+- **CLI**: `walters-analyzer` with `wk-card`, `scrape-overtime`, and `scrape-injuries` commands
 - **Cards**: JSON snapshots in `./cards/`
-- **Scrapers**: Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
+- **Scrapers**: 
+  - Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
+  - ESPN injury report scraper for player status tracking
 - **Claude**: `/commands` and `/hooks` placeholders
 - **Env**: `env.template` for required keys
 
@@ -73,6 +75,28 @@ uv run walters-analyzer scrape-overtime --output-dir ./my_data
 # Scrape live betting odds
 uv run walters-analyzer scrape-overtime --live
 ```
+
+### Scrape ESPN Injury Reports
+
+Critical for gate checks - track player injury status (Out, Doubtful, Questionable, Probable):
+
+```powershell
+# Scrape College Football injuries (default)
+uv run walters-analyzer scrape-injuries --sport cfb
+
+# Scrape NFL injuries
+uv run walters-analyzer scrape-injuries --sport nfl
+
+# Custom output directory
+uv run walters-analyzer scrape-injuries --sport cfb --output-dir ./injury_data
+```
+
+**Why Injuries Matter:**
+- Key player absences significantly impact point spreads
+- Starting QB injuries can move lines 3-7 points
+- Essential gate check before placing any wager
+
+See [INJURY_SCRAPER.md](INJURY_SCRAPER.md) for complete documentation, gate integration examples, and position impact guidelines.
 
 ### Output Files
 Scraped data is saved to `data/overtime_live/` (or custom directory) in three formats:

@@ -54,3 +54,43 @@ def game_key_from(away: str, home: str, date_bucket: Optional[str] = None) -> st
 
 def iso_now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+@dataclass
+class InjuryReportItem:
+    """
+    Represents a player's injury status for a specific team/game.
+    
+    Status values: "Out", "Doubtful", "Questionable", "Probable", "Day-to-Day"
+    """
+    source: str                     # "espn", "team_site", etc.
+    sport: str                      # "college_football", "nfl"
+    league: str                     # "NCAAF", "NFL"
+    collected_at: str               # ISO8601Z timestamp
+    team: str                       # Team name
+    team_abbr: Optional[str]        # Team abbreviation (e.g., "ALA", "UGA")
+    player_name: str                # Full player name
+    position: Optional[str]         # "QB", "RB", "WR", etc.
+    injury_status: str              # "Out", "Doubtful", "Questionable", "Probable", "Day-to-Day"
+    injury_type: Optional[str]      # "Knee", "Ankle", "Concussion", etc.
+    date_reported: Optional[str]    # When injury was reported/updated
+    game_date: Optional[str]        # Upcoming game date (if available)
+    opponent: Optional[str]         # Opponent for upcoming game
+    notes: Optional[str]            # Additional context/notes
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+    
+    def get_impact_score(self) -> int:
+        """
+        Return a numeric impact score based on injury status.
+        Higher = more impactful to betting decision.
+        """
+        impact_map = {
+            "out": 100,
+            "doubtful": 75,
+            "questionable": 50,
+            "probable": 25,
+            "day-to-day": 40,
+        }
+        return impact_map.get(self.injury_status.lower(), 0)
