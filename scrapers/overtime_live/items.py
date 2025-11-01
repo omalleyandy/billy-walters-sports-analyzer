@@ -23,24 +23,28 @@ class Market:
 @dataclass
 class LiveGameItem:
     source: str                 # "overtime.ag"
-    sport: str                  # "ncaa_football"
-    league: str                 # "NCAAF"
+    sport: str                  # "nfl" or "college_football"
+    league: str                 # "NFL" or "NCAAF"
     collected_at: str           # ISO8601Z
     game_key: str               # stable hash of matchup + date bucket
-    event_date: Optional[str]   # if available (ISO), else None
+    event_date: Optional[str]   # parsed date in ISO format (e.g., "2025-11-02")
+    event_time: Optional[str]   # game time as displayed (e.g., "1:00 PM ET")
+    rotation_number: Optional[str]  # e.g., "451-452" or "317-318"
     teams: Dict[str, str]       # {"away": "...", "home": "..."}
     state: Dict[str, Any]       # {"quarter": 4, "clock": "03:24"} best-effort
     markets: Dict[str, Market]  # {"spread": Market(...), "total": Market(...), "moneyline": Market(...)}
+    is_live: bool = False       # True for live betting, False for pre-game
 
     def to_dict(self) -> Dict[str, Any]:
-        d = asdict(self)
-        # flatten nested dataclasses
-        for k, v in list(d.get("markets", {}).items()):
-            if isinstance(v, dict):
-                for kk, vv in list(v.items()):
-                    if isinstance(vv, dict):
-                        pass
-        return d
+        """
+        Convert this dataclass into a plain Python dictionary.
+
+        `dataclasses.asdict()` will recursively convert nested dataclasses to
+        dictionaries, which is sufficient for our needs.  If you need more
+        control over serialisation (e.g. converting datetime objects), you
+        should handle that in the caller.
+        """
+        return asdict(self)
 
 
 def game_key_from(away: str, home: str, date_bucket: Optional[str] = None) -> str:
