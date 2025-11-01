@@ -5,7 +5,13 @@ description = "Billy Walters Sports Analyzer (WSA) — CLI + scraping skeleton u
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{name = "Andy + ChatGPT", email = "noreply@example.com"}]
-dependencies = []
+dependencies = [
+    "orjson>=3.11.4",
+    "pyarrow>=21.0.0",
+    "python-dotenv>=1.2.1",
+    "scrapy>=2.13.3",
+    "scrapy-playwright>=0.0.44",
+]
 
 [project.scripts]
 walters-analyzer = "walters_analyzer.cli:main"
