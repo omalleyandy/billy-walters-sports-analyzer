@@ -42,7 +42,7 @@ This repository uses `env.template` as the canonical list of environment variabl
    merged_path.write_text("\n".join(merged_lines) + "\n")
    ```
 
-6. **Validate.** Replace `.env` with `.env.new` once reviewed, then run the application or tests to ensure everything loads correctly. Never commit your personal `.env` or other files containing secrets.
+6. **Validate.** Replace `.env` with `.env.new` once reviewed, then run the application or tests to ensure everything loads correctly. A quick sanity check is `pytest`, which exercises the parsers and spiders that depend on the environment. Never commit your personal `.env` or other files containing secrets.
 
 ## WSL + Windows PowerShell Integration Notes
 
