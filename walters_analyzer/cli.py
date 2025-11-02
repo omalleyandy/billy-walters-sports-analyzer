@@ -349,7 +349,6 @@ def main():
     elif args.cmd == "scrape-nfl-schedule":
         # Run NFL schedule scraper (ESPN API)
         import asyncio
-        import sys
         from pathlib import Path
 
         # Add scripts directory to path
@@ -392,7 +391,6 @@ def main():
 
     elif args.cmd == "update-power-ratings":
         # Run power ratings updater
-        import sys
         from pathlib import Path
 
         # Add scripts directory to path
@@ -437,7 +435,6 @@ def main():
     elif args.cmd == "backfill-nfl-season":
         # Combined workflow: scrape all weeks then update ratings
         import asyncio
-        import sys
         from pathlib import Path
 
         print(f"\n{'='*60}")
@@ -502,7 +499,6 @@ def main():
     elif args.cmd == "weekly-nfl-update":
         # Weekly workflow: scrape single week + update ratings
         import asyncio
-        import sys
         from pathlib import Path
 
         print(f"\n{'='*60}")

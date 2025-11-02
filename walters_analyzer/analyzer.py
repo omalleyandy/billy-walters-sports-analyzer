@@ -170,7 +170,7 @@ class BillyWaltersAnalyzer:
         base_spread = self.power_engine.calculate_predicted_spread(
             away_team, home_team, sport
         )
-        predicted_spread = base_spread + swe_spread_adj
+        predicted_spread = -(base_spread + swe_spread_adj)
 
         predicted_total = self.power_engine.calculate_predicted_total(
             away_team, home_team, sport,
@@ -197,7 +197,7 @@ class BillyWaltersAnalyzer:
                 bet_line = market_spread
             else:
                 side = "away"
-                bet_line = market_spread
+                bet_line = -market_spread
 
             # Create reasoning
             reasoning = self._build_reasoning(

@@ -263,7 +263,7 @@ class BetSizingCalculator:
             'bet_amount': round(bet_amount, 2),
             'bet_percentage': round(bet_pct * 100, 2),
             'kelly_full': round(kelly_full * 100, 2),
-            'kelly_fractional': round(kelly_frac * 100, 2),
+            'kelly_fraction': round(kelly_frac * 100, 2),
             'expected_value': round(ev, 2),
             'risk_of_ruin': round(ror, 4),
             'recommendation': self._generate_recommendation(
@@ -334,7 +334,7 @@ class BetSizingCalculator:
             bet_amount=sizing['bet_amount'],
             bet_percentage=sizing['bet_percentage'],
             kelly_full=sizing['kelly_full'],
-            kelly_fractional=sizing['kelly_fractional'],
+            kelly_fraction=sizing['kelly_fraction'],
             risk_of_ruin=sizing['risk_of_ruin'],
             expected_value=sizing['expected_value'],
             reasoning=reasoning

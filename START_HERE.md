@@ -75,6 +75,13 @@ uv run python examples/complete_research_demo.py
 
 ---
 
+## 🤖 Codex Integration
+- Codex runs `.codex/preflight.sh` automatically; review `hooks/` if you need to adjust guardrails.
+- Command automations live in `commands/` (bootstrap, weekly cards, scraping workflows).
+- See `docs/CODEX_WORKFLOW.md` for a focused guide on Codex usage and troubleshooting.
+
+---
+
 ## 📚 Essential Documentation
 
 ### **Start Here:**
