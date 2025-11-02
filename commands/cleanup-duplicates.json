@@ -1,0 +1,3 @@
+{
+  "cmd": "uv run python -c \"import os; from pathlib import Path; from collections import defaultdict; data_dir = Path('data/nfl_schedule'); files = list(data_dir.glob('*.json*')); by_week = defaultdict(list); [by_week[f.name.split('_')[1]].append(f) for f in files if 'nfl_week' in f.name]; total_removed = 0; [print(f'\\\\nWeek {week}: {len(files)} files (keeping 2 newest)') or [print(f'  Removing: {f.name}') or f.unlink() for f in sorted(files, key=lambda x: x.stat().st_mtime, reverse=True)[2:]] for week, files in sorted(by_week.items()) if len(files) > 2]; print(f'\\\\nRemoved {sum(len(files)-2 for week, files in by_week.items() if len(files) > 2)} duplicate files')\""
+}

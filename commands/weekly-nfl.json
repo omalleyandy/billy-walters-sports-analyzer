@@ -1,0 +1,3 @@
+{
+  "cmd": "uv run walters-analyzer weekly-nfl-update --week 10"
+}

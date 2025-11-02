@@ -1,0 +1,250 @@
+{
+  "teams": {
+    "ARI": {
+      "full_name": "Arizona Cardinals",
+      "location": "Arizona",
+      "nickname": "Cardinals",
+      "division": "NFC West",
+      "conference": "NFC"
+    },
+    "ATL": {
+      "full_name": "Atlanta Falcons",
+      "location": "Atlanta",
+      "nickname": "Falcons",
+      "division": "NFC South",
+      "conference": "NFC"
+    },
+    "BAL": {
+      "full_name": "Baltimore Ravens",
+      "location": "Baltimore",
+      "nickname": "Ravens",
+      "division": "AFC North",
+      "conference": "AFC"
+    },
+    "BUF": {
+      "full_name": "Buffalo Bills",
+      "location": "Buffalo",
+      "nickname": "Bills",
+      "division": "AFC East",
+      "conference": "AFC"
+    },
+    "CAR": {
+      "full_name": "Carolina Panthers",
+      "location": "Carolina",
+      "nickname": "Panthers",
+      "division": "NFC South",
+      "conference": "NFC"
+    },
+    "CHI": {
+      "full_name": "Chicago Bears",
+      "location": "Chicago",
+      "nickname": "Bears",
+      "division": "NFC North",
+      "conference": "NFC"
+    },
+    "CIN": {
+      "full_name": "Cincinnati Bengals",
+      "location": "Cincinnati",
+      "nickname": "Bengals",
+      "division": "AFC North",
+      "conference": "AFC"
+    },
+    "CLE": {
+      "full_name": "Cleveland Browns",
+      "location": "Cleveland",
+      "nickname": "Browns",
+      "division": "AFC North",
+      "conference": "AFC"
+    },
+    "DAL": {
+      "full_name": "Dallas Cowboys",
+      "location": "Dallas",
+      "nickname": "Cowboys",
+      "division": "NFC East",
+      "conference": "NFC"
+    },
+    "DEN": {
+      "full_name": "Denver Broncos",
+      "location": "Denver",
+      "nickname": "Broncos",
+      "division": "AFC West",
+      "conference": "AFC"
+    },
+    "DET": {
+      "full_name": "Detroit Lions",
+      "location": "Detroit",
+      "nickname": "Lions",
+      "division": "NFC North",
+      "conference": "NFC"
+    },
+    "GB": {
+      "full_name": "Green Bay Packers",
+      "location": "Green Bay",
+      "nickname": "Packers",
+      "division": "NFC North",
+      "conference": "NFC"
+    },
+    "HOU": {
+      "full_name": "Houston Texans",
+      "location": "Houston",
+      "nickname": "Texans",
+      "division": "AFC South",
+      "conference": "AFC"
+    },
+    "IND": {
+      "full_name": "Indianapolis Colts",
+      "location": "Indianapolis",
+      "nickname": "Colts",
+      "division": "AFC South",
+      "conference": "AFC"
+    },
+    "JAX": {
+      "full_name": "Jacksonville Jaguars",
+      "location": "Jacksonville",
+      "nickname": "Jaguars",
+      "division": "AFC South",
+      "conference": "AFC"
+    },
+    "KC": {
+      "full_name": "Kansas City Chiefs",
+      "location": "Kansas City",
+      "nickname": "Chiefs",
+      "division": "AFC West",
+      "conference": "AFC"
+    },
+    "LAC": {
+      "full_name": "Los Angeles Chargers",
+      "location": "Los Angeles",
+      "nickname": "Chargers",
+      "division": "AFC West",
+      "conference": "AFC"
+    },
+    "LAR": {
+      "full_name": "Los Angeles Rams",
+      "location": "Los Angeles",
+      "nickname": "Rams",
+      "division": "NFC West",
+      "conference": "NFC"
+    },
+    "LV": {
+      "full_name": "Las Vegas Raiders",
+      "location": "Las Vegas",
+      "nickname": "Raiders",
+      "division": "AFC West",
+      "conference": "AFC"
+    },
+    "MIA": {
+      "full_name": "Miami Dolphins",
+      "location": "Miami",
+      "nickname": "Dolphins",
+      "division": "AFC East",
+      "conference": "AFC"
+    },
+    "MIN": {
+      "full_name": "Minnesota Vikings",
+      "location": "Minnesota",
+      "nickname": "Vikings",
+      "division": "NFC North",
+      "conference": "NFC"
+    },
+    "NE": {
+      "full_name": "New England Patriots",
+      "location": "New England",
+      "nickname": "Patriots",
+      "division": "AFC East",
+      "conference": "AFC"
+    },
+    "NO": {
+      "full_name": "New Orleans Saints",
+      "location": "New Orleans",
+      "nickname": "Saints",
+      "division": "NFC South",
+      "conference": "NFC"
+    },
+    "NYG": {
+      "full_name": "New York Giants",
+      "location": "New York",
+      "nickname": "Giants",
+      "division": "NFC East",
+      "conference": "NFC"
+    },
+    "NYJ": {
+      "full_name": "New York Jets",
+      "location": "New York",
+      "nickname": "Jets",
+      "division": "AFC East",
+      "conference": "AFC"
+    },
+    "PHI": {
+      "full_name": "Philadelphia Eagles",
+      "location": "Philadelphia",
+      "nickname": "Eagles",
+      "division": "NFC East",
+      "conference": "NFC"
+    },
+    "PIT": {
+      "full_name": "Pittsburgh Steelers",
+      "location": "Pittsburgh",
+      "nickname": "Steelers",
+      "division": "AFC North",
+      "conference": "AFC"
+    },
+    "SEA": {
+      "full_name": "Seattle Seahawks",
+      "location": "Seattle",
+      "nickname": "Seahawks",
+      "division": "NFC West",
+      "conference": "NFC"
+    },
+    "SF": {
+      "full_name": "San Francisco 49ers",
+      "location": "San Francisco",
+      "nickname": "49ers",
+      "division": "NFC West",
+      "conference": "NFC"
+    },
+    "TB": {
+      "full_name": "Tampa Bay Buccaneers",
+      "location": "Tampa Bay",
+      "nickname": "Buccaneers",
+      "division": "NFC South",
+      "conference": "NFC"
+    },
+    "TEN": {
+      "full_name": "Tennessee Titans",
+      "location": "Tennessee",
+      "nickname": "Titans",
+      "division": "AFC South",
+      "conference": "AFC"
+    },
+    "WAS": {
+      "full_name": "Washington Commanders",
+      "location": "Washington",
+      "nickname": "Commanders",
+      "division": "NFC East",
+      "conference": "NFC"
+    }
+  },
+  "divisions": {
+    "AFC East": ["BUF", "MIA", "NE", "NYJ"],
+    "AFC North": ["BAL", "CIN", "CLE", "PIT"],
+    "AFC South": ["HOU", "IND", "JAX", "TEN"],
+    "AFC West": ["DEN", "KC", "LAC", "LV"],
+    "NFC East": ["DAL", "NYG", "PHI", "WAS"],
+    "NFC North": ["CHI", "DET", "GB", "MIN"],
+    "NFC South": ["ATL", "CAR", "NO", "TB"],
+    "NFC West": ["ARI", "LAR", "SF", "SEA"]
+  },
+  "dome_stadiums": [
+    "Allegiant Stadium",
+    "AT&T Stadium",
+    "Caesars Superdome",
+    "Ford Field",
+    "Lucas Oil Stadium",
+    "Mercedes-Benz Stadium",
+    "NRG Stadium",
+    "SoFi Stadium",
+    "State Farm Stadium",
+    "U.S. Bank Stadium"
+  ]
+}

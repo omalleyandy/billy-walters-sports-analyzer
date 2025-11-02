@@ -3,7 +3,13 @@
     "allow": [
       "Bash(git rev-parse:*)",
       "Bash(uv sync:*)",
-      "Bash(uv run pytest:*)"
+      "Bash(uv run pytest:*)",
+      "Bash(dir:*)",
+      "Bash(nul)",
+      "Bash(uv add:*)",
+      "Bash(uv run:*)",
+      "Bash(schtasks /query /TN \"Billy Walters NFL Weekly Update\" /FO LIST /V)",
+      "Bash(powershell.exe \"Get-ScheduledTask -TaskName ''Billy Walters NFL Weekly Update'' | Format-List TaskName,State,LastRunTime,NextRunTime\")"
     ],
     "deny": [],
     "ask": []

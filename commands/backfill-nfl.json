@@ -1,0 +1,3 @@
+{
+  "cmd": "uv run walters-analyzer backfill-nfl-season --season 2025 --end-week 9"
+}

@@ -1,0 +1,613 @@
+{
+  "last_updated": "2025-11-01T21:22:50.094800",
+  "ratings": {
+    "nfl:philadelphia eagles": {
+      "team": "Philadelphia Eagles",
+      "sport": "nfl",
+      "rating": 3.62,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797717",
+      "rating_history": [
+        0.59,
+        2.37,
+        2.73,
+        3.1,
+        4.33,
+        4.35,
+        4.4,
+        1.78,
+        1.95,
+        3.62
+      ]
+    },
+    "nfl:dallas cowboys": {
+      "team": "Dallas Cowboys",
+      "sport": "nfl",
+      "rating": -0.69,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797762",
+      "rating_history": [
+        1.28,
+        -0.56,
+        -0.88,
+        -0.74,
+        -2.82,
+        -1.82,
+        -1.02,
+        -1.8,
+        1.01,
+        -0.69
+      ]
+    },
+    "nfl:los angeles chargers": {
+      "team": "Los Angeles Chargers",
+      "sport": "nfl",
+      "rating": 3.7,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797675",
+      "rating_history": [
+        -0.13,
+        2.96,
+        4.27,
+        4.29,
+        4.94,
+        3.55,
+        1.79,
+        0.97,
+        0.84,
+        3.7
+      ]
+    },
+    "nfl:kansas city chiefs": {
+      "team": "Kansas City Chiefs",
+      "sport": "nfl",
+      "rating": 11.36,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797806",
+      "rating_history": [
+        5.62,
+        7.55,
+        6.37,
+        5.96,
+        5.91,
+        7.53,
+        6.57,
+        8.14,
+        10.1,
+        11.36
+      ]
+    },
+    "nfl:atlanta falcons": {
+      "team": "Atlanta Falcons",
+      "sport": "nfl",
+      "rating": -4.8,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797689",
+      "rating_history": [
+        1.01,
+        -0.21,
+        -3.05,
+        -2.65,
+        -1.33,
+        -4.65,
+        -3.04,
+        -0.99,
+        -2.02,
+        -4.8
+      ]
+    },
+    "nfl:tampa bay buccaneers": {
+      "team": "Tampa Bay Buccaneers",
+      "sport": "nfl",
+      "rating": 2.43,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797753",
+      "rating_history": [
+        0.23,
+        1.41,
+        1.05,
+        1.12,
+        1.02,
+        1.0,
+        1.56,
+        2.87,
+        1.52,
+        2.43
+      ]
+    },
+    "nfl:cleveland browns": {
+      "team": "Cleveland Browns",
+      "sport": "nfl",
+      "rating": -4.17,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797709",
+      "rating_history": [
+        -1.27,
+        -2.88,
+        -2.86,
+        -4.93,
+        -3.27,
+        -4.88,
+        -4.49,
+        -5.55,
+        -2.84,
+        -4.17
+      ]
+    },
+    "nfl:cincinnati bengals": {
+      "team": "Cincinnati Bengals",
+      "sport": "nfl",
+      "rating": -5.96,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797698",
+      "rating_history": [
+        -4.39,
+        -4.16,
+        -4.18,
+        -2.88,
+        -6.53,
+        -8.0,
+        -7.53,
+        -7.55,
+        -6.2,
+        -5.96
+      ]
+    },
+    "nfl:indianapolis colts": {
+      "team": "Indianapolis Colts",
+      "sport": "nfl",
+      "rating": 11.8,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797768",
+      "rating_history": [
+        9.09,
+        10.09,
+        11.07,
+        10.81,
+        10.81,
+        9.41,
+        11.64,
+        11.14,
+        11.26,
+        11.8
+      ]
+    },
+    "nfl:miami dolphins": {
+      "team": "Miami Dolphins",
+      "sport": "nfl",
+      "rating": -8.4,
+      "games_played": 22,
+      "last_updated": "2025-11-01T21:22:50.094382",
+      "rating_history": [
+        -8.53,
+        -7.75,
+        -7.73,
+        -6.54,
+        -6.86,
+        -5.95,
+        -8.38,
+        -5.88,
+        -7.27,
+        -8.4
+      ]
+    },
+    "nfl:new england patriots": {
+      "team": "New England Patriots",
+      "sport": "nfl",
+      "rating": 5.35,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797707",
+      "rating_history": [
+        2.3,
+        4.1,
+        2.72,
+        2.02,
+        1.26,
+        4.08,
+        4.22,
+        3.67,
+        3.87,
+        5.35
+      ]
+    },
+    "nfl:las vegas raiders": {
+      "team": "Las Vegas Raiders",
+      "sport": "nfl",
+      "rating": -7.54,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797354",
+      "rating_history": [
+        -3.71,
+        -2.67,
+        -5.19,
+        -3.95,
+        -3.98,
+        -5.33,
+        -4.85,
+        -6.86,
+        -5.78,
+        -7.54
+      ]
+    },
+    "nfl:new orleans saints": {
+      "team": "New Orleans Saints",
+      "sport": "nfl",
+      "rating": -6.92,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797751",
+      "rating_history": [
+        -4.15,
+        -5.46,
+        -5.28,
+        -4.93,
+        -7.07,
+        -7.29,
+        -5.46,
+        -4.84,
+        -5.91,
+        -6.92
+      ]
+    },
+    "nfl:arizona cardinals": {
+      "team": "Arizona Cardinals",
+      "sport": "nfl",
+      "rating": 0.78,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797405",
+      "rating_history": [
+        0.51,
+        0.7,
+        0.83,
+        0.67,
+        0.79,
+        0.44,
+        1.06,
+        0.17,
+        0.61,
+        0.78
+      ]
+    },
+    "nfl:new york jets": {
+      "team": "New York Jets",
+      "sport": "nfl",
+      "rating": -5.48,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797700",
+      "rating_history": [
+        -3.62,
+        -3.82,
+        -3.39,
+        -4.4,
+        -4.31,
+        -5.38,
+        -6.27,
+        -4.97,
+        -5.26,
+        -5.48
+      ]
+    },
+    "nfl:pittsburgh steelers": {
+      "team": "Pittsburgh Steelers",
+      "sport": "nfl",
+      "rating": -0.18,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797796",
+      "rating_history": [
+        1.43,
+        0.4,
+        -0.05,
+        -0.43,
+        -1.12,
+        -0.43,
+        0.27,
+        1.45,
+        0.23,
+        -0.18
+      ]
+    },
+    "nfl:washington commanders": {
+      "team": "Washington Commanders",
+      "sport": "nfl",
+      "rating": -1.89,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797808",
+      "rating_history": [
+        1.41,
+        -0.33,
+        1.08,
+        0.44,
+        1.95,
+        0.5,
+        2.08,
+        1.77,
+        -0.75,
+        -1.89
+      ]
+    },
+    "nfl:new york giants": {
+      "team": "New York Giants",
+      "sport": "nfl",
+      "rating": -3.38,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797719",
+      "rating_history": [
+        -2.08,
+        -3.68,
+        -4.95,
+        -5.08,
+        -5.03,
+        -3.48,
+        -5.13,
+        -2.23,
+        -1.88,
+        -3.38
+      ]
+    },
+    "nfl:jacksonville jaguars": {
+      "team": "Jacksonville Jaguars",
+      "sport": "nfl",
+      "rating": 0.9,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797316",
+      "rating_history": [
+        4.23,
+        3.57,
+        0.99,
+        2.29,
+        1.13,
+        2.29,
+        2.38,
+        3.44,
+        3.15,
+        0.9
+      ]
+    },
+    "nfl:carolina panthers": {
+      "team": "Carolina Panthers",
+      "sport": "nfl",
+      "rating": -5.33,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797726",
+      "rating_history": [
+        -2.01,
+        -4.47,
+        -5.64,
+        -5.75,
+        -2.06,
+        -4.59,
+        -4.24,
+        -3.37,
+        -3.11,
+        -5.33
+      ]
+    },
+    "nfl:denver broncos": {
+      "team": "Denver Broncos",
+      "sport": "nfl",
+      "rating": 6.6,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797760",
+      "rating_history": [
+        3.32,
+        5.36,
+        5.04,
+        5.27,
+        4.69,
+        6.31,
+        6.27,
+        5.1,
+        4.72,
+        6.6
+      ]
+    },
+    "nfl:tennessee titans": {
+      "team": "Tennessee Titans",
+      "sport": "nfl",
+      "rating": -10.3,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797770",
+      "rating_history": [
+        -7.42,
+        -8.32,
+        -8.03,
+        -7.76,
+        -7.76,
+        -9.42,
+        -8.61,
+        -9.58,
+        -9.81,
+        -10.3
+      ]
+    },
+    "nfl:seattle seahawks": {
+      "team": "Seattle Seahawks",
+      "sport": "nfl",
+      "rating": 7.37,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797431",
+      "rating_history": [
+        3.21,
+        3.8,
+        4.83,
+        4.21,
+        4.83,
+        7.2,
+        6.64,
+        6.03,
+        6.29,
+        7.37
+      ]
+    },
+    "nfl:san francisco 49ers": {
+      "team": "San Francisco 49ers",
+      "sport": "nfl",
+      "rating": 0.39,
+      "games_played": 18,
+      "last_updated": "2025-11-01T19:16:30.797745",
+      "rating_history": [
+        1.25,
+        0.16,
+        0.72,
+        0.4,
+        0.79,
+        0.69,
+        1.25,
+        0.06,
+        1.2,
+        0.39
+      ]
+    },
+    "nfl:green bay packers": {
+      "team": "Green Bay Packers",
+      "sport": "nfl",
+      "rating": 3.99,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797799",
+      "rating_history": [
+        3.52,
+        3.4,
+        3.8,
+        5.43,
+        6.14,
+        4.65,
+        3.75,
+        3.77,
+        3.62,
+        3.99
+      ]
+    },
+    "nfl:detroit lions": {
+      "team": "Detroit Lions",
+      "sport": "nfl",
+      "rating": 6.83,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797422",
+      "rating_history": [
+        3.41,
+        1.8,
+        3.55,
+        2.09,
+        5.06,
+        5.37,
+        7.15,
+        6.73,
+        5.33,
+        6.83
+      ]
+    },
+    "nfl:los angeles rams": {
+      "team": "Los Angeles Rams",
+      "sport": "nfl",
+      "rating": 8.14,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797318",
+      "rating_history": [
+        2.83,
+        3.28,
+        5.6,
+        6.17,
+        5.93,
+        4.82,
+        6.37,
+        5.75,
+        6.12,
+        8.14
+      ]
+    },
+    "nfl:houston texans": {
+      "team": "Houston Texans",
+      "sport": "nfl",
+      "rating": 6.56,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797743",
+      "rating_history": [
+        3.57,
+        2.64,
+        3.85,
+        3.33,
+        3.25,
+        2.21,
+        4.06,
+        6.64,
+        5.66,
+        6.56
+      ]
+    },
+    "nfl:buffalo bills": {
+      "team": "Buffalo Bills",
+      "sport": "nfl",
+      "rating": 5.18,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797727",
+      "rating_history": [
+        3.3,
+        1.83,
+        4.05,
+        4.06,
+        4.97,
+        4.94,
+        5.19,
+        5.03,
+        3.18,
+        5.18
+      ]
+    },
+    "nfl:baltimore ravens": {
+      "team": "Baltimore Ravens",
+      "sport": "nfl",
+      "rating": 1.93,
+      "games_played": 20,
+      "last_updated": "2025-11-01T21:22:50.094392",
+      "rating_history": [
+        0.67,
+        0.66,
+        2.96,
+        2.62,
+        1.16,
+        -1.7,
+        -2.11,
+        -0.35,
+        0.91,
+        1.93
+      ]
+    },
+    "nfl:chicago bears": {
+      "team": "Chicago Bears",
+      "sport": "nfl",
+      "rating": -2.59,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797736",
+      "rating_history": [
+        -1.0,
+        0.25,
+        -1.64,
+        -1.67,
+        -4.35,
+        -2.04,
+        -2.47,
+        -2.2,
+        -1.01,
+        -2.59
+      ]
+    },
+    "nfl:minnesota vikings": {
+      "team": "Minnesota Vikings",
+      "sport": "nfl",
+      "rating": -2.61,
+      "games_played": 16,
+      "last_updated": "2025-11-01T19:16:30.797680",
+      "rating_history": [
+        1.82,
+        1.3,
+        -1.48,
+        -1.45,
+        -2.92,
+        1.13,
+        0.5,
+        0.15,
+        -0.04,
+        -2.61
+      ]
+    }
+  }
+}

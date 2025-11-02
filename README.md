@@ -1,15 +1,64 @@
-# Walters Analyzer (WSA)
+# Billy Walters Sports Analyzer
 
-Canonical, uv-based repo scaffold so we stay in sync. One env per project.
-This repo includes:
-- **CLI**: `walters-analyzer` with `wk-card`, `scrape-overtime`, and `scrape-injuries` commands
-- **Cards**: JSON snapshots in `./cards/`
-- **Scrapers**: 
-  - Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
-  - ESPN injury report scraper for player status tracking
-  - AccuWeather API integration for game weather analysis
-- **Claude**: `/commands` and `/hooks` placeholders
-- **Env**: `env.template` for required keys
+**A complete sports betting research platform implementing Billy Walters' proven methodology from his Advanced Masterclass.**
+
+## Overview
+
+This project implements the **complete Billy Walters sports betting system**, combining:
+
+### Core Billy Walters Methodology (NEW!)
+1. **Power Rating Engine** - Exponential weighted team ratings updated after every game
+2. **S/W/E Factor System** - Situational, Weather, and Emotional adjustments
+3. **Key Number Analysis** - NFL/CFB key number value and half-point calculations
+4. **Star System & Bet Sizing** - Risk-managed bet sizing (0.5-3.0 stars based on edge)
+5. **CLV Tracking** - Closing Line Value validation to measure long-term skill
+
+### Data Collection Infrastructure
+- **Odds Scraping**: Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
+- **Injury Reports**: ESPN scraper for player status tracking
+- **Weather Analysis**: AccuWeather API integration for game conditions
+- **Power Ratings**: Massey Ratings scraper for objective benchmarking
+
+### Features
+- **Automated Analysis**: Complete game analysis combining power ratings, S/W/E factors, and key numbers
+- **Bet Recommendations**: Automatic bet sizing based on calculated edge percentage
+- **Performance Tracking**: SQLite database tracking CLV, ROI, and performance by star rating
+- **Scientific Validation**: Comprehensive test suite validating all statistical models
+
+---
+
+## Quick Start: Billy Walters Methodology
+
+```python
+from walters_analyzer.analyzer import BillyWaltersAnalyzer
+from walters_analyzer.situational_factors import GameContext
+
+# Initialize analyzer
+analyzer = BillyWaltersAnalyzer(bankroll=10000)
+
+# Create game context with S/W/E factors
+context = GameContext(
+    team="Alabama", opponent="LSU", sport="cfb", is_home=False,
+    is_rivalry=True, playoff_implications="seeding",
+    wind_speed_mph=12, temperature_f=68
+)
+
+# Analyze game
+analysis = analyzer.analyze_game(
+    away_team="Alabama", home_team="LSU", sport="cfb",
+    market_spread=-3.0, game_context=context, game_date="2024-11-09"
+)
+
+# Get recommendation
+if analysis.should_bet:
+    rec = analysis.recommendation
+    print(f"{rec.stars}⭐ BET {rec.side.upper()} ${rec.bet_amount:,.2f}")
+    print(f"Edge: {rec.edge_percentage:.1f}% | CLV will validate this bet")
+```
+
+See [**Billy Walters Methodology Guide**](docs/BILLY_WALTERS_METHODOLOGY.md) for complete documentation.
+
+---
 
 ## Setup
 
@@ -224,11 +273,322 @@ scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
 - Free tier limited to 50 calls/day
 - Check API status at https://developer.accuweather.com/
 
+## Core Billy Walters Modules
+
+### Power Ratings Engine
+**File**: `walters_analyzer/power_ratings.py`
+
+Implements Billy Walters' exponential weighted rating system:
+```python
+from walters_analyzer.power_ratings import PowerRatingEngine, GameResult
+
+engine = PowerRatingEngine()
+game = GameResult("Alabama", "LSU", 42, 35, True, "cfb", "2024-11-09")
+rating = engine.update_rating(game)
+
+# Predict spreads
+spread = engine.calculate_predicted_spread("LSU", "Alabama", "cfb")
+```
+
+**Key Features:**
+- 90/10 exponential weighting formula
+- Home field adjustments (NFL: 2.5, CFB: 3.5)
+- Opponent strength accounting
+- Injury differential integration
+- Persistent JSON storage
+
+### S/W/E Factor System
+**File**: `walters_analyzer/situational_factors.py`
+
+Calculate Situational, Weather, and Emotional factors:
+```python
+from walters_analyzer.situational_factors import SWEFactorCalculator, GameContext
+
+context = GameContext(
+    team="Alabama", opponent="LSU", sport="cfb", is_home=False,
+    is_rivalry=True, wind_speed_mph=22, playoff_implications="seeding"
+)
+
+calculator = SWEFactorCalculator()
+factors = calculator.calculate_all_factors(context)
+# Returns spread adjustment (5 points = 1 point spread)
+```
+
+**Key Features:**
+- Rest advantage/disadvantage (1-3 points)
+- Travel fatigue (1-3 points)
+- Game importance (rivalry, divisional, conference)
+- Weather impact (wind, precipitation, temperature)
+- Playoff motivation (2-5 points)
+
+### Key Number Analysis
+**File**: `walters_analyzer/key_numbers.py`
+
+NFL/CFB key number value calculations:
+```python
+from walters_analyzer.key_numbers import KeyNumberCalculator
+
+calc = KeyNumberCalculator()
+
+# Calculate edge crossing key numbers
+analysis = calc.calculate_edge_value(
+    your_line=-2.5, market_line=-3.5, sport='nfl'
+)
+# NFL 3 = 8% value, 7 = 6% value
+
+# Should you buy half-point?
+buy = calc.should_buy_half_point(-3.0, price_diff=20, sport='nfl')
+# Returns True if value > cost
+```
+
+**Key Features:**
+- NFL key numbers (3=8%, 7=6%, 6/10/14=4-5%)
+- CFB key numbers (different distribution)
+- Half-point value calculations
+- Optimal bet timing ("favorites early, dogs late")
+
+### Star System & Bet Sizing
+**File**: `walters_analyzer/bet_sizing.py`
+
+Convert edge to star rating and bet size:
+```python
+from walters_analyzer.bet_sizing import BetSizingCalculator
+
+calc = BetSizingCalculator(bankroll=10000)
+sizing = calc.calculate_bet_size(edge_percentage=0.08, price=-110)
+
+# 8% edge = 1.0 star = 1% bankroll ($100)
+```
+
+**Star Thresholds:**
+- 15%+ edge → 3.0 stars → 3% bankroll
+- 13-15% → 2.5 stars → 2.5% bankroll
+- 11-13% → 2.0 stars → 2% bankroll
+- 9-11% → 1.5 stars → 1.5% bankroll
+- 7-9% → 1.0 stars → 1% bankroll
+- 5.5-7% → 0.5 stars → 0.5% bankroll
+- <5.5% → NO BET
+
+### CLV Tracker
+**File**: `walters_analyzer/clv_tracker.py`
+
+Track Closing Line Value and validate your model:
+```python
+from walters_analyzer.clv_tracker import CLVTracker
+
+tracker = CLVTracker()
+
+# Log bet
+bet_id = tracker.log_bet(
+    game="Cowboys @ Giants", sport="nfl", bet_type="spread",
+    your_line=-3.0, opening_line=-2.5, stars=1.0, bet_amount=100
+)
+
+# Update closing line
+tracker.update_closing_line(bet_id, closing_line=-3.5)
+# CLV = -3.5 - (-3.0) = -0.5 (you beat the close!)
+
+# Update result
+tracker.update_result(bet_id, result="win", profit=90.91)
+
+# Get stats
+stats = tracker.get_clv_stats()
+# Average CLV, % beating close, win rate
+```
+
+**Performance Metrics:**
+- CLV by bet (closing - your line)
+- ROI (total profit / total wagered)
+- Win rate by star rating
+- Performance by bet type (spread/total/ML)
+- Sharpe ratio (risk-adjusted returns)
+
+### Master Analyzer
+**File**: `walters_analyzer/analyzer.py`
+
+Unified interface integrating all components:
+```python
+from walters_analyzer.analyzer import BillyWaltersAnalyzer
+
+analyzer = BillyWaltersAnalyzer(bankroll=10000)
+
+# Complete game analysis
+analysis = analyzer.analyze_game(
+    away_team="Alabama", home_team="LSU", sport="cfb",
+    market_spread=-3.0, game_context=context
+)
+
+# Place bet if recommended
+if analysis.should_bet:
+    bet_id = analyzer.place_bet(analysis, game_date="2024-11-09")
+
+# Update after game
+analyzer.update_game_result(bet_id, closing_line=-3.5,
+                            actual_result="win", profit=90.91)
+
+# Performance report
+print(analyzer.get_performance_report())
+```
+
+---
+
+## Testing
+
+Comprehensive test suite validates all core components:
+
+```powershell
+# Run all tests
+uv run pytest
+
+# Run specific module tests
+uv run pytest tests/test_power_ratings.py
+uv run pytest tests/test_swe_factors.py
+uv run pytest tests/test_key_numbers.py
+
+# Run with coverage
+uv run pytest --cov=walters_analyzer --cov-report=html
+```
+
+**Test Coverage:**
+- Power rating calculations and persistence
+- S/W/E factor calculations
+- Key number edge detection
+- Bet sizing and Kelly Criterion
+- CLV tracking and statistics
+
+---
+
+## Example Workflow
+
+See [`examples/complete_workflow_example.py`](examples/complete_workflow_example.py) for a complete demonstration:
+
+```powershell
+uv run python examples/complete_workflow_example.py
+```
+
+This example shows:
+1. Building power ratings from historical games
+2. Analyzing a game with S/W/E factors
+3. Calculating edge with key numbers
+4. Generating bet recommendation with star sizing
+5. Logging bet and tracking CLV
+6. Updating results and performance metrics
+
+---
+
 ## Documentation
 
+### Billy Walters Methodology
+- **[BILLY_WALTERS_METHODOLOGY.md](docs/BILLY_WALTERS_METHODOLOGY.md)** - Complete methodology guide with formulas and examples
+
+### Data Collection
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick setup and first scrape guide
 - **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Technical details of scraper implementation
 - **[INJURY_SCRAPER.md](INJURY_SCRAPER.md)** - Injury report scraper documentation
 - **[WEATHER_ANALYZER.md](WEATHER_ANALYZER.md)** - Weather analysis using Billy Walters methodology
+- **[MASSEY_RATINGS.md](MASSEY_RATINGS.md)** - Massey Ratings scraper and edge detection
 - **[EXAMPLE_OUTPUT.md](EXAMPLE_OUTPUT.md)** - Sample outputs and data formats
+
+### Automation
 - **[CLAUDE.md](CLAUDE.md)** - Commands and hooks for automation
+
+---
+
+## Project Structure
+
+```
+billy-walters-sports-analyzer/
+├── walters_analyzer/           # Core Billy Walters modules
+│   ├── power_ratings.py        # Power rating engine
+│   ├── situational_factors.py  # S/W/E factor system
+│   ├── key_numbers.py          # Key number analysis
+│   ├── bet_sizing.py           # Star system & Kelly Criterion
+│   ├── clv_tracker.py          # CLV tracking database
+│   ├── analyzer.py             # Master analyzer
+│   ├── cli.py                  # Command-line interface
+│   ├── wkcard.py               # Betting card loader
+│   ├── weather_fetcher.py      # AccuWeather API
+│   └── weather_pipeline.py     # Weather data pipeline
+├── scrapers/                   # Web scraping infrastructure
+│   └── overtime_live/          # Scrapy project
+│       ├── spiders/            # Scraper spiders
+│       │   ├── overtime_live_spider.py
+│       │   ├── pregame_odds_spider.py
+│       │   ├── espn_injury_spider.py
+│       │   └── massey_ratings_spider.py
+│       ├── items.py            # Data models
+│       ├── pipelines.py        # Export pipelines
+│       └── settings.py         # Scrapy configuration
+├── tests/                      # Test suite
+│   ├── test_power_ratings.py
+│   ├── test_swe_factors.py
+│   ├── test_key_numbers.py
+│   └── ...
+├── examples/                   # Example scripts
+│   └── complete_workflow_example.py
+├── docs/                       # Documentation
+│   └── BILLY_WALTERS_METHODOLOGY.md
+├── data/                       # Data storage
+│   ├── power_ratings/          # Team ratings JSON
+│   ├── bets/                   # CLV tracking database
+│   ├── overtime_live/          # Scraped odds
+│   ├── injuries/               # Injury reports
+│   ├── weather/                # Weather data
+│   └── massey_ratings/         # Power ratings
+└── cards/                      # Betting cards
+```
+
+---
+
+## Philosophy: Billy Walters Principles
+
+This project embodies Billy Walters' core principles:
+
+1. **Data-Driven Decision Making**
+   - Power ratings built from game results
+   - Objective benchmarks (Massey Ratings)
+   - Statistical validation (CLV tracking)
+
+2. **Systematic Approach**
+   - Consistent methodology (S/W/E factors)
+   - Repeatable process (automated analysis)
+   - No emotional decisions
+
+3. **Risk Management**
+   - Star system bet sizing
+   - Fractional Kelly Criterion
+   - Never risk more than edge justifies
+
+4. **Long-Term Thinking**
+   - CLV validation over short-term results
+   - Bankroll management
+   - Continuous improvement through testing
+
+5. **Edge Detection**
+   - Key number analysis
+   - Market inefficiency identification
+   - Multiple data source validation
+
+> **"The goal is not to win every bet. The goal is to have an edge and let the math work over time."** - Billy Walters
+
+---
+
+## Contributing
+
+This is a statistical research project. Contributions welcome for:
+- Backtesting framework
+- Additional statistical models
+- Data source integrations
+- Test coverage improvements
+
+---
+
+## License
+
+MIT License - See LICENSE file for details
+
+---
+
+## Disclaimer
+
+This software is for educational and research purposes only. Sports betting involves risk. Always gamble responsibly and within your means.

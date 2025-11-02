@@ -1,0 +1,3 @@
+{
+  "cmd": "pytest tests/test_power_ratings.py tests/test_key_numbers.py -v"
+}

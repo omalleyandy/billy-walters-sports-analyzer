@@ -38,14 +38,65 @@ def main():
                         help="Output directory for weather data")
     
     massey = sub.add_parser("scrape-massey", help="Scrape Massey Ratings for college football")
-    massey.add_argument("--data-type", choices=["all", "ratings", "games", "matchups"], 
+    massey.add_argument("--data-type", choices=["all", "ratings", "games", "matchups"],
                        default="all",
                        help="Type of data to scrape: all, ratings, games, or matchups")
     massey.add_argument("--season", type=str, default="2025",
                        help="Season year (default: 2025)")
     massey.add_argument("--output-dir", default="data/massey_ratings",
                        help="Output directory for Massey Ratings data")
-    
+
+    # NFL Schedule Scraper (ESPN API)
+    nfl_schedule = sub.add_parser("scrape-nfl-schedule", help="Scrape NFL schedule/scores from ESPN API")
+    nfl_schedule.add_argument("--season", type=int, default=2025,
+                             help="NFL season year (default: 2025)")
+    nfl_schedule.add_argument("--week", type=int,
+                             help="Single week to scrape (1-18)")
+    nfl_schedule.add_argument("--start-week", type=int, default=1,
+                             help="Start week for backfill (default: 1)")
+    nfl_schedule.add_argument("--end-week", type=int, default=18,
+                             help="End week for backfill (default: 18)")
+    nfl_schedule.add_argument("--output-dir", default="data/nfl_schedule",
+                             help="Output directory (default: data/nfl_schedule)")
+
+    # Power Ratings Updater
+    ratings_update = sub.add_parser("update-power-ratings", help="Update Billy Walters power ratings from game data")
+    ratings_input = ratings_update.add_mutually_exclusive_group(required=True)
+    ratings_input.add_argument("--file", type=str,
+                              help="Single JSONL file to process")
+    ratings_input.add_argument("--dir", type=str,
+                              help="Directory containing JSONL files")
+    ratings_update.add_argument("--weeks", type=int, nargs="+",
+                               help="Specific weeks to process (e.g., --weeks 1 2 3)")
+    ratings_update.add_argument("--ratings-file", default="data/power_ratings/team_ratings.json",
+                               help="Power ratings file path")
+    ratings_update.add_argument("--show-top", type=int, default=10,
+                               help="Show top N teams after update (default: 10)")
+    ratings_update.add_argument("--quiet", action="store_true",
+                               help="Minimal output")
+
+    # Backfill NFL Season (convenience command)
+    backfill = sub.add_parser("backfill-nfl-season", help="Backfill NFL season data and update power ratings")
+    backfill.add_argument("--season", type=int, default=2025,
+                         help="Season year (default: 2025)")
+    backfill.add_argument("--start-week", type=int, default=1,
+                         help="First week to collect (default: 1)")
+    backfill.add_argument("--end-week", type=int, required=True,
+                         help="Last week to collect (e.g., 9 for current week)")
+    backfill.add_argument("--skip-scrape", action="store_true",
+                         help="Skip scraping, only update ratings from existing data")
+    backfill.add_argument("--output-dir", default="data/nfl_schedule",
+                         help="Data directory (default: data/nfl_schedule)")
+
+    # Weekly NFL Update (combined workflow)
+    weekly = sub.add_parser("weekly-nfl-update", help="Weekly NFL workflow: scrape + update ratings")
+    weekly.add_argument("--week", type=int, required=True,
+                       help="Week number to process")
+    weekly.add_argument("--season", type=int, default=2025,
+                       help="Season year (default: 2025)")
+    weekly.add_argument("--show-top", type=int, default=10,
+                       help="Show top N teams (default: 10)")
+
     args = parser.parse_args()
 
     if args.cmd == "wk-card":
@@ -293,6 +344,219 @@ def main():
         except FileNotFoundError:
             print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)
             print("Run: uv sync", file=sys.stderr)
+            sys.exit(1)
+
+    elif args.cmd == "scrape-nfl-schedule":
+        # Run NFL schedule scraper (ESPN API)
+        import asyncio
+        import sys
+        from pathlib import Path
+
+        # Add scripts directory to path
+        scripts_dir = Path(__file__).parent.parent / "scripts"
+        sys.path.insert(0, str(scripts_dir))
+
+        # Import and run scraper
+        try:
+            import collect_nfl_schedule
+
+            # Build arguments for scraper
+            scraper_args = [
+                "--season", str(args.season),
+                "--output-dir", args.output_dir
+            ]
+
+            if args.week:
+                scraper_args.extend(["--week", str(args.week)])
+            else:
+                scraper_args.extend([
+                    "--start-week", str(args.start_week),
+                    "--end-week", str(args.end_week)
+                ])
+
+            # Override sys.argv for the scraper's argparse
+            original_argv = sys.argv
+            sys.argv = ["collect_nfl_schedule.py"] + scraper_args
+
+            # Run scraper
+            asyncio.run(collect_nfl_schedule.main())
+
+            # Restore sys.argv
+            sys.argv = original_argv
+
+        except Exception as e:
+            print(f"ERROR: NFL schedule scraping failed: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+
+    elif args.cmd == "update-power-ratings":
+        # Run power ratings updater
+        import sys
+        from pathlib import Path
+
+        # Add scripts directory to path
+        scripts_dir = Path(__file__).parent.parent / "scripts"
+        sys.path.insert(0, str(scripts_dir))
+
+        try:
+            import update_power_ratings_from_games
+
+            # Build arguments
+            updater_args = ["--ratings-file", args.ratings_file]
+
+            if args.file:
+                updater_args.extend(["--file", args.file])
+            elif args.dir:
+                updater_args.extend(["--dir", args.dir])
+
+            if args.weeks:
+                updater_args.extend(["--weeks"] + [str(w) for w in args.weeks])
+
+            updater_args.extend(["--show-top", str(args.show_top)])
+
+            if args.quiet:
+                updater_args.append("--quiet")
+
+            # Override sys.argv
+            original_argv = sys.argv
+            sys.argv = ["update_power_ratings_from_games.py"] + updater_args
+
+            # Run updater
+            update_power_ratings_from_games.main()
+
+            # Restore sys.argv
+            sys.argv = original_argv
+
+        except Exception as e:
+            print(f"ERROR: Power ratings update failed: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+
+    elif args.cmd == "backfill-nfl-season":
+        # Combined workflow: scrape all weeks then update ratings
+        import asyncio
+        import sys
+        from pathlib import Path
+
+        print(f"\n{'='*60}")
+        print(f"NFL Season Backfill: {args.season}")
+        print(f"Weeks {args.start_week} through {args.end_week}")
+        print(f"{'='*60}\n")
+
+        scripts_dir = Path(__file__).parent.parent / "scripts"
+        sys.path.insert(0, str(scripts_dir))
+
+        try:
+            # Step 1: Scrape games (unless skipped)
+            if not args.skip_scrape:
+                print("STEP 1: Scraping game data from ESPN API...\n")
+
+                import collect_nfl_schedule
+
+                scraper_args = [
+                    "--season", str(args.season),
+                    "--start-week", str(args.start_week),
+                    "--end-week", str(args.end_week),
+                    "--output-dir", args.output_dir
+                ]
+
+                original_argv = sys.argv
+                sys.argv = ["collect_nfl_schedule.py"] + scraper_args
+
+                asyncio.run(collect_nfl_schedule.main())
+
+                sys.argv = original_argv
+                print("\n[SUCCESS] Scraping complete!\n")
+            else:
+                print("STEP 1: Skipping scrape (using existing data)\n")
+
+            # Step 2: Update power ratings
+            print("STEP 2: Updating power ratings...\n")
+
+            import update_power_ratings_from_games
+
+            # Process weeks in sequential order
+            updater_args = [
+                "--dir", args.output_dir,
+                "--weeks"] + [str(w) for w in range(args.start_week, args.end_week + 1)]
+
+            original_argv = sys.argv
+            sys.argv = ["update_power_ratings_from_games.py"] + updater_args
+
+            update_power_ratings_from_games.main()
+
+            sys.argv = original_argv
+
+            print(f"\n{'='*60}")
+            print(f"[SUCCESS] Backfill Complete!")
+            print(f"{'='*60}\n")
+
+        except Exception as e:
+            print(f"\n[ERROR] ERROR during backfill: {e}\n", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+
+    elif args.cmd == "weekly-nfl-update":
+        # Weekly workflow: scrape single week + update ratings
+        import asyncio
+        import sys
+        from pathlib import Path
+
+        print(f"\n{'='*60}")
+        print(f"Weekly NFL Update: Week {args.week}, {args.season}")
+        print(f"{'='*60}\n")
+
+        scripts_dir = Path(__file__).parent.parent / "scripts"
+        sys.path.insert(0, str(scripts_dir))
+
+        try:
+            # Step 1: Scrape week
+            print("STEP 1: Scraping game data from ESPN API...\n")
+
+            import collect_nfl_schedule
+
+            scraper_args = [
+                "--season", str(args.season),
+                "--week", str(args.week)
+            ]
+
+            original_argv = sys.argv
+            sys.argv = ["collect_nfl_schedule.py"] + scraper_args
+
+            asyncio.run(collect_nfl_schedule.main())
+
+            sys.argv = original_argv
+            print("\n[SUCCESS] Scraping complete!\n")
+
+            # Step 2: Update power ratings
+            print("STEP 2: Updating power ratings...\n")
+
+            import update_power_ratings_from_games
+
+            updater_args = [
+                "--dir", "data/nfl_schedule",
+                "--weeks", str(args.week),
+                "--show-top", str(args.show_top)
+            ]
+
+            original_argv = sys.argv
+            sys.argv = ["update_power_ratings_from_games.py"] + updater_args
+
+            update_power_ratings_from_games.main()
+
+            sys.argv = original_argv
+
+            print(f"\n{'='*60}")
+            print(f"[SUCCESS] Weekly Update Complete!")
+            print(f"{'='*60}\n")
+
+        except Exception as e:
+            print(f"\n[ERROR] ERROR during weekly update: {e}\n", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
             sys.exit(1)
 
 if __name__ == "__main__":

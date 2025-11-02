@@ -1,11 +1,120 @@
+# ============================================================================
+# Python
+# ============================================================================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
 .pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ============================================================================
+# Virtual Environments
+# ============================================================================
 .venv/
-.scrapy/
-playwright/.cache/
+venv/
+ENV/
+env/
+
+# ============================================================================
+# IDEs & Editors
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============================================================================
+# Environment & Secrets
+# ============================================================================
 .env
 .env.*
-.DS_Store
+!env.template
+!env.template.new
+
+# ============================================================================
+# Scrapy
+# ============================================================================
+.scrapy/
+scrapy_cache/
+
+# ============================================================================
+# Playwright
+# ============================================================================
+playwright/.cache/
+.playwright/
+test-results/
+playwright-report/
+
+# ============================================================================
+# Application State & Temporary Files
+# ============================================================================
 .overtime_state.json
+*.tmp
+*.log
+nul
+
+# ============================================================================
+# Data Files (Optional - Uncomment if you don't want to track data)
+# ============================================================================
+# data/injuries/*.jsonl
+# data/injuries/*.parquet
+# data/massey_ratings/*.jsonl
+# data/massey_ratings/*.parquet
+# data/weather/*.jsonl
+# data/weather/*.parquet
+# data/overtime_live/*.jsonl
+# data/overtime_live/*.parquet
+
+# Keep structure but ignore large data files
+data/**/*.jsonl
+data/**/*.parquet
+data/**/*.csv
+!data/team_mappings/**
+
+# ============================================================================
+# Snapshots & Debug Files
+# ============================================================================
 snapshots/*.json
+snapshots/*.html
+snapshots/*.png
+!snapshots/.gitkeep
+
+# ============================================================================
+# Logs & Backups
+# ============================================================================
+logs/
+*.log
+scripts/update_log.txt
+data/power_ratings/*.backup.json
+*.backup
+
+# ============================================================================
+# OS-Specific
+# ============================================================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+.directory
+.Trash-*
