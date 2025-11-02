@@ -16,7 +16,8 @@ Last Updated: November 2, 2025
 **Developers:**
 1. `PROJECT_STRUCTURE.md` - Codebase organization
 2. `TECH_STACK_BEST_PRACTICES.md` - Architecture validation
-3. `../pyproject.toml` - Dependencies and project config
+3. `CODEX_WORKFLOW.md` - Codex CLI workflow and automation index
+4. `../pyproject.toml` - Dependencies and project config
 
 ---
 

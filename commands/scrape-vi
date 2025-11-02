@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+uv run scrapy crawl vegasinsider -s LOG_LEVEL=INFO -O data/vi_odds_week9.json
+echo "✅ saved -> data/vi_odds_week9.json"

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "🔧 Syncing env & browsers…"
+
+# uv defaults to ~/.cache, which is read-only in some WSL setups.
+# Fall back to a repo-local cache so sync works without extra permissions.
+if [ -z "${UV_CACHE_DIR:-}" ]; then
+  export UV_CACHE_DIR="$PWD/.uv-cache"
+  mkdir -p "$UV_CACHE_DIR"
+fi
+
+uv sync
+uv run python -m playwright install --with-deps chromium
+echo "✅ bootstrap complete"

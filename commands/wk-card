@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CARD_PATH="${1:-cards/wk-card-2025-10-31.json}"
+
+if [[ ! -f "$CARD_PATH" ]]; then
+  echo "❌ wk-card input missing: $CARD_PATH"
+  echo "   Create a card JSON (e.g. cards/wk-card-2025-10-31.json) or pass a path:"
+  echo "     ./commands/wk-card path/to/card.json"
+  exit 1
+fi
+
+if ! command -v uv >/dev/null 2>&1; then
+  echo "❌ uv not found. Install uv from https://docs.astral.sh/uv/ and re-run."
+  exit 1
+fi
+
+echo "📝 Rendering wk-card preview for ${CARD_PATH}"
+uv run walters-analyzer wk-card --file "$CARD_PATH" --dry-run
+echo "✅ wk-card preview complete"

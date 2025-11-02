@@ -82,16 +82,30 @@ uv run playwright install chromium
 ```
 
 ### 3. Configure Environment
-Copy `env.template` to `.env` and fill in your credentials:
+Copy `.env.example` to `.env` and fill in your credentials:
 ```bash
-cp env.template .env
-# Edit .env with your overtime.ag credentials
+cp .env.example .env
+# Edit .env with your API keys and credentials
 ```
 
-Required environment variables:
-- `OV_CUSTOMER_ID`: Your overtime.ag customer ID
-- `OV_CUSTOMER_PASSWORD`: Your overtime.ag password
-- `ACCUWEATHER_API_KEY`: Your AccuWeather API key (for weather analysis)
+**Important:** Never commit your `.env` file. It's gitignored and contains your actual secrets.
+
+The settings loader (`walters_analyzer.settings`) reads `.env` via python-dotenv and
+provides sensible defaults. Update the values that matter for your workflow:
+
+| Variable | Required | Default | Purpose |
+| --- | --- | --- | --- |
+| `OV_CUSTOMER_ID` | ✅ | – | Overtime.ag login |
+| `OV_CUSTOMER_PASSWORD` | ✅ | – | Overtime.ag login |
+| `ACCUWEATHER_API_KEY` | ✅ | – | Weather research API (primary) |
+| `OPENWEATHER_API_KEY` | Optional | – | Backup weather data source |
+| `BANKROLL` | Optional | `10000.0` | Starting bankroll for bet sizing |
+| `KELLY_FRACTION` | Optional | `0.25` | Fractional Kelly for bankroll growth |
+| `MAX_BET_PERCENTAGE` | Optional | `0.03` | Safety cap per wager |
+| `MINIMUM_EDGE_PERCENTAGE` | Optional | `5.5` | Minimum edge to trigger a bet |
+| `CACHE_TTL_WEATHER` | Optional | `1800` | Weather cache lifetime (seconds) |
+| `ENABLE_WEB_FETCH` | Optional | `true` | Toggle external fetches during research |
+| `PROXY_URL` | Optional | – | Outbound proxy for Playwright/Scrapy |
 
 ## Usage
 
@@ -592,3 +606,10 @@ MIT License - See LICENSE file for details
 ## Disclaimer
 
 This software is for educational and research purposes only. Sports betting involves risk. Always gamble responsibly and within your means.
+
+## Codex Setup
+- Codex starts in this repo via `~/.codexrc`
+- Project rules: `CLAUDE.md`
+- Codex workflow guide: `docs/CODEX_WORKFLOW.md`
+- Hooks: `hooks/*.sh` (run `.codex/preflight.sh` before committing)
+- Project commands: `commands/*` (e.g., `./commands/bootstrap`, `./commands/wk-card`)
