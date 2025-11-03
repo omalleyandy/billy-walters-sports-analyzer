@@ -4,11 +4,8 @@ version = "0.1.0"
 description = "Billy Walters Sports Analyzer (WSA) — CLI + scraping skeleton using uv."
 readme = "README.md"
 requires-python = ">=3.9"
-authors = [{ name = "Andy + ChatGPT", email = "noreply@example.com" }]
+authors = [{ name = "Andy + ChatGPT", email = "omalleyandy@gmail.com" }]
 
-# Base deps used by the CLI + scraper. Keep scrapy + scrapy-playwright here,
-# and add playwright so the browser engine is present (you'll still run
-# `playwright install chromium` once after syncing).
 dependencies = [
     "orjson>=3.11.4",
     "pyarrow>=21.0.0",
@@ -23,26 +20,22 @@ dependencies = [
 ]
 
 [project.scripts]
-walters-analyzer = "walters_analyzer.cli:main"
+walters-analyzer = "walters_analyzer.cli:main"   # argparse entrypoint
 
 [project.optional-dependencies]
-# Keep this extra for things that are helpful for auxiliary HTML parsing / retries,
-# but are not strictly required to run the spider end-to-end.
-scraping = [
-  "beautifulsoup4>=4.12",
-  "tenacity>=8.2",
-]
-
-# Optional: a small, handy dev/test extra.
-dev = [
-  "pytest>=7.4",
-  "pytest-cov>=4.1",
-  "ruff>=0.6.0",
-]
+scraping = ["beautifulsoup4>=4.12","tenacity>=8.2"]
+dev = ["pytest>=7.4","pytest-cov>=4.1","ruff>=0.6.0"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# Flat layout hardening (optional but recommended)
+[tool.hatch.build.targets.wheel]
+packages = ["walters_analyzer"]
+
+[tool.hatch.build.targets.sdist]
+include = ["walters_analyzer", "scripts", "README.md", "pyproject.toml"]
 
 [tool.uv.sources]
 orjson = { path = "vendor/orjson_stub" }

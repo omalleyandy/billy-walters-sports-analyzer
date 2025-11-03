@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
 import scrapy
 from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
-from playwright.async_api import Page, Frame, ElementHandle, TimeoutError as PWTimeout
+from playwright.async_api import Page, Frame, ElementHandle
 
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
@@ -20,21 +20,26 @@ except Exception:
     pass
 
 
+# ---------- helpers & regex ----------
+
 def to_float(s: Optional[str]) -> Optional[float]:
     if not s:
         return None
     try:
-        return float(s.replace("½", ".5"))
+        return float(str(s).replace("½", ".5"))
     except Exception:
         try:
-            return float(re.sub(r"[^\d\.\-+]", "", s))
+            return float(re.sub(r"[^\d\.\-+]", "", str(s)))
         except Exception:
             return None
 
 
-def _prices_from_text(text: str) -> list[int]:
-    return [int(x) for x in re.findall(r"(?<![ou])\b([+\-]\d{2,4})\b", text)]
+_PRICE_RE = re.compile(r"(?<![ou])\b([+\-]\d{2,4})\b")
+_SPREAD_LINE = re.compile(r"^[+\-]\d+(?:[.]\d)?$")
+_TOTAL_TOKEN = re.compile(r"^[ou]\s*[+\-]?\d+(?:[.]\d)?$", re.I)
 
+def _prices_from_text(text: str) -> List[int]:
+    return [int(x) for x in _PRICE_RE.findall(text)]
 
 def _looks_like_event_block(txt: str) -> bool:
     if not txt:
@@ -43,29 +48,35 @@ def _looks_like_event_block(txt: str) -> bool:
     text_lines = [l for l in lines if re.search(r"[A-Za-z]", l)]
     if len(text_lines) < 2:
         return False
-    has_price = bool(re.search(r"(?<![ou])\b[+\-]\d{2,4}\b", txt))
-    has_spread = bool(re.search(r"\b[+\-]\d{1,2}(?:\.\d)?\b", txt))
-    has_total = bool(re.search(r"\b[ou]\s*\d{1,2}(?:\.\d)?\b", txt, flags=re.I))
+    has_price = bool(_PRICE_RE.search(txt))
+    has_spread = bool(re.search(r"\b[+\-]\d{1,2}(?:[.]\d)?\b", txt.replace("½", ".5")))
+    has_total = bool(re.search(r"\b[ou]\s*\d{1,2}(?:[.]\d)?\b", txt.replace("½", ".5"), re.I))
     return has_price or has_spread or has_total
+
+_STATE_RE = re.compile(
+    r"\b(\d)(?:st|nd|rd|th)?\s*(?:q(?:uarter)?|qtr)?\s+(\d{1,2}:\d{2})\b",
+    re.I,
+)
+
+def _parse_state(text: str) -> Dict[str, Any]:
+    m = _STATE_RE.search(text)
+    if not m:
+        return {}
+    try:
+        return {"quarter": int(m.group(1)), "clock": m.group(2)}
+    except Exception:
+        return {}
 
 
 class OvertimeLiveSpider(scrapy.Spider):
     """
-    Live odds scraper for overtime.ag (focus: NCAAF).
+    Live odds scraper for overtime.ag (focus: NCAAF/NFL).
     Strategy:
-      1) Try site JSON APIs (Offering.asmx) via page.evaluate -> robust & fast.
-      2) Fallback to DOM/iframe parsing with best-effort sport selection.
+      1) Prefer site JSON APIs (Offering.asmx) via page.evaluate.
+      2) Fallback to DOM/iframe parsing.
     """
-
     name = "overtime_live"
 
-    # Custom settings allow this spider to be self‑contained.  See the README for
-    # instructions on overriding these values via a settings file or the
-    # command line.  In addition to the original settings we enable
-    # retry/backoff for 429/403 responses and optionally configure a proxy
-    # server via environment variables.  If OVERTIME_PROXY or PROXY_URL is
-    # defined the proxy dict will be passed to Playwright.  Otherwise the
-    # proxy entry is omitted.
     _proxy_server = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
     custom_settings = {
         "BOT_NAME": "overtime_live",
@@ -73,10 +84,6 @@ class OvertimeLiveSpider(scrapy.Spider):
         "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 90_000,
         "PLAYWRIGHT_LAUNCH_OPTIONS": {
             "headless": True,
-            # Use a proxy if provided via env.  Playwright expects the
-            # dictionary to contain a server key, otherwise omit the key
-            # entirely.  Without this check Scrapy might attempt to send a
-            # literal `None` which Playwright rejects.
             **({"proxy": {"server": _proxy_server}} if _proxy_server else {}),
         },
         "DEFAULT_REQUEST_HEADERS": {
@@ -87,17 +94,11 @@ class OvertimeLiveSpider(scrapy.Spider):
             "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
         },
         "TWISTED_REACTOR": "twisted.internet.asyncioreactor.AsyncioSelectorReactor",
-        # Concurrency and throttling – keep the load reasonable and avoid
-        # overwhelming the target.  AutoThrottle will dynamically adjust
-        # delays based on observed latencies.
         "CONCURRENT_REQUESTS": 2,
         "AUTOTHROTTLE_ENABLED": True,
         "AUTOTHROTTLE_START_DELAY": 1.0,
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
-        # Retry configuration – back off on 429/403 and other transient
-        # errors.  You can tune these values via settings or environment
-        # variables.
         "RETRY_TIMES": 5,
         "RETRY_HTTP_CODES": [429, 403, 500, 502, 503, 504],
         "RETRY_BACKOFF_BASE": 2,
@@ -110,11 +111,9 @@ class OvertimeLiveSpider(scrapy.Spider):
         start = os.getenv("OVERTIME_START_URL") or "https://overtime.ag"
         target_url = live or start
 
-        # Per-request proxy (fixes 407 when you set OVERTIME_PROXY / PROXY_URL)
         proxy_url = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
         context_kwargs = {"proxy": {"server": proxy_url}} if proxy_url else None
 
-        # Hash routes rarely fire "load" → use domcontentloaded; fail faster on blocks
         goto_kwargs = {"wait_until": "domcontentloaded", "timeout": 60_000, "referer": "https://overtime.ag/"}
 
         meta = {
@@ -122,10 +121,7 @@ class OvertimeLiveSpider(scrapy.Spider):
             "playwright_include_page": True,
             "playwright_page_goto_kwargs": goto_kwargs,
             "playwright_page_methods": [
-                # small beat for SPA hydration; prefer a selector if you have one
                 PageMethod("wait_for_timeout", 500),
-                # Example (if you find a stable element on the live board):
-                # PageMethod("wait_for_selector", "text=/Live|College Football/i", timeout=5000),
             ],
         }
         if context_kwargs:
@@ -145,71 +141,39 @@ class OvertimeLiveSpider(scrapy.Spider):
             os.makedirs("snapshots", exist_ok=True)
             try:
                 await page.screenshot(path="snapshots/error.png", full_page=True)
-                self.logger.error("Saved error screenshot to snapshots/error.png")
             except Exception:
-                self.logger.debug("Could not write error screenshot", exc_info=True)
+                pass
             try:
                 await page.close()
             except Exception:
                 pass
 
-    # -------- Helpers --------
+    # -------- helpers --------
     async def _perform_login(self, page: Page) -> bool:
-        """
-        Perform login to overtime.ag if credentials are available.
-        Returns True if login successful or already logged in, False otherwise.
-        """
-        customer_id = os.getenv("OV_CUSTOMER_ID")
-        password = os.getenv("OV_CUSTOMER_PASSWORD")
-
-        if not customer_id or not password:
-            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID, OV_CUSTOMER_PASSWORD)")
+        cid = os.getenv("OV_CUSTOMER_ID")
+        pwd = os.getenv("OV_CUSTOMER_PASSWORD")
+        if not cid or not pwd:
             return False
-
         try:
-            # Check if already logged in by looking for logout indicator
             try:
-                await page.wait_for_selector("text=/logout/i", timeout=2000)
-                self.logger.info("Already logged in")
+                await page.wait_for_selector("text=/logout/i", timeout=1200)
                 return True
             except Exception:
                 pass
-
-            # Navigate to login page
-            self.logger.info("Navigating to login page...")
             await page.evaluate("() => { location.hash = '#/login'; }")
-            await page.wait_for_timeout(1500)
-
-            # Fill in credentials
-            self.logger.info("Filling login credentials...")
-            customer_id_input = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"], input[type="text"]')
-            if customer_id_input:
-                await customer_id_input.fill(customer_id)
-            
-            password_input = await page.query_selector('input[type="password"]')
-            if password_input:
-                await password_input.fill(password)
-            
-            # Click login button
-            login_btn = await page.query_selector('button:has-text("LOGIN"), button:has-text("Login")')
-            if login_btn:
-                await login_btn.click()
-                await page.wait_for_timeout(3000)
-                
-                # Check for successful login
-                current_hash = await page.evaluate("() => location.hash")
-                if "#/login" not in current_hash:
-                    self.logger.info("Login successful")
-                    return True
-                else:
-                    self.logger.error("Login failed - still on login page")
-                    return False
-            else:
-                self.logger.error("Login button not found")
-                return False
-
-        except Exception as e:
-            self.logger.error(f"Login error: {e}", exc_info=True)
+            await page.wait_for_timeout(800)
+            cid_el = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"], input[type="text"]')
+            if cid_el:
+                await cid_el.fill(cid)
+            pwd_el = await page.query_selector('input[type="password"]')
+            if pwd_el:
+                await pwd_el.fill(pwd)
+            btn = await page.query_selector('button:has-text("Login"), button:has-text("LOGIN")')
+            if btn:
+                await btn.click()
+                await page.wait_for_timeout(1500)
+            return True
+        except Exception:
             return False
 
     async def _hash_nudge_to_live(self, page: Page):
@@ -217,26 +181,16 @@ class OvertimeLiveSpider(scrapy.Spider):
             await page.evaluate(
                 "() => { const wanted='#/integrations/liveBetting'; if (!location.hash.includes('liveBetting')) { location.hash = wanted; } }"
             )
-            await page.wait_for_timeout(800)
-        except Exception:
-            # Log but don't crash if we cannot adjust the hash.  The page may
-            # already be on the live betting route or the site may have
-            # changed its routing mechanism.
-            self.logger.debug("Could not nudge to liveBetting hash", exc_info=True)
-
-    async def _find_live_iframe(self, page: Page) -> Optional[Frame]:
-        try:
-            await page.wait_for_timeout(400)
+            await page.wait_for_timeout(500)
         except Exception:
             pass
 
-        # Prefer frames with these patterns
+    async def _find_live_iframe(self, page: Page) -> Optional[Frame]:
+        # Prefer frames by URL hint; else pick the largest
         for f in page.frames:
             u = (f.url or "").lower()
             if any(k in u for k in ("live", "digitalsportstech", "ticosports")):
                 return f
-
-        # Otherwise pick the largest iframe
         try:
             handles: List[ElementHandle] = await page.query_selector_all("iframe")
             best = None
@@ -251,32 +205,16 @@ class OvertimeLiveSpider(scrapy.Spider):
                 except Exception:
                     continue
             if best:
-                os.makedirs("snapshots", exist_ok=True)
-                try:
-                    await best.screenshot(path="snapshots/overtime_live_iframe.png")
-                except Exception:
-                    pass
                 f = await best.content_frame()
                 if f:
                     return f
         except Exception:
-            self.logger.debug("Error while locating live iframe", exc_info=True)
+            pass
         return None
 
     async def _try_click_sport_filters(self, root: Page | Frame):
-        """Attempt to click Football -> NCAA/College inside the widget."""
-        labels = [
-            "FOOTBALL",
-            "American Football",
-            "Football",
-        ]
-        comps = [
-            "NCAA",
-            "College",
-            "NCAAF",
-            "College Football",
-        ]
-        # Env overrides
+        labels = ["FOOTBALL", "American Football", "Football"]
+        comps = ["NCAA", "College", "NCAAF", "College Football"]
         env_sport = os.getenv("OVERTIME_SPORT")
         env_comp = os.getenv("OVERTIME_COMP")
         if env_sport:
@@ -284,26 +222,23 @@ class OvertimeLiveSpider(scrapy.Spider):
         if env_comp:
             comps.insert(0, env_comp)
 
-        # Try a few common UI text buttons/anchors
         for t in labels:
             for sel in (f"text={t}", f"button:has-text('{t}')", f"a:has-text('{t}')", f"[role='tab']:has-text('{t}')"):
                 try:
-                    await root.click(sel, timeout=1200)
-                    await root.wait_for_timeout(250)
+                    await root.click(sel, timeout=1000)
+                    await root.wait_for_timeout(200)
                     break
                 except Exception:
-                    # Clicking a particular filter may fail if it is not
-                    # present; ignore and continue but log at debug level.
-                    self.logger.debug("Failed to click sport filter %s", sel, exc_info=True)
+                    continue
 
         for t in comps:
             for sel in (f"text={t}", f"button:has-text('{t}')", f"a:has-text('{t}')", f"[role='tab']:has-text('{t}')"):
                 try:
-                    await root.click(sel, timeout=1200)
-                    await root.wait_for_timeout(350)
+                    await root.click(sel, timeout=1000)
+                    await root.wait_for_timeout(250)
                     break
                 except Exception:
-                    self.logger.debug("Failed to click competition filter %s", sel, exc_info=True)
+                    continue
 
     async def _extract_rows_js(self, root: Page | Frame) -> list[Dict[str, Any]]:
         js = """
@@ -329,9 +264,10 @@ class OvertimeLiveSpider(scrapy.Spider):
             if isinstance(rows, list):
                 return rows
         except Exception:
-            self.logger.debug("JS extraction failed", exc_info=True)
+            pass
         return []
 
+    # ---------- hardened text parser for a single game block ----------
     def _parse_game_block(self, row_text: str) -> Optional[Dict[str, Any]]:
         if not _looks_like_event_block(row_text):
             return None
@@ -343,36 +279,42 @@ class OvertimeLiveSpider(scrapy.Spider):
 
         away, home = text_lines[0], text_lines[1]
 
-        toks = re.findall(r"[ou]?\s?[+\-]?\d+\.?\d*|[+\-]\d{2,4}", row_text.replace("½", ".5"))
+        # tokenise odds (normalise half)
+        norm = row_text.replace("½", ".5")
+        toks = re.findall(r"[ou]?\s?[+\-]?\d+\.?\d*|[+\-]\d{2,4}", norm)
+
         spread = Market()
         total = Market()
         money = Market()
 
-        spread_lines = [t for t in toks if re.match(r"^[+\-]\d+(\.\d+)?$", t)]
-        total_lines = [t for t in toks if re.match(r"^[ou]\s*[+\-]?\d+(\.\d+)?$", t, flags=re.I)]
-        prices = _prices_from_text(row_text)
+        spread_tokens = [t for t in toks if _SPREAD_LINE.match(t)]
+        total_tokens = [t for t in toks if _TOTAL_TOKEN.match(t)]
+        prices = _prices_from_text(norm)
 
-        def pull_line_price(ll: list[str], pp: list[int]) -> tuple[Optional[float], Optional[int]]:
+        def pull_line_price(ll: List[str], pp: List[int]) -> tuple[Optional[float], Optional[int]]:
             line = to_float(ll.pop(0)) if ll else None
             price = pp.pop(0) if pp else None
             return line, price
 
-        if spread_lines:
-            a_ln, a_px = pull_line_price(spread_lines, prices)
-            h_ln, h_px = pull_line_price(spread_lines, prices)
+        # spreads (away, home)
+        if spread_tokens:
+            a_ln, a_px = pull_line_price(spread_tokens, prices)
+            h_ln, h_px = pull_line_price(spread_tokens, prices)
             spread.away = QuoteSide(a_ln, a_px)
             spread.home = QuoteSide(h_ln, h_px)
 
-        if total_lines:
+        # totals O/U
+        if total_tokens:
             def clean(x: str) -> Optional[float]:
                 return to_float(x.lstrip("ou").strip())
-            o_line = clean(total_lines.pop(0))
+            o_line = clean(total_tokens.pop(0))
             o_px = prices.pop(0) if prices else None
-            u_line = clean(total_lines.pop(0)) if total_lines else o_line
+            u_line = clean(total_tokens.pop(0)) if total_tokens else o_line
             u_px = prices.pop(0) if prices else None
             total.over = QuoteSide(o_line, o_px)
             total.under = QuoteSide(u_line, u_px)
 
+        # moneyline (next two prices if present)
         if prices:
             a_ml = prices.pop(0) if prices else None
             h_ml = prices.pop(0) if prices else None
@@ -387,18 +329,13 @@ class OvertimeLiveSpider(scrapy.Spider):
         if not has_any:
             return None
 
-        return {"away": away, "home": home, "markets": {"spread": spread, "total": total, "moneyline": money}}
+        return {
+            "away": away,
+            "home": home,
+            "markets": {"spread": spread, "total": total, "moneyline": money},
+        }
 
     def _normalize_markets(self, markets: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Convert line/price values within the market dictionary to the appropriate
-        types (float for line, int for price) if possible.  This helper will
-        tolerate missing keys and values gracefully.
-
-        :param markets: nested dictionary of markets as returned by the API or
-                        DOM parser (e.g. {"spread": {"away": {"line": "-6.5", "price": "-110"}, ...}})
-        :return: the same dictionary with numeric values converted when safe
-        """
         for mkt_name, mkt in markets.items():
             if not isinstance(mkt, dict):
                 continue
@@ -407,55 +344,21 @@ class OvertimeLiveSpider(scrapy.Spider):
                     continue
                 line = quote.get("line")
                 price = quote.get("price")
-                # normalise line
                 if line is not None:
-                    try:
-                        # accept strings or numbers and convert halves
-                        quote["line"] = to_float(str(line))
-                    except Exception:
-                        self.logger.debug("Failed to normalise line %s", line, exc_info=True)
-                # normalise price
+                    quote["line"] = to_float(line)
                 if price is not None:
                     try:
                         quote["price"] = int(price)
                     except Exception:
-                        self.logger.debug("Failed to normalise price %s", price, exc_info=True)
+                        pass
         return markets
-
-    def _parse_state(self, text: str) -> Dict[str, Any]:
-        """
-        Attempt to extract game state (quarter and clock) from a block of text.
-
-        Many betting boards display live state as "3rd Q 05:32" or similar.
-        This function uses a simple regular expression to look for an ordinal
-        quarter number followed by a clock in mm:ss format.  If found, it
-        returns a dictionary with integer `quarter` and string `clock` keys.
-
-        :param text: raw text from a game row
-        :return: dict with state information or empty dict if none found
-        """
-        state: Dict[str, Any] = {}
-        # Look for patterns like "3rd Q 05:32" or "4th Quarter 1:23"
-        m = re.search(r"\b(\d)(?:st|nd|rd|th)?\s*(?:q(?:uarter)?|qtr)?\s*(\d{1,2}:\d{2})", text, re.IGNORECASE)
-        if m:
-            try:
-                state["quarter"] = int(m.group(1))
-                state["clock"] = m.group(2)
-            except Exception:
-                self.logger.debug("Failed to parse state from %s", m.group(0), exc_info=True)
-        return state
 
     # -------- API path (preferred) --------
     async def _api_pull_events(self, page: Page) -> list[Dict[str, Any]]:
-        """
-        Use in-page fetch to call site APIs with current cookies.
-        Returns a normalized list of {away, home, markets{...}} dicts.
-        """
         script = """
         async () => {
           function safeJson(txt) {
             try { return JSON.parse(txt); } catch (e) {
-              // some ASP.NET services wrap JSON in a "d" field or as a stringified JSON
               try { const obj = JSON.parse(txt); if (obj && obj.d) {
                   try { return JSON.parse(obj.d); } catch (e2) { return obj.d; }
               } } catch(e3) {}
@@ -474,76 +377,61 @@ class OvertimeLiveSpider(scrapy.Spider):
 
           const sports = await post('/sports/Api/Offering.asmx/GetSports', {});
           let sportId = null;
-          const names = ['American Football','Football','FOOTBALL','US Football'];
-          function norm(x){return String(x||'').toLowerCase();}
+          const candidates = ['American Football','Football','US Football','FOOTBALL'];
           const list = sports?.Sports || sports?.Result?.Sports || sports || [];
           for (const s of list) {
-            const nm = norm(s.Name || s.name || s.description);
-            if (names.some(n => nm.includes(n.toLowerCase()))) { sportId = s.Id || s.id; break; }
+            const nm = String(s.Name || s.name || s.description || '').toLowerCase();
+            if (candidates.some(c => nm.includes(c.toLowerCase()))) { sportId = s.Id || s.id; break; }
           }
-          if (!sportId && list.length && list[0].Id) { sportId = list[0].Id; }
+          if (!sportId && list.length && list[0]?.Id) sportId = list[0].Id;
 
           if (!sportId) return {events: []};
-
           const offering = await post('/sports/Api/Offering.asmx/GetSportOffering', { SportId: sportId, LangId: 'ENG' });
 
-          // Try to collect live competitions/events
-          const comps = offering?.Competitions
-                        || offering?.Result?.Competitions
-                        || offering?.competitions
-                        || [];
+          const comps = offering?.Competitions || offering?.Result?.Competitions || offering?.competitions || [];
           const out = [];
           for (const c of comps) {
             const evs = c.Events || c.events || [];
             for (const ev of evs) {
-              // participants / teams
               const parts = ev.Participants || ev.participants || ev.teams || [];
               let away = null, home = null;
               for (const p of parts) {
-                const role = (p.Role || p.role || p.side || '').toLowerCase();
+                const role = String(p.Role || p.role || p.side || '').toLowerCase();
                 const nm = p.Name || p.name || p.team || '';
-                if (!away && (role.includes('away') || role=='visitor')) away = nm;
-                if (!home && (role.includes('home') || role=='home')) home = nm;
+                if (!away && (role.includes('away') || role==='visitor')) away = nm;
+                if (!home && (role.includes('home') || role==='home')) home = nm;
               }
               if (!away || !home) {
-                // fallback: first two names
                 const names2 = parts.map(p=>p.Name||p.name).filter(Boolean);
                 away = away || names2[0] || null;
                 home = home || names2[1] || null;
               }
 
-              // markets
               const mkts = ev.Markets || ev.markets || [];
               const marketOut = {spread:{}, total:{}, moneyline:{}};
-
               function setSide(m, side, line, price){
-                if (line===undefined || line===null) line = null;
-                if (price===undefined || price===null) price = null;
-                m[side] = { line, price };
+                m[side] = { line: (line ?? null), price: (price ?? null) };
               }
-
               for (const m of mkts) {
                 const t = String(m.Type || m.type || m.name || '').toLowerCase();
                 const sel = m.Selections || m.selections || m.outcomes || [];
-                if (t.includes('spread') || t=='ah' || t=='handicap') {
-                  // try to map two sides
+                if (t.includes('spread') || t==='ah' || t==='handicap') {
                   const a = sel.find(x => /(away|visitor|team1)/i.test(x.Name || x.name || '')) || sel[0];
                   const h = sel.find(x => /(home|team2)/i.test(x.Name || x.name || '')) || sel[1];
                   if (a) setSide(marketOut.spread, 'away', a.Points ?? a.line ?? a.hcap ?? null, a.Price ?? a.price ?? null);
                   if (h) setSide(marketOut.spread, 'home', h.Points ?? h.line ?? h.hcap ?? null, h.Price ?? h.price ?? null);
-                } else if (t.includes('total') || t.includes('over/under') || t=='ou') {
+                } else if (t.includes('total') || t.includes('over/under') || t==='ou') {
                   const o = sel.find(x => /over/i.test(x.Name || x.name || '')) || sel[0];
                   const u = sel.find(x => /under/i.test(x.Name || x.name || '')) || sel[1];
                   if (o) setSide(marketOut.total, 'over', o.Points ?? o.total ?? o.line ?? null, o.Price ?? o.price ?? null);
                   if (u) setSide(marketOut.total, 'under', u.Points ?? u.total ?? u.line ?? null, u.Price ?? u.price ?? null);
-                } else if (t.includes('money') || t=='ml') {
+                } else if (t.includes('money') || t==='ml') {
                   const a = sel.find(x => /(away|visitor|team1)/i.test(x.Name || x.name || '')) || sel[0];
                   const h = sel.find(x => /(home|team2)/i.test(x.Name || x.name || '')) || sel[1];
                   if (a) setSide(marketOut.moneyline, 'away', null, a.Price ?? a.price ?? null);
                   if (h) setSide(marketOut.moneyline, 'home', null, h.Price ?? h.price ?? null);
                 }
               }
-
               out.push({ away, home, markets: marketOut });
             }
           }
@@ -553,26 +441,19 @@ class OvertimeLiveSpider(scrapy.Spider):
         try:
             data = await page.evaluate(script)
             events = data.get("events", []) if isinstance(data, dict) else []
-            # filter to sane rows
             clean = [e for e in events if e.get("away") and e.get("home")]
-            # Normalise numeric types within markets
             for ev in clean:
-                mkts = ev.get("markets")
-                if isinstance(mkts, dict):
-                    ev["markets"] = self._normalize_markets(mkts)
+                if isinstance(ev.get("markets"), dict):
+                    ev["markets"] = self._normalize_markets(ev["markets"])
             return clean
         except Exception:
-            self.logger.debug("API evaluation failed", exc_info=True)
             return []
 
     # -------- Scrapy callback --------
     async def parse_board(self, response: Response):
         page: Page = response.meta["playwright_page"]
-        
-        # Attempt login first
+
         await self._perform_login(page)
-        
-        # Navigate to live betting
         await self._hash_nudge_to_live(page)
 
         os.makedirs("snapshots", exist_ok=True)
@@ -583,7 +464,7 @@ class OvertimeLiveSpider(scrapy.Spider):
 
         emitted = 0
 
-        # 1) Preferred: API pull
+        # 1) API preferred
         api_events = await self._api_pull_events(page)
         if api_events:
             for ev in api_events:
@@ -591,7 +472,7 @@ class OvertimeLiveSpider(scrapy.Spider):
                 mkts = ev.get("markets", {})
                 item = LiveGameItem(
                     source="overtime.ag",
-                    sport="college_football",
+                    sport="college_football",  # adjust if you split by league
                     league="NCAAF",
                     collected_at=iso_now(),
                     game_key=game_key_from(away, home),
@@ -606,15 +487,13 @@ class OvertimeLiveSpider(scrapy.Spider):
                 yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
                 emitted += 1
 
-        # 2) Fallback: DOM/iframe parse if API yielded nothing
+        # 2) DOM/iframe fallback
         if emitted == 0:
             frame = await self._find_live_iframe(page)
             root = frame or page
-
-            # try clicking filters to reveal NCAAF
             await self._try_click_sport_filters(root)
             try:
-                await root.wait_for_timeout(1200)
+                await root.wait_for_timeout(900)
             except Exception:
                 pass
 
@@ -628,8 +507,7 @@ class OvertimeLiveSpider(scrapy.Spider):
                     continue
 
                 away, home = parsed["away"], parsed["home"]
-                # Derive state (quarter/clock) from the free‑text block
-                state = self._parse_state(txt)
+                state = _parse_state(txt)
                 item = LiveGameItem(
                     source="overtime.ag",
                     sport="college_football",
@@ -647,7 +525,6 @@ class OvertimeLiveSpider(scrapy.Spider):
                 yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
                 emitted += 1
 
-            # dump a text snapshot if still nothing
             if emitted == 0:
                 try:
                     txt = await (root.evaluate("() => document.body?.innerText || ''"))
@@ -656,8 +533,7 @@ class OvertimeLiveSpider(scrapy.Spider):
                 except Exception:
                     pass
 
-        self.logger.info("Emitted %d college football rows", emitted)
-
+        self.logger.info("Emitted %d live rows", emitted)
         try:
             await page.close()
         except Exception:
