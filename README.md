@@ -259,11 +259,69 @@ Each game record includes:
 # Pre-game odds spider
 scrapy crawl pregame_odds -a sport=both
 
-# Live betting spider
+# Live betting spider (single scrape)
 scrapy crawl overtime_live
+
+# Live betting with continuous monitoring (10-second intervals)
+scrapy crawl overtime_live -a monitor=10
 
 # With custom settings
 scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
+```
+
+### Live Odds Monitoring Mode
+
+The overtime_live spider now supports **continuous monitoring** with CDP network interception:
+
+```bash
+# Monitor odds continuously with 10-second refresh
+uv run scrapy crawl overtime_live -a monitor=10
+
+# Single scrape (default behavior)
+uv run scrapy crawl overtime_live
+```
+
+**Features:**
+- 🔄 **Automatic Refresh**: Polls for odds updates at your specified interval
+- 📡 **CDP Network Interception**: Captures API responses for debugging
+- 📊 **Odds Change Detection**: Automatically logs spread/total/moneyline changes
+- 🎨 **Colored Console Output**: Real-time alerts for odds movements
+- 💾 **Multiple Storage Options**: SQLite (default) or Redis for distributed tracking
+
+**Monitoring Output:**
+- API responses: `data/overtime_live/api_response_*.json`
+- Odds changes: `data/overtime_live/odds_changes_{date}.csv`
+- Change tracking DB: `data/overtime_live/odds_changes.db` (SQLite)
+
+### Odds Change Tracking
+
+Track line movements automatically with the `OddsChangeTrackerPipeline`:
+
+**Default (SQLite):**
+```bash
+# No configuration needed - SQLite is used automatically
+uv run scrapy crawl overtime_live -a monitor=10
+```
+
+**Optional (Redis):**
+```bash
+# Enable in .env for distributed tracking
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+```
+
+**Change Detection:**
+- Spread line movements
+- Total (over/under) adjustments
+- Moneyline price changes
+- Timestamped CSV logs for analysis
+
+**Example Change Log:**
+```csv
+timestamp,game_key,game,market,field,old_value,new_value
+2024-11-03T18:30:00,alabama_lsu,Alabama @ LSU,spread,away_line,-3.0,-3.5
+2024-11-03T18:30:00,alabama_lsu,Alabama @ LSU,total,over_line,47.5,48.0
 ```
 
 ## Troubleshooting

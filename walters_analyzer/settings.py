@@ -110,6 +110,11 @@ class Settings:
 
     proxy_url: Optional[str]
     overtime_proxy: Optional[str]
+    
+    redis_host: Optional[str]
+    redis_port: Optional[int]
+    redis_db: Optional[int]
+    overtime_monitor_interval: Optional[int]
 
     @property
     def overtime_credentials(self) -> tuple[str, str]:
@@ -219,6 +224,10 @@ def _load_settings() -> Settings:
         ),
         proxy_url=_get_value("PROXY_URL"),
         overtime_proxy=_get_value("OVERTIME_PROXY"),
+        redis_host=_get_value("REDIS_HOST"),
+        redis_port=_get_value("REDIS_PORT", cast=int) if os.getenv("REDIS_PORT") else None,
+        redis_db=_get_value("REDIS_DB", cast=int) if os.getenv("REDIS_DB") else None,
+        overtime_monitor_interval=_get_value("OVERTIME_MONITOR_INTERVAL", cast=int) if os.getenv("OVERTIME_MONITOR_INTERVAL") else None,
     )
 
 

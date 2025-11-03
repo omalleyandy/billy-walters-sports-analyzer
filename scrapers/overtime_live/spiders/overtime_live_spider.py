@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import re
@@ -12,6 +13,7 @@ from playwright.async_api import Page, Frame, ElementHandle
 
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
+from ..cdp_helpers import setup_cdp_interception, save_api_response, format_odds_display
 
 try:
     from dotenv import load_dotenv  # type: ignore
@@ -74,8 +76,21 @@ class OvertimeLiveSpider(scrapy.Spider):
     Strategy:
       1) Prefer site JSON APIs (Offering.asmx) via page.evaluate.
       2) Fallback to DOM/iframe parsing.
+      3) CDP network interception for API response capture.
+      4) Optional continuous monitoring mode.
     """
     name = "overtime_live"
+    
+    def __init__(self, monitor: Optional[str] = None, *args, **kwargs):
+        """
+        Initialize spider with optional monitoring mode.
+        
+        Args:
+            monitor: Monitoring interval in seconds (e.g. "10" for 10-second intervals)
+        """
+        super().__init__(*args, **kwargs)
+        self.monitor_interval = int(monitor) if monitor else None
+        self.cdp_session = None
 
     _proxy_server = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
     custom_settings = {
@@ -449,12 +464,79 @@ class OvertimeLiveSpider(scrapy.Spider):
         except Exception:
             return []
 
+    # -------- CDP helpers --------
+    async def _setup_cdp_session(self, page: Page):
+        """Setup CDP session for network interception."""
+        try:
+            async def api_response_handler(url: str, body: str):
+                """Handle captured API responses."""
+                try:
+                    save_api_response(url, body, "data/overtime_live")
+                except Exception as e:
+                    self.logger.error(f"Error saving API response: {e}")
+            
+            self.cdp_session = await setup_cdp_interception(
+                page,
+                api_response_handler
+            )
+            self.logger.info("CDP network interception enabled")
+        except Exception as e:
+            self.logger.warning(f"Could not enable CDP interception: {e}")
+    
+    async def _monitoring_loop(self, page: Page):
+        """
+        Continuous monitoring loop for odds updates.
+        
+        Args:
+            page: Playwright page to monitor
+        """
+        if not self.monitor_interval:
+            return
+        
+        self.logger.info(
+            f"Starting continuous monitoring (interval: {self.monitor_interval}s)"
+        )
+        
+        refresh_counter = 0
+        max_refreshes_before_reload = 30  # Full reload every 30 checks
+        
+        try:
+            while True:
+                await asyncio.sleep(self.monitor_interval)
+                
+                # Trigger small scroll to refresh data
+                try:
+                    await page.evaluate('window.scrollBy(0, 1)')
+                    await page.evaluate('window.scrollBy(0, -1)')
+                except Exception:
+                    pass
+                
+                refresh_counter += 1
+                
+                # Full page refresh periodically
+                if refresh_counter >= max_refreshes_before_reload:
+                    self.logger.info("Performing periodic page reload...")
+                    try:
+                        await page.reload(wait_until='domcontentloaded')
+                        await asyncio.sleep(3)
+                        refresh_counter = 0
+                    except Exception as e:
+                        self.logger.error(f"Error reloading page: {e}")
+                
+        except KeyboardInterrupt:
+            self.logger.info("Monitoring interrupted by user")
+        except Exception as e:
+            self.logger.error(f"Error in monitoring loop: {e}")
+
     # -------- Scrapy callback --------
     async def parse_board(self, response: Response):
         page: Page = response.meta["playwright_page"]
 
         await self._perform_login(page)
         await self._hash_nudge_to_live(page)
+        
+        # Setup CDP interception
+        await self._setup_cdp_session(page)
 
         os.makedirs("snapshots", exist_ok=True)
         try:
@@ -534,6 +616,15 @@ class OvertimeLiveSpider(scrapy.Spider):
                     pass
 
         self.logger.info("Emitted %d live rows", emitted)
+        
+        # Enter monitoring loop if enabled
+        if self.monitor_interval:
+            self.logger.info(
+                f"Entering monitoring mode with {self.monitor_interval}s interval"
+            )
+            await self._monitoring_loop(page)
+        
+        # Close page if not monitoring
         try:
             await page.close()
         except Exception:

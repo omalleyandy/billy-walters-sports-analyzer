@@ -349,3 +349,99 @@ class MasseyRatingsPipeline:
                 spider.logger.info(f"Wrote {len(flattened_rows)} games to {csv_path}")
         except Exception as e:
             spider.logger.error(f"Failed to write games CSV: {e}")
+
+
+class OddsChangeTrackerPipeline:
+    """
+    Track odds changes and log them in real-time.
+    
+    Uses SQLite by default, with optional Redis support for distributed tracking.
+    Detects changes in spread, total, and moneyline markets.
+    """
+    
+    def __init__(self, out_dir: str = "data/overtime_live", use_redis: bool = False):
+        """
+        Initialize odds change tracker.
+        
+        Args:
+            out_dir: Output directory for change logs
+            use_redis: Whether to use Redis (falls back to SQLite if unavailable)
+        """
+        self.out_dir = out_dir
+        os.makedirs(self.out_dir, exist_ok=True)
+        
+        # Import helper classes
+        from .cdp_helpers import (
+            OddsChangeDetector,
+            SQLiteOddsStorage,
+            RedisOddsStorage
+        )
+        
+        # Setup storage backend
+        if use_redis:
+            redis_storage = RedisOddsStorage()
+            if redis_storage.available:
+                self.storage = redis_storage
+                self.storage_type = "Redis"
+            else:
+                # Fallback to SQLite
+                self.storage = SQLiteOddsStorage(
+                    os.path.join(out_dir, "odds_changes.db")
+                )
+                self.storage_type = "SQLite"
+        else:
+            self.storage = SQLiteOddsStorage(
+                os.path.join(out_dir, "odds_changes.db")
+            )
+            self.storage_type = "SQLite"
+        
+        # Create change detector
+        self.detector = OddsChangeDetector(self.storage, out_dir)
+    
+    @classmethod
+    def from_crawler(cls, crawler):
+        """
+        Create pipeline from Scrapy crawler.
+        
+        Args:
+            crawler: Scrapy crawler instance
+            
+        Returns:
+            OddsChangeTrackerPipeline instance
+        """
+        out_dir = crawler.settings.get("OVERTIME_OUT_DIR", "data/overtime_live")
+        use_redis = crawler.settings.get("USE_REDIS_ODDS_TRACKING", False)
+        return cls(out_dir, use_redis)
+    
+    def open_spider(self, spider):
+        """Log pipeline startup."""
+        spider.logger.info(
+            f"OddsChangeTrackerPipeline initialized with {self.storage_type} storage"
+        )
+    
+    def process_item(self, item, spider):
+        """
+        Process each scraped item and check for odds changes.
+        
+        Args:
+            item: Scraped game item
+            spider: Spider instance
+            
+        Returns:
+            The item (unchanged)
+        """
+        try:
+            # Check for changes and log if detected
+            self.detector.check_and_log_changes(item)
+        except Exception as e:
+            spider.logger.error(f"Error tracking odds change: {e}")
+        
+        return item
+    
+    def close_spider(self, spider):
+        """Clean up storage resources."""
+        try:
+            self.storage.close()
+            spider.logger.info("OddsChangeTrackerPipeline closed")
+        except Exception as e:
+            spider.logger.error(f"Error closing odds tracker: {e}")

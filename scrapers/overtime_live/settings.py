@@ -9,6 +9,7 @@ LOG_LEVEL = "INFO"
 ITEM_PIPELINES = {
     "scrapers.overtime_live.pipelines.ParquetPipeline": 300,
     "scrapers.overtime_live.pipelines.CSVPipeline": 310,
+    "scrapers.overtime_live.pipelines.OddsChangeTrackerPipeline": 320,
 }
 
 # Playwright is configured in spider.custom_settings; these here are fallback.
