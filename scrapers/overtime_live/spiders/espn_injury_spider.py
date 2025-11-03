@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import re
 from typing import Any, Dict, Optional, List
@@ -152,7 +151,7 @@ class ESPNInjurySpider(scrapy.Spider):
                 opponent=injury_data.get("opponent"),
                 notes=injury_data.get("notes"),
             )
-            yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
+            yield item.to_dict()
 
         self.logger.info(f"Extracted {len(injuries)} injury reports")
 

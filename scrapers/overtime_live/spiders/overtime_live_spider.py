@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import re
 from typing import Any, Dict, Optional, List
@@ -603,7 +602,7 @@ class OvertimeLiveSpider(scrapy.Spider):
                     markets=mkts,
                     is_live=True,
                 )
-                yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
+                yield item.to_dict()
                 emitted += 1
 
         # 2) Fallback: DOM/iframe parse if API yielded nothing
@@ -644,7 +643,7 @@ class OvertimeLiveSpider(scrapy.Spider):
                     markets=parsed["markets"],
                     is_live=True,
                 )
-                yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
+                yield item.to_dict()
                 emitted += 1
 
             # dump a text snapshot if still nothing

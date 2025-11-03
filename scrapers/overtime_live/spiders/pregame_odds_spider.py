@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import re
 from typing import Any, Dict, Optional
@@ -255,7 +254,7 @@ class PregameOddsSpider(scrapy.Spider):
                 markets=game_data["markets"],
                 is_live=False,
             )
-            yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
+            yield item.to_dict()
 
     async def _extract_games_js(self, page: Page) -> list[Dict[str, Any]]:
         """Extract game data from the page using JavaScript"""
