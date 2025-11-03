@@ -33,7 +33,23 @@ def to_float(s: Optional[str]) -> Optional[float]:
 
 
 def _prices_from_text(text: str) -> list[int]:
-    return [int(x) for x in re.findall(r"(?<![ou])\b([+\-]\d{2,4})\b", text)]
+    """Extract price values from a block of event text.
+
+    The previous implementation relied on ``\b`` word boundaries to
+    delimit prices.  That approach breaks for odds such as ``-115`` or
+    ``+215`` because the leading ``+``/``-`` characters are not word
+    characters, meaning ``\b`` does not recognise the transition from
+    whitespace to the sign.  As a result no prices were detected and the
+    parser concluded that the block did not contain any markets.
+
+    Instead we explicitly ensure that a price token is not preceded by an
+    alphanumeric character (to avoid totals like ``O49.5``) and is not
+    followed by another digit.  This still captures the usual American odds
+    formats while remaining robust to surrounding punctuation.
+    """
+
+    pattern = r"(?<![A-Za-z0-9])([+\-]\d{2,4})(?!\d)"
+    return [int(x) for x in re.findall(pattern, text)]
 
 
 def _looks_like_event_block(txt: str) -> bool:
@@ -43,9 +59,14 @@ def _looks_like_event_block(txt: str) -> bool:
     text_lines = [l for l in lines if re.search(r"[A-Za-z]", l)]
     if len(text_lines) < 2:
         return False
-    has_price = bool(re.search(r"(?<![ou])\b[+\-]\d{2,4}\b", txt))
-    has_spread = bool(re.search(r"\b[+\-]\d{1,2}(?:\.\d)?\b", txt))
-    has_total = bool(re.search(r"\b[ou]\s*\d{1,2}(?:\.\d)?\b", txt, flags=re.I))
+    normalized = txt.replace("½", ".5")
+    has_price = bool(_prices_from_text(normalized))
+    has_spread = bool(
+        re.search(r"(?<![A-Za-z0-9])[+\-]\d{1,2}(?:\.\d+)?", normalized)
+    )
+    has_total = bool(
+        re.search(r"\b[ou]\s*[+\-]?\d{1,2}(?:\.\d+)?", normalized, flags=re.I)
+    )
     return has_price or has_spread or has_total
 
 
@@ -343,7 +364,13 @@ class OvertimeLiveSpider(scrapy.Spider):
 
         away, home = text_lines[0], text_lines[1]
 
-        toks = re.findall(r"[ou]?\s?[+\-]?\d+\.?\d*|[+\-]\d{2,4}", row_text.replace("½", ".5"))
+        toks = [
+            t.strip()
+            for t in re.findall(
+                r"[ou]?\s?[+\-]?\d+\.?\d*|[+\-]\d{2,4}", row_text.replace("½", ".5")
+            )
+            if t.strip()
+        ]
         spread = Market()
         total = Market()
         money = Market()
