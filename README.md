@@ -149,3 +149,10 @@ scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
 - Check `snapshots/` directory for debug screenshots
 - Review logs for timeout or selector errors
 - Ensure stable internet connection
+
+## Collaboration Permissions Quick Checklist
+
+- Keep the repository private and restrict collaborators to the two active maintainers.
+- Issue fine-grained personal access tokens (PATs) scoped only to `billy-walters-sports-analyzer` when command-line or API access is required.
+- Grant PAT permissions strictly aligned with needed features (e.g., contents, issues, pull requests, workflows, administration).
+- Audit PATs and GitHub App installations periodically, revoking any tokens or integrations that are no longer in use.
