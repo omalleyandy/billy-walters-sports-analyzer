@@ -229,8 +229,27 @@ class PregameOddsSpider(scrapy.Spider):
 
         try:
             # Click sport selector using JavaScript for reliability
-            await page.evaluate(f'() => {{ const el = document.querySelector("{selector}"); if(el) el.click(); }}')
+            # Use single quotes in JS to avoid quote conflicts with the selector
+            await page.evaluate(f"() => {{ const el = document.querySelector('{selector}'); if(el) el.click(); }}")
             await page.wait_for_timeout(2500)
+            
+            # Ensure we're on the "GAME" period (full game), not 1H/2H/Quarters
+            self.logger.info(f"Selecting GAME period for {sport.upper()}...")
+            await page.evaluate("""
+                () => {
+                    // Find the "GAME" period button and click it if not already active
+                    const gameButtons = document.querySelectorAll('button.btn-period');
+                    for (const btn of gameButtons) {
+                        const text = btn.innerText || '';
+                        if (/^GAME$/i.test(text.trim()) && !btn.classList.contains('active')) {
+                            btn.click();
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            """)
+            await page.wait_for_timeout(1500)
         except Exception as e:
             self.logger.error(f"Failed to select {sport}: {e}")
             return
@@ -263,7 +282,7 @@ class PregameOddsSpider(scrapy.Spider):
         () => {
             const games = [];
             
-            // Find all game list items
+            // Find all game list items - use more specific selectors to avoid false positives
             const listItems = document.querySelectorAll('ul li, .event-row, [class*="game"]');
             
             for (const item of listItems) {
@@ -284,14 +303,18 @@ class PregameOddsSpider(scrapy.Spider):
                     if (!awayMatch || !homeMatch) continue;
                     
                     const awayRot = awayMatch[1];
-                    const awayTeam = awayMatch[2];
+                    const awayTeam = awayMatch[2].trim();
                     const homeRot = homeMatch[1];
-                    const homeTeam = homeMatch[2];
+                    const homeTeam = homeMatch[2].trim();
+                    
+                    // Validate: team names should be reasonable (no emojis, no single words like "SPORTS")
+                    if (awayTeam.length < 3 || homeTeam.length < 3) continue;
+                    if (!/^[A-Z\\s\\-\\.&']+$/i.test(awayTeam) || !/^[A-Z\\s\\-\\.&']+$/i.test(homeTeam)) continue;
                     
                     // Extract date and time
                     let dateStr = null;
                     let timeStr = null;
-                    const dateTimeElements = item.querySelectorAll('div, span');
+                    const dateTimeElements = item.querySelectorAll('div, span, any');
                     for (const el of dateTimeElements) {
                         const t = el.innerText || '';
                         if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+\\w+\\s+\\d+$/.test(t.trim())) {
@@ -302,53 +325,84 @@ class PregameOddsSpider(scrapy.Spider):
                         }
                     }
                     
-                    // Extract odds from buttons
+                    // Extract odds from buttons WITH their IDs for proper assignment
                     const buttons = item.querySelectorAll('button');
-                    const odds = [];
+                    const buttonData = [];
                     for (const btn of buttons) {
                         const btnText = btn.innerText || '';
-                        odds.push(btnText.trim());
+                        const btnId = btn.id || '';
+                        buttonData.push({ text: btnText.trim(), id: btnId });
                     }
                     
-                    // Parse markets
+                    // Parse markets using button IDs for explicit assignment
                     const markets = { spread: {}, total: {}, moneyline: {} };
                     
-                    // Spread: look for patterns like "-2½ -115" or "+3 -110"
-                    const spreadRegex = /^([+\\-]\\d+\\.?\\d?)\\s+([+\\-]\\d{2,4})$/;
-                    let spreadIdx = 0;
-                    for (let i = 0; i < odds.length; i++) {
-                        const match = odds[i].match(spreadRegex);
-                        if (match && spreadIdx < 2) {
+                    // Spread: use button IDs (S1=away, S2=home) for explicit assignment
+                    const spreadRegex = /^([+\\-]\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/;
+                    for (const btnData of buttonData) {
+                        const match = btnData.text.match(spreadRegex);
+                        if (match) {
                             const line = parseFloat(match[1].replace('½', '.5'));
                             const price = parseInt(match[2]);
-                            if (spreadIdx === 0) {
+                            
+                            // Use button ID to determine away vs home
+                            if (btnData.id.startsWith('S1_')) {
                                 markets.spread.away = { line, price };
-                            } else {
+                            } else if (btnData.id.startsWith('S2_')) {
                                 markets.spread.home = { line, price };
+                            } else {
+                                // Fallback: first spread is away, second is home
+                                if (!markets.spread.away) {
+                                    markets.spread.away = { line, price };
+                                } else if (!markets.spread.home) {
+                                    markets.spread.home = { line, price };
+                                }
                             }
-                            spreadIdx++;
                         }
                     }
                     
-                    // Total: look for patterns like "O 51 -110" or "U 48½ -105"
-                    const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?)\\s+([+\\-]\\d{2,4})$/i;
-                    for (const odd of odds) {
-                        const match = odd.match(totalRegex);
+                    // Total: use button IDs (L1=over, L2=under) for explicit assignment
+                    const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/i;
+                    for (const btnData of buttonData) {
+                        const match = btnData.text.match(totalRegex);
                         if (match) {
                             const side = match[1].toUpperCase();
                             const line = parseFloat(match[2].replace('½', '.5'));
                             const price = parseInt(match[3]);
-                            if (side === 'O') {
+                            
+                            // Use button ID to determine over vs under
+                            if (btnData.id.startsWith('L1_') || side === 'O') {
                                 markets.total.over = { line, price };
-                            } else {
+                            } else if (btnData.id.startsWith('L2_') || side === 'U') {
                                 markets.total.under = { line, price };
                             }
                         }
                     }
                     
-                    // Moneyline: look for standalone prices (e.g., "+150" or "-200")
-                    // Usually displayed separately, harder to detect from buttons alone
-                    // This is a best-effort extraction
+                    // Moneyline: look for buttons with M1/M2 prefix or standalone prices
+                    const mlRegex = /^([+\\-]\\d{2,4})$/;
+                    for (const btnData of buttonData) {
+                        const match = btnData.text.match(mlRegex);
+                        if (match) {
+                            const price = parseInt(match[1]);
+                            
+                            if (btnData.id.startsWith('M1_')) {
+                                markets.moneyline.away = { line: null, price };
+                            } else if (btnData.id.startsWith('M2_')) {
+                                markets.moneyline.home = { line: null, price };
+                            }
+                        }
+                    }
+                    
+                    // Validation: ensure we have at least one market before adding
+                    const hasSpread = markets.spread.away || markets.spread.home;
+                    const hasTotal = markets.total.over || markets.total.under;
+                    const hasMoneyline = markets.moneyline.away || markets.moneyline.home;
+                    
+                    if (!hasSpread && !hasTotal && !hasMoneyline) {
+                        console.log('Skipping item with no valid markets:', awayTeam, homeTeam);
+                        continue;
+                    }
                     
                     games.push({
                         rotation_number: `${awayRot}-${homeRot}`,

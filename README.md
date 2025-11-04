@@ -3,12 +3,34 @@
 Canonical, uv-based repo scaffold so we stay in sync. One env per project.
 This repo includes:
 - **CLI**: `walters-analyzer` with `wk-card`, `scrape-overtime`, and `scrape-injuries` commands
+- **Billy Walters Valuation System**: Sophisticated injury impact analysis with position-specific valuations, injury multipliers, and market inefficiency detection
 - **Cards**: JSON snapshots in `./cards/`
 - **Scrapers**: 
   - Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
   - ESPN injury report scraper for player status tracking
 - **Claude**: `/commands` and `/hooks` placeholders
 - **Env**: `env.template` for required keys
+
+## Billy Walters Methodology
+
+This system implements Billy Walters' sophisticated approach to injury impact analysis:
+
+- **Position-Specific Valuations**: Elite QB = 3.5-4.5 pts, Elite RB = 2.5 pts, WR1 = 1.8 pts, etc.
+- **Injury Capacity Multipliers**: OUT = 0%, Questionable = 92%, Hamstring = 70%, Ankle = 80%
+- **Market Inefficiency Detection**: Markets typically underreact by 15% to injuries
+- **Position Group Crisis Analysis**: Multiple injuries to same unit compound (O-line, secondary, etc.)
+- **Recovery Timeline Tracking**: Hamstring = 14 days, Ankle = 10 days, ACL = 270 days
+- **Historical Win Rates**: 3+ point edge = 64% win rate, 2-3 pts = 58%, 1-2 pts = 54%
+
+### Key Advantages Over Generic Systems
+
+| Generic Approach | Billy Walters Approach |
+|-----------------|------------------------|
+| "QB OUT! (+10 pts)" | "Mahomes ankle: 65% capacity (-1.2 of 3.5 pts)" |
+| "High injuries - be cautious" | "Edge: 3.2 pts. Historical: 64% win rate. Bet 2% bankroll" |
+| Position counts only | Specific point spread impacts |
+| No market analysis | Market inefficiency detection |
+| No bet sizing | Kelly Criterion bet sizing |
 
 ## Setup
 
@@ -97,6 +119,27 @@ uv run walters-analyzer scrape-injuries --sport cfb --output-dir ./injury_data
 - Essential gate check before placing any wager
 
 See [INJURY_SCRAPER.md](INJURY_SCRAPER.md) for complete documentation, gate integration examples, and position impact guidelines.
+
+### Billy Walters Analysis Scripts
+
+Two powerful analysis scripts using the Billy Walters methodology:
+
+```bash
+# Combined game + injury analysis (MAIN TOOL)
+uv run python analyze_games_with_injuries.py
+
+# Position-based injury analysis
+uv run python analyze_injuries_by_position.py
+```
+
+**What You Get:**
+- Specific point spread impacts (not generic scores)
+- Injury capacity percentages (Questionable = 92%, Hamstring = 70%)
+- Market inefficiency detection (15% underreaction factor)
+- Position group crisis alerts (O-line depleted, secondary crisis)
+- Recovery timeline estimates
+- Betting recommendations with historical win rates
+- Kelly Criterion bet sizing (0.5-3% of bankroll)
 
 ### Output Files
 Scraped data is saved to `data/overtime_live/` (or custom directory) in three formats:

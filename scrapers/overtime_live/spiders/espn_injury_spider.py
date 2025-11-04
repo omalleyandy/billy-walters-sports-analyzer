@@ -68,8 +68,24 @@ class ESPNInjurySpider(scrapy.Spider):
         sport = os.getenv("ESPN_SPORT", "football")
         league = os.getenv("ESPN_LEAGUE", "college-football")
         
+        # Store sport/league for later use
+        self.sport = sport
+        self.league = league
+        
+        # Map league to proper sport/league labels for data export
+        if league == "nfl":
+            self.sport_label = "nfl"
+            self.league_label = "NFL"
+        else:
+            self.sport_label = "college_football"
+            self.league_label = "NCAAF"
+        
         # ESPN injury report URLs
-        injury_url = os.getenv("ESPN_INJURY_URL") or f"https://www.espn.com/{sport}/{league}/injuries"
+        # NFL uses /nfl/injuries, college football uses /college-football/injuries
+        if league == "nfl":
+            injury_url = os.getenv("ESPN_INJURY_URL") or f"https://www.espn.com/{league}/injuries"
+        else:
+            injury_url = os.getenv("ESPN_INJURY_URL") or f"https://www.espn.com/{sport}/{league}/injuries"
         
         self.logger.info(f"Starting ESPN injury scraper for: {injury_url}")
 
@@ -234,40 +250,67 @@ class ESPNInjurySpider(scrapy.Spider):
         () => {
             const injuries = [];
             
-            // Look for injury tables (common ESPN pattern)
-            const tables = document.querySelectorAll('table.Table, .injuries-table, [class*="InjuriesTable"]');
+            // ESPN uses ResponsiveTable containers, each with team name + table
+            const containers = document.querySelectorAll('.ResponsiveTable, div[class*="ResponsiveTable"]');
             
-            for (const table of tables) {
-                // Try to find team name (usually in header)
-                let teamName = '';
-                const teamHeader = table.closest('div[class*="TeamSection"]') || 
-                                 table.closest('section') || 
-                                 table.previousElementSibling;
+            for (const container of containers) {
+                // Extract team name from the container
+                let teamName = 'Unknown';
+                let teamAbbr = '';
                 
-                if (teamHeader) {
-                    const teamText = teamHeader.textContent || '';
-                    const teamMatch = teamText.match(/([A-Z][a-z]+(\\s+[A-Z][a-z]+)*)/);
-                    if (teamMatch) teamName = teamMatch[0].trim();
+                // Look for divs with team name (appears at start of container)
+                const divs = container.querySelectorAll('div');
+                for (const div of divs) {
+                    const text = div.textContent.trim();
+                    // Team name is 2-3 words, capitalized, NOT table headers
+                    const words = text.split(/\\s+/);
+                    if (words.length >= 2 && words.length <= 3 && 
+                        text.length > 5 && text.length < 50 &&
+                        !text.includes('NAME') && !text.includes('POS') && 
+                        !text.includes('STATUS') && !text.includes('RETURN')) {
+                        // Verify it matches team name pattern
+                        if (text.match(/^[A-Z][a-z]+(\\s+[A-Z][a-z]+){1,2}$/)) {
+                            teamName = text;
+                            break;
+                        }
+                    }
                 }
                 
+                // Try to extract team abbreviation from player links
+                const firstPlayerLink = container.querySelector('a[href*="/nfl/player/"]');
+                if (firstPlayerLink && firstPlayerLink.href) {
+                    // Links often contain team info, but not always reliable
+                    // We'll prioritize the text-based team name
+                }
+                
+                // Find the table within this container
+                const table = container.querySelector('table');
+                if (!table) continue;
+                
                 // Parse table rows
-                const rows = table.querySelectorAll('tbody tr, tr[class*="Table__TR"]');
+                const rows = table.querySelectorAll('tbody tr');
                 
                 for (const row of rows) {
-                    const cells = row.querySelectorAll('td, [class*="Table__TD"]');
-                    if (cells.length >= 3) {
-                        const playerName = cells[0]?.textContent?.trim() || '';
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length >= 4) {
+                        // ESPN injury table format: Name, Position, Est. Return Date, Status, Comment
+                        const playerLink = cells[0]?.querySelector('a');
+                        const playerName = playerLink?.textContent?.trim() || cells[0]?.textContent?.trim() || '';
                         const position = cells[1]?.textContent?.trim() || '';
-                        const injuryInfo = cells[2]?.textContent?.trim() || '';
-                        const status = cells[3]?.textContent?.trim() || '';
+                        const returnDate = cells[2]?.textContent?.trim() || '';
+                        const statusElement = cells[3]?.querySelector('span');
+                        const status = statusElement?.textContent?.trim() || cells[3]?.textContent?.trim() || '';
+                        const comment = cells[4]?.textContent?.trim() || '';
                         
-                        if (playerName) {
+                        if (playerName && playerName !== 'NAME') {
                             injuries.push({
                                 team: teamName,
+                                team_abbr: teamAbbr,
                                 player_name: playerName,
                                 position: position,
-                                injury_type: injuryInfo,
-                                injury_status: status || 'Unknown',
+                                injury_type: returnDate,
+                                injury_status: status,
+                                notes: comment.slice(0, 200),
                                 raw_html: row.innerHTML.slice(0, 500)
                             });
                         }
@@ -371,8 +414,8 @@ class ESPNInjurySpider(scrapy.Spider):
             # Only include if we have minimum required data
             if injury.get("player_name") and normalized_status:
                 normalized.append({
-                    "sport": "college_football",
-                    "league": "NCAAF",
+                    "sport": getattr(self, 'sport_label', 'college_football'),
+                    "league": getattr(self, 'league_label', 'NCAAF'),
                     "team": injury.get("team", "").strip(),
                     "team_abbr": injury.get("team_abbr", ""),
                     "player_name": injury.get("player_name", "").strip(),
