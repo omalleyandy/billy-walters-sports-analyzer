@@ -23,6 +23,28 @@ def main():
     injuries.add_argument("--output-dir", default="data/injuries",
                           help="Output directory for injury data")
     
+    # view-odds: View scraped pregame odds
+    vo = sub.add_parser("view-odds", help="View scraped pregame odds from overtime.ag")
+    vo.add_argument("--data-dir", default="data/overtime_live",
+                   help="Directory containing scraped data")
+    vo.add_argument("--file", help="Specific JSONL file to load")
+    vo.add_argument("--sport", choices=["nfl", "college_football"],
+                   help="Filter by sport")
+    vo.add_argument("--date", help="Filter by date (YYYY-MM-DD)")
+    vo.add_argument("--today", action="store_true",
+                   help="Show today's games")
+    vo.add_argument("--upcoming", type=int, metavar="DAYS",
+                   help="Show games in next N days (default: 7)", const=7, nargs="?")
+    vo.add_argument("--team", help="Filter by team name (partial match)")
+    vo.add_argument("--compare", metavar="TEAM",
+                   help="Compare lines for a team across games")
+    vo.add_argument("--summary", action="store_true",
+                   help="Show summary only (no detailed odds)")
+    vo.add_argument("--brief", action="store_true",
+                   help="Brief output (game info only, no odds)")
+    vo.add_argument("--export", metavar="FILE",
+                   help="Export filtered results to CSV file")
+    
     args = parser.parse_args()
 
     if args.cmd == "wk-card":
@@ -107,6 +129,70 @@ def main():
             print("ERROR: scrapy command not found. Make sure scrapy is installed.", file=sys.stderr)
             print("Run: uv pip install scrapy scrapy-playwright", file=sys.stderr)
             sys.exit(1)
+    
+    elif args.cmd == "view-odds":
+        from .query.odds_viewer import OddsViewer
+        from pathlib import Path
+        
+        # Initialize viewer
+        viewer = OddsViewer(data_dir=args.data_dir)
+        
+        # Load data
+        if args.file:
+            count = viewer.load_file(Path(args.file), sport=args.sport)
+            print(f"📂 Loaded {count} games from {args.file}\n")
+        else:
+            count = viewer.load_latest(sport=args.sport)
+            if count > 0:
+                data_path = Path(args.data_dir)
+                jsonl_files = sorted(data_path.glob("overtime-live-*.jsonl"), reverse=True)
+                if jsonl_files:
+                    print(f"📂 Loaded {count} games from {jsonl_files[0].name}\n")
+        
+        if count == 0:
+            print("❌ No games found. Run scraper first:")
+            print("   uv run walters-analyzer scrape-overtime --sport nfl")
+            sys.exit(1)
+        
+        # Show summary if requested
+        if args.summary:
+            viewer.display_summary()
+            sys.exit(0)
+        
+        # Compare mode
+        if args.compare:
+            viewer.compare_lines(args.compare)
+            sys.exit(0)
+        
+        # Filter games
+        games = viewer.games
+        
+        if args.today:
+            games = viewer.get_today_games()
+            print("📅 Today's games:\n")
+        elif args.upcoming is not None:
+            days = args.upcoming if args.upcoming else 7
+            games = viewer.get_upcoming_games(days=days)
+            print(f"📅 Upcoming games (next {days} days):\n")
+        elif args.date:
+            games = viewer.filter_by_date(args.date)
+            print(f"📅 Games on {args.date}:\n")
+        
+        if args.team:
+            games = [g for g in games if any(
+                args.team.lower() in team.lower()
+                for team in [g.get("teams", {}).get("away", ""), g.get("teams", {}).get("home", "")]
+            )]
+            print(f"🔍 Filtered for team: '{args.team}'\n")
+        
+        # Export if requested
+        if args.export:
+            viewer.export_csv(games, args.export)
+        else:
+            # Display games
+            viewer.display_games(games, show_details=not args.brief)
+        
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()

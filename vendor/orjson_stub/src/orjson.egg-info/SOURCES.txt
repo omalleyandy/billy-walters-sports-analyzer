@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+src/orjson/__init__.py
+src/orjson.egg-info/PKG-INFO
+src/orjson.egg-info/SOURCES.txt
+src/orjson.egg-info/dependency_links.txt
+src/orjson.egg-info/top_level.txt
