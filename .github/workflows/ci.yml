@@ -6,7 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
-      - name: Sync env (frozen)
-        run: uv sync --frozen
+      - name: Sync env with dev dependencies
+        run: uv sync --frozen --extra dev
+      - name: Run tests
+        run: uv run pytest tests/ -v
       - name: Validate card JSON
         run: python -c "import json,sys;json.load(open('cards/wk-card-2025-10-31.json'))"

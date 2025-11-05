@@ -39,12 +39,14 @@ This system implements Billy Walters' sophisticated approach to injury impact an
 # Windows PowerShell
 uv sync
 uv sync --extra scraping  # Optional: additional scraping utilities
+uv sync --extra dev       # Optional: development tools (pytest, ruff, coverage)
 ```
 
 ```bash
 # WSL/Linux
 uv sync
 uv sync --extra scraping  # Optional: additional scraping utilities
+uv sync --extra dev       # Optional: development tools (pytest, ruff, coverage)
 ```
 
 ### 2. Install Playwright Browsers
@@ -63,6 +65,18 @@ cp env.template .env
 Required environment variables:
 - `OV_CUSTOMER_ID`: Your overtime.ag customer ID
 - `OV_CUSTOMER_PASSWORD`: Your overtime.ag password
+
+### 4. Running Tests (Optional)
+```bash
+# Install dev dependencies first
+uv sync --extra dev
+
+# Run all tests
+uv run pytest tests/ -v
+
+# Run with coverage
+uv run pytest tests/ --cov=walters_analyzer --cov=scrapers
+```
 
 ## Usage
 
