@@ -35,7 +35,11 @@ Write-Host "Games found: $($oddsData.Count)" -ForegroundColor Gray
 Write-Host ""
 
 # Create unique game identifier for deduplication
-$uniqueGames = $oddsData | ForEach-Object { "$($_.teams.away) `@ $($_.teams.home)" } | Select-Object -Unique
+$uniqueGames = $oddsData | ForEach-Object {
+    $away = $_.teams.away
+    $home = $_.teams.home
+    "$away at $home"
+} | Select-Object -Unique
 
 Write-Host "Unique matchups: $($uniqueGames.Count)`n" -ForegroundColor Yellow
 
@@ -65,7 +69,9 @@ if ($gamesWithSpreads.Count -gt 0) {
             if ($homeLine -gt 0) { "+$homeLine" } else { "$homeLine" }
         } else { "N/A" }
 
-        Write-Host "  $($game.teams.away) ($awayDisplay $awayPrice) `@ $($game.teams.home) ($homDisplay $homePrice)" -ForegroundColor White
+        $awayTeam = $game.teams.away
+        $homeTeam = $game.teams.home
+        Write-Host "  $awayTeam ($awayDisplay $awayPrice) at $homeTeam ($homDisplay $homePrice)" -ForegroundColor White
     }
 } else {
     Write-Host "  No spreads available" -ForegroundColor Yellow
@@ -95,7 +101,9 @@ if ($gamesWithTotals.Count -gt 0) {
             $overPrice = if ($game.markets.total.over.price) { " ($($game.markets.total.over.price))" } else { "" }
             $underPrice = if ($game.markets.total.under.price) { " ($($game.markets.total.under.price))" } else { "" }
 
-            Write-Host "  $($game.teams.away) `@ $($game.teams.home): O/U $total" -ForegroundColor White
+            $awayTeam = $game.teams.away
+            $homeTeam = $game.teams.home
+            Write-Host "  $awayTeam at $homeTeam : O/U $total" -ForegroundColor White
             Write-Host "    Over $total$overPrice | Under $total$underPrice" -ForegroundColor Gray
         }
     }
@@ -106,7 +114,7 @@ if ($gamesWithTotals.Count -gt 0) {
 # ========================================
 # HIGH SCORING GAMES
 # ========================================
-Write-Host "`n[HIGH SCORING GAMES (Total `> $HighTotalThreshold)]" -ForegroundColor Green
+Write-Host "`n[HIGH SCORING GAMES (Total above $HighTotalThreshold)]" -ForegroundColor Green
 Write-Host "----------------------------------------" -ForegroundColor Gray
 
 $highScoringGames = $gamesWithTotals | Where-Object {
@@ -119,17 +127,19 @@ $highScoringGames = $gamesWithTotals | Where-Object {
 if ($highScoringGames.Count -gt 0) {
     foreach ($game in $highScoringGames) {
         $total = if ($game.markets.total.over.line) { $game.markets.total.over.line } else { $game.markets.total.under.line }
-        Write-Host "  $($game.teams.away) `@ $($game.teams.home): O/U $total" -ForegroundColor Cyan
+        $awayTeam = $game.teams.away
+        $homeTeam = $game.teams.home
+        Write-Host "  $awayTeam at $homeTeam : O/U $total" -ForegroundColor Cyan
     }
     Write-Host "`n  Found $($highScoringGames.Count) high-scoring games" -ForegroundColor Yellow
 } else {
-    Write-Host "  No games with totals `> $HighTotalThreshold" -ForegroundColor Yellow
+    Write-Host "  No games with totals above $HighTotalThreshold" -ForegroundColor Yellow
 }
 
 # ========================================
 # LOW SCORING GAMES
 # ========================================
-Write-Host "`n[LOW SCORING GAMES (Total `< $LowTotalThreshold)]" -ForegroundColor Green
+Write-Host "`n[LOW SCORING GAMES (Total below $LowTotalThreshold)]" -ForegroundColor Green
 Write-Host "----------------------------------------" -ForegroundColor Gray
 
 $lowScoringGames = $gamesWithTotals | Where-Object {
@@ -142,11 +152,13 @@ $lowScoringGames = $gamesWithTotals | Where-Object {
 if ($lowScoringGames.Count -gt 0) {
     foreach ($game in $lowScoringGames) {
         $total = if ($game.markets.total.over.line) { $game.markets.total.over.line } else { $game.markets.total.under.line }
-        Write-Host "  $($game.teams.away) `@ $($game.teams.home): O/U $total" -ForegroundColor Cyan
+        $awayTeam = $game.teams.away
+        $homeTeam = $game.teams.home
+        Write-Host "  $awayTeam at $homeTeam : O/U $total" -ForegroundColor Cyan
     }
     Write-Host "`n  Found $($lowScoringGames.Count) low-scoring games" -ForegroundColor Yellow
 } else {
-    Write-Host "  No games with totals `< $LowTotalThreshold" -ForegroundColor Yellow
+    Write-Host "  No games with totals below $LowTotalThreshold" -ForegroundColor Yellow
 }
 
 # ========================================
@@ -157,7 +169,7 @@ Write-Host "----------------------------------------" -ForegroundColor Gray
 Write-Host "  Total games: $($oddsData.Count)" -ForegroundColor White
 Write-Host "  Games with spreads: $($gamesWithSpreads.Count)" -ForegroundColor White
 Write-Host "  Games with totals: $($gamesWithTotals.Count)" -ForegroundColor White
-Write-Host "  High-scoring games (`> $HighTotalThreshold): $($highScoringGames.Count)" -ForegroundColor White
-Write-Host "  Low-scoring games (`< $LowTotalThreshold): $($lowScoringGames.Count)" -ForegroundColor White
+Write-Host "  High-scoring games (above $HighTotalThreshold): $($highScoringGames.Count)" -ForegroundColor White
+Write-Host "  Low-scoring games (below $LowTotalThreshold): $($lowScoringGames.Count)" -ForegroundColor White
 
 Write-Host "`n========================================`n" -ForegroundColor Cyan
