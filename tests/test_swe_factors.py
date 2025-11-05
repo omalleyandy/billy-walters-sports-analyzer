@@ -3,7 +3,7 @@ Tests for S/W/E Factor System
 """
 
 import pytest
-from walters_analyzer.situational_factors import (
+from walters.situational_factors import (
     SWEFactorCalculator,
     GameContext
 )

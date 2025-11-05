@@ -12,7 +12,10 @@
       "Bash(git log:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git mv:*)",
+      "Bash(printf:*)",
+      "Bash(src/walters/backtest/__init__.py)"
     ],
     "deny": [],
     "ask": []

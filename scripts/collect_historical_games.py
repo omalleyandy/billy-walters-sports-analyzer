@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 import time
 import click
-from walters_analyzer.historical_db import HistoricalDatabase
+from walters.historical_db import HistoricalDatabase
 
 
 class ESPNGameCollector:

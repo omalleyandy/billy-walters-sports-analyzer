@@ -21,9 +21,9 @@ print("=" * 60)
 # Test Phase 1
 print("\n[Phase 1] Testing...")
 try:
-    from walters_analyzer.core import async_get, cache_weather_data, TeamRating
-    from walters_analyzer.core.http_client import cleanup_http_client
-    from walters_analyzer.core.cache import get_cache_stats
+    from walters.core import async_get, cache_weather_data, TeamRating
+    from walters.core.http_client import cleanup_http_client
+    from walters.core.cache import get_cache_stats
     print("  [OK] HTTP Client imported")
     print("  [OK] Caching system imported")
     print("  [OK] Models imported")
@@ -34,7 +34,7 @@ except Exception as e:
 # Test Phase 2
 print("\n[Phase 2] Testing...")
 try:
-    from walters_analyzer.research import ScrapyBridge, ResearchEngine
+    from walters.research import ScrapyBridge, ResearchEngine
     print("  [OK] ScrapyBridge imported")
     print("  [OK] ResearchEngine imported")
 except Exception as e:
@@ -44,7 +44,7 @@ except Exception as e:
 # Test Configuration
 print("\n[Configuration] Testing...")
 try:
-    from walters_analyzer.config import get_config
+    from walters.config import get_config
     config = get_config()
     print("  [OK] Config loaded")
     print(f"  [OK] Bankroll: ${config.BANKROLL:,.2f}")
@@ -61,10 +61,10 @@ except Exception as e:
 # Test Existing Modules
 print("\n[Existing Modules] Testing...")
 try:
-    from walters_analyzer.analyzer import BillyWaltersAnalyzer
-    from walters_analyzer.power_ratings import PowerRatingEngine
-    from walters_analyzer.bet_sizing import BetSizingCalculator
-    from walters_analyzer.key_numbers import KeyNumberCalculator
+    from walters.analyzer import BillyWaltersAnalyzer
+    from walters.power_ratings import PowerRatingEngine
+    from walters.bet_sizing import BetSizingCalculator
+    from walters.key_numbers import KeyNumberCalculator
     print("  [OK] Analyzer imported")
     print("  [OK] Power ratings imported")
     print("  [OK] Bet sizing imported")

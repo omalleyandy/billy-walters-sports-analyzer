@@ -3,7 +3,7 @@ Tests for Key Number Logic
 """
 
 import pytest
-from walters_analyzer.key_numbers import (
+from walters.key_numbers import (
     KeyNumberCalculator,
     NFL_KEY_NUMBERS,
     CFB_KEY_NUMBERS

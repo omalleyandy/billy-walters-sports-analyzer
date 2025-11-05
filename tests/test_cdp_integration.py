@@ -5,8 +5,12 @@ Tests the integrated CDP network interception and odds change tracking features.
 """
 
 import os
+import sys
 import tempfile
 from pathlib import Path
+
+# Add project root to path for scrapers module
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scrapers.overtime_live.cdp_helpers import (
     OddsChangeDetector,

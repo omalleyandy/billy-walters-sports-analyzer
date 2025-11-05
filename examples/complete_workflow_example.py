@@ -11,9 +11,9 @@ This script demonstrates the full workflow using all core components:
 Run this to see how everything works together.
 """
 
-from walters_analyzer.analyzer import BillyWaltersAnalyzer
-from walters_analyzer.situational_factors import GameContext
-from walters_analyzer.power_ratings import GameResult
+from walters.analyzer import BillyWaltersAnalyzer
+from walters.situational_factors import GameContext
+from walters.power_ratings import GameResult
 
 
 def main():

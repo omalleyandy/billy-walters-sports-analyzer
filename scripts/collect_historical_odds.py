@@ -16,7 +16,7 @@ from typing import List, Dict, Optional, Tuple
 import time
 import click
 import re
-from walters_analyzer.historical_db import HistoricalDatabase
+from walters.historical_db import HistoricalDatabase
 
 
 class ProFootballReferenceOddsCollector:

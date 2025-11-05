@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import click
 from datetime import datetime
 
-from walters_analyzer.backtest import BacktestEngine, PerformanceMetrics, StrategyValidator
+from walters.backtest import BacktestEngine, PerformanceMetrics, StrategyValidator
 
 
 @click.group()
@@ -174,7 +174,7 @@ def analyze(db_path: str, season: int):
     click.echo("BACKTEST ANALYSIS")
     click.echo("="*80)
 
-    from walters_analyzer.historical_db import HistoricalDatabase
+    from walters.historical_db import HistoricalDatabase
 
     db = HistoricalDatabase(db_path)
 

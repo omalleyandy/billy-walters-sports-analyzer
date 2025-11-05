@@ -1,0 +1,100 @@
+site: overtime.ag
+start_url: https://overtime.ag/sports
+active_flow: nfl_game   # change to nfl_1h for 1st Half
+
+auth:
+  username_env: OV_CUSTOMER_ID
+  password_env: OV_PASSWORD
+  steps:
+    # Open login modal / panel (text and class fallbacks)
+    - click_any:
+        - role=button[name="Login"]
+        - text=/\bLogin\b/i
+        - css=.btn.btn-default.btn-login.ng-binding
+
+    # Fill credentials by placeholder (your research)
+    - fill_first:
+        selector_any:
+          - input[placeholder="Customer Id"]
+          - input[autocomplete="username"]
+          - input[type="text"]
+        value_env: OV_CUSTOMER_ID
+
+    - fill_first:
+        selector_any:
+          - input[placeholder="Password"]
+          - input[autocomplete="current-password"]
+          - input[type="password"]
+        value_env: OV_PASSWORD
+
+    # Submit
+    - click_any:
+        - role=button[name="Login"]
+        - text=/\bLog\s*in\b/i
+        - css=.btn.btn-default.btn-login.ng-binding
+    - wait_for: {ms: 1200}
+
+flows:
+  nfl_base:
+    steps:
+      # Open NFL league block (label text + attribute fallbacks)
+      - click_any:
+          - text=/NFL-Game\/1H\/2H\/Qrts/i
+          - css=label[for="gl_Football_NFL_G"]
+      - wait_for: {ms: 600}
+
+  nfl_game:
+    extends: nfl_base
+    steps:
+      # Click "Game" period (your button text)
+      - click_any:
+          - role=button[name="Game"]
+          - text=/\bGame\b/i
+          - css=button.btn-period.ng-binding:has-text("Game")
+      - wait_for: {ms: 900}
+
+  nfl_1h:
+    extends: nfl_base
+    steps:
+      # Click "1st Half" period (your button text)
+      - click_any:
+          - role=button[name="1st Half"]
+          - text=/\b1st\s*Half\b/i
+          - css=button.btn-period.ng-binding:has-text("1st Half")
+      - wait_for: {ms: 900}
+
+extract:
+  # Game row container (broad but stable fallbacks)
+  row_selector: |
+    div[ng-repeat*="gameLine"] ,
+    div.game-line ,
+    div.line-row ,
+    li.event ,
+    div.event
+
+  # Simple fields (scoped to each row)
+  fields:
+    date:      'css:any[ng-bind*="formatGameDate"] ::textone'
+    time:      'css:span[ng-bind*="formatGameTime"] ::textone'
+    visitor_rot: 'css:span.line-rot-num[ng-bind*="Team1RotNum"] ::textone'
+    home_rot:    'css:span.line-rot-num[ng-bind*="Team2RotNum"] ::textone'
+    away_team:   'css:span[ng-bind*="Team1ID"] ::textone'
+    home_team:   'css:span[ng-bind*="Team2ID"] ::textone'
+
+    # Label anchors (optional capture)
+    label_spread:    "css:span[ng-bind*=\"Translate('Spread')\"] ::textone"
+    label_moneyline: "css:span[ng-bind*=\"Translate('Money_Line')\"] ::textone"
+    label_totals:    "css:span[ng-bind*=\"Translate('Totals')\"] ::textone"
+
+    # Market blocks (raw text capture; parser will split later)
+    spread_raw:    'css:span[ng-bind*="formatLine"] ::textall'
+    moneyline_raw: 'css:span[ng-bind*="formatLine"] ::textall'
+    totals_raw:    'css:span[ng-bind*="formatLine"] ::textall'
+
+  meta:
+    book: overtime
+    league: NFL
+    scope_from_flow:
+      nfl_game: GAME
+      nfl_1h:  1H
+    liveplus: false   # flip to true if you want the Live Plus path in a different flow

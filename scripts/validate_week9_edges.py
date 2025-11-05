@@ -19,10 +19,10 @@ from datetime import datetime
 from typing import Dict, List
 import pandas as pd
 
-from walters_analyzer.power_ratings import PowerRatingsEngine
-from walters_analyzer.situational_factors import SituationalFactorCalculator
-from walters_analyzer.bet_sizing import BetSizeCalculator
-from walters_analyzer.key_numbers import KeyNumberAnalyzer
+from walters.power_ratings import PowerRatingsEngine
+from walters.situational_factors import SituationalFactorCalculator
+from walters.bet_sizing import BetSizeCalculator
+from walters.key_numbers import KeyNumberAnalyzer
 
 
 class Week9Validator:

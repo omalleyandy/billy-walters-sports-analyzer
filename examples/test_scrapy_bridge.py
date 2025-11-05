@@ -15,7 +15,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from walters_analyzer.research import ScrapyBridge
+from walters.research import ScrapyBridge
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel

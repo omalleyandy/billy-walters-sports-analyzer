@@ -1,6 +1,6 @@
 import pytest
 
-from walters_analyzer.settings import SettingsError, reload_settings
+from walters.settings import SettingsError, reload_settings
 
 
 def _clear_env(monkeypatch):

@@ -11,7 +11,7 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from walters_analyzer.weather_fetcher import fetch_game_weather
+from walters.weather_fetcher import fetch_game_weather
 from rich.console import Console
 from rich.table import Table
 

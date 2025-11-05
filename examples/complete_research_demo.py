@@ -17,8 +17,8 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from walters_analyzer.research import ScrapyBridge, ResearchEngine
-from walters_analyzer.core import get_cache_stats
+from walters.research import ScrapyBridge, ResearchEngine
+from walters.core import get_cache_stats
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table

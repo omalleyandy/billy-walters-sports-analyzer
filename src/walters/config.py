@@ -5,7 +5,7 @@ Manages all configuration from environment variables and defaults.
 Following best practices from Scrapy, Playwright, and Python-dotenv.
 
 Usage:
-    from walters_analyzer.config import Config
+    from walters.config import Config
     
     config = Config()
     
@@ -249,7 +249,7 @@ def get_config() -> Config:
         Config instance
     
     Usage:
-        from walters_analyzer.config import get_config
+        from walters.config import get_config
         
         config = get_config()
         if config.ACCUWEATHER_API_KEY:

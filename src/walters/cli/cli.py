@@ -1,5 +1,5 @@
 import argparse, json, sys, pathlib, subprocess
-from walters_analyzer.wkcard import load_card, summarize_card, validate_gates
+from walters.wkcard import load_card, summarize_card, validate_gates
 
 def main():
     parser = argparse.ArgumentParser(prog="walters-analyzer")
@@ -184,8 +184,8 @@ def main():
             sys.exit(1)
     
     elif args.cmd == "scrape-weather":
-        from walters_analyzer.weather_fetcher import fetch_game_weather
-        from walters_analyzer.weather_pipeline import WeatherDataPipeline
+        from walters.weather_fetcher import fetch_game_weather
+        from walters.weather_pipeline import WeatherDataPipeline
         from rich.console import Console
         from rich.table import Table
         

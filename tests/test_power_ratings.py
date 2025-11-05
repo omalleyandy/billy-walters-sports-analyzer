@@ -5,7 +5,7 @@ Tests for Power Rating Engine
 import pytest
 import os
 import tempfile
-from walters_analyzer.power_ratings import (
+from walters.power_ratings import (
     PowerRatingEngine,
     GameResult,
     TeamRating

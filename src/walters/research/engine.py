@@ -7,7 +7,7 @@ Integrates:
 - Phase 1 components (HTTP client, caching, models)
 
 Usage:
-    from walters_analyzer.research import ResearchEngine
+    from walters.research import ResearchEngine
     
     engine = ResearchEngine()
     

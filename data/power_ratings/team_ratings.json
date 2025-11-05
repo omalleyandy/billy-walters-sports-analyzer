@@ -1,5 +1,5 @@
 {
-  "last_updated": "2025-11-01T21:22:50.094800",
+  "last_updated": "2025-11-04T06:00:04.056803",
   "ratings": {
     "nfl:philadelphia eagles": {
       "team": "Philadelphia Eagles",
@@ -175,11 +175,10 @@
     "nfl:miami dolphins": {
       "team": "Miami Dolphins",
       "sport": "nfl",
-      "rating": -8.4,
-      "games_played": 22,
-      "last_updated": "2025-11-01T21:22:50.094382",
+      "rating": -9.32,
+      "games_played": 23,
+      "last_updated": "2025-11-04T06:00:04.056379",
       "rating_history": [
-        -8.53,
         -7.75,
         -7.73,
         -6.54,
@@ -188,7 +187,8 @@
         -8.38,
         -5.88,
         -7.27,
-        -8.4
+        -8.4,
+        -9.32
       ]
     },
     "nfl:new england patriots": {
@@ -555,11 +555,10 @@
     "nfl:baltimore ravens": {
       "team": "Baltimore Ravens",
       "sport": "nfl",
-      "rating": 1.93,
-      "games_played": 20,
-      "last_updated": "2025-11-01T21:22:50.094392",
+      "rating": 2.76,
+      "games_played": 21,
+      "last_updated": "2025-11-04T06:00:04.056394",
       "rating_history": [
-        0.67,
         0.66,
         2.96,
         2.62,
@@ -568,7 +567,8 @@
         -2.11,
         -0.35,
         0.91,
-        1.93
+        1.93,
+        2.76
       ]
     },
     "nfl:chicago bears": {

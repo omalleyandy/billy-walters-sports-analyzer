@@ -8,7 +8,7 @@ Provides:
 - Resource cleanup on shutdown
 
 Usage:
-    from walters_analyzer.core.http_client import async_get, async_post
+    from walters.core.http_client import async_get, async_post
     
     # GET request
     response = await async_get("https://api.example.com", params={'key': 'value'})

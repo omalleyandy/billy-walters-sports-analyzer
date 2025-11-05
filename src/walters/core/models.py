@@ -8,7 +8,7 @@ All dataclasses and enums consolidated in one place for:
 - Improved IDE autocomplete
 
 Usage:
-    from walters_analyzer.core.models import (
+    from walters.core.models import (
         TeamRating,
         GameResult,
         GameContext,
@@ -349,7 +349,7 @@ if __name__ == "__main__":
     
     print("\nUsage Example:")
     print("""
-    from walters_analyzer.core.models import TeamRating, BetRecommendation
+    from walters.core.models import TeamRating, BetRecommendation
     
     # Create a team rating
     chiefs = TeamRating(

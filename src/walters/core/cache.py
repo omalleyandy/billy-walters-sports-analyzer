@@ -8,7 +8,7 @@ Provides decorator-based caching with TTL (time-to-live) to:
 - Avoid redundant data fetching
 
 Usage:
-    from walters_analyzer.core.cache import cache_weather_data, cache_injury_data
+    from walters.core.cache import cache_weather_data, cache_injury_data
     
     @cache_weather_data(ttl=1800)  # Cache for 30 minutes
     async def fetch_weather(city: str):
@@ -23,7 +23,7 @@ Usage:
     weather2 = await fetch_weather("Buffalo")  # ~1ms
 
 Cache Statistics:
-    from walters_analyzer.core.cache import get_cache_stats
+    from walters.core.cache import get_cache_stats
     
     stats = get_cache_stats()
     print(f"Cached items: {stats['size']}")

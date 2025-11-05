@@ -26,8 +26,8 @@ from datetime import datetime
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from walters_analyzer.power_ratings import PowerRatingEngine, GameResult
-from walters_analyzer.nfl_data import (
+from walters.power_ratings import PowerRatingEngine, GameResult
+from walters.nfl_data import (
     NFLGame,
     load_games_from_jsonl,
     filter_completed_games,

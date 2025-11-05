@@ -11,9 +11,9 @@ Run: uv run python examples/quick_wins_demo.py
 
 import asyncio
 import time
-from walters_analyzer.core.http_client import async_get, cleanup_http_client
-from walters_analyzer.core.cache import cache_weather_data, get_cache_stats, clear_cache
-from walters_analyzer.core.models import TeamRating, BetRecommendation, BetType
+from walters.core.http_client import async_get, cleanup_http_client
+from walters.core.cache import cache_weather_data, get_cache_stats, clear_cache
+from walters.core.models import TeamRating, BetRecommendation, BetType
 
 
 # ============================================================================
@@ -164,7 +164,7 @@ def demo_models():
     print(f"  Bet: ${bet.bet_amount}")
     print(f"  Edge: {bet.edge_percentage}%")
     
-    print("\n[RESULT] All models accessible from walters_analyzer.core.models")
+    print("\n[RESULT] All models accessible from walters.core.models")
     print("  - Single import location")
     print("  - Easy to discover")
     print("  - Better IDE autocomplete")
@@ -215,7 +215,7 @@ async def run_complete_demo():
         print("\n[NEXT STEPS]")
         print("  - Add @cache_weather_data to weather_fetcher.py")
         print("  - Update weather_fetcher.py to use async_get()")
-        print("  - Import models from walters_analyzer.core.models")
+        print("  - Import models from walters.core.models")
         
         print("\n" + "=" * 60)
         print("[SUCCESS] Quick Wins implementation complete!")

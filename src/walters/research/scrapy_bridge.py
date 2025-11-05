@@ -12,7 +12,7 @@ Key Features:
 - Optionally trigger new scrapes programmatically
 
 Usage:
-    from walters_analyzer.research import ScrapyBridge
+    from walters.research import ScrapyBridge
     
     bridge = ScrapyBridge()
     
@@ -458,8 +458,8 @@ if __name__ == "__main__":
     from rich.console import Console
     from rich.table import Table
     
-    # Now we can import from walters_analyzer
-    from walters_analyzer.core.models import InjuryReport
+    # Now we can import from walters
+    from walters.core.models import InjuryReport
     
     console = Console()
     
