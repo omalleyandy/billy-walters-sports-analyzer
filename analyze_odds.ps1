@@ -36,9 +36,9 @@ Write-Host ""
 
 # Create unique game identifier for deduplication
 $uniqueGames = $oddsData | ForEach-Object {
-    $away = $_.teams.away
-    $home = $_.teams.home
-    "$away at $home"
+    $awayTeam = $_.teams.away
+    $homeTeam = $_.teams.home
+    "$awayTeam at $homeTeam"
 } | Select-Object -Unique
 
 Write-Host "Unique matchups: $($uniqueGames.Count)`n" -ForegroundColor Yellow
