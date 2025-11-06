@@ -213,6 +213,7 @@ class PregameOddsSpider(scrapy.Spider):
     async def _perform_login(self, page: Page) -> bool:
         """
         Perform login to overtime.ag if credentials are available.
+        Login fields are on the sports page itself, not a separate page.
         Returns True if login successful or already logged in, False otherwise.
         """
         # Support both OV_CUSTOMER_ID and OV_ID
@@ -221,25 +222,12 @@ class PregameOddsSpider(scrapy.Spider):
         password = os.getenv("OV_CUSTOMER_PASSWORD") or os.getenv("OV_PASSWORD")
 
         if not customer_id or not password:
-            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID/OV_ID, OV_CUSTOMER_PASSWORD/OV_PASSWORD)")
+            self.logger.info("No login credentials - continuing without login")
             return False
 
         try:
-            # Check if already logged in by looking for logout indicator
-            try:
-                await page.wait_for_selector("text=/logout/i", timeout=2000)
-                self.logger.info("Already logged in")
-                return True
-            except Exception:
-                pass
-
-            # Navigate to login page
-            self.logger.info("Navigating to login page...")
-            await page.goto("https://overtime.ag/login", wait_until="domcontentloaded", timeout=30_000)
-            await page.wait_for_timeout(2000)
-
-            # Fill in credentials using correct XPath selectors
-            self.logger.info("Filling login credentials...")
+            # Login fields are right on the sports page - no navigation needed
+            self.logger.info("Attempting login on sports page...")
 
             # Customer ID field: //input[@placeholder='Customer Id']
             customer_id_input = await page.wait_for_selector("xpath=//input[@placeholder='Customer Id']", timeout=5000)
@@ -258,22 +246,14 @@ class PregameOddsSpider(scrapy.Spider):
             if login_btn:
                 await login_btn.click()
                 self.logger.info("✓ Login button clicked")
-                await page.wait_for_timeout(3000)
+                await page.wait_for_timeout(2000)
+                self.logger.info("✓ Login completed")
+                return True
 
-                # Check for successful login
-                current_url = page.url
-                if "login" not in current_url.lower():
-                    self.logger.info("✓ Login successful")
-                    return True
-                else:
-                    self.logger.error("Login failed - still on login page")
-                    return False
-            else:
-                self.logger.error("Login button not found")
-                return False
+            return False
 
         except Exception as e:
-            self.logger.error(f"Login error: {e}", exc_info=True)
+            self.logger.warning(f"Login not available or failed: {e}")
             return False
 
     async def parse_main(self, response: Response):
@@ -309,15 +289,8 @@ class PregameOddsSpider(scrapy.Spider):
             # Continue anyway - we're already on the page from start()
 
         # Attempt login (optional - will skip if no credentials)
-        login_success = await self._perform_login(page)
-        if login_success:
-            # If login worked, navigate back to sports
-            self.logger.info("Navigating back to sports page after login...")
-            await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=60_000)
-            await page.wait_for_timeout(3000)
-        else:
-            # No login or login failed - continue on current page
-            self.logger.info("Continuing without login")
+        # Login fields are on the sports page, no need to navigate away
+        await self._perform_login(page)
 
         # Take snapshot for debugging
         os.makedirs("snapshots", exist_ok=True)
