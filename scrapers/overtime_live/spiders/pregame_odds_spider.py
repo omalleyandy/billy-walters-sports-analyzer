@@ -13,10 +13,18 @@ from playwright.async_api import Page
 
 # Stealth mode to bypass Cloudflare
 try:
-    from playwright_stealth import stealth_async
-    STEALTH_AVAILABLE = True
+    # Try v2.0.0+ API first
+    try:
+        from playwright_stealth import Stealth
+        stealth_async = lambda page: Stealth().apply_stealth_async(page)
+        STEALTH_AVAILABLE = True
+    except (ImportError, AttributeError):
+        # Fall back to v1.0.6 API
+        from playwright_stealth import stealth_async
+        STEALTH_AVAILABLE = True
 except ImportError:
     STEALTH_AVAILABLE = False
+    stealth_async = None
     print("⚠ playwright-stealth not installed. Run: uv pip install playwright-stealth")
 
 # Local modules
