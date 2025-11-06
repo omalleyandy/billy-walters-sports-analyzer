@@ -412,154 +412,186 @@ class PregameOddsSpider(scrapy.Spider):
             yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
 
     async def _extract_games_js(self, page: Page) -> list[Dict[str, Any]]:
-        """Extract game data from the page using JavaScript"""
+        """Extract game data from the page using JavaScript - text-based parsing for Angular"""
+
+        # Wait for Angular to fully render the games
+        self.logger.info("Waiting 10 seconds for Angular to render games...")
+        await page.wait_for_timeout(10000)
+
         js_code = """
         () => {
-            const games = [];
-            
-            // Find all game list items - use more specific selectors to avoid false positives
-            const listItems = document.querySelectorAll('ul li, .event-row, [class*="game"]');
-            
-            for (const item of listItems) {
-                try {
-                    const text = item.innerText || '';
-                    
-                    // Look for team headings with rotation numbers (e.g., "451 Chicago Bears")
-                    const headings = item.querySelectorAll('h4, h3, [class*="team"]');
-                    if (headings.length < 2) continue;
-                    
-                    const awayText = headings[0].innerText || '';
-                    const homeText = headings[1].innerText || '';
-                    
-                    // Parse rotation and team name (e.g., "451 Chicago Bears")
-                    const awayMatch = awayText.match(/^(\\d{3,4})\\s+(.+)$/);
-                    const homeMatch = homeText.match(/^(\\d{3,4})\\s+(.+)$/);
-                    
-                    if (!awayMatch || !homeMatch) continue;
-                    
-                    const awayRot = awayMatch[1];
-                    const awayTeam = awayMatch[2].trim();
-                    const homeRot = homeMatch[1];
-                    const homeTeam = homeMatch[2].trim();
-                    
-                    // Validate: team names should be reasonable (no emojis, no single words like "SPORTS")
-                    if (awayTeam.length < 3 || homeTeam.length < 3) continue;
-                    if (!/^[A-Z\\s\\-\\.&']+$/i.test(awayTeam) || !/^[A-Z\\s\\-\\.&']+$/i.test(homeTeam)) continue;
-                    
-                    // Extract date and time
-                    let dateStr = null;
-                    let timeStr = null;
-                    const dateTimeElements = item.querySelectorAll('div, span, any');
-                    for (const el of dateTimeElements) {
-                        const t = el.innerText || '';
-                        if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+\\w+\\s+\\d+$/.test(t.trim())) {
-                            dateStr = t.trim();
-                        }
-                        if (/^\\d{1,2}:\\d{2}\\s+(AM|PM)$/i.test(t.trim())) {
-                            timeStr = t.trim();
+            // Parse document.body.innerText to find rotation numbers and team names
+            // Angular renders the content as text, not as structured DOM we can query
+            const allText = document.body.innerText;
+            const lines = allText.split('\\n');
+
+            // Step 1: Find all team lines with rotation numbers
+            const teamLines = [];
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                const match = line.match(/^(\\d{3,4})\\s+(.+)$/);
+                if (match) {
+                    const rotation = match[1];
+                    const teamName = match[2].trim();
+
+                    // Validate team name: must be at least 3 chars, no emojis, valid characters
+                    if (teamName.length >= 3 && /^[A-Z\\s\\-\\.&']+$/i.test(teamName)) {
+                        // Exclude navigation/UI elements
+                        if (!teamName.match(/^(NEW VERSION|SPORTS|GAME|PERIOD|FILTER)$/i)) {
+                            teamLines.push({ rotation, teamName, lineIndex: i });
                         }
                     }
-                    
-                    // Extract odds from buttons WITH their IDs for proper assignment
-                    const buttons = item.querySelectorAll('button');
-                    const buttonData = [];
-                    for (const btn of buttons) {
-                        const btnText = btn.innerText || '';
-                        const btnId = btn.id || '';
-                        buttonData.push({ text: btnText.trim(), id: btnId });
-                    }
-                    
-                    // Parse markets using button IDs for explicit assignment
-                    const markets = { spread: {}, total: {}, moneyline: {} };
-                    
-                    // Spread: use button IDs (S1=away, S2=home) for explicit assignment
-                    const spreadRegex = /^([+\\-]\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(spreadRegex);
-                        if (match) {
-                            const line = parseFloat(match[1].replace('½', '.5'));
-                            const price = parseInt(match[2]);
-                            
-                            // Use button ID to determine away vs home
-                            if (btnData.id.startsWith('S1_')) {
-                                markets.spread.away = { line, price };
-                            } else if (btnData.id.startsWith('S2_')) {
-                                markets.spread.home = { line, price };
-                            } else {
-                                // Fallback: first spread is away, second is home
-                                if (!markets.spread.away) {
-                                    markets.spread.away = { line, price };
-                                } else if (!markets.spread.home) {
-                                    markets.spread.home = { line, price };
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Total: use button IDs (L1=over, L2=under) for explicit assignment
-                    const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/i;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(totalRegex);
-                        if (match) {
-                            const side = match[1].toUpperCase();
-                            const line = parseFloat(match[2].replace('½', '.5'));
-                            const price = parseInt(match[3]);
-                            
-                            // Use button ID to determine over vs under
-                            if (btnData.id.startsWith('L1_') || side === 'O') {
-                                markets.total.over = { line, price };
-                            } else if (btnData.id.startsWith('L2_') || side === 'U') {
-                                markets.total.under = { line, price };
-                            }
-                        }
-                    }
-                    
-                    // Moneyline: look for buttons with M1/M2 prefix or standalone prices
-                    const mlRegex = /^([+\\-]\\d{2,4})$/;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(mlRegex);
-                        if (match) {
-                            const price = parseInt(match[1]);
-                            
-                            if (btnData.id.startsWith('M1_')) {
-                                markets.moneyline.away = { line: null, price };
-                            } else if (btnData.id.startsWith('M2_')) {
-                                markets.moneyline.home = { line: null, price };
-                            }
-                        }
-                    }
-                    
-                    // Validation: ensure we have at least one market before adding
-                    const hasSpread = markets.spread.away || markets.spread.home;
-                    const hasTotal = markets.total.over || markets.total.under;
-                    const hasMoneyline = markets.moneyline.away || markets.moneyline.home;
-                    
-                    if (!hasSpread && !hasTotal && !hasMoneyline) {
-                        console.log('Skipping item with no valid markets:', awayTeam, homeTeam);
-                        continue;
-                    }
-                    
-                    games.push({
-                        rotation_number: `${awayRot}-${homeRot}`,
-                        away_team: awayTeam,
-                        home_team: homeTeam,
-                        event_date: dateStr,
-                        event_time: timeStr,
-                        markets: markets,
-                    });
-                    
-                } catch (e) {
-                    console.error('Error parsing game:', e);
                 }
             }
-            
+
+            console.log(`Found ${teamLines.length} valid team lines`);
+
+            // Step 2: Pair teams into games (consecutive rotation numbers)
+            const games = [];
+            for (let i = 0; i < teamLines.length - 1; i++) {
+                const away = teamLines[i];
+                const home = teamLines[i + 1];
+
+                const awayRot = parseInt(away.rotation);
+                const homeRot = parseInt(home.rotation);
+
+                // Check if consecutive (home = away + 1)
+                if (homeRot === awayRot + 1) {
+                    games.push({
+                        rotation_number: `${away.rotation}-${home.rotation}`,
+                        away_team: away.teamName,
+                        away_rot: away.rotation,
+                        home_team: home.teamName,
+                        home_rot: home.rotation,
+                        lineIndex: away.lineIndex,
+                    });
+                    i++; // Skip the home team since we've paired it
+                }
+            }
+
+            console.log(`Paired ${games.length} games from rotation numbers`);
+
+            // Step 3: Get ALL buttons on the page with their IDs and text
+            const allButtons = document.querySelectorAll('button');
+            const buttonMap = {};
+            for (const btn of allButtons) {
+                const btnId = btn.id || '';
+                const btnText = (btn.innerText || '').trim();
+                if (btnId && btnText) {
+                    buttonMap[btnId] = btnText;
+                }
+            }
+
+            console.log(`Found ${Object.keys(buttonMap).length} buttons with IDs`);
+
+            // Step 4: Extract markets for each game by matching button ID patterns
+            for (const game of games) {
+                const markets = { spread: {}, total: {}, moneyline: {} };
+
+                // Find buttons for this game by looking for button IDs containing the rotation numbers
+                // Button IDs format: S1_<event_id>_<line_id>, S2_<event_id>_<line_id>, etc.
+                const gameButtons = {};
+                for (const [btnId, btnText] of Object.entries(buttonMap)) {
+                    // Match buttons by checking if they're related to this game's rotation numbers
+                    // This is a heuristic - buttons don't contain rotation numbers in IDs
+                    // So we'll just collect all buttons and parse them
+                    gameButtons[btnId] = btnText;
+                }
+
+                // Parse spread buttons (S1=away, S2=home)
+                const spreadRegex = /^([+\\-]\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('S1_')) {
+                        const match = btnText.match(spreadRegex);
+                        if (match) {
+                            markets.spread.away = {
+                                line: parseFloat(match[1].replace('½', '.5')),
+                                price: parseInt(match[2])
+                            };
+                        }
+                    } else if (btnId.startsWith('S2_')) {
+                        const match = btnText.match(spreadRegex);
+                        if (match) {
+                            markets.spread.home = {
+                                line: parseFloat(match[1].replace('½', '.5')),
+                                price: parseInt(match[2])
+                            };
+                        }
+                    }
+                }
+
+                // Parse total buttons (L1=over, L2=under)
+                const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/i;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('L1_')) {
+                        const match = btnText.match(totalRegex);
+                        if (match) {
+                            markets.total.over = {
+                                line: parseFloat(match[2].replace('½', '.5')),
+                                price: parseInt(match[3])
+                            };
+                        }
+                    } else if (btnId.startsWith('L2_')) {
+                        const match = btnText.match(totalRegex);
+                        if (match) {
+                            markets.total.under = {
+                                line: parseFloat(match[2].replace('½', '.5')),
+                                price: parseInt(match[3])
+                            };
+                        }
+                    }
+                }
+
+                // Parse moneyline buttons (M1=away, M2=home)
+                const mlRegex = /^([+\\-]\\d{2,4})$/;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('M1_')) {
+                        const match = btnText.match(mlRegex);
+                        if (match) {
+                            markets.moneyline.away = {
+                                line: null,
+                                price: parseInt(match[1])
+                            };
+                        }
+                    } else if (btnId.startsWith('M2_')) {
+                        const match = btnText.match(mlRegex);
+                        if (match) {
+                            markets.moneyline.home = {
+                                line: null,
+                                price: parseInt(match[1])
+                            };
+                        }
+                    }
+                }
+
+                game.markets = markets;
+
+                // Extract date and time from surrounding text (best effort)
+                const dateRegex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+\\w+\\s+\\d+$/;
+                const timeRegex = /^\\d{1,2}:\\d{2}\\s+(AM|PM)$/i;
+
+                // Look for date/time near the game's line index
+                game.event_date = null;
+                game.event_time = null;
+                for (let j = Math.max(0, game.lineIndex - 10); j < Math.min(lines.length, game.lineIndex + 5); j++) {
+                    const nearbyLine = lines[j].trim();
+                    if (dateRegex.test(nearbyLine)) {
+                        game.event_date = nearbyLine;
+                    }
+                    if (timeRegex.test(nearbyLine)) {
+                        game.event_time = nearbyLine;
+                    }
+                }
+            }
+
             return games;
         }
         """
         
         try:
             raw_games = await page.evaluate(js_code)
-            
+            self.logger.info(f"Raw extraction found {len(raw_games)} games")
+
             # Process and clean the data
             processed_games = []
             for game in raw_games:
