@@ -101,7 +101,12 @@ class OvertimeLiveSpider(scrapy.Spider):
             **({"proxy": {"server": _proxy_server}} if _proxy_server else {}),
         },
         "DEFAULT_REQUEST_HEADERS": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+        },
+        "PLAYWRIGHT_CONTEXT_OPTIONS": {
+            "viewport": {"width": 1920, "height": 1080},
+            "locale": "en-US",
+            "timezone_id": "America/New_York",
         },
         "DOWNLOAD_HANDLERS": {
             "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -116,11 +121,10 @@ class OvertimeLiveSpider(scrapy.Spider):
         "AUTOTHROTTLE_START_DELAY": 1.0,
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
-        # Retry configuration – back off on 429/403 and other transient
-        # errors.  You can tune these values via settings or environment
-        # variables.
+        # Retry configuration – back off on 429/403/407 and other transient
+        # errors.  407 = Proxy Authentication Required (common with rotating proxies)
         "RETRY_TIMES": 5,
-        "RETRY_HTTP_CODES": [429, 403, 500, 502, 503, 504],
+        "RETRY_HTTP_CODES": [403, 407, 429, 500, 502, 503, 504],
         "RETRY_BACKOFF_BASE": 2,
         "RETRY_BACKOFF_MAX": 60,
     }
@@ -175,6 +179,55 @@ class OvertimeLiveSpider(scrapy.Spider):
                 pass
 
     # -------- Helpers --------
+    async def _verify_proxy_ip(self, page: Page) -> bool:
+        """
+        Verify the proxy is working by checking the external IP.
+        Returns True if proxy verification successful, False otherwise.
+        """
+        proxy_url = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
+        if not proxy_url:
+            return True  # No proxy configured, skip verification
+
+        try:
+            self.logger.info("Verifying proxy IP...")
+            await page.goto("https://ipinfo.io/json", timeout=15_000)
+
+            # Extract IP info from the page
+            ip_info = await page.evaluate("""
+                () => {
+                    try {
+                        const pre = document.querySelector('pre');
+                        if (pre) {
+                            const data = JSON.parse(pre.innerText);
+                            return {
+                                ip: data.ip,
+                                city: data.city,
+                                region: data.region,
+                                country: data.country,
+                                org: data.org
+                            };
+                        }
+                    } catch (e) {
+                        return null;
+                    }
+                    return null;
+                }
+            """)
+
+            if ip_info:
+                self.logger.info(
+                    f"✓ Proxy IP verified: {ip_info.get('ip')} "
+                    f"({ip_info.get('city')}, {ip_info.get('region')}, {ip_info.get('country')})"
+                )
+                return True
+            else:
+                self.logger.warning("⚠ Could not parse IP info")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"✗ Proxy verification failed: {e}")
+            return False
+
     async def _perform_login(self, page: Page) -> bool:
         """
         Perform login to overtime.ag if credentials are available.
@@ -595,7 +648,14 @@ class OvertimeLiveSpider(scrapy.Spider):
     # -------- Scrapy callback --------
     async def parse_board(self, response: Response):
         page: Page = response.meta["playwright_page"]
-        
+
+        # Verify proxy IP if configured
+        await self._verify_proxy_ip(page)
+
+        # Navigate to overtime.ag after IP check
+        await page.goto("https://overtime.ag", timeout=60_000)
+        await page.wait_for_timeout(1000)
+
         # Attempt login first
         await self._perform_login(page)
         

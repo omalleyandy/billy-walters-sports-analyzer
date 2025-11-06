@@ -68,15 +68,25 @@ class PregameOddsSpider(scrapy.Spider):
 
     # Allow spider argument to control which sport(s) to scrape
     # Options: "nfl", "cfb", "both" (default: "both")
+    # Configure proxy from environment
+    _proxy_url = os.getenv("PROXY_URL") or os.getenv("OVERTIME_PROXY")
+    _proxy_config = {"proxy": {"server": _proxy_url}} if _proxy_url else {}
+
     custom_settings = {
         "BOT_NAME": "overtime_pregame",
         "PLAYWRIGHT_BROWSER_TYPE": "chromium",
         "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 90_000,
         "PLAYWRIGHT_LAUNCH_OPTIONS": {
             "headless": True,
+            **_proxy_config,
+        },
+        "PLAYWRIGHT_CONTEXT_OPTIONS": {
+            "viewport": {"width": 1920, "height": 1080},
+            "locale": "en-US",
+            "timezone_id": "America/New_York",
         },
         "DEFAULT_REQUEST_HEADERS": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         },
         "DOWNLOAD_HANDLERS": {
             "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -88,13 +98,22 @@ class PregameOddsSpider(scrapy.Spider):
         "AUTOTHROTTLE_START_DELAY": 1.0,
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
-        "RETRY_TIMES": 3,
-        "RETRY_HTTP_CODES": [429, 403, 500, 502, 503, 504],
+        "RETRY_TIMES": 5,
+        "RETRY_HTTP_CODES": [403, 407, 429, 500, 502, 503, 504],  # 407 = Proxy Auth Required
+        "RETRY_BACKOFF_BASE": 2,
+        "RETRY_BACKOFF_MAX": 60,
     }
 
     def __init__(self, sport="both", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_sport = sport.lower()  # "nfl", "cfb", or "both"
+
+        # Log proxy configuration
+        if self._proxy_url:
+            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
+            self.logger.info(f"✓ Using residential proxy: {proxy_display}")
+        else:
+            self.logger.warning("⚠ No proxy configured - using direct connection")
 
     async def start(self):
         """Entry point for the spider"""
@@ -122,6 +141,54 @@ class PregameOddsSpider(scrapy.Spider):
                 await page.close()
             except Exception:
                 pass
+
+    async def _verify_proxy_ip(self, page: Page) -> bool:
+        """
+        Verify the proxy is working by checking the external IP.
+        Returns True if proxy verification successful, False otherwise.
+        """
+        if not self._proxy_url:
+            return True  # No proxy configured, skip verification
+
+        try:
+            self.logger.info("Verifying proxy IP...")
+            await page.goto("https://ipinfo.io/json", timeout=15_000)
+
+            # Extract IP info from the page
+            ip_info = await page.evaluate("""
+                () => {
+                    try {
+                        const pre = document.querySelector('pre');
+                        if (pre) {
+                            const data = JSON.parse(pre.innerText);
+                            return {
+                                ip: data.ip,
+                                city: data.city,
+                                region: data.region,
+                                country: data.country,
+                                org: data.org
+                            };
+                        }
+                    } catch (e) {
+                        return null;
+                    }
+                    return null;
+                }
+            """)
+
+            if ip_info:
+                self.logger.info(
+                    f"✓ Proxy IP verified: {ip_info.get('ip')} "
+                    f"({ip_info.get('city')}, {ip_info.get('region')}, {ip_info.get('country')})"
+                )
+                return True
+            else:
+                self.logger.warning("⚠ Could not parse IP info")
+                return False
+
+        except Exception as e:
+            self.logger.error(f"✗ Proxy verification failed: {e}")
+            return False
 
     async def _perform_login(self, page: Page) -> bool:
         """
@@ -184,7 +251,14 @@ class PregameOddsSpider(scrapy.Spider):
     async def parse_main(self, response: Response):
         """Main parsing logic - handles login and sport selection"""
         page: Page = response.meta["playwright_page"]
-        
+
+        # Verify proxy IP if configured
+        await self._verify_proxy_ip(page)
+
+        # Navigate back to sports page after IP check
+        await page.goto("https://overtime.ag/sports#/", timeout=60_000)
+        await page.wait_for_timeout(1000)
+
         # Attempt login
         await self._perform_login(page)
         
