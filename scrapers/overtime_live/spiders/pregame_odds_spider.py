@@ -86,14 +86,20 @@ class PregameOddsSpider(scrapy.Spider):
     # Options: "nfl", "cfb", "both" (default: "both")
     # Configure proxy from environment
     _proxy_url = os.getenv("PROXY_URL") or os.getenv("OVERTIME_PROXY")
+
+    # If we have a custom proxy URL, use it. Otherwise, let Playwright use system proxy naturally (don't configure anything).
     _proxy_config = {"proxy": {"server": _proxy_url}} if _proxy_url else {}
 
     custom_settings = {
         "BOT_NAME": "overtime_pregame",
         "PLAYWRIGHT_BROWSER_TYPE": "chromium",
         "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 120_000,  # Increased to 120s for proxy
+        # Disable header processing completely - let browser handle everything naturally
+        "PLAYWRIGHT_PROCESS_REQUEST_HEADERS": None,
+        "PLAYWRIGHT_ABORT_REQUEST": None,
         "PLAYWRIGHT_LAUNCH_OPTIONS": {
             "headless": True,
+            # Only set proxy if we have a custom one, otherwise let system proxy work naturally
             **_proxy_config,
         },
         "PLAYWRIGHT_CONTEXT_OPTIONS": {
@@ -134,6 +140,16 @@ class PregameOddsSpider(scrapy.Spider):
         else:
             self.logger.warning("⚠ No proxy configured - using direct connection")
 
+    async def _apply_stealth_init(self, page: Page, request):
+        """Apply stealth mode before navigation (called by scrapy-playwright)"""
+        if STEALTH_AVAILABLE:
+            self.logger.info("🥷 Applying stealth mode before navigation...")
+            try:
+                await stealth_async(page)
+                self.logger.info("✓ Stealth mode activated")
+            except Exception as e:
+                self.logger.warning(f"Failed to apply stealth: {e}")
+
     async def start(self):
         """Entry point for the spider"""
         # Use /sports/ instead of /sports#/ for simpler routing
@@ -147,9 +163,14 @@ class PregameOddsSpider(scrapy.Spider):
                 "timeout": 120_000,  # Increased to 120s for proxy
             },
             "playwright_page_methods": [
-                PageMethod("wait_for_timeout", 3000),  # Extra wait for Cloudflare/JS
+                # Apply stealth BEFORE navigation
+                PageMethod("evaluate", "() => {}"),  # Dummy method to trigger page creation
             ],
         }
+
+        # Use page_init callback to apply stealth before navigation
+        if STEALTH_AVAILABLE:
+            meta["playwright_page_init_callback"] = self._apply_stealth_init
 
         yield scrapy.Request(url, meta=meta, callback=self.parse_main, errback=self.errback)
 
@@ -260,16 +281,8 @@ class PregameOddsSpider(scrapy.Spider):
         """Main parsing logic - handles login and sport selection"""
         page: Page = response.meta["playwright_page"]
 
-        # Apply stealth mode to bypass Cloudflare detection
-        if STEALTH_AVAILABLE:
-            self.logger.info("🥷 Applying stealth mode to bypass Cloudflare...")
-            try:
-                await stealth_async(page)
-                self.logger.info("✓ Stealth mode activated")
-            except Exception as e:
-                self.logger.warning(f"Failed to apply stealth: {e}")
-        else:
-            self.logger.warning("⚠ Stealth mode not available - may be blocked by Cloudflare")
+        # Stealth mode already applied before navigation via playwright_page_init_callback
+        self.logger.info("✓ Page loaded successfully (stealth mode applied during init)")
 
         # Skip IP verification - it's slow and causes timeouts with Cloudflare
         # The simple proxy test confirms proxy works, so we skip this step
@@ -277,16 +290,13 @@ class PregameOddsSpider(scrapy.Spider):
             proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
             self.logger.info(f"Using proxy: {proxy_display} (skipping IP verification to avoid Cloudflare)")
 
-        # Already on sports page from start() - just wait for it to settle
-        self.logger.info("Waiting for sports page to load...")
+        # Wait for page to settle after loading
+        self.logger.info("Waiting for page to settle...")
         try:
-            # Wait for page to be interactive
-            await page.wait_for_load_state("domcontentloaded", timeout=30_000)
-            await page.wait_for_timeout(3000)  # Extra wait for Cloudflare/JS
-            self.logger.info("✓ Sports page loaded")
+            await page.wait_for_timeout(2000)  # Wait for JavaScript to finish
+            self.logger.info("✓ Page settled")
         except Exception as e:
-            self.logger.warning(f"Load state timeout (might be OK): {e}")
-            # Continue anyway - we're already on the page from start()
+            self.logger.warning(f"Wait timeout (might be OK): {e}")
 
         # Attempt login (optional - will skip if no credentials)
         # Login fields are on the sports page, no need to navigate away
@@ -323,23 +333,40 @@ class PregameOddsSpider(scrapy.Spider):
             selector = "xpath=//label[@for='gl_Football_NFL_G']"
             league = "NFL"
             sport_name = "nfl"
+            check_text = "FOOTBALL-NFL"
         else:  # cfb
             # College Football selector: //label[@for='gl_Football_College_Football_G']
             selector = "xpath=//label[@for='gl_Football_College_Football_G']"
             league = "NCAAF"
             sport_name = "college_football"
+            check_text = "FOOTBALL-COLLEGE"
 
         try:
-            # Click sport selector using XPath
-            self.logger.info(f"Clicking {sport.upper()} filter...")
-            sport_label = await page.wait_for_selector(selector, timeout=10_000)
-            if sport_label:
-                await sport_label.click()
-                self.logger.info(f"✓ {sport.upper()} filter clicked")
-                await page.wait_for_timeout(2500)
+            # Check if games are already visible (page might show them by default)
+            self.logger.info(f"Checking if {sport.upper()} games are already visible...")
+            page_content = await page.content()
+            games_already_visible = check_text in page_content
+
+            if games_already_visible:
+                self.logger.info(f"✓ {sport.upper()} games already visible, skipping filter click")
             else:
-                self.logger.error(f"Could not find {sport.upper()} filter")
-                return
+                # Click sport selector using XPath
+                self.logger.info(f"Clicking {sport.upper()} filter...")
+                try:
+                    sport_label = await page.wait_for_selector(selector, timeout=10_000)
+                    if sport_label:
+                        # Check if element is enabled before clicking
+                        is_enabled = await sport_label.evaluate("el => !el.disabled && !el.hasAttribute('disabled')")
+                        if is_enabled:
+                            await sport_label.click()
+                            self.logger.info(f"✓ {sport.upper()} filter clicked")
+                            await page.wait_for_timeout(2500)
+                        else:
+                            self.logger.warning(f"⚠ {sport.upper()} filter element found but disabled, continuing anyway")
+                    else:
+                        self.logger.warning(f"Could not find {sport.upper()} filter, continuing anyway")
+                except Exception as filter_e:
+                    self.logger.warning(f"Filter click failed ({filter_e}), continuing anyway")
 
             # Ensure we're on the "GAME" period (full game), not 1H/2H/Quarters
             self.logger.info(f"Selecting GAME period for {sport.upper()}...")
