@@ -75,7 +75,7 @@ class PregameOddsSpider(scrapy.Spider):
     custom_settings = {
         "BOT_NAME": "overtime_pregame",
         "PLAYWRIGHT_BROWSER_TYPE": "chromium",
-        "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 90_000,
+        "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 120_000,  # Increased to 120s for proxy
         "PLAYWRIGHT_LAUNCH_OPTIONS": {
             "headless": True,
             **_proxy_config,
@@ -118,16 +118,16 @@ class PregameOddsSpider(scrapy.Spider):
     async def start(self):
         """Entry point for the spider"""
         url = "https://overtime.ag/sports#/"
-        
+
         meta = {
             "playwright": True,
             "playwright_include_page": True,
             "playwright_page_goto_kwargs": {
                 "wait_until": "domcontentloaded",
-                "timeout": 60_000,
+                "timeout": 120_000,  # Increased to 120s for proxy
             },
             "playwright_page_methods": [
-                PageMethod("wait_for_timeout", 1000),
+                PageMethod("wait_for_timeout", 2000),  # Extra wait for Cloudflare
             ],
         }
 
@@ -152,7 +152,7 @@ class PregameOddsSpider(scrapy.Spider):
 
         try:
             self.logger.info("Verifying proxy IP...")
-            await page.goto("https://ipinfo.io/json", timeout=15_000)
+            await page.goto("https://ipinfo.io/json", timeout=30_000)  # Increased for proxy
 
             # Extract IP info from the page
             ip_info = await page.evaluate("""
@@ -253,11 +253,22 @@ class PregameOddsSpider(scrapy.Spider):
         page: Page = response.meta["playwright_page"]
 
         # Verify proxy IP if configured
-        await self._verify_proxy_ip(page)
+        proxy_ok = await self._verify_proxy_ip(page)
+        if not proxy_ok and self._proxy_url:
+            self.logger.warning("Proxy verification failed but continuing anyway...")
 
         # Navigate back to sports page after IP check
-        await page.goto("https://overtime.ag/sports#/", timeout=60_000)
-        await page.wait_for_timeout(1000)
+        self.logger.info("Navigating to overtime.ag sports page...")
+        try:
+            await page.goto("https://overtime.ag/sports#/", timeout=120_000)  # Increased timeout
+            await page.wait_for_timeout(2000)  # Extra wait for Cloudflare/JS
+            self.logger.info("Successfully loaded sports page")
+        except Exception as e:
+            self.logger.error(f"Failed to load sports page: {e}")
+            # Try one more time with networkidle
+            self.logger.info("Retrying with networkidle strategy...")
+            await page.goto("https://overtime.ag/sports#/", wait_until="networkidle", timeout=120_000)
+            await page.wait_for_timeout(3000)
 
         # Attempt login
         await self._perform_login(page)
