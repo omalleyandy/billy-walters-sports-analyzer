@@ -56,15 +56,24 @@ uv run playwright install chromium
 ```
 
 ### 3. Configure Environment
-Copy `env.template` to `.env` and fill in your credentials:
+Copy `.env.example` to `.env` and fill in your credentials:
 ```bash
-cp env.template .env
-# Edit .env with your overtime.ag credentials
+cp .env.example .env
+# Edit .env with your overtime.ag credentials and optional proxy
 ```
 
 Required environment variables:
 - `OV_CUSTOMER_ID`: Your overtime.ag customer ID
 - `OV_CUSTOMER_PASSWORD`: Your overtime.ag password
+
+Optional (recommended for stealth):
+- `PROXY_URL`: Your residential proxy for Cloudflare bypass and IP rotation
+
+**Proxy Setup:** See [PROXY_SETUP.md](PROXY_SETUP.md) for complete proxy configuration guide including:
+- Residential proxy setup (10 rotating IPs)
+- Cloudflare bypass configuration
+- IP verification and monitoring
+- Troubleshooting proxy issues
 
 ### 4. Running Tests (Optional)
 ```bash
@@ -206,6 +215,13 @@ scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
 - Check `snapshots/` directory for debug screenshots
 - Review logs for timeout or selector errors
 - Ensure stable internet connection
+- **Blocked by Cloudflare?** Configure a residential proxy (see [PROXY_SETUP.md](PROXY_SETUP.md))
+
+### Proxy Issues
+- See [PROXY_SETUP.md](PROXY_SETUP.md) for complete troubleshooting guide
+- Verify proxy with: `curl -x "http://user:pass@proxy:port" "https://ipinfo.io/json"`
+- Check logs for "Proxy IP verified" message
+- Ensure `PROXY_URL` is set correctly in `.env`
 
 ## Collaboration Permissions Quick Checklist
 

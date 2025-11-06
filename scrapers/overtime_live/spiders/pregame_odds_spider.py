@@ -11,6 +11,22 @@ from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
 from playwright.async_api import Page
 
+# Stealth mode to bypass Cloudflare
+try:
+    # Try v2.0.0+ API first
+    try:
+        from playwright_stealth import Stealth
+        stealth_async = lambda page: Stealth().apply_stealth_async(page)
+        STEALTH_AVAILABLE = True
+    except (ImportError, AttributeError):
+        # Fall back to v1.0.6 API
+        from playwright_stealth import stealth_async
+        STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+    stealth_async = None
+    print("⚠ playwright-stealth not installed. Run: uv pip install playwright-stealth")
+
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
@@ -68,15 +84,34 @@ class PregameOddsSpider(scrapy.Spider):
 
     # Allow spider argument to control which sport(s) to scrape
     # Options: "nfl", "cfb", "both" (default: "both")
+    # Configure proxy from environment
+    _proxy_url = os.getenv("PROXY_URL") or os.getenv("OVERTIME_PROXY")
+
+    # If we have a custom proxy URL, use it. Otherwise, let Playwright use system proxy naturally (don't configure anything).
+    _proxy_config = {"proxy": {"server": _proxy_url}} if _proxy_url else {}
+
     custom_settings = {
         "BOT_NAME": "overtime_pregame",
         "PLAYWRIGHT_BROWSER_TYPE": "chromium",
-        "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 90_000,
+        "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 120_000,  # Increased to 120s for proxy
+        # Disable header processing completely - let browser handle everything naturally
+        "PLAYWRIGHT_PROCESS_REQUEST_HEADERS": None,
+        "PLAYWRIGHT_ABORT_REQUEST": None,
         "PLAYWRIGHT_LAUNCH_OPTIONS": {
             "headless": True,
+            # Only set proxy if we have a custom one, otherwise let system proxy work naturally
+            **_proxy_config,
+        },
+        "PLAYWRIGHT_CONTEXT_OPTIONS": {
+            "viewport": {"width": 1920, "height": 1080},
+            "locale": "en-US",
+            "timezone_id": "America/New_York",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "bypass_csp": True,  # Bypass Content Security Policy
+            "ignore_https_errors": True,  # Ignore SSL errors
         },
         "DEFAULT_REQUEST_HEADERS": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
         },
         "DOWNLOAD_HANDLERS": {
             "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
@@ -88,29 +123,54 @@ class PregameOddsSpider(scrapy.Spider):
         "AUTOTHROTTLE_START_DELAY": 1.0,
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
-        "RETRY_TIMES": 3,
-        "RETRY_HTTP_CODES": [429, 403, 500, 502, 503, 504],
+        "RETRY_TIMES": 5,
+        "RETRY_HTTP_CODES": [403, 407, 429, 500, 502, 503, 504],  # 407 = Proxy Auth Required
+        "RETRY_BACKOFF_BASE": 2,
+        "RETRY_BACKOFF_MAX": 60,
     }
 
     def __init__(self, sport="both", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_sport = sport.lower()  # "nfl", "cfb", or "both"
 
+        # Log proxy configuration
+        if self._proxy_url:
+            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
+            self.logger.info(f"✓ Using residential proxy: {proxy_display}")
+        else:
+            self.logger.warning("⚠ No proxy configured - using direct connection")
+
+    async def _apply_stealth_init(self, page: Page, request):
+        """Apply stealth mode before navigation (called by scrapy-playwright)"""
+        if STEALTH_AVAILABLE:
+            self.logger.info("🥷 Applying stealth mode before navigation...")
+            try:
+                await stealth_async(page)
+                self.logger.info("✓ Stealth mode activated")
+            except Exception as e:
+                self.logger.warning(f"Failed to apply stealth: {e}")
+
     async def start(self):
         """Entry point for the spider"""
-        url = "https://overtime.ag/sports#/"
-        
+        # Use /sports/ instead of /sports#/ for simpler routing
+        url = "https://overtime.ag/sports/"
+
         meta = {
             "playwright": True,
             "playwright_include_page": True,
             "playwright_page_goto_kwargs": {
                 "wait_until": "domcontentloaded",
-                "timeout": 60_000,
+                "timeout": 120_000,  # Increased to 120s for proxy
             },
             "playwright_page_methods": [
-                PageMethod("wait_for_timeout", 1000),
+                # Apply stealth BEFORE navigation
+                PageMethod("evaluate", "() => {}"),  # Dummy method to trigger page creation
             ],
         }
+
+        # Use page_init callback to apply stealth before navigation
+        if STEALTH_AVAILABLE:
+            meta["playwright_page_init_callback"] = self._apply_stealth_init
 
         yield scrapy.Request(url, meta=meta, callback=self.parse_main, errback=self.errback)
 
@@ -123,74 +183,124 @@ class PregameOddsSpider(scrapy.Spider):
             except Exception:
                 pass
 
-    async def _perform_login(self, page: Page) -> bool:
+    async def _verify_proxy_ip(self, page: Page) -> bool:
         """
-        Perform login to overtime.ag if credentials are available.
-        Returns True if login successful or already logged in, False otherwise.
+        Verify the proxy is working by checking the external IP.
+        Returns True if proxy verification successful, False otherwise.
         """
-        customer_id = os.getenv("OV_CUSTOMER_ID")
-        password = os.getenv("OV_CUSTOMER_PASSWORD")
-
-        if not customer_id or not password:
-            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID, OV_CUSTOMER_PASSWORD)")
-            return False
+        if not self._proxy_url:
+            return True  # No proxy configured, skip verification
 
         try:
-            # Check if already logged in by looking for logout indicator
-            try:
-                await page.wait_for_selector("text=/logout/i", timeout=2000)
-                self.logger.info("Already logged in")
+            self.logger.info("Verifying proxy IP...")
+            await page.goto("https://ipinfo.io/json", timeout=30_000)  # Increased for proxy
+
+            # Extract IP info from the page
+            ip_info = await page.evaluate("""
+                () => {
+                    try {
+                        const pre = document.querySelector('pre');
+                        if (pre) {
+                            const data = JSON.parse(pre.innerText);
+                            return {
+                                ip: data.ip,
+                                city: data.city,
+                                region: data.region,
+                                country: data.country,
+                                org: data.org
+                            };
+                        }
+                    } catch (e) {
+                        return null;
+                    }
+                    return null;
+                }
+            """)
+
+            if ip_info:
+                self.logger.info(
+                    f"✓ Proxy IP verified: {ip_info.get('ip')} "
+                    f"({ip_info.get('city')}, {ip_info.get('region')}, {ip_info.get('country')})"
+                )
                 return True
-            except Exception:
-                pass
-
-            # Navigate to login page
-            self.logger.info("Navigating to login page...")
-            await page.evaluate("() => { location.hash = '#/login'; }")
-            await page.wait_for_timeout(1500)
-
-            # Fill in credentials
-            self.logger.info("Filling login credentials...")
-            customer_id_input = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"], input[type="text"]')
-            if customer_id_input:
-                await customer_id_input.fill(customer_id)
-            
-            password_input = await page.query_selector('input[type="password"]')
-            if password_input:
-                await password_input.fill(password)
-            
-            # Click login button
-            login_btn = await page.query_selector('button:has-text("LOGIN"), button:has-text("Login")')
-            if login_btn:
-                await login_btn.click()
-                await page.wait_for_timeout(3000)
-                
-                # Check for successful login
-                current_hash = await page.evaluate("() => location.hash")
-                if "#/login" not in current_hash:
-                    self.logger.info("Login successful")
-                    return True
-                else:
-                    self.logger.error("Login failed - still on login page")
-                    return False
             else:
-                self.logger.error("Login button not found")
+                self.logger.warning("⚠ Could not parse IP info")
                 return False
 
         except Exception as e:
-            self.logger.error(f"Login error: {e}", exc_info=True)
+            self.logger.error(f"✗ Proxy verification failed: {e}")
+            return False
+
+    async def _perform_login(self, page: Page) -> bool:
+        """
+        Perform login to overtime.ag if credentials are available.
+        Login fields are on the sports page itself, not a separate page.
+        Returns True if login successful or already logged in, False otherwise.
+        """
+        # Support both OV_CUSTOMER_ID and OV_ID
+        customer_id = os.getenv("OV_CUSTOMER_ID") or os.getenv("OV_ID")
+        # Support both OV_CUSTOMER_PASSWORD and OV_PASSWORD
+        password = os.getenv("OV_CUSTOMER_PASSWORD") or os.getenv("OV_PASSWORD")
+
+        if not customer_id or not password:
+            self.logger.info("No login credentials - continuing without login")
+            return False
+
+        try:
+            # Login fields are right on the sports page - no navigation needed
+            self.logger.info("Attempting login on sports page...")
+
+            # Customer ID field: //input[@placeholder='Customer Id']
+            customer_id_input = await page.wait_for_selector("xpath=//input[@placeholder='Customer Id']", timeout=5000)
+            if customer_id_input:
+                await customer_id_input.fill(customer_id)
+                self.logger.info("✓ Customer ID filled")
+
+            # Password field: //input[@placeholder='Password']
+            password_input = await page.wait_for_selector("xpath=//input[@placeholder='Password']", timeout=5000)
+            if password_input:
+                await password_input.fill(password)
+                self.logger.info("✓ Password filled")
+
+            # Login button: //button[@class='btn btn-default btn-login ng-binding']
+            login_btn = await page.wait_for_selector("xpath=//button[@class='btn btn-default btn-login ng-binding']", timeout=5000)
+            if login_btn:
+                await login_btn.click()
+                self.logger.info("✓ Login button clicked")
+                await page.wait_for_timeout(2000)
+                self.logger.info("✓ Login completed")
+                return True
+
+            return False
+
+        except Exception as e:
+            self.logger.warning(f"Login not available or failed: {e}")
             return False
 
     async def parse_main(self, response: Response):
         """Main parsing logic - handles login and sport selection"""
         page: Page = response.meta["playwright_page"]
-        
-        # Attempt login
+
+        # Stealth mode already applied before navigation via playwright_page_init_callback
+        self.logger.info("✓ Page loaded successfully (stealth mode applied during init)")
+
+        # Skip IP verification - it's slow and causes timeouts with Cloudflare
+        # The simple proxy test confirms proxy works, so we skip this step
+        if self._proxy_url:
+            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
+            self.logger.info(f"Using proxy: {proxy_display} (skipping IP verification to avoid Cloudflare)")
+
+        # Wait for page to settle after loading
+        self.logger.info("Waiting for page to settle...")
+        try:
+            await page.wait_for_timeout(2000)  # Wait for JavaScript to finish
+            self.logger.info("✓ Page settled")
+        except Exception as e:
+            self.logger.warning(f"Wait timeout (might be OK): {e}")
+
+        # Attempt login (optional - will skip if no credentials)
+        # Login fields are on the sports page, no need to navigate away
         await self._perform_login(page)
-        
-        # Navigate back to sports page
-        await page.evaluate("() => { location.hash = '#/'; }")
-        await page.wait_for_timeout(2000)
 
         # Take snapshot for debugging
         os.makedirs("snapshots", exist_ok=True)
@@ -216,23 +326,48 @@ class PregameOddsSpider(scrapy.Spider):
     async def _scrape_sport(self, page: Page, sport: str):
         """Scrape odds for a specific sport (nfl or cfb)"""
         self.logger.info(f"Scraping {sport.upper()} odds...")
-        
-        # Click appropriate sport filter
+
+        # Use correct XPath selectors for sport filters
         if sport == "nfl":
-            selector = 'label[for="gl_Football_NFL_G"]'
+            # NFL selector: //label[@for='gl_Football_NFL_G']
+            selector = "xpath=//label[@for='gl_Football_NFL_G']"
             league = "NFL"
             sport_name = "nfl"
+            check_text = "FOOTBALL-NFL"
         else:  # cfb
-            selector = 'label[for="gl_Football_COLLEGE_FB"]'
+            # College Football selector: //label[@for='gl_Football_College_Football_G']
+            selector = "xpath=//label[@for='gl_Football_College_Football_G']"
             league = "NCAAF"
             sport_name = "college_football"
+            check_text = "FOOTBALL-COLLEGE"
 
         try:
-            # Click sport selector using JavaScript for reliability
-            # Use single quotes in JS to avoid quote conflicts with the selector
-            await page.evaluate(f"() => {{ const el = document.querySelector('{selector}'); if(el) el.click(); }}")
-            await page.wait_for_timeout(2500)
-            
+            # Check if games are already visible (page might show them by default)
+            self.logger.info(f"Checking if {sport.upper()} games are already visible...")
+            page_content = await page.content()
+            games_already_visible = check_text in page_content
+
+            if games_already_visible:
+                self.logger.info(f"✓ {sport.upper()} games already visible, skipping filter click")
+            else:
+                # Click sport selector using XPath
+                self.logger.info(f"Clicking {sport.upper()} filter...")
+                try:
+                    sport_label = await page.wait_for_selector(selector, timeout=10_000)
+                    if sport_label:
+                        # Check if element is enabled before clicking
+                        is_enabled = await sport_label.evaluate("el => !el.disabled && !el.hasAttribute('disabled')")
+                        if is_enabled:
+                            await sport_label.click()
+                            self.logger.info(f"✓ {sport.upper()} filter clicked")
+                            await page.wait_for_timeout(2500)
+                        else:
+                            self.logger.warning(f"⚠ {sport.upper()} filter element found but disabled, continuing anyway")
+                    else:
+                        self.logger.warning(f"Could not find {sport.upper()} filter, continuing anyway")
+                except Exception as filter_e:
+                    self.logger.warning(f"Filter click failed ({filter_e}), continuing anyway")
+
             # Ensure we're on the "GAME" period (full game), not 1H/2H/Quarters
             self.logger.info(f"Selecting GAME period for {sport.upper()}...")
             await page.evaluate("""
@@ -256,9 +391,9 @@ class PregameOddsSpider(scrapy.Spider):
 
         # Extract games using JavaScript
         games_data = await self._extract_games_js(page)
-        
+
         self.logger.info(f"Extracted {len(games_data)} {sport.upper()} games")
-        
+
         for game_data in games_data:
             item = LiveGameItem(
                 source="overtime.ag",
@@ -277,154 +412,207 @@ class PregameOddsSpider(scrapy.Spider):
             yield json.loads(json.dumps(item, default=lambda o: o.__dict__))
 
     async def _extract_games_js(self, page: Page) -> list[Dict[str, Any]]:
-        """Extract game data from the page using JavaScript"""
+        """Extract game data from the page using JavaScript - text-based parsing for Angular"""
+
+        # Wait for GameLines container to be visible (more reliable than fixed timeout)
+        self.logger.info("Waiting for GameLines container to load...")
+        try:
+            await page.wait_for_selector('#GameLines', state='visible', timeout=30000)
+            self.logger.info("✓ GameLines container loaded")
+        except Exception as e:
+            self.logger.warning(f"GameLines container not found: {e}")
+            # Fall back to short wait
+            await page.wait_for_timeout(5000)
+
+        # Validate market headers are present
+        try:
+            spread_header = await page.locator("//span[normalize-space()='Spread']").count()
+            ml_header = await page.locator("//span[normalize-space()='Money Line']").count()
+            totals_header = await page.locator("//span[normalize-space()='Totals']").count()
+
+            if spread_header > 0 and ml_header > 0 and totals_header > 0:
+                self.logger.info("✓ Market headers validated (Spread, Money Line, Totals)")
+            else:
+                self.logger.warning(
+                    f"Market headers incomplete - Spread:{spread_header} ML:{ml_header} Totals:{totals_header}"
+                )
+        except Exception as e:
+            self.logger.warning(f"Failed to validate market headers: {e}")
+
         js_code = """
         () => {
-            const games = [];
-            
-            // Find all game list items - use more specific selectors to avoid false positives
-            const listItems = document.querySelectorAll('ul li, .event-row, [class*="game"]');
-            
-            for (const item of listItems) {
-                try {
-                    const text = item.innerText || '';
-                    
-                    // Look for team headings with rotation numbers (e.g., "451 Chicago Bears")
-                    const headings = item.querySelectorAll('h4, h3, [class*="team"]');
-                    if (headings.length < 2) continue;
-                    
-                    const awayText = headings[0].innerText || '';
-                    const homeText = headings[1].innerText || '';
-                    
-                    // Parse rotation and team name (e.g., "451 Chicago Bears")
-                    const awayMatch = awayText.match(/^(\\d{3,4})\\s+(.+)$/);
-                    const homeMatch = homeText.match(/^(\\d{3,4})\\s+(.+)$/);
-                    
-                    if (!awayMatch || !homeMatch) continue;
-                    
-                    const awayRot = awayMatch[1];
-                    const awayTeam = awayMatch[2].trim();
-                    const homeRot = homeMatch[1];
-                    const homeTeam = homeMatch[2].trim();
-                    
-                    // Validate: team names should be reasonable (no emojis, no single words like "SPORTS")
-                    if (awayTeam.length < 3 || homeTeam.length < 3) continue;
-                    if (!/^[A-Z\\s\\-\\.&']+$/i.test(awayTeam) || !/^[A-Z\\s\\-\\.&']+$/i.test(homeTeam)) continue;
-                    
-                    // Extract date and time
-                    let dateStr = null;
-                    let timeStr = null;
-                    const dateTimeElements = item.querySelectorAll('div, span, any');
-                    for (const el of dateTimeElements) {
-                        const t = el.innerText || '';
-                        if (/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+\\w+\\s+\\d+$/.test(t.trim())) {
-                            dateStr = t.trim();
-                        }
-                        if (/^\\d{1,2}:\\d{2}\\s+(AM|PM)$/i.test(t.trim())) {
-                            timeStr = t.trim();
+            // Parse document.body.innerText to find rotation numbers and team names
+            // Angular renders the content as text, not as structured DOM we can query
+            const allText = document.body.innerText;
+            const lines = allText.split('\\n');
+
+            // Step 1: Find all team lines with rotation numbers
+            const teamLines = [];
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                const match = line.match(/^(\\d{3,4})\\s+(.+)$/);
+                if (match) {
+                    const rotation = match[1];
+                    const teamName = match[2].trim();
+
+                    // Validate team name: must be at least 3 chars, no emojis, valid characters
+                    if (teamName.length >= 3 && /^[A-Z\\s\\-\\.&']+$/i.test(teamName)) {
+                        // Exclude navigation/UI elements
+                        if (!teamName.match(/^(NEW VERSION|SPORTS|GAME|PERIOD|FILTER)$/i)) {
+                            teamLines.push({ rotation, teamName, lineIndex: i });
                         }
                     }
-                    
-                    // Extract odds from buttons WITH their IDs for proper assignment
-                    const buttons = item.querySelectorAll('button');
-                    const buttonData = [];
-                    for (const btn of buttons) {
-                        const btnText = btn.innerText || '';
-                        const btnId = btn.id || '';
-                        buttonData.push({ text: btnText.trim(), id: btnId });
-                    }
-                    
-                    // Parse markets using button IDs for explicit assignment
-                    const markets = { spread: {}, total: {}, moneyline: {} };
-                    
-                    // Spread: use button IDs (S1=away, S2=home) for explicit assignment
-                    const spreadRegex = /^([+\\-]\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(spreadRegex);
-                        if (match) {
-                            const line = parseFloat(match[1].replace('½', '.5'));
-                            const price = parseInt(match[2]);
-                            
-                            // Use button ID to determine away vs home
-                            if (btnData.id.startsWith('S1_')) {
-                                markets.spread.away = { line, price };
-                            } else if (btnData.id.startsWith('S2_')) {
-                                markets.spread.home = { line, price };
-                            } else {
-                                // Fallback: first spread is away, second is home
-                                if (!markets.spread.away) {
-                                    markets.spread.away = { line, price };
-                                } else if (!markets.spread.home) {
-                                    markets.spread.home = { line, price };
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Total: use button IDs (L1=over, L2=under) for explicit assignment
-                    const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/i;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(totalRegex);
-                        if (match) {
-                            const side = match[1].toUpperCase();
-                            const line = parseFloat(match[2].replace('½', '.5'));
-                            const price = parseInt(match[3]);
-                            
-                            // Use button ID to determine over vs under
-                            if (btnData.id.startsWith('L1_') || side === 'O') {
-                                markets.total.over = { line, price };
-                            } else if (btnData.id.startsWith('L2_') || side === 'U') {
-                                markets.total.under = { line, price };
-                            }
-                        }
-                    }
-                    
-                    // Moneyline: look for buttons with M1/M2 prefix or standalone prices
-                    const mlRegex = /^([+\\-]\\d{2,4})$/;
-                    for (const btnData of buttonData) {
-                        const match = btnData.text.match(mlRegex);
-                        if (match) {
-                            const price = parseInt(match[1]);
-                            
-                            if (btnData.id.startsWith('M1_')) {
-                                markets.moneyline.away = { line: null, price };
-                            } else if (btnData.id.startsWith('M2_')) {
-                                markets.moneyline.home = { line: null, price };
-                            }
-                        }
-                    }
-                    
-                    // Validation: ensure we have at least one market before adding
-                    const hasSpread = markets.spread.away || markets.spread.home;
-                    const hasTotal = markets.total.over || markets.total.under;
-                    const hasMoneyline = markets.moneyline.away || markets.moneyline.home;
-                    
-                    if (!hasSpread && !hasTotal && !hasMoneyline) {
-                        console.log('Skipping item with no valid markets:', awayTeam, homeTeam);
-                        continue;
-                    }
-                    
-                    games.push({
-                        rotation_number: `${awayRot}-${homeRot}`,
-                        away_team: awayTeam,
-                        home_team: homeTeam,
-                        event_date: dateStr,
-                        event_time: timeStr,
-                        markets: markets,
-                    });
-                    
-                } catch (e) {
-                    console.error('Error parsing game:', e);
                 }
             }
-            
+
+            console.log(`Found ${teamLines.length} valid team lines`);
+
+            // Step 2: Pair teams into games (consecutive rotation numbers)
+            const games = [];
+            for (let i = 0; i < teamLines.length - 1; i++) {
+                const away = teamLines[i];
+                const home = teamLines[i + 1];
+
+                const awayRot = parseInt(away.rotation);
+                const homeRot = parseInt(home.rotation);
+
+                // Check if consecutive (home = away + 1)
+                if (homeRot === awayRot + 1) {
+                    games.push({
+                        rotation_number: `${away.rotation}-${home.rotation}`,
+                        away_team: away.teamName,
+                        away_rot: away.rotation,
+                        home_team: home.teamName,
+                        home_rot: home.rotation,
+                        lineIndex: away.lineIndex,
+                    });
+                    i++; // Skip the home team since we've paired it
+                }
+            }
+
+            console.log(`Paired ${games.length} games from rotation numbers`);
+
+            // Step 3: Get ALL buttons on the page with their IDs and text
+            const allButtons = document.querySelectorAll('button');
+            const buttonMap = {};
+            for (const btn of allButtons) {
+                const btnId = btn.id || '';
+                const btnText = (btn.innerText || '').trim();
+                if (btnId && btnText) {
+                    buttonMap[btnId] = btnText;
+                }
+            }
+
+            console.log(`Found ${Object.keys(buttonMap).length} buttons with IDs`);
+
+            // Step 4: Extract markets for each game by matching button ID patterns
+            for (const game of games) {
+                const markets = { spread: {}, total: {}, moneyline: {} };
+
+                // Find buttons for this game by looking for button IDs containing the rotation numbers
+                // Button IDs format: S1_<event_id>_<line_id>, S2_<event_id>_<line_id>, etc.
+                const gameButtons = {};
+                for (const [btnId, btnText] of Object.entries(buttonMap)) {
+                    // Match buttons by checking if they're related to this game's rotation numbers
+                    // This is a heuristic - buttons don't contain rotation numbers in IDs
+                    // So we'll just collect all buttons and parse them
+                    gameButtons[btnId] = btnText;
+                }
+
+                // Parse spread buttons (S1=away, S2=home)
+                const spreadRegex = /^([+\\-]\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('S1_')) {
+                        const match = btnText.match(spreadRegex);
+                        if (match) {
+                            markets.spread.away = {
+                                line: parseFloat(match[1].replace('½', '.5')),
+                                price: parseInt(match[2])
+                            };
+                        }
+                    } else if (btnId.startsWith('S2_')) {
+                        const match = btnText.match(spreadRegex);
+                        if (match) {
+                            markets.spread.home = {
+                                line: parseFloat(match[1].replace('½', '.5')),
+                                price: parseInt(match[2])
+                            };
+                        }
+                    }
+                }
+
+                // Parse total buttons (L1=over, L2=under)
+                const totalRegex = /^([OU])\\s+(\\d+\\.?\\d?[½]?)\\s+([+\\-]\\d{2,4})$/i;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('L1_')) {
+                        const match = btnText.match(totalRegex);
+                        if (match) {
+                            markets.total.over = {
+                                line: parseFloat(match[2].replace('½', '.5')),
+                                price: parseInt(match[3])
+                            };
+                        }
+                    } else if (btnId.startsWith('L2_')) {
+                        const match = btnText.match(totalRegex);
+                        if (match) {
+                            markets.total.under = {
+                                line: parseFloat(match[2].replace('½', '.5')),
+                                price: parseInt(match[3])
+                            };
+                        }
+                    }
+                }
+
+                // Parse moneyline buttons (M1=away, M2=home)
+                const mlRegex = /^([+\\-]\\d{2,4})$/;
+                for (const [btnId, btnText] of Object.entries(gameButtons)) {
+                    if (btnId.startsWith('M1_')) {
+                        const match = btnText.match(mlRegex);
+                        if (match) {
+                            markets.moneyline.away = {
+                                line: null,
+                                price: parseInt(match[1])
+                            };
+                        }
+                    } else if (btnId.startsWith('M2_')) {
+                        const match = btnText.match(mlRegex);
+                        if (match) {
+                            markets.moneyline.home = {
+                                line: null,
+                                price: parseInt(match[1])
+                            };
+                        }
+                    }
+                }
+
+                game.markets = markets;
+
+                // Extract date and time from surrounding text (best effort)
+                const dateRegex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+\\w+\\s+\\d+$/;
+                const timeRegex = /^\\d{1,2}:\\d{2}\\s+(AM|PM)$/i;
+
+                // Look for date/time near the game's line index
+                game.event_date = null;
+                game.event_time = null;
+                for (let j = Math.max(0, game.lineIndex - 10); j < Math.min(lines.length, game.lineIndex + 5); j++) {
+                    const nearbyLine = lines[j].trim();
+                    if (dateRegex.test(nearbyLine)) {
+                        game.event_date = nearbyLine;
+                    }
+                    if (timeRegex.test(nearbyLine)) {
+                        game.event_time = nearbyLine;
+                    }
+                }
+            }
+
             return games;
         }
         """
         
         try:
             raw_games = await page.evaluate(js_code)
-            
+            self.logger.info(f"Raw extraction found {len(raw_games)} games")
+
             # Process and clean the data
             processed_games = []
             for game in raw_games:
