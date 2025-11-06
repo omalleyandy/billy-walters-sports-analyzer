@@ -53,7 +53,7 @@ async def test_proxy():
             # Test 1: IP check
             print("\n2️⃣ Checking proxy IP...")
             try:
-                await page.goto("https://ipinfo.io/json", timeout=30000)
+                await page.goto("https://ipinfo.io/json", wait_until="domcontentloaded", timeout=30000)
                 ip_info = await page.evaluate("""
                     () => {
                         try {
@@ -82,13 +82,14 @@ async def test_proxy():
             try:
                 import time
                 start = time.time()
-                await page.goto("https://overtime.ag/sports#/", timeout=120000)
+                # Use /sports/ instead of /sports#/ - simpler routing
+                await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=120000)
                 load_time = time.time() - start
 
                 print(f"   ✓ Page loaded in {load_time:.1f}s")
 
                 # Wait for content
-                await page.wait_for_timeout(2000)
+                await page.wait_for_timeout(3000)
 
                 # Check for Cloudflare
                 title = await page.title()
@@ -104,7 +105,7 @@ async def test_proxy():
                     print("   ✓ No blocking detected")
 
                 # Save screenshot
-                await page.screenshot(path="proxy_test.png")
+                await page.screenshot(path="proxy_test.png", full_page=True)
                 print("   ✓ Screenshot saved: proxy_test.png")
 
             except Exception as e:

@@ -117,7 +117,8 @@ class PregameOddsSpider(scrapy.Spider):
 
     async def start(self):
         """Entry point for the spider"""
-        url = "https://overtime.ag/sports#/"
+        # Use /sports/ instead of /sports#/ for simpler routing
+        url = "https://overtime.ag/sports/"
 
         meta = {
             "playwright": True,
@@ -127,7 +128,7 @@ class PregameOddsSpider(scrapy.Spider):
                 "timeout": 120_000,  # Increased to 120s for proxy
             },
             "playwright_page_methods": [
-                PageMethod("wait_for_timeout", 2000),  # Extra wait for Cloudflare
+                PageMethod("wait_for_timeout", 3000),  # Extra wait for Cloudflare/JS
             ],
         }
 
@@ -213,8 +214,8 @@ class PregameOddsSpider(scrapy.Spider):
 
             # Navigate to login page
             self.logger.info("Navigating to login page...")
-            await page.evaluate("() => { location.hash = '#/login'; }")
-            await page.wait_for_timeout(1500)
+            await page.goto("https://overtime.ag/login", wait_until="domcontentloaded", timeout=30_000)
+            await page.wait_for_timeout(2000)
 
             # Fill in credentials
             self.logger.info("Filling login credentials...")
@@ -260,22 +261,23 @@ class PregameOddsSpider(scrapy.Spider):
         # Navigate back to sports page after IP check
         self.logger.info("Navigating to overtime.ag sports page...")
         try:
-            await page.goto("https://overtime.ag/sports#/", timeout=120_000)  # Increased timeout
-            await page.wait_for_timeout(2000)  # Extra wait for Cloudflare/JS
+            # Use /sports/ instead of /sports#/ for simpler routing
+            await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=120_000)
+            await page.wait_for_timeout(3000)  # Extra wait for Cloudflare/JS
             self.logger.info("Successfully loaded sports page")
         except Exception as e:
             self.logger.error(f"Failed to load sports page: {e}")
             # Try one more time with networkidle
             self.logger.info("Retrying with networkidle strategy...")
-            await page.goto("https://overtime.ag/sports#/", wait_until="networkidle", timeout=120_000)
-            await page.wait_for_timeout(3000)
+            await page.goto("https://overtime.ag/sports/", wait_until="networkidle", timeout=120_000)
+            await page.wait_for_timeout(5000)
 
         # Attempt login
         await self._perform_login(page)
-        
+
         # Navigate back to sports page
-        await page.evaluate("() => { location.hash = '#/'; }")
-        await page.wait_for_timeout(2000)
+        await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=60_000)
+        await page.wait_for_timeout(3000)
 
         # Take snapshot for debugging
         os.makedirs("snapshots", exist_ok=True)
