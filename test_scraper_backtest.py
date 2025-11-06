@@ -79,12 +79,64 @@ class ScraperDataAnalyzer:
             print("❌ No records found in data files")
             return
 
-        # Aggregate analysis
-        self._analyze_schema(all_records)
-        self._analyze_data_quality(all_records)
-        self._analyze_markets(all_records)
-        self._analyze_timestamps(all_records)
-        self._show_samples(all_records)
+        # Separate injury data from odds data
+        injury_records = [r for r in all_records if "player_name" in r or "injury_status" in r]
+        odds_records = [r for r in all_records if "game_key" in r and "markets" in r]
+
+        print(f"\n📋 Data Type Distribution:")
+        print(f"   • Injury Data: {len(injury_records)} records")
+        print(f"   • Odds Data: {len(odds_records)} records")
+        print(f"   • Other: {len(all_records) - len(injury_records) - len(odds_records)} records")
+
+        # Filter out invalid odds records (bad team names, no markets)
+        valid_odds_records = []
+        invalid_odds_records = []
+        for r in odds_records:
+            teams = r.get("teams", {})
+            away = teams.get("away", "")
+            home = teams.get("home", "")
+
+            # Validate team names: must be at least 3 chars, no emojis, valid characters only
+            import re
+            is_valid_away = len(away) >= 3 and re.match(r'^[A-Za-z\s\-\.&\']+$', away)
+            is_valid_home = len(home) >= 3 and re.match(r'^[A-Za-z\s\-\.&\']+$', home)
+
+            # Check if at least one market has data
+            markets = r.get("markets", {})
+            has_any_market = (
+                markets.get("spread", {}).get("away") or
+                markets.get("spread", {}).get("home") or
+                markets.get("total", {}).get("over") or
+                markets.get("total", {}).get("under") or
+                markets.get("moneyline", {}).get("away") or
+                markets.get("moneyline", {}).get("home")
+            )
+
+            if is_valid_away and is_valid_home and has_any_market:
+                valid_odds_records.append(r)
+            else:
+                invalid_odds_records.append(r)
+                self.results["warnings"].append(
+                    f"Filtered invalid odds record: away='{away}', home='{home}', has_markets={has_any_market}"
+                )
+
+        print(f"\n🔍 Odds Data Quality:")
+        print(f"   • Valid: {len(valid_odds_records)} records")
+        print(f"   • Invalid (filtered): {len(invalid_odds_records)} records")
+
+        if not valid_odds_records:
+            print("\n⚠️  No valid odds records found. Cannot perform odds analysis.")
+            print("   This is normal if you've only run the injury scraper.")
+            print("   To generate odds data, run: uv run walters-analyzer scrape-overtime --sport nfl")
+            self._print_summary()
+            return
+
+        # Aggregate analysis on valid odds data only
+        self._analyze_schema(valid_odds_records)
+        self._analyze_data_quality(valid_odds_records)
+        self._analyze_markets(valid_odds_records)
+        self._analyze_timestamps(valid_odds_records)
+        self._show_samples(valid_odds_records)
 
         # Final summary
         self._print_summary()
