@@ -11,6 +11,13 @@ import os
 from playwright.async_api import async_playwright
 from dotenv import load_dotenv
 
+# Stealth mode to bypass Cloudflare
+try:
+    from playwright_stealth import stealth_async
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+
 load_dotenv()
 
 
@@ -49,6 +56,14 @@ async def test_proxy():
                 timezone_id="America/New_York",
             )
             page = await context.new_page()
+
+            # Apply stealth mode if available
+            if STEALTH_AVAILABLE:
+                print("\n🥷 Applying stealth mode...")
+                await stealth_async(page)
+                print("   ✓ Stealth activated")
+            else:
+                print("\n⚠️ Stealth mode not available (install: uv pip install playwright-stealth)")
 
             # Test 1: IP check
             print("\n2️⃣ Checking proxy IP...")

@@ -16,6 +16,7 @@ dependencies = [
     "scrapy>=2.13.3",
     "scrapy-playwright>=0.0.44",
     "playwright>=1.47.0",
+    "playwright-stealth>=1.0.6",
 ]
 
 [project.scripts]

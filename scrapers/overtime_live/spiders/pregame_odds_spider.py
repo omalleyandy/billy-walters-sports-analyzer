@@ -11,6 +11,14 @@ from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
 from playwright.async_api import Page
 
+# Stealth mode to bypass Cloudflare
+try:
+    from playwright_stealth import stealth_async
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+    print("⚠ playwright-stealth not installed. Run: uv pip install playwright-stealth")
+
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
@@ -255,6 +263,17 @@ class PregameOddsSpider(scrapy.Spider):
     async def parse_main(self, response: Response):
         """Main parsing logic - handles login and sport selection"""
         page: Page = response.meta["playwright_page"]
+
+        # Apply stealth mode to bypass Cloudflare detection
+        if STEALTH_AVAILABLE:
+            self.logger.info("🥷 Applying stealth mode to bypass Cloudflare...")
+            try:
+                await stealth_async(page)
+                self.logger.info("✓ Stealth mode activated")
+            except Exception as e:
+                self.logger.warning(f"Failed to apply stealth: {e}")
+        else:
+            self.logger.warning("⚠ Stealth mode not available - may be blocked by Cloudflare")
 
         # Skip IP verification - it's slow and causes timeouts with Cloudflare
         # The simple proxy test confirms proxy works, so we skip this step
