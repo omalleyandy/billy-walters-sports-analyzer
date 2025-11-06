@@ -84,6 +84,9 @@ class PregameOddsSpider(scrapy.Spider):
             "viewport": {"width": 1920, "height": 1080},
             "locale": "en-US",
             "timezone_id": "America/New_York",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "bypass_csp": True,  # Bypass Content Security Policy
+            "ignore_https_errors": True,  # Ignore SSL errors
         },
         "DEFAULT_REQUEST_HEADERS": {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
@@ -253,31 +256,33 @@ class PregameOddsSpider(scrapy.Spider):
         """Main parsing logic - handles login and sport selection"""
         page: Page = response.meta["playwright_page"]
 
-        # Verify proxy IP if configured
-        proxy_ok = await self._verify_proxy_ip(page)
-        if not proxy_ok and self._proxy_url:
-            self.logger.warning("Proxy verification failed but continuing anyway...")
+        # Skip IP verification - it's slow and causes timeouts with Cloudflare
+        # The simple proxy test confirms proxy works, so we skip this step
+        if self._proxy_url:
+            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
+            self.logger.info(f"Using proxy: {proxy_display} (skipping IP verification to avoid Cloudflare)")
 
-        # Navigate back to sports page after IP check
-        self.logger.info("Navigating to overtime.ag sports page...")
+        # Already on sports page from start() - just wait for it to settle
+        self.logger.info("Waiting for sports page to load...")
         try:
-            # Use /sports/ instead of /sports#/ for simpler routing
-            await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=120_000)
+            # Wait for page to be interactive
+            await page.wait_for_load_state("domcontentloaded", timeout=30_000)
             await page.wait_for_timeout(3000)  # Extra wait for Cloudflare/JS
-            self.logger.info("Successfully loaded sports page")
+            self.logger.info("✓ Sports page loaded")
         except Exception as e:
-            self.logger.error(f"Failed to load sports page: {e}")
-            # Try one more time with networkidle
-            self.logger.info("Retrying with networkidle strategy...")
-            await page.goto("https://overtime.ag/sports/", wait_until="networkidle", timeout=120_000)
-            await page.wait_for_timeout(5000)
+            self.logger.warning(f"Load state timeout (might be OK): {e}")
+            # Continue anyway - we're already on the page from start()
 
-        # Attempt login
-        await self._perform_login(page)
-
-        # Navigate back to sports page
-        await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=60_000)
-        await page.wait_for_timeout(3000)
+        # Attempt login (optional - will skip if no credentials)
+        login_success = await self._perform_login(page)
+        if login_success:
+            # If login worked, navigate back to sports
+            self.logger.info("Navigating back to sports page after login...")
+            await page.goto("https://overtime.ag/sports/", wait_until="domcontentloaded", timeout=60_000)
+            await page.wait_for_timeout(3000)
+        else:
+            # No login or login failed - continue on current page
+            self.logger.info("Continuing without login")
 
         # Take snapshot for debugging
         os.makedirs("snapshots", exist_ok=True)
