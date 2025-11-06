@@ -238,26 +238,32 @@ class PregameOddsSpider(scrapy.Spider):
             await page.goto("https://overtime.ag/login", wait_until="domcontentloaded", timeout=30_000)
             await page.wait_for_timeout(2000)
 
-            # Fill in credentials
+            # Fill in credentials using correct XPath selectors
             self.logger.info("Filling login credentials...")
-            customer_id_input = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"], input[type="text"]')
+
+            # Customer ID field: //input[@placeholder='Customer Id']
+            customer_id_input = await page.wait_for_selector("xpath=//input[@placeholder='Customer Id']", timeout=5000)
             if customer_id_input:
                 await customer_id_input.fill(customer_id)
-            
-            password_input = await page.query_selector('input[type="password"]')
+                self.logger.info("✓ Customer ID filled")
+
+            # Password field: //input[@placeholder='Password']
+            password_input = await page.wait_for_selector("xpath=//input[@placeholder='Password']", timeout=5000)
             if password_input:
                 await password_input.fill(password)
-            
-            # Click login button
-            login_btn = await page.query_selector('button:has-text("LOGIN"), button:has-text("Login")')
+                self.logger.info("✓ Password filled")
+
+            # Login button: //button[@class='btn btn-default btn-login ng-binding']
+            login_btn = await page.wait_for_selector("xpath=//button[@class='btn btn-default btn-login ng-binding']", timeout=5000)
             if login_btn:
                 await login_btn.click()
+                self.logger.info("✓ Login button clicked")
                 await page.wait_for_timeout(3000)
-                
+
                 # Check for successful login
-                current_hash = await page.evaluate("() => location.hash")
-                if "#/login" not in current_hash:
-                    self.logger.info("Login successful")
+                current_url = page.url
+                if "login" not in current_url.lower():
+                    self.logger.info("✓ Login successful")
                     return True
                 else:
                     self.logger.error("Login failed - still on login page")
@@ -337,23 +343,31 @@ class PregameOddsSpider(scrapy.Spider):
     async def _scrape_sport(self, page: Page, sport: str):
         """Scrape odds for a specific sport (nfl or cfb)"""
         self.logger.info(f"Scraping {sport.upper()} odds...")
-        
-        # Click appropriate sport filter
+
+        # Use correct XPath selectors for sport filters
         if sport == "nfl":
-            selector = 'label[for="gl_Football_NFL_G"]'
+            # NFL selector: //label[@for='gl_Football_NFL_G']
+            selector = "xpath=//label[@for='gl_Football_NFL_G']"
             league = "NFL"
             sport_name = "nfl"
         else:  # cfb
-            selector = 'label[for="gl_Football_COLLEGE_FB"]'
+            # College Football selector: //label[@for='gl_Football_College_Football_G']
+            selector = "xpath=//label[@for='gl_Football_College_Football_G']"
             league = "NCAAF"
             sport_name = "college_football"
 
         try:
-            # Click sport selector using JavaScript for reliability
-            # Use single quotes in JS to avoid quote conflicts with the selector
-            await page.evaluate(f"() => {{ const el = document.querySelector('{selector}'); if(el) el.click(); }}")
-            await page.wait_for_timeout(2500)
-            
+            # Click sport selector using XPath
+            self.logger.info(f"Clicking {sport.upper()} filter...")
+            sport_label = await page.wait_for_selector(selector, timeout=10_000)
+            if sport_label:
+                await sport_label.click()
+                self.logger.info(f"✓ {sport.upper()} filter clicked")
+                await page.wait_for_timeout(2500)
+            else:
+                self.logger.error(f"Could not find {sport.upper()} filter")
+                return
+
             # Ensure we're on the "GAME" period (full game), not 1H/2H/Quarters
             self.logger.info(f"Selecting GAME period for {sport.upper()}...")
             await page.evaluate("""
@@ -377,9 +391,9 @@ class PregameOddsSpider(scrapy.Spider):
 
         # Extract games using JavaScript
         games_data = await self._extract_games_js(page)
-        
+
         self.logger.info(f"Extracted {len(games_data)} {sport.upper()} games")
-        
+
         for game_data in games_data:
             item = LiveGameItem(
                 source="overtime.ag",
