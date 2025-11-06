@@ -9,3 +9,24 @@ playwright/.cache/
 .DS_Store
 .overtime_state.json
 snapshots/*.json
+
+# Windows Zone.Identifier files
+*:Zone.Identifier
+
+# Data files (large, regenerable)
+data/**/*.jsonl
+data/**/*.json
+data/**/*.parquet
+data/**/*.csv
+data/**/*.xml
+data/**/*.zip
+!data/**/README.md
+
+# Temporary files
+test_*.py
+diagnose_*.py
+fix_*.py
+skip_*.py
+replace_*.py
+*.html
+new_extract_function.txt
