@@ -14,14 +14,14 @@ def main():
                         help="Sport to scrape: nfl, cfb (college football), or both")
     scrape.add_argument("--live", action="store_true", 
                         help="Scrape live betting odds instead of pre-game")
-    scrape.add_argument("--output-dir", default="data/overtime_live",
-                        help="Output directory for scraped data")
+    scrape.add_argument("--output-dir", default=None,
+                        help="Output directory for scraped data (default: data/odds/nfl or data/odds/ncaaf)")
     
     injuries = sub.add_parser("scrape-injuries", help="Scrape injury reports from ESPN")
     injuries.add_argument("--sport", choices=["nfl", "cfb"], default="cfb",
                           help="Sport to scrape: nfl or cfb (college football)")
-    injuries.add_argument("--output-dir", default="data/injuries",
-                          help="Output directory for injury data")
+    injuries.add_argument("--output-dir", default=None,
+                          help="Output directory for injury data (default: data/injuries/nfl or data/injuries/ncaaf)")
     
     # view-odds: View scraped pregame odds
     vo = sub.add_parser("view-odds", help="View scraped pregame odds from overtime.ag")
@@ -64,6 +64,15 @@ def main():
         print(summarize_card(card, dry_run=args.dry_run))
     
     elif args.cmd == "scrape-overtime":
+        # Set default output directory based on sport
+        if args.output_dir is None:
+            if args.sport == "nfl":
+                args.output_dir = "data/odds/nfl"
+            elif args.sport == "cfb":
+                args.output_dir = "data/odds/ncaaf"
+            else:  # both
+                args.output_dir = "data/odds"  # Will separate by sport in pipeline
+        
         # Determine which spider to run
         if args.live:
             spider_name = "overtime_live"
@@ -71,6 +80,8 @@ def main():
         else:
             spider_name = "pregame_odds"
             print(f"Starting pre-game odds scraper for overtime.ag ({args.sport})...")
+        
+        print(f"Output directory: {args.output_dir}")
         
         # Build scrapy command
         cmd = [
@@ -85,7 +96,10 @@ def main():
         # Run scrapy
         try:
             result = subprocess.run(cmd, check=True)
-            print(f"\n✓ Scraping completed. Check {args.output_dir}/ for output files.")
+            try:
+                print(f"\n[OK] Scraping completed. Check {args.output_dir}/ for output files.")
+            except UnicodeEncodeError:
+                print(f"\n[OK] Scraping completed. Check {args.output_dir}/ for output files.")
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"ERROR: Scraping failed with exit code {e.returncode}", file=sys.stderr)
@@ -103,7 +117,15 @@ def main():
         }
         espn_sport, espn_league = sport_map[args.sport]
         
+        # Set default output directory based on sport
+        if args.output_dir is None:
+            if args.sport == "nfl":
+                args.output_dir = "data/injuries/nfl"
+            else:  # cfb
+                args.output_dir = "data/injuries/ncaaf"
+        
         print(f"Starting ESPN injury report scraper for {args.sport.upper()}...")
+        print(f"Output directory: {args.output_dir}")
         
         # Build scrapy command with environment variables for ESPN spider
         import os
@@ -111,16 +133,22 @@ def main():
         env["ESPN_SPORT"] = espn_sport
         env["ESPN_LEAGUE"] = espn_league
         
+        # Use sport-specific filename prefix
+        filename_prefix = "nfl-injuries" if args.sport == "nfl" else "ncaaf-injuries"
+        
         cmd = [
             "scrapy", "crawl", "espn_injuries",
-            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.jsonl]=jsonlines",
-            "-s", f"FEEDS[{args.output_dir}/injuries-%(time)s.parquet]=parquet",
+            "-s", f"FEEDS[{args.output_dir}/{filename_prefix}-%(time)s.jsonl]=jsonlines",
+            "-s", f"FEEDS[{args.output_dir}/{filename_prefix}-%(time)s.parquet]=parquet",
         ]
         
         # Run scrapy
         try:
             result = subprocess.run(cmd, env=env, check=True)
-            print(f"\n✓ Injury scraping completed. Check {args.output_dir}/ for output files.")
+            try:
+                print(f"\n[OK] Injury scraping completed. Check {args.output_dir}/ for output files.")
+            except UnicodeEncodeError:
+                print(f"\n[OK] Injury scraping completed. Check {args.output_dir}/ for output files.")
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"ERROR: Injury scraping failed with exit code {e.returncode}", file=sys.stderr)

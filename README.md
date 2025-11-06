@@ -165,10 +165,16 @@ uv run python analyze_injuries_by_position.py
 - Kelly Criterion bet sizing (0.5-3% of bankroll)
 
 ### Output Files
-Scraped data is saved to `data/overtime_live/` (or custom directory) in three formats:
-- **JSONL**: `overtime-live-{timestamp}.jsonl` - Line-delimited JSON
-- **Parquet**: `overtime-live-{timestamp}.parquet` - Columnar format for analytics
-- **CSV**: `overtime-live-{timestamp}.csv` - Flattened spreadsheet format
+
+**Organized by source and sport:**
+
+**Injury Data (ESPN):**
+- **NFL:** `data/injuries/nfl/nfl-injuries-{timestamp}.jsonl` and `.parquet`
+- **NCAAF:** `data/injuries/ncaaf/ncaaf-injuries-{timestamp}.jsonl` and `.parquet`
+
+**Odds Data (overtime.ag via Chrome DevTools):**
+- **NFL:** `data/odds/nfl/nfl-odds-{timestamp}.jsonl`, `.json`, and `.csv`
+- **NCAAF:** `data/odds/ncaaf/ncaaf-odds-{timestamp}.jsonl`, `.json`, and `.csv`
 
 ### Data Schema
 Each game record includes:

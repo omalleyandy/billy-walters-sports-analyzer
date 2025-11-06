@@ -45,7 +45,10 @@ PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 90_000
 _proxy_config = {}
 if PROXY_URL:
     _proxy_config = {"proxy": {"server": PROXY_URL}}
-    print(f"✓ Proxy configured: {PROXY_URL.split('@')[1] if '@' in PROXY_URL else PROXY_URL}")
+    try:
+        print(f"[OK] Proxy configured: {PROXY_URL.split('@')[1] if '@' in PROXY_URL else PROXY_URL}")
+    except UnicodeEncodeError:
+        print("[OK] Proxy configured")
 
 PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": True,
