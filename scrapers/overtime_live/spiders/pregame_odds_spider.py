@@ -207,11 +207,13 @@ class PregameOddsSpider(scrapy.Spider):
         Perform login to overtime.ag if credentials are available.
         Returns True if login successful or already logged in, False otherwise.
         """
-        customer_id = os.getenv("OV_CUSTOMER_ID")
-        password = os.getenv("OV_CUSTOMER_PASSWORD")
+        # Support both OV_CUSTOMER_ID and OV_ID
+        customer_id = os.getenv("OV_CUSTOMER_ID") or os.getenv("OV_ID")
+        # Support both OV_CUSTOMER_PASSWORD and OV_PASSWORD
+        password = os.getenv("OV_CUSTOMER_PASSWORD") or os.getenv("OV_PASSWORD")
 
         if not customer_id or not password:
-            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID, OV_CUSTOMER_PASSWORD)")
+            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID/OV_ID, OV_CUSTOMER_PASSWORD/OV_PASSWORD)")
             return False
 
         try:
