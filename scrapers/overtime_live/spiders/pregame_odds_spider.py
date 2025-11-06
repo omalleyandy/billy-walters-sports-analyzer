@@ -414,9 +414,30 @@ class PregameOddsSpider(scrapy.Spider):
     async def _extract_games_js(self, page: Page) -> list[Dict[str, Any]]:
         """Extract game data from the page using JavaScript - text-based parsing for Angular"""
 
-        # Wait for Angular to fully render the games
-        self.logger.info("Waiting 10 seconds for Angular to render games...")
-        await page.wait_for_timeout(10000)
+        # Wait for GameLines container to be visible (more reliable than fixed timeout)
+        self.logger.info("Waiting for GameLines container to load...")
+        try:
+            await page.wait_for_selector('#GameLines', state='visible', timeout=30000)
+            self.logger.info("✓ GameLines container loaded")
+        except Exception as e:
+            self.logger.warning(f"GameLines container not found: {e}")
+            # Fall back to short wait
+            await page.wait_for_timeout(5000)
+
+        # Validate market headers are present
+        try:
+            spread_header = await page.locator("//span[normalize-space()='Spread']").count()
+            ml_header = await page.locator("//span[normalize-space()='Money Line']").count()
+            totals_header = await page.locator("//span[normalize-space()='Totals']").count()
+
+            if spread_header > 0 and ml_header > 0 and totals_header > 0:
+                self.logger.info("✓ Market headers validated (Spread, Money Line, Totals)")
+            else:
+                self.logger.warning(
+                    f"Market headers incomplete - Spread:{spread_header} ML:{ml_header} Totals:{totals_header}"
+                )
+        except Exception as e:
+            self.logger.warning(f"Failed to validate market headers: {e}")
 
         js_code = """
         () => {

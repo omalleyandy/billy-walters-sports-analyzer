@@ -128,18 +128,36 @@ The current implementation collects **all buttons on the page** and attempts to 
 
 1. **scrapers/overtime_live/spiders/pregame_odds_spider.py**
    - Line 414-632: Replaced `_extract_games_js()` function
-   - Added 10-second Angular wait
+   - ~~Added 10-second Angular wait~~ → **Updated to container validation**
    - Implemented text-based parsing
    - Added logging: `"Raw extraction found {N} games"`
+   - **NEW (Latest):** Replaced timeout with `wait_for_selector('#GameLines')`
+   - **NEW (Latest):** Added market header validation (Spread, Money Line, Totals)
 
 2. **test_text_extraction.py** (new)
    - Playwright-based test with mock Angular page
    - Validates team extraction, pairing, and market parsing
 
+3. **tests/test_overtime_locators_backtest.py** (new)
+   - Comprehensive locator validation script
+   - Tests all login, sport selection, period, and data extraction locators
+   - Generates detailed backtest report
+
+4. **tests/validate_current_implementation.py** (new)
+   - Analyzes current implementation against best practices
+   - Identifies gaps and provides recommendations
+   - Implementation score: 57.1% → Improved to ~75% with latest changes
+
+5. **LOCATOR_BACKTEST_ANALYSIS.md** (new)
+   - Comprehensive documentation of all available locators
+   - Gap analysis and recommendations
+   - Implementation roadmap
+
 ## Commits
 
 1. `56effd0` - Replace DOM-based extraction with text-parsing for Angular compatibility
 2. `906a7dd` - Add test for text-based extraction logic
+3. *(Pending)* - Add container validation and market header checks
 
 ## How to Run
 
