@@ -3,7 +3,7 @@ name = "walters-analyzer"
 version = "0.1.0"
 description = "Billy Walters Sports Analyzer (WSA) — CLI + scraping skeleton using uv."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Andy + ChatGPT", email = "noreply@example.com" }]
 
 # Base deps used by the CLI + scraper. Keep scrapy + scrapy-playwright here,
