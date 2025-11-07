@@ -1,15 +1,30 @@
-# Walters Analyzer (WSA)
+# Billy Walters Sports Analyzer (Ultimate Edition)
 
-Canonical, uv-based repo scaffold so we stay in sync. One env per project.
-This repo includes:
+**The most comprehensive Billy Walters-inspired sports betting analysis system combining real-time data ingestion, professional analysis, and AI-powered decision making.**
+
+## 🚀 What's New - Ultimate Edition Features
+
+### 🤖 Claude Desktop Integration (NEW!)
+- **MCP Server**: Full Claude Desktop integration with 6 analysis tools
+- **Autonomous Agent**: Self-learning AI with 5-step reasoning chains
+- **Real-time Analysis**: Sharp money detection and market monitoring
+- **Portfolio Optimization**: Risk management and Kelly Criterion sizing
+
+### 🧠 Core Capabilities
+- **Billy Walters Methodology**: Complete implementation of proven betting strategies
+- **Data Ingestion**: Chrome DevTools scraping + multi-source research engine
+- **Advanced Analysis**: Power ratings, key numbers, injury impacts, weather
+- **Machine Learning**: XGBoost, Random Forest, optional PyTorch neural networks
+- **Backtesting**: Historical validation with performance metrics
+
+### 📊 System Components
 - **CLI**: `walters-analyzer` with `wk-card`, `scrape-overtime`, and `scrape-injuries` commands
-- **Billy Walters Valuation System**: Sophisticated injury impact analysis with position-specific valuations, injury multipliers, and market inefficiency detection
-- **Cards**: JSON snapshots in `./cards/`
-- **Scrapers**: 
-  - Overtime.ag spider for NFL and College Football odds (Scrapy + Playwright)
-  - ESPN injury report scraper for player status tracking
-- **Claude**: `/commands` and `/hooks` placeholders
-- **Env**: `env.template` for required keys
+- **MCP Server**: Claude Desktop tools for AI-powered analysis
+- **Autonomous Agent**: Self-learning betting agent with reasoning chains
+- **Billy Walters Valuation**: Position-specific injury impacts and market inefficiencies
+- **Cards**: JSON betting card snapshots in `./cards/`
+- **Scrapers**: Real-time odds and injury data collection
+- **Research Engine**: AccuWeather, Highlightly, ProFootballDoc integration
 
 ## Billy Walters Methodology
 
@@ -40,6 +55,11 @@ This system implements Billy Walters' sophisticated approach to injury impact an
 uv sync
 uv sync --extra scraping  # Optional: additional scraping utilities
 uv sync --extra dev       # Optional: development tools (pytest, ruff, coverage)
+uv sync --extra ai        # NEW! All AI/ML features (MCP + Autonomous Agent)
+uv sync --extra mcp       # NEW! MCP Server only (Claude Desktop integration)
+uv sync --extra ml        # NEW! Machine Learning only (scikit-learn, xgboost)
+uv sync --extra dl        # NEW! Deep Learning (PyTorch)
+uv sync --extra research  # NEW! Research API integrations
 ```
 
 ```bash
@@ -47,6 +67,11 @@ uv sync --extra dev       # Optional: development tools (pytest, ruff, coverage)
 uv sync
 uv sync --extra scraping  # Optional: additional scraping utilities
 uv sync --extra dev       # Optional: development tools (pytest, ruff, coverage)
+uv sync --extra ai        # NEW! All AI/ML features (MCP + Autonomous Agent)
+uv sync --extra mcp       # NEW! MCP Server only (Claude Desktop integration)
+uv sync --extra ml        # NEW! Machine Learning only (scikit-learn, xgboost)
+uv sync --extra dl        # NEW! Deep Learning (PyTorch)
+uv sync --extra research  # NEW! Research API integrations
 ```
 
 ### 2. Install Playwright Browsers
@@ -228,6 +253,219 @@ scrapy crawl pregame_odds -a sport=nfl -s OVERTIME_OUT_DIR=./custom_output
 - Verify proxy with: `curl -x "http://user:pass@proxy:port" "https://ipinfo.io/json"`
 - Check logs for "Proxy IP verified" message
 - Ensure `PROXY_URL` is set correctly in `.env`
+
+## 🤖 Claude Desktop Integration (NEW!)
+
+### MCP Server Setup
+
+The MCP server provides AI-powered analysis tools directly in Claude Desktop.
+
+**Quick Start:**
+```bash
+# Install MCP dependencies
+uv sync --extra mcp
+
+# Set environment variables
+export WALTERS_API_KEY="your_key"
+export ACCUWEATHER_API_KEY="your_key"
+export HIGHLIGHTLY_API_KEY="your_key"
+
+# Start MCP server
+uv run python .claude/walters_mcp_server.py
+```
+
+**Configure Claude Desktop:**
+1. Copy `.claude/claude-desktop-config.json` settings to your Claude Desktop config
+2. Location: `~/.config/Claude/claude_desktop_config.json` (Linux/Mac)
+3. Restart Claude Desktop
+4. MCP tools will be available automatically
+
+**Available Tools:**
+- `analyze_game` - Comprehensive game analysis with Billy Walters methodology
+- `find_sharp_money` - Monitor games for sharp betting patterns
+- `calculate_kelly_stake` - Calculate optimal bet sizing using Kelly Criterion
+- `backtest_strategy` - Test betting strategies on historical data
+- `get_injury_report` - Get comprehensive injury analysis for a team
+- `get_market_alerts` - Retrieve active betting alerts and opportunities
+
+**Example Usage in Claude Desktop:**
+```
+Analyze the Chiefs vs Bills game with -2.5 spread
+```
+
+Claude will automatically use the `analyze_game` tool to provide:
+- Power rating analysis
+- Key number edge detection
+- Sharp money indicators
+- Injury and weather impacts
+- Kelly Criterion bet sizing
+- Expected value calculation
+
+See [.claude/README.md](.claude/README.md) for complete MCP server documentation.
+
+## 🧠 Autonomous Agent (NEW!)
+
+### Self-Learning Betting Agent with Reasoning Chains
+
+The autonomous agent makes decisions with full transparency, showing you exactly how it arrives at each recommendation.
+
+**Setup:**
+```bash
+# Install ML dependencies
+uv sync --extra ml
+
+# Optional: Install PyTorch for deep learning
+uv sync --extra dl
+```
+
+**Quick Example:**
+```python
+from .claude.walters_autonomous_agent import WaltersCognitiveAgent
+
+# Initialize agent
+agent = WaltersCognitiveAgent(initial_bankroll=10000)
+
+# Make decision
+game_data = {
+    'game_id': 'KC_vs_BUF_2024',
+    'home_team': 'Kansas City Chiefs',
+    'away_team': 'Buffalo Bills',
+    'spread': -2.5,
+    'total': 47.5,
+    'home_rating': 8.5,
+    'away_rating': 9.0,
+    'opening_spread': -3.5,
+    'public_percentage': 68,
+    'money_percentage': 45
+}
+
+decision = await agent.make_autonomous_decision(game_data)
+
+# View reasoning chain
+print(f"Recommendation: {decision.recommendation}")
+print(f"Confidence: {decision.confidence.name}")
+print(f"Stake: {decision.stake_percentage:.1f}% of bankroll")
+print(f"Expected Value: {decision.expected_value:.2f}%")
+
+for step in decision.reasoning_chain:
+    print(f"\nStep {step.step_number}: {step.description}")
+    print(f"  Confidence: {step.confidence:.1%}")
+    print(f"  Evidence: {', '.join(step.evidence)}")
+    print(f"  Impact: {step.impact_on_decision}")
+```
+
+**5-Step Reasoning Process:**
+1. **Power Rating Analysis** - Team strength and predicted spread
+2. **Market Efficiency Check** - Line movement and sharp money indicators
+3. **Situational Analysis** - Rest, travel, motivation factors
+4. **Historical Pattern Matching** - Similar games and outcomes
+5. **Portfolio Risk Analysis** - Correlation and position sizing
+
+**Machine Learning Features:**
+- **XGBoost** for game outcome prediction
+- **Random Forest** for value estimation
+- **Pattern Recognition** engine with similarity matching
+- **Meta Learning** system that learns from past decisions
+- **Optional PyTorch** neural networks for advanced pattern matching
+
+**Portfolio Management:**
+- Correlation analysis to avoid overexposure
+- Value at Risk (VaR) calculation at 95% confidence
+- Position sizing optimization
+- Maximum drawdown tracking
+
+**Memory System:**
+- Short-term memory (last 100 decisions)
+- Long-term categorized storage
+- Similar decision recall
+- Performance learning and strategy refinement
+
+See [.claude/README.md](.claude/README.md) for complete autonomous agent documentation.
+
+## 📚 Architecture
+
+```
+┌────────────────────────────────────────────────────────┐
+│                   Claude Desktop                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
+│  │   Chat UI    │  │    Tools     │  │   Prompts    │ │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘ │
+│         │                  │                  │         │
+│         └──────────────────┴──────────────────┘         │
+└─────────────────────────────┬──────────────────────────┘
+                              │ MCP Protocol
+┌─────────────────────────────┴──────────────────────────┐
+│                      MCP Server                         │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │          WaltersMCPEngine                        │  │
+│  │  • analyze_game    • find_sharp_money            │  │
+│  │  • kelly_stake     • backtest_strategy           │  │
+│  └──────────────┬───────────────────────────────────┘  │
+│                 │                                       │
+│  ┌──────────────┴───────────────────────────────────┐  │
+│  │    WaltersSportsAnalyzer (Core)                  │  │
+│  │  • Power Ratings  • Bankroll Management          │  │
+│  │  • Key Numbers    • Risk Analysis                │  │
+│  └──────────────┬───────────────────────────────────┘  │
+│                 │                                       │
+│  ┌──────────────┴───────────────────────────────────┐  │
+│  │         Data Ingestion & Research                │  │
+│  │  • Chrome DevTools    • AccuWeather              │  │
+│  │  • Highlightly        • ProFootballDoc           │  │
+│  └────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+                              │
+                              │
+┌─────────────────────────────┴──────────────────────────┐
+│         Autonomous Agent (Optional)                     │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │       WaltersCognitiveAgent                      │  │
+│  │  • 5-Step Reasoning    • XGBoost/RandomForest    │  │
+│  │  • Pattern Recognition • Portfolio Optimization  │  │
+│  │  • Meta Learning       • Memory System           │  │
+│  └────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────┘
+```
+
+## 📖 Documentation
+
+### Core Documentation
+- [README.md](README.md) - This file (main documentation)
+- [INTEGRATION_ANALYSIS.md](INTEGRATION_ANALYSIS.md) - Integration architecture and strategy
+- [.claude/README.md](.claude/README.md) - MCP server and autonomous agent guide
+
+### Methodology & Guides
+- [BILLY_WALTERS_METHODOLOGY.md](BILLY_WALTERS_METHODOLOGY.md) - Complete Billy Walters approach
+- [QUICKSTART.md](QUICKSTART.md) - Fast start guide
+- [USAGE_GUIDE.md](USAGE_GUIDE.md) - Detailed usage instructions
+
+### Specialized Guides
+- [INJURY_SCRAPER.md](INJURY_SCRAPER.md) - Injury data collection and analysis
+- [PROXY_SETUP.md](PROXY_SETUP.md) - Proxy configuration for scraping
+- [CHROME_DEVTOOLS_BREAKTHROUGH.md](CHROME_DEVTOOLS_BREAKTHROUGH.md) - Advanced scraping techniques
+
+### Testing & Validation
+- [TESTING_QUICK_START.md](TESTING_QUICK_START.md) - Testing guide
+- [BACKTEST_RESULTS_SUMMARY.md](BACKTEST_RESULTS_SUMMARY.md) - Historical performance
+- [DATA_QUALITY_REVIEW.md](DATA_QUALITY_REVIEW.md) - Data validation
+
+## ⚠️ Educational Purpose & Risk Warning
+
+This system is designed for **educational and research purposes only**.
+
+**Important Notes:**
+- Sports betting involves substantial risk of financial loss
+- Past performance does not guarantee future results
+- The system includes safety features (paper trading mode, loss limits, bet size caps)
+- Always bet responsibly and within your means
+- This is not financial advice
+
+**Safety Features Built-In:**
+- Paper trading mode enabled by default
+- Daily loss limits (5% of bankroll)
+- Maximum bet size limits (3% per bet)
+- Confirmation required for all bets
+- Real-time risk monitoring
 
 ## Collaboration Permissions Quick Checklist
 
