@@ -265,6 +265,9 @@ The MCP server provides AI-powered analysis tools directly in Claude Desktop.
 # Install MCP dependencies
 uv sync --extra mcp
 
+# Validate installation
+uv run python test_mcp_server.py
+
 # Set environment variables
 export WALTERS_API_KEY="your_key"
 export ACCUWEATHER_API_KEY="your_key"
@@ -275,10 +278,12 @@ uv run python .claude/walters_mcp_server.py
 ```
 
 **Configure Claude Desktop:**
-1. Copy `.claude/claude-desktop-config.json` settings to your Claude Desktop config
-2. Location: `~/.config/Claude/claude_desktop_config.json` (Linux/Mac)
+1. **Use hardened config (recommended):** Copy `.claude/claude-desktop-config.hardened.json` to your Claude Desktop config
+2. Location: `~/.config/Claude/claude_desktop_config.json` (Linux/Mac) or `%APPDATA%/Claude/claude_desktop_config.json` (Windows)
 3. Restart Claude Desktop
 4. MCP tools will be available automatically
+
+**Security:** See `MCP_SECURITY_HARDENING.md` for security best practices and validation tests.
 
 **Available Tools:**
 - `analyze_game` - Comprehensive game analysis with Billy Walters methodology

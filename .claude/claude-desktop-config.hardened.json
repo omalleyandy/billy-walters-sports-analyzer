@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "billy-walters-expert": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        ".claude/walters_mcp_server.py"
+      ],
+      "env": {
+        "WALTERS_API_KEY": "${WALTERS_API_KEY}",
+        "NEWS_API_KEY": "${NEWS_API_KEY}",
+        "HIGHLIGHTLY_API_KEY": "${HIGHLIGHTLY_API_KEY}",
+        "ACCUWEATHER_API_KEY": "${ACCUWEATHER_API_KEY}",
+        "PYTHONPATH": "."
+      },
+      "disabled": false
+    }
+  },
+  "globalSettings": {
+    "autoStart": false,
+    "debugMode": false,
+    "logLevel": "info",
+    "maxConcurrentRequests": 5,
+    "requestTimeout": 30000
+  },
+  "development": {
+    "test_mode": false,
+    "mock_data": false,
+    "cache_ttl": 300,
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 30
+    }
+  },
+  "safety": {
+    "educational_only": true,
+    "risk_warning": "This system is for educational purposes only. Sports betting involves risk of financial loss.",
+    "paper_trading_mode": true,
+    "require_confirmation": true,
+    "daily_loss_limit_percent": 5.0,
+    "max_bet_percent": 3.0
+  }
+}
