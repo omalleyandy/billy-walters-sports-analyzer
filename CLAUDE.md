@@ -2,6 +2,26 @@
 
 This document contains critical information about working with the Billy Walters Sports Analyzer codebase. Follow these guidelines precisely.
 
+---
+
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [How to Use This Document](#how-to-use-this-document)
+3. [Core Development Rules](#core-development-rules)
+4. [CI/CD Pipeline](#cicd-pipeline)
+5. [Git Workflow](#git-workflow)
+6. [Code Formatting](#code-formatting)
+7. [Environment Variables & API Keys](#environment-variables--api-keys)
+8. [Football Analytics Best Practices](#football-analytics-best-practices)
+9. [API Integration Guidelines](#api-integration-guidelines)
+10. [Project Structure](#project-structure)
+11. [Quick Reference](#quick-reference)
+12. [Development Session Best Practices](#development-session-best-practices)
+13. [Resources](#resources)
+
+---
+
 ## Project Overview
 
 This is a **football-focused sports analytics and betting analysis system** (NFL & NCAAF) inspired by Billy Walters' analytical approach. The project integrates weather data, AI-powered analysis, odds tracking, and statistical modeling to provide comprehensive insights for informed decision-making.
@@ -14,6 +34,112 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
 - **MCP Server** (walters_mcp_server.py) - Model Context Protocol server for tool integration
 - **Autonomous Agent** (walters_autonomous_agent.py) - Automated analysis agent
 - **PRD** (billy_walters_analytics_prd.md) - Product requirements document
+
+### Project Status
+- **CI/CD**: Fully operational with GitHub Actions
+- **Tests**: 146 tests passing (multi-platform, multi-version)
+- **Code Quality**: Automated linting and type checking
+- **Security**: Automated vulnerability scanning and secret detection
+- **Documentation**: Complete development guidelines and lessons learned
+- **Legacy Code**: Pragmatic configuration allows CI while incrementally improving code quality
+
+## How to Use This Document
+
+**For New Development Sessions:**
+1. Review relevant sections based on your task
+2. Check **Quick Reference** for common workflows
+3. Consult **Troubleshooting** section if you encounter issues
+4. Reference **LESSONS_LEARNED.md** for similar past problems
+
+**Before Making Changes:**
+1. Read **Core Development Rules** (critical)
+2. Review **CI/CD Pipeline** section
+3. Follow **Git Workflow** process
+4. Use **Local Validation** commands before pushing
+
+**When Something Breaks:**
+1. Check **Troubleshooting** section in this file
+2. Review **LESSONS_LEARNED.md** for similar issues
+3. Check `.github/CI_CD.md` for CI/CD specific problems
+4. Document new issues using `/document-lesson` command
+
+**This Document Contains:**
+- Development rules and best practices
+- Complete CI/CD integration guide
+- Step-by-step workflows
+- Quick reference commands
+- Troubleshooting guide
+- Project structure and organization
+
+## Documentation System
+
+This project maintains comprehensive documentation across multiple files:
+
+### Primary Documents
+
+**CLAUDE.md (This File)**
+- **Purpose**: Single source of truth for development guidelines
+- **Audience**: Developers (human and AI)
+- **Content**: Rules, workflows, best practices, quick reference
+- **Update When**: Adding new patterns, solving common issues, changing standards
+- **Location**: Project root
+
+**LESSONS_LEARNED.md**
+- **Purpose**: Troubleshooting guide and institutional knowledge
+- **Audience**: Developers debugging issues
+- **Content**: Session-by-session problem solving with root causes and solutions
+- **Update When**: Solving non-trivial problems, debugging CI/CD, major refactoring
+- **Location**: Project root
+- **How to Update**: Use `/document-lesson` command
+
+**.github/CI_CD.md**
+- **Purpose**: Technical CI/CD documentation
+- **Audience**: DevOps, CI/CD maintainers
+- **Content**: Workflow architecture, configuration details, troubleshooting
+- **Update When**: Changing workflows, adding checks, modifying actions
+- **Location**: `.github/` directory
+
+**README.md**
+- **Purpose**: Project overview and quick start
+- **Audience**: New users, external stakeholders
+- **Content**: What the project does, installation, basic usage
+- **Update When**: Features change, installation process updates
+- **Location**: Project root
+
+### Supporting Documentation
+
+**.env.example**
+- Template for required environment variables
+- Update when adding new API integrations
+
+**pyproject.toml**
+- Package configuration
+- Ruff and Pyright settings (with inline comments)
+
+**.github/BRANCH_PROTECTION_SETUP.md**
+- Step-by-step branch protection configuration
+- Reference for GitHub repository settings
+
+### Documentation Principles
+
+1. **Single Source of Truth**: Each topic has one authoritative location
+2. **Cross-Reference**: Documents link to each other for related topics
+3. **Keep Current**: Update documentation with code changes
+4. **Be Specific**: Include file paths, line numbers, error messages
+5. **Show Examples**: Provide code snippets and command examples
+6. **Explain Why**: Document rationale, not just what
+
+### When to Update What
+
+| Situation | Update |
+|-----------|--------|
+| Solved a bug | LESSONS_LEARNED.md |
+| New development pattern | CLAUDE.md |
+| Changed CI workflow | .github/CI_CD.md |
+| Added feature | README.md |
+| New API integration | .env.example, CLAUDE.md |
+| Configuration change | pyproject.toml (comments), CLAUDE.md |
+| Common issue solved | CLAUDE.md (Troubleshooting), LESSONS_LEARNED.md |
 
 ## Core Development Rules
 
@@ -567,6 +693,181 @@ uv pip install -e .
 3. Review relevant section in this file
 4. Check GitHub Issues for known problems
 5. Use `/document-lesson` to add new lessons learned
+
+## Development Session Best Practices
+
+### Starting a Session
+
+**1. Sync with Latest Changes**
+```bash
+# Pull latest from main
+git pull origin main
+
+# Update dependencies
+uv sync --all-extras --dev
+
+# Verify CI is passing
+gh run list --workflow=ci.yml --limit 3
+```
+
+**2. Review Recent Changes**
+```bash
+# Check recent commits
+git log --oneline -10
+
+# Check if any new lessons learned
+tail -50 LESSONS_LEARNED.md
+
+# Check Dependabot PRs
+gh pr list --author app/dependabot
+```
+
+**3. Set Up Your Task**
+- Create feature branch
+- Review relevant documentation sections
+- Run tests to ensure baseline is green
+
+### During Development
+
+**Best Practices:**
+- **Commit Often**: Small, focused commits are easier to review and revert
+- **Test Locally**: Run validation commands before every commit
+- **Document as You Go**: Use inline comments for complex logic
+- **Follow Patterns**: Match existing code style and architecture
+- **Ask Questions**: Use `/document-lesson` if you solve something tricky
+
+**Validation Checklist (Before Every Commit):**
+- [ ] Code formatted: `uv run ruff format .`
+- [ ] Linting passes: `uv run ruff check .`
+- [ ] Type check passes: `uv run pyright`
+- [ ] Tests pass: `uv run pytest tests/ -v`
+- [ ] No secrets in staged files: `git diff --cached`
+
+### Ending a Session
+
+**1. Clean Up Your Work**
+```bash
+# Commit any remaining changes
+git status
+git add .
+git commit -m "work-in-progress: description"
+
+# Push to your branch (backup)
+git push origin your-branch-name
+```
+
+**2. Document What You Learned**
+```bash
+# If you solved a tricky problem
+/document-lesson
+
+# Add to LESSONS_LEARNED.md with:
+# - Problem description
+# - Root cause
+# - Solution implemented
+# - Prevention tips
+```
+
+**3. Update Project State**
+- Sync CLAUDE.md if you discovered new patterns
+- Update README.md if project scope changed
+- Commit documentation updates separately
+
+**4. Prepare for Next Session**
+- Leave clear TODO comments in code
+- Update GitHub issues with progress
+- Note any blockers or questions
+
+### When CI/CD Fails
+
+**Systematic Debugging Process:**
+
+1. **Identify Which Check Failed**
+   ```bash
+   gh run view <run-id> --log-failed
+   ```
+
+2. **Reproduce Locally**
+   - Run the exact same command CI uses
+   - Check if it fails locally
+   - If it passes locally, check for environment differences
+
+3. **Common Fixes**
+   - **Lint failures**: Run `uv run ruff format .` and `uv run ruff check . --fix`
+   - **Type check failures**: Check if new code needs type hints or pyright exclusions
+   - **Test failures**: Run `uv run pytest tests/ -v --cov=.` and fix failing tests
+   - **Security scan failures**: Check for accidentally committed secrets
+
+4. **If Still Stuck**
+   - Check `LESSONS_LEARNED.md` for similar CI failures
+   - Review `.github/CI_CD.md` troubleshooting section
+   - Check if configuration in `pyproject.toml` needs updating
+
+5. **Document the Solution**
+   - Use `/document-lesson` to capture the fix
+   - Include what failed, why it failed, and how you fixed it
+   - Update CLAUDE.md if it's a common issue
+
+### Maintaining Documentation
+
+**Keep Documentation Current:**
+
+**CLAUDE.md (This File):**
+- Update when adding new development patterns
+- Add to Quick Reference when you create useful commands
+- Update Troubleshooting when you solve new issues
+- Keep project structure current
+
+**LESSONS_LEARNED.md:**
+- Document every non-trivial problem you solve
+- Include root cause analysis
+- Provide prevention tips
+- Update after each significant debugging session
+
+**README.md:**
+- Update when project features change
+- Keep installation instructions current
+- Update examples if APIs change
+
+**Code Comments:**
+- Document why, not what
+- Explain non-obvious decisions
+- Add TODO comments for known issues
+- Link to GitHub issues for context
+
+### Working with Legacy Code
+
+This project has legacy code that doesn't meet current standards. Our approach:
+
+**Philosophy:**
+- Don't block on legacy issues
+- Fix what you touch
+- Improve incrementally
+- Document patterns to avoid
+
+**Practical Guidelines:**
+1. **New Code**: Must pass strict linting and type checking
+2. **Modified Code**: Fix issues in files you're editing
+3. **Legacy Code**: Leave alone unless it breaks
+4. **Configuration**: Keep pragmatic ignores in `pyproject.toml`
+
+**Tracking Improvement:**
+- Monitor ruff/pyright error counts over time
+- Quarterly review of ignored rules
+- Remove ignores as code improves
+- Celebrate when strictness can be increased
+
+### Using Custom Commands
+
+**Available Slash Commands:**
+- `/document-lesson` - Add entry to LESSONS_LEARNED.md
+- `/current-week` - Show current NFL week and schedule
+
+**Creating New Commands:**
+1. Create `.claude/commands/your-command.md`
+2. Add description and prompt
+3. Test with `/your-command`
+4. Document in this section
 
 ## Resources
 
