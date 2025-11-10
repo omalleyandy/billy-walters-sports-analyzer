@@ -4,7 +4,7 @@
 
 ## 🚀 What's New - Ultimate Edition Features
 
-### 🎉 ALL PHASES COMPLETE! (✅ 100% DONE!)  **v1.0.0 RELEASED!**
+### 🎉 ALL PHASES COMPLETE!  **v0.8.0 Beta**
 - **MCP Server**: Full Claude Desktop integration with 6 analysis tools ✅
 - **Autonomous Agent**: Self-learning AI with 5-step reasoning chains ✅
 - **AI-Enhanced Scraper**: Performance monitoring, network analysis, auto-debugging ✅
@@ -13,12 +13,12 @@
 - **Interactive Mode**: REPL interface with Chrome DevTools AI patterns ✅
 - **Automation**: Super-run orchestrator + 14 VS Code tasks + Daily workflows ✅
 - **Documentation**: 10,000+ lines - Architecture, API refs, guides, video scripts ✅
-- **Testing**: 114 passing tests with 98.3% success rate ✅
+- **Testing**: Test suite in progress (52/58 tests passing) 🔧
 - **Production**: env.template, deployment guide, monitoring setup ✅
 - **Real-time Analysis**: Sharp money detection and market monitoring
 - **Portfolio Optimization**: Risk management and Kelly Criterion sizing
 
-**🏆 PROJECT COMPLETE! Ready for production use!**
+**🎯 BETA STATUS: Core features complete. Production readiness in progress!**
 
 ### 🧠 Core Capabilities
 - **Billy Walters Methodology**: Complete implementation of proven betting strategies
@@ -70,6 +70,27 @@ This system implements Billy Walters' sophisticated approach to injury impact an
 | Position counts only | Specific point spread impacts |
 | No market analysis | Market inefficiency detection |
 | No bet sizing | Kelly Criterion bet sizing |
+
+## 🔧 Known Issues (v0.8.0 Beta)
+
+As we work toward v1.0, the following issues are being addressed:
+
+### Critical
+- **Duplicate Code Directories**: Both `walters_analyzer/` and `src/walters_analyzer/` exist - consolidation in progress
+- **Test Suite**: 6 out of 58 tests failing due to import errors (fixing duplicate directory issue will resolve)
+
+### High Priority
+- **Root Directory Organization**: 30+ scripts in root need reorganization into proper directories
+- **Linting Issues**: 68 linting errors remain (unused imports, undefined names in MCP server, bare except statements)
+
+### Medium Priority
+- **Documentation Accuracy**: Some documentation refers to features still in development
+- **HTTP Client Duplication**: 5 different HTTP client implementations should be consolidated
+
+### Progress Tracking
+Track our progress toward v1.0 in the [project issues](https://github.com/your-repo/issues).
+
+**Estimated time to v1.0:** 5-7 days of focused development
 
 ## Documentation Hub
 
