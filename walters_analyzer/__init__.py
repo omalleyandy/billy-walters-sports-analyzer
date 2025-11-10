@@ -1,1 +1,1 @@
-__all__ = ['cli', 'wkcard']
+__all__ = ["cli", "wkcard"]

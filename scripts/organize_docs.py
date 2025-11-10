@@ -97,10 +97,14 @@ def move_markdown(dry_run: bool = False) -> None:
         destination = destination_dir / path.name
 
         if destination.exists():
-            print(f"skip {path.name}: already located at {destination.relative_to(ROOT)}")
+            print(
+                f"skip {path.name}: already located at {destination.relative_to(ROOT)}"
+            )
             continue
 
-        print(f"{'DRY RUN - would move' if dry_run else 'Moving'} {path.name} -> {destination.relative_to(ROOT)}")
+        print(
+            f"{'DRY RUN - would move' if dry_run else 'Moving'} {path.name} -> {destination.relative_to(ROOT)}"
+        )
         if not dry_run:
             shutil.move(str(path), destination)
 
@@ -115,15 +119,27 @@ def archive_reports(dry_run: bool = False) -> None:
         destination = ARCHIVE_DIR / path.name
         if destination.exists():
             continue
-        print(f"{'DRY RUN - would archive' if dry_run else 'Archiving'} {path.name} -> {destination.relative_to(ROOT)}")
+        print(
+            f"{'DRY RUN - would archive' if dry_run else 'Archiving'} {path.name} -> {destination.relative_to(ROOT)}"
+        )
         if not dry_run:
             shutil.move(str(path), destination)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Organize root markdown files under docs/")
-    parser.add_argument("--dry-run", action="store_true", help="Show planned moves without touching files")
-    parser.add_argument("--skip-archive", action="store_true", help="Do not move reports into docs/reports/archive")
+    parser = argparse.ArgumentParser(
+        description="Organize root markdown files under docs/"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show planned moves without touching files",
+    )
+    parser.add_argument(
+        "--skip-archive",
+        action="store_true",
+        help="Do not move reports into docs/reports/archive",
+    )
     args = parser.parse_args()
     move_markdown(dry_run=args.dry_run)
     if not args.skip_archive:

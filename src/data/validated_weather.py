@@ -61,9 +61,7 @@ class ValidatedWeatherClient:
         """Async context manager exit."""
         await self.client.close()
 
-    def _validate_data(
-        self, data_type: str, data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _validate_data(self, data_type: str, data: dict[str, Any]) -> dict[str, Any]:
         """
         Run validation script on data.
 
@@ -132,9 +130,7 @@ class ValidatedWeatherClient:
             ValueError: If validation fails in strict mode
             RuntimeError: If fetch fails
         """
-        logger.info(
-            f"Fetching and validating game forecast for {city}, {state}"
-        )
+        logger.info(f"Fetching and validating game forecast for {city}, {state}")
 
         # Fetch weather data
         weather = await self.client.get_game_forecast(
@@ -150,8 +146,7 @@ class ValidatedWeatherClient:
         if not validation_result["valid"]:
             errors = validation_result.get("errors", [])
             error_msg = (
-                f"Weather validation failed for {city}, {state}: "
-                f"{', '.join(errors)}"
+                f"Weather validation failed for {city}, {state}: {', '.join(errors)}"
             )
 
             if strict:
@@ -164,13 +159,10 @@ class ValidatedWeatherClient:
         warnings = validation_result.get("warnings", [])
         if warnings:
             logger.warning(
-                f"Weather warnings for {city}, {state}: "
-                f"{', '.join(warnings)}"
+                f"Weather warnings for {city}, {state}: {', '.join(warnings)}"
             )
 
-        logger.info(
-            f"Successfully fetched and validated forecast for {city}, {state}"
-        )
+        logger.info(f"Successfully fetched and validated forecast for {city}, {state}")
         return normalized
 
     async def get_and_validate_current_weather(
@@ -212,8 +204,7 @@ class ValidatedWeatherClient:
         if not validation_result["valid"]:
             errors = validation_result.get("errors", [])
             error_msg = (
-                f"Weather validation failed for {city}, {state}: "
-                f"{', '.join(errors)}"
+                f"Weather validation failed for {city}, {state}: {', '.join(errors)}"
             )
 
             if strict:
@@ -246,7 +237,7 @@ async def main():
                 "Kansas City", "MO", game_time, strict=True
             )
 
-            print(f"\nValidated game forecast:")
+            print("\nValidated game forecast:")
             print(f"  Source: {forecast['source']}")
             print(f"  Temperature: {forecast['temperature_f']}°F")
             print(f"  Weather: {forecast['weather_text']}")

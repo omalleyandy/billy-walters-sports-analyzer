@@ -41,7 +41,7 @@ class ValidationLogger:
 
         # Create formatter
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
         file_handler.setFormatter(formatter)
 
@@ -52,10 +52,10 @@ class ValidationLogger:
         # In-memory event tracking
         self.events: List[Dict[str, Any]] = []
         self.stats = {
-            'total_validations': 0,
-            'successful': 0,
-            'failed': 0,
-            'by_type': {}
+            "total_validations": 0,
+            "successful": 0,
+            "failed": 0,
+            "by_type": {},
         }
 
     def log_event(
@@ -63,7 +63,7 @@ class ValidationLogger:
         event_name: str,
         data_type: str,
         validation_result: Dict[str, Any],
-        context: Optional[Dict[str, Any]] = None
+        context: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Log a validation event.
@@ -75,35 +75,35 @@ class ValidationLogger:
             context: Additional context (game_id, timestamp, etc.)
         """
         event = {
-            'timestamp': datetime.now().isoformat(),
-            'event_name': event_name,
-            'data_type': data_type,
-            'valid': validation_result.get('valid', False),
-            'errors': validation_result.get('errors', []),
-            'context': context or {}
+            "timestamp": datetime.now().isoformat(),
+            "event_name": event_name,
+            "data_type": data_type,
+            "valid": validation_result.get("valid", False),
+            "errors": validation_result.get("errors", []),
+            "context": context or {},
         }
 
         # Store event
         self.events.append(event)
 
         # Update statistics
-        self.stats['total_validations'] += 1
-        if event['valid']:
-            self.stats['successful'] += 1
+        self.stats["total_validations"] += 1
+        if event["valid"]:
+            self.stats["successful"] += 1
         else:
-            self.stats['failed'] += 1
+            self.stats["failed"] += 1
 
         # Track by type
-        if data_type not in self.stats['by_type']:
-            self.stats['by_type'][data_type] = {'success': 0, 'failed': 0}
+        if data_type not in self.stats["by_type"]:
+            self.stats["by_type"][data_type] = {"success": 0, "failed": 0}
 
-        if event['valid']:
-            self.stats['by_type'][data_type]['success'] += 1
+        if event["valid"]:
+            self.stats["by_type"][data_type]["success"] += 1
         else:
-            self.stats['by_type'][data_type]['failed'] += 1
+            self.stats["by_type"][data_type]["failed"] += 1
 
         # Log to file
-        if event['valid']:
+        if event["valid"]:
             self.logger.info(
                 f"{event_name} - {data_type} validation PASSED: {json.dumps(context or {})}"
             )
@@ -118,7 +118,7 @@ class ValidationLogger:
         game_id: str,
         odds_data: Dict[str, Any],
         is_valid: bool,
-        errors: Optional[List[str]] = None
+        errors: Optional[List[str]] = None,
     ) -> None:
         """
         Convenience method for logging odds validation.
@@ -129,27 +129,24 @@ class ValidationLogger:
             is_valid: Whether validation passed
             errors: List of validation errors if any
         """
-        validation_result = {
-            'valid': is_valid,
-            'errors': errors or []
-        }
+        validation_result = {"valid": is_valid, "errors": errors or []}
 
         context = {
-            'game_id': game_id,
-            'spread': odds_data.get('spread'),
-            'over_under': odds_data.get('over_under'),
-            'moneyline_home': odds_data.get('moneyline_home'),
-            'moneyline_away': odds_data.get('moneyline_away')
+            "game_id": game_id,
+            "spread": odds_data.get("spread"),
+            "over_under": odds_data.get("over_under"),
+            "moneyline_home": odds_data.get("moneyline_home"),
+            "moneyline_away": odds_data.get("moneyline_away"),
         }
 
-        self.log_event('odds_validation', 'odds', validation_result, context)
+        self.log_event("odds_validation", "odds", validation_result, context)
 
     def log_weather_validation(
         self,
         game_id: str,
         weather_data: Dict[str, Any],
         is_valid: bool,
-        errors: Optional[List[str]] = None
+        errors: Optional[List[str]] = None,
     ) -> None:
         """
         Convenience method for logging weather validation.
@@ -160,19 +157,16 @@ class ValidationLogger:
             is_valid: Whether validation passed
             errors: List of validation errors if any
         """
-        validation_result = {
-            'valid': is_valid,
-            'errors': errors or []
-        }
+        validation_result = {"valid": is_valid, "errors": errors or []}
 
         context = {
-            'game_id': game_id,
-            'temperature': weather_data.get('temperature'),
-            'wind_speed': weather_data.get('wind_speed'),
-            'precipitation_probability': weather_data.get('precipitation_probability')
+            "game_id": game_id,
+            "temperature": weather_data.get("temperature"),
+            "wind_speed": weather_data.get("wind_speed"),
+            "precipitation_probability": weather_data.get("precipitation_probability"),
         }
 
-        self.log_event('weather_validation', 'weather', validation_result, context)
+        self.log_event("weather_validation", "weather", validation_result, context)
 
     def get_statistics(self) -> Dict[str, Any]:
         """
@@ -183,11 +177,11 @@ class ValidationLogger:
         """
         return {
             **self.stats,
-            'success_rate': (
-                self.stats['successful'] / self.stats['total_validations'] * 100
-                if self.stats['total_validations'] > 0
+            "success_rate": (
+                self.stats["successful"] / self.stats["total_validations"] * 100
+                if self.stats["total_validations"] > 0
                 else 0
-            )
+            ),
         }
 
     def get_recent_events(self, limit: int = 10) -> List[Dict[str, Any]]:
@@ -209,7 +203,7 @@ class ValidationLogger:
         Returns:
             List of failed validation events
         """
-        return [event for event in self.events if not event['valid']]
+        return [event for event in self.events if not event["valid"]]
 
     def save_report(self, filename: Optional[str] = None) -> Path:
         """
@@ -222,18 +216,20 @@ class ValidationLogger:
             Path to saved report file
         """
         if filename is None:
-            filename = f"validation_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            filename = (
+                f"validation_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            )
 
         report_path = self.log_dir / filename
 
         report = {
-            'generated_at': datetime.now().isoformat(),
-            'statistics': self.get_statistics(),
-            'recent_events': self.get_recent_events(50),
-            'failed_validations': self.get_failed_validations()
+            "generated_at": datetime.now().isoformat(),
+            "statistics": self.get_statistics(),
+            "recent_events": self.get_recent_events(50),
+            "failed_validations": self.get_failed_validations(),
         }
 
-        with open(report_path, 'w') as f:
+        with open(report_path, "w") as f:
             json.dump(report, f, indent=2)
 
         self.logger.info(f"Validation report saved to {report_path}")
@@ -265,28 +261,28 @@ if __name__ == "__main__":
     logger.log_odds_validation(
         game_id="NFL_2025_W10_BUF_KC",
         odds_data={
-            'spread': -2.5,
-            'over_under': 47.5,
-            'moneyline_home': -135,
-            'moneyline_away': 115
+            "spread": -2.5,
+            "over_under": 47.5,
+            "moneyline_home": -135,
+            "moneyline_away": 115,
         },
-        is_valid=True
+        is_valid=True,
     )
 
     # Test failed validation
     logger.log_odds_validation(
         game_id="NFL_2025_W10_DET_GB",
         odds_data={
-            'spread': -75.5,  # Invalid
-            'over_under': 15,  # Invalid
-            'moneyline_home': -150,
-            'moneyline_away': 130
+            "spread": -75.5,  # Invalid
+            "over_under": 15,  # Invalid
+            "moneyline_home": -150,
+            "moneyline_away": 130,
         },
         is_valid=False,
         errors=[
             "Invalid spread: -75.5 (must be between -50 and 50)",
-            "Invalid over/under: 15 (must be between 20 and 100)"
-        ]
+            "Invalid over/under: 15 (must be between 20 and 100)",
+        ],
     )
 
     # Print statistics

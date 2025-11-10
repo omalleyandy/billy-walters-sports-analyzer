@@ -22,7 +22,8 @@
       "Bash(git commit:*)",
       "Bash(NUL)",
       "Bash(del nul)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(uv sync:*)"
     ],
     "deny": [],
     "ask": []

@@ -26,12 +26,10 @@ from billy_walters_edge_detector import (
     WeatherImpact,
     SharpAction,
     InjuryImpact,
-    AccuWeatherClient
 )
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -115,7 +113,7 @@ class BillyWaltersTotalsDetector:
 
     # Massey rating scale conversion
     MASSEY_BASELINE_OFF = 21.0  # Average offensive rating
-    MASSEY_BASELINE_DEF = 6.0   # Average defensive rating
+    MASSEY_BASELINE_DEF = 6.0  # Average defensive rating
     MASSEY_OFF_TO_POINTS = 0.3  # Each Off rating point = 0.3 points/game
     MASSEY_DEF_TO_POINTS = 0.4  # Each Def rating point = 0.4 points allowed/game
 
@@ -139,14 +137,16 @@ class BillyWaltersTotalsDetector:
             ratings: Dictionary of team -> PowerRating
         """
         self.power_ratings = ratings
-        logger.info(f"Loaded {len(self.power_ratings)} power ratings for totals analysis")
+        logger.info(
+            f"Loaded {len(self.power_ratings)} power ratings for totals analysis"
+        )
 
     def calculate_predicted_total(
         self,
         away_team: str,
         home_team: str,
         weather_adj: float = 0.0,
-        injury_adj: float = 0.0
+        injury_adj: float = 0.0,
     ) -> Tuple[float, float, float, float, float]:
         """
         Calculate predicted game total using offensive/defensive ratings
@@ -189,12 +189,16 @@ class BillyWaltersTotalsDetector:
         # Away team expected score
         away_off_adj = (away_off - self.MASSEY_BASELINE_OFF) * self.MASSEY_OFF_TO_POINTS
         home_def_adj = (home_def - self.MASSEY_BASELINE_DEF) * self.MASSEY_DEF_TO_POINTS
-        away_expected = (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + away_off_adj - home_def_adj
+        away_expected = (
+            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + away_off_adj - home_def_adj
+        )
 
         # Home team expected score
         home_off_adj = (home_off - self.MASSEY_BASELINE_OFF) * self.MASSEY_OFF_TO_POINTS
         away_def_adj = (away_def - self.MASSEY_BASELINE_DEF) * self.MASSEY_DEF_TO_POINTS
-        home_expected = (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + home_off_adj - away_def_adj
+        home_expected = (
+            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + home_off_adj - away_def_adj
+        )
 
         # Base total prediction
         base_total = away_expected + home_expected
@@ -211,9 +215,7 @@ class BillyWaltersTotalsDetector:
         return (predicted_total, away_off, away_def, home_off, home_def)
 
     def calculate_injury_impact_on_total(
-        self,
-        away_injuries: InjuryImpact,
-        home_injuries: InjuryImpact
+        self, away_injuries: InjuryImpact, home_injuries: InjuryImpact
     ) -> float:
         """
         Calculate how injuries affect total scoring
@@ -307,7 +309,7 @@ class BillyWaltersTotalsDetector:
         weather: Optional[WeatherImpact] = None,
         sharp_action: Optional[SharpAction] = None,
         away_injuries: Optional[InjuryImpact] = None,
-        home_injuries: Optional[InjuryImpact] = None
+        home_injuries: Optional[InjuryImpact] = None,
     ) -> Optional[TotalsEdge]:
         """
         Detect totals betting edge using Billy Walters methodology
@@ -335,11 +337,15 @@ class BillyWaltersTotalsDetector:
         # Calculate injury impact on total
         injury_adj = 0.0
         if away_injuries and home_injuries:
-            injury_adj = self.calculate_injury_impact_on_total(away_injuries, home_injuries)
+            injury_adj = self.calculate_injury_impact_on_total(
+                away_injuries, home_injuries
+            )
 
         # Calculate predicted total
-        predicted_total, away_off, away_def, home_off, home_def = self.calculate_predicted_total(
-            away_team, home_team, weather_adj, injury_adj
+        predicted_total, away_off, away_def, home_off, home_def = (
+            self.calculate_predicted_total(
+                away_team, home_team, weather_adj, injury_adj
+            )
         )
 
         # Calculate edge
@@ -410,18 +416,24 @@ class BillyWaltersTotalsDetector:
             kelly_fraction=kelly,
             confidence_score=confidence,
             timestamp=datetime.now().isoformat(),
-            data_sources=["massey_offensive_defensive", "action_network", "accuweather"],
+            data_sources=[
+                "massey_offensive_defensive",
+                "action_network",
+                "accuweather",
+            ],
             away_injuries=away_injuries,
-            home_injuries=home_injuries
+            home_injuries=home_injuries,
         )
 
-    def save_totals_edges(self, edges: List[TotalsEdge], filename: str = "nfl_totals_detected.jsonl"):
+    def save_totals_edges(
+        self, edges: List[TotalsEdge], filename: str = "nfl_totals_detected.jsonl"
+    ):
         """Save detected totals edges to JSONL file"""
         filepath = os.path.join(self.output_dir, filename)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             for edge in edges:
-                f.write(json.dumps(asdict(edge)) + '\n')
+                f.write(json.dumps(asdict(edge)) + "\n")
 
         logger.info(f"Saved {len(edges)} totals edges to {filepath}")
 
@@ -435,7 +447,9 @@ class BillyWaltersTotalsDetector:
         report.append("")
 
         if not edges:
-            report.append("No totals edges detected above minimum threshold (3.5 points)")
+            report.append(
+                "No totals edges detected above minimum threshold (3.5 points)"
+            )
             return "\n".join(report)
 
         # Sort by edge strength
@@ -444,12 +458,20 @@ class BillyWaltersTotalsDetector:
         for i, edge in enumerate(edges_sorted, 1):
             report.append(f"{i}. {edge.matchup} (Week {edge.week})")
             report.append(f"   Time: {edge.game_time}")
-            report.append(f"   Offensive: {edge.away_team} {edge.away_offensive_rating:.1f} | {edge.home_team} {edge.home_offensive_rating:.1f}")
-            report.append(f"   Defensive: {edge.away_team} {edge.away_defensive_rating:.1f} | {edge.home_team} {edge.home_defensive_rating:.1f}")
+            report.append(
+                f"   Offensive: {edge.away_team} {edge.away_offensive_rating:.1f} | {edge.home_team} {edge.home_offensive_rating:.1f}"
+            )
+            report.append(
+                f"   Defensive: {edge.away_team} {edge.away_defensive_rating:.1f} | {edge.home_team} {edge.home_defensive_rating:.1f}"
+            )
             report.append(f"   Predicted Total: {edge.predicted_total:.1f}")
             report.append(f"   Market Total: {edge.market_total:.1f}")
-            report.append(f"   EDGE: {edge.edge_points:.1f} points → BET {edge.edge_side.upper()} ({edge.edge_strength.upper()})")
-            report.append(f"   Kelly Sizing: {edge.kelly_fraction*100:.1f}% of bankroll")
+            report.append(
+                f"   EDGE: {edge.edge_points:.1f} points → BET {edge.edge_side.upper()} ({edge.edge_strength.upper()})"
+            )
+            report.append(
+                f"   Kelly Sizing: {edge.kelly_fraction * 100:.1f}% of bankroll"
+            )
             report.append(f"   Confidence: {edge.confidence_score:.0f}/100")
 
             if edge.weather_adjustment != 0:
@@ -463,7 +485,9 @@ class BillyWaltersTotalsDetector:
 
         report.append("=" * 80)
         report.append(f"Total Edges Found: {len(edges)}")
-        report.append(f"Strong/Very Strong: {sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}")
+        report.append(
+            f"Strong/Very Strong: {sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}"
+        )
         report.append(f"Over bets: {sum(1 for e in edges if e.edge_side == 'over')}")
         report.append(f"Under bets: {sum(1 for e in edges if e.edge_side == 'under')}")
         report.append("=" * 80)
@@ -473,5 +497,7 @@ class BillyWaltersTotalsDetector:
 
 if __name__ == "__main__":
     logger.info("Billy Walters Totals Edge Detector - Standalone mode")
-    logger.info("This module is designed to be imported by the main edge detection system")
+    logger.info(
+        "This module is designed to be imported by the main edge detection system"
+    )
     logger.info("Run billy_walters_edge_detector.py for complete analysis")

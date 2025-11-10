@@ -8,7 +8,7 @@ BOT_NAME = "overtime_live"
 SPIDER_MODULES = ["scrapers.overtime_live.spiders"]
 NEWSPIDER_MODULE = "scrapers.overtime_live.spiders"
 
-ROBOTSTXT_OBEY = False          # You decide case-by-case.
+ROBOTSTXT_OBEY = False  # You decide case-by-case.
 LOG_LEVEL = "INFO"
 
 # Output via custom pipeline (JSONL + Parquet + CSV snapshots)
@@ -19,8 +19,10 @@ ITEM_PIPELINES = {
 
 # Playwright is configured in spider.custom_settings; these here are fallback.
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-DOWNLOAD_HANDLERS = {"http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-                     "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler"}
+DOWNLOAD_HANDLERS = {
+    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+}
 
 # Respectful cadence
 CONCURRENT_REQUESTS = 2
@@ -46,7 +48,9 @@ _proxy_config = {}
 if PROXY_URL:
     _proxy_config = {"proxy": {"server": PROXY_URL}}
     try:
-        print(f"[OK] Proxy configured: {PROXY_URL.split('@')[1] if '@' in PROXY_URL else PROXY_URL}")
+        print(
+            f"[OK] Proxy configured: {PROXY_URL.split('@')[1] if '@' in PROXY_URL else PROXY_URL}"
+        )
     except UnicodeEncodeError:
         print("[OK] Proxy configured")
 

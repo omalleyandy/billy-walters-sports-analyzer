@@ -1,7 +1,12 @@
 from __future__ import annotations
 from typing import Any, Dict, List
 from datetime import datetime
-import os, orjson, pyarrow as pa, pyarrow.parquet as pq, csv
+import os
+import orjson
+import pyarrow as pa
+import pyarrow.parquet as pq
+import csv
+
 
 class ParquetPipeline:
     def __init__(self, out_dir: str = "data/overtime_live"):
@@ -28,20 +33,28 @@ class ParquetPipeline:
                 f.write(orjson.dumps(row))
                 f.write(b"\n")
 
-        table = pa.table({
-            "source": [r.get("source") for r in self._buffer],
-            "league": [r.get("league") for r in self._buffer],
-            "sport":  [r.get("sport")  for r in self._buffer],
-            "game_key": [r.get("game_key") for r in self._buffer],
-            "collected_at": [r.get("collected_at") for r in self._buffer],
-            "event_date": [r.get("event_date") for r in self._buffer],
-            "event_time": [r.get("event_time") for r in self._buffer],
-            "rotation_number": [r.get("rotation_number") for r in self._buffer],
-            "is_live": [r.get("is_live", False) for r in self._buffer],
-            "teams_json":   [orjson.dumps(r.get("teams")).decode() for r in self._buffer],
-            "state_json":   [orjson.dumps(r.get("state")).decode() for r in self._buffer],
-            "markets_json": [orjson.dumps(r.get("markets")).decode() for r in self._buffer],
-        })
+        table = pa.table(
+            {
+                "source": [r.get("source") for r in self._buffer],
+                "league": [r.get("league") for r in self._buffer],
+                "sport": [r.get("sport") for r in self._buffer],
+                "game_key": [r.get("game_key") for r in self._buffer],
+                "collected_at": [r.get("collected_at") for r in self._buffer],
+                "event_date": [r.get("event_date") for r in self._buffer],
+                "event_time": [r.get("event_time") for r in self._buffer],
+                "rotation_number": [r.get("rotation_number") for r in self._buffer],
+                "is_live": [r.get("is_live", False) for r in self._buffer],
+                "teams_json": [
+                    orjson.dumps(r.get("teams")).decode() for r in self._buffer
+                ],
+                "state_json": [
+                    orjson.dumps(r.get("state")).decode() for r in self._buffer
+                ],
+                "markets_json": [
+                    orjson.dumps(r.get("markets")).decode() for r in self._buffer
+                ],
+            }
+        )
         pq_path = os.path.join(self.out_dir, f"overtime-live-{ts}.parquet")
         pq.write_table(table, pq_path)
 
@@ -51,6 +64,7 @@ class CSVPipeline:
     Export scraped items to CSV with flattened market data.
     Each game gets one row with columns for spread/total/moneyline fields.
     """
+
     def __init__(self, out_dir: str = "data/overtime_live"):
         self.out_dir = out_dir
         os.makedirs(self.out_dir, exist_ok=True)
@@ -68,10 +82,10 @@ class CSVPipeline:
     def close_spider(self, spider):
         if not self._buffer:
             return
-        
+
         ts = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
         csv_path = os.path.join(self.out_dir, f"overtime-live-{ts}.csv")
-        
+
         # Flatten the nested structure for CSV
         flattened_rows = []
         for row in self._buffer:
@@ -88,36 +102,76 @@ class CSVPipeline:
                 "away_team": row.get("teams", {}).get("away"),
                 "home_team": row.get("teams", {}).get("home"),
             }
-            
+
             # Extract market data
             markets = row.get("markets", {})
-            
+
             # Spread market
             spread = markets.get("spread", {})
-            flat["spread_away_line"] = spread.get("away", {}).get("line") if isinstance(spread.get("away"), dict) else None
-            flat["spread_away_price"] = spread.get("away", {}).get("price") if isinstance(spread.get("away"), dict) else None
-            flat["spread_home_line"] = spread.get("home", {}).get("line") if isinstance(spread.get("home"), dict) else None
-            flat["spread_home_price"] = spread.get("home", {}).get("price") if isinstance(spread.get("home"), dict) else None
-            
+            flat["spread_away_line"] = (
+                spread.get("away", {}).get("line")
+                if isinstance(spread.get("away"), dict)
+                else None
+            )
+            flat["spread_away_price"] = (
+                spread.get("away", {}).get("price")
+                if isinstance(spread.get("away"), dict)
+                else None
+            )
+            flat["spread_home_line"] = (
+                spread.get("home", {}).get("line")
+                if isinstance(spread.get("home"), dict)
+                else None
+            )
+            flat["spread_home_price"] = (
+                spread.get("home", {}).get("price")
+                if isinstance(spread.get("home"), dict)
+                else None
+            )
+
             # Total market
             total = markets.get("total", {})
-            flat["total_over_line"] = total.get("over", {}).get("line") if isinstance(total.get("over"), dict) else None
-            flat["total_over_price"] = total.get("over", {}).get("price") if isinstance(total.get("over"), dict) else None
-            flat["total_under_line"] = total.get("under", {}).get("line") if isinstance(total.get("under"), dict) else None
-            flat["total_under_price"] = total.get("under", {}).get("price") if isinstance(total.get("under"), dict) else None
-            
+            flat["total_over_line"] = (
+                total.get("over", {}).get("line")
+                if isinstance(total.get("over"), dict)
+                else None
+            )
+            flat["total_over_price"] = (
+                total.get("over", {}).get("price")
+                if isinstance(total.get("over"), dict)
+                else None
+            )
+            flat["total_under_line"] = (
+                total.get("under", {}).get("line")
+                if isinstance(total.get("under"), dict)
+                else None
+            )
+            flat["total_under_price"] = (
+                total.get("under", {}).get("price")
+                if isinstance(total.get("under"), dict)
+                else None
+            )
+
             # Moneyline market
             moneyline = markets.get("moneyline", {})
-            flat["moneyline_away_price"] = moneyline.get("away", {}).get("price") if isinstance(moneyline.get("away"), dict) else None
-            flat["moneyline_home_price"] = moneyline.get("home", {}).get("price") if isinstance(moneyline.get("home"), dict) else None
-            
+            flat["moneyline_away_price"] = (
+                moneyline.get("away", {}).get("price")
+                if isinstance(moneyline.get("away"), dict)
+                else None
+            )
+            flat["moneyline_home_price"] = (
+                moneyline.get("home", {}).get("price")
+                if isinstance(moneyline.get("home"), dict)
+                else None
+            )
+
             # Game state (for live betting)
             state = row.get("state", {})
             flat["quarter"] = state.get("quarter")
             flat["clock"] = state.get("clock")
-            
+
             flattened_rows.append(flat)
-        
+
         # Write CSV
         if flattened_rows:
             fieldnames = list(flattened_rows[0].keys())

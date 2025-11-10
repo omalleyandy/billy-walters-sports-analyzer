@@ -10,8 +10,8 @@ import json
 import time
 import logging
 import threading
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional
+from datetime import datetime
+from typing import Dict, List
 from dotenv import load_dotenv
 
 # Import our custom clients
@@ -24,11 +24,11 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
+    format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler('orchestrator.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+        logging.FileHandler("orchestrator.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -77,8 +77,8 @@ class GameScheduleDetector:
     def should_run_live_odds() -> bool:
         """Check if we should run live odds collection"""
         return (
-            GameScheduleDetector.is_nfl_game_time() or
-            GameScheduleDetector.is_ncaaf_game_time()
+            GameScheduleDetector.is_nfl_game_time()
+            or GameScheduleDetector.is_ncaaf_game_time()
         )
 
 
@@ -173,15 +173,13 @@ class UnifiedDataOrchestrator:
             # NFL Scores
             nfl_scores = self.espn_client.get_nfl_scoreboard()
             self._save_data_timestamped(
-                nfl_scores,
-                f"{self.output_base}/live/nfl_scores"
+                nfl_scores, f"{self.output_base}/live/nfl_scores"
             )
 
             # NCAAF Scores
             ncaaf_scores = self.espn_client.get_ncaaf_scoreboard()
             self._save_data_timestamped(
-                ncaaf_scores,
-                f"{self.output_base}/live/ncaaf_scores"
+                ncaaf_scores, f"{self.output_base}/live/ncaaf_scores"
             )
 
             logger.info("ESPN live scores collected successfully")
@@ -207,8 +205,7 @@ class UnifiedDataOrchestrator:
 
             # Run in background thread
             self.signalr_thread = threading.Thread(
-                target=self.signalr_client.run,
-                kwargs={"duration": duration}
+                target=self.signalr_client.run, kwargs={"duration": duration}
             )
             self.signalr_thread.daemon = True
             self.signalr_thread.start()
@@ -237,7 +234,7 @@ class UnifiedDataOrchestrator:
         """Save data to JSON file"""
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
         logger.debug(f"Saved data to {filepath}")
@@ -367,13 +364,13 @@ class UnifiedDataOrchestrator:
         else:
             scoreboard = self.espn_client.get_ncaaf_scoreboard()
 
-        events = scoreboard.get('events', [])
+        events = scoreboard.get("events", [])
 
         # Filter for active games
         active_games = []
         for event in events:
-            status = event.get('status', {}).get('type', {}).get('state')
-            if status == 'in':  # Game is in progress
+            status = event.get("status", {}).get("type", {}).get("state")
+            if status == "in":  # Game is in progress
                 active_games.append(event)
 
         return active_games
@@ -395,14 +392,16 @@ class UnifiedDataOrchestrator:
             if os.path.exists(filepath):
                 size = os.path.getsize(filepath)
                 modified = datetime.fromtimestamp(os.path.getmtime(filepath))
-                logger.info(f"{name}: {size} bytes (updated {modified.strftime('%Y-%m-%d %H:%M:%S')})")
+                logger.info(
+                    f"{name}: {size} bytes (updated {modified.strftime('%Y-%m-%d %H:%M:%S')})"
+                )
             else:
                 logger.info(f"{name}: NOT FOUND")
 
         # Count live data files
         live_dir = f"{self.output_base}/live"
         if os.path.exists(live_dir):
-            live_files = len([f for f in os.listdir(live_dir) if f.endswith('.json')])
+            live_files = len([f for f in os.listdir(live_dir) if f.endswith(".json")])
             logger.info(f"Live data snapshots: {live_files} files")
 
         # Count SignalR data
@@ -412,11 +411,11 @@ class UnifiedDataOrchestrator:
             game_dir = f"{signalr_dir}/games"
 
             if os.path.exists(msg_dir):
-                msgs = len([f for f in os.listdir(msg_dir) if f.endswith('.json')])
+                msgs = len([f for f in os.listdir(msg_dir) if f.endswith(".json")])
                 logger.info(f"SignalR messages: {msgs} files")
 
             if os.path.exists(game_dir):
-                games = len([f for f in os.listdir(game_dir) if f.endswith('.json')])
+                games = len([f for f in os.listdir(game_dir) if f.endswith(".json")])
                 logger.info(f"SignalR game updates: {games} files")
 
         logger.info("=" * 60)
@@ -430,20 +429,16 @@ def main():
         description="Billy Walters Unified Data Orchestrator"
     )
     parser.add_argument(
-        "mode",
-        choices=["setup", "live", "continuous"],
-        help="Orchestration mode"
+        "mode", choices=["setup", "live", "continuous"], help="Orchestration mode"
     )
     parser.add_argument(
         "--duration",
         type=int,
         default=3600,
-        help="Duration for live mode (seconds, default 3600)"
+        help="Duration for live mode (seconds, default 3600)",
     )
     parser.add_argument(
-        "--summary",
-        action="store_true",
-        help="Show data summary after completion"
+        "--summary", action="store_true", help="Show data summary after completion"
     )
 
     args = parser.parse_args()
@@ -471,6 +466,7 @@ def main():
     except Exception as e:
         logger.error(f"Fatal error: {e}")
         import traceback
+
         traceback.print_exc()
 
 

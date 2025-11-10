@@ -1,8 +1,9 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Data validation hook for sports analytics data.
 Validates odds, weather data, and game information.
 """
+
 import json
 import sys
 from datetime import datetime
@@ -32,10 +33,8 @@ def validate_odds_data(odds: dict) -> list[str]:
         moneyline = odds.get(ml_key)
         if moneyline is not None:
             if not -10000 < moneyline < 10000:
-                errors.append(
-                    f"Invalid {ml_key}: {moneyline} (out of realistic range)"
-                )
-    
+                errors.append(f"Invalid {ml_key}: {moneyline} (out of realistic range)")
+
     return errors
 
 
@@ -47,26 +46,20 @@ def validate_weather_data(weather: dict) -> list[str]:
     temp = weather.get("temperature")
     if temp is not None:
         if not -20 < temp < 130:  # Fahrenheit
-            errors.append(
-                f"Invalid temperature: {temp}F (must be between -20 and 130)"
-            )
+            errors.append(f"Invalid temperature: {temp}F (must be between -20 and 130)")
 
     # Validate wind speed
     wind = weather.get("wind_speed")
     if wind is not None:
         if not 0 <= wind < 100:
-            errors.append(
-                f"Invalid wind speed: {wind} mph (must be between 0 and 100)"
-            )
+            errors.append(f"Invalid wind speed: {wind} mph (must be between 0 and 100)")
 
     # Validate precipitation probability
     precip = weather.get("precipitation_probability")
     if precip is not None:
         if not 0 <= precip <= 1:
-            errors.append(
-                f"Invalid precipitation probability: {precip} (must be 0-1)"
-            )
-    
+            errors.append(f"Invalid precipitation probability: {precip} (must be 0-1)")
+
     return errors
 
 
@@ -94,7 +87,7 @@ def validate_game_data(game: dict) -> list[str]:
     league = game.get("league")
     if league and league not in ["NFL", "NCAAF"]:
         errors.append(f"Invalid league: {league} (must be NFL or NCAAF)")
-    
+
     return errors
 
 
@@ -105,31 +98,25 @@ def main():
     except json.JSONDecodeError:
         print("Invalid JSON input", file=sys.stderr)
         sys.exit(1)
-    
+
     all_errors = []
-    
+
     # Validate based on data type
     data_type = input_data.get("type")
-    
+
     if data_type == "odds":
         all_errors.extend(validate_odds_data(input_data.get("data", {})))
     elif data_type == "weather":
         all_errors.extend(validate_weather_data(input_data.get("data", {})))
     elif data_type == "game":
         all_errors.extend(validate_game_data(input_data.get("data", {})))
-    
+
     # Output results
     if all_errors:
-        output = {
-            "valid": False,
-            "errors": all_errors
-        }
+        output = {"valid": False, "errors": all_errors}
     else:
-        output = {
-            "valid": True,
-            "message": "Data validation passed!"
-        }
-    
+        output = {"valid": True, "message": "Data validation passed!"}
+
     print(json.dumps(output, indent=2))
     sys.exit(0 if output["valid"] else 1)
 

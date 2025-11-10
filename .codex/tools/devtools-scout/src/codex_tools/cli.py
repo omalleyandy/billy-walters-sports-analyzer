@@ -1,4 +1,4 @@
-﻿# src/codex_tools/cli.py
+# src/codex_tools/cli.py
 from __future__ import annotations
 from pathlib import Path
 from datetime import datetime
@@ -25,12 +25,16 @@ app.add_typer(overtime_cmd, name="overtime")
 
 # ===================== ESPN =====================
 
+
 @espn_cmd.command("discover")
 def espn_discover():
-    rprint({
-        "url": "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
-        "example": "uv run codex-devtools espn pull --dates 20251106-20251109",
-    })
+    rprint(
+        {
+            "url": "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+            "example": "uv run codex-devtools espn pull --dates 20251106-20251109",
+        }
+    )
+
 
 @espn_cmd.command("pull")
 def espn_pull(
@@ -62,14 +66,16 @@ def espn_pull(
     # flatten minimal fields
     rows = []
     for e in chunks:
-        rows.append({
-            "id": e.get("id"),
-            "date": e.get("date"),
-            "name": e.get("name"),
-            "shortName": e.get("shortName"),
-            "status": (e.get("status") or {}).get("type", {}).get("description"),
-            "competitions": json.dumps(e.get("competitions", [])),
-        })
+        rows.append(
+            {
+                "id": e.get("id"),
+                "date": e.get("date"),
+                "name": e.get("name"),
+                "shortName": e.get("shortName"),
+                "status": (e.get("status") or {}).get("type", {}).get("description"),
+                "competitions": json.dumps(e.get("competitions", [])),
+            }
+        )
 
     df = pd.DataFrame(rows)
     stem = f"espn_scoreboard_{dates}"
@@ -80,16 +86,19 @@ def espn_pull(
     except Exception as e:
         rprint({"warn": f"parquet export skipped: {e}"})
 
-    rprint({
-        "exports": {
-            "csv": str(outdir / f"{stem}.csv"),
-            "json": str(outdir / f"{stem}.json"),
-            "parquet": str(outdir / f"{stem}.parquet"),
+    rprint(
+        {
+            "exports": {
+                "csv": str(outdir / f"{stem}.csv"),
+                "json": str(outdir / f"{stem}.json"),
+                "parquet": str(outdir / f"{stem}.parquet"),
+            }
         }
-    })
+    )
 
 
 # ===================== MASSEY =====================
+
 
 @massey_cmd.command("pull")
 def massey_pull(
@@ -128,19 +137,21 @@ def massey_pull(
     except Exception as e:
         rprint({"warn": f"parquet export skipped: {e}"})
 
-    rprint({
-        "exports": {
-            "csv": str(outdir / f"{stem}.csv"),
-            "json": str(outdir / f"{stem}.json"),
-            "parquet": str(outdir / f"{stem}.parquet"),
+    rprint(
+        {
+            "exports": {
+                "csv": str(outdir / f"{stem}.csv"),
+                "json": str(outdir / f"{stem}.json"),
+                "parquet": str(outdir / f"{stem}.parquet"),
+            }
         }
-    })
+    )
 
 
 # ===================== OVERTIME =====================
 
-from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
+
 
 @overtime_cmd.command("discover")
 def overtime_discover(
@@ -153,7 +164,7 @@ def overtime_discover(
     Launches overtime.ag and records JSON/XHR endpoints while the app loads core markets.
     Captures url, status, content-type, and a small preview body (first 8KB if JSON).
     """
-    out_dir = (Path(__file__).resolve().parents[2] / out_dir)
+    out_dir = Path(__file__).resolve().parents[2] / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     outpath = out_dir / f"overtime_discover_{stamp}.json"
@@ -162,10 +173,12 @@ def overtime_discover(
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
-        ctx = browser.new_context(user_agent=(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/120 Safari/537.36"
-        ))
+        ctx = browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/120 Safari/537.36"
+            )
+        )
         page = ctx.new_page()
 
         def _log_response(resp):
@@ -174,7 +187,17 @@ def overtime_discover(
                 if "json" in ct.lower():
                     u = resp.url
                     # keep only API-ish urls; trim images/fonts
-                    if any(s in u for s in ("/api/", ".json", "graphql", "rest", "/odds", "/markets")):
+                    if any(
+                        s in u
+                        for s in (
+                            "/api/",
+                            ".json",
+                            "graphql",
+                            "rest",
+                            "/odds",
+                            "/markets",
+                        )
+                    ):
                         rec = {
                             "url": u,
                             "status": resp.status,
@@ -198,7 +221,11 @@ def overtime_discover(
         page.wait_for_timeout(wait_ms)
 
         # Nudge a couple of common markets (these selectors are resilient fallbacks)
-        for frag in ("#/sports", "#/sports?league=NFL", "#/sports?league=NCAA%20Football"):
+        for frag in (
+            "#/sports",
+            "#/sports?league=NFL",
+            "#/sports?league=NCAA%20Football",
+        ):
             try:
                 page.goto(f"https://overtime.ag/sports{frag}", wait_until="networkidle")
                 page.wait_for_timeout(1500)
@@ -216,8 +243,11 @@ def overtime_discover(
         browser.close()
 
     # Show a few JSON endpoints
-    json_urls = [c["url"] for c in captures if "json" in (c.get("content_type") or "").lower()]
+    json_urls = [
+        c["url"] for c in captures if "json" in (c.get("content_type") or "").lower()
+    ]
     rprint({"discover": str(outpath), "top_json": json_urls[:5]})
+
 
 @overtime_cmd.command("list")
 def overtime_list(
@@ -230,9 +260,12 @@ def overtime_list(
     for i, u in enumerate(urls[:limit], 1):
         rprint(f"{i}. {u}")
 
+
 @overtime_cmd.command("replay")
 def overtime_replay(
-    url: str = typer.Option(..., help="Captured JSON endpoint (must start with https://)"),
+    url: str = typer.Option(
+        ..., help="Captured JSON endpoint (must start with https://)"
+    ),
     params: list[str] = typer.Option([], help="key=value pairs"),
     limit: int = 200,
     save_json: Path | None = typer.Option(None, help="Optional path to save raw JSON"),
@@ -253,9 +286,13 @@ def overtime_replay(
 
     if save_json:
         save_json.parent.mkdir(parents=True, exist_ok=True)
-        save_json.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        save_json.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
 
-    rows = data if isinstance(data, list) else data.get("data") or data.get("items") or []
+    rows = (
+        data if isinstance(data, list) else data.get("data") or data.get("items") or []
+    )
     if not isinstance(rows, list):
         rows = [data]
     if limit and isinstance(rows, list):
@@ -273,16 +310,18 @@ def overtime_replay(
     except Exception as e:
         rprint({"warn": f"parquet export skipped: {e}"})
 
-    rprint({
-        "url": url,
-        "params": q,
-        "rows": len(df),
-        "exports": {
-            "csv": str(outdir / f"{stem}.csv"),
-            "json": str(outdir / f"{stem}.json"),
-            "parquet": str(outdir / f"{stem}.parquet"),
+    rprint(
+        {
+            "url": url,
+            "params": q,
+            "rows": len(df),
+            "exports": {
+                "csv": str(outdir / f"{stem}.csv"),
+                "json": str(outdir / f"{stem}.json"),
+                "parquet": str(outdir / f"{stem}.parquet"),
+            },
         }
-    })
+    )
 
 
 if __name__ == "__main__":

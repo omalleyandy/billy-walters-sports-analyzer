@@ -11,7 +11,6 @@ import time
 import logging
 import urllib.parse
 from datetime import datetime
-from typing import Dict, List, Optional
 import requests
 import websocket
 from dotenv import load_dotenv
@@ -22,11 +21,11 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
+    format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler('signalr_manual.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+        logging.FileHandler("signalr_manual.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -71,7 +70,7 @@ class SignalR1xClient:
         # SignalR 1.x negotiation parameters
         params = {
             "clientProtocol": "1.5",
-            "connectionData": json.dumps([{"name": self.hub_name}])
+            "connectionData": json.dumps([{"name": self.hub_name}]),
         }
 
         try:
@@ -86,7 +85,7 @@ class SignalR1xClient:
             self.connection_token = data.get("ConnectionToken")
             self.connection_id = data.get("ConnectionId")
 
-            logger.info(f"Negotiation successful!")
+            logger.info("Negotiation successful!")
             logger.info(f"Connection ID: {self.connection_id}")
             logger.info(f"Protocol Version: {data.get('ProtocolVersion')}")
             logger.info(f"TryWebSockets: {data.get('TryWebSockets')}")
@@ -111,20 +110,20 @@ class SignalR1xClient:
         logger.info("Connecting to SignalR WebSocket...")
 
         # Build WebSocket URL
-        ws_url = f"wss://ws.ticosports.com/signalr/connect"
+        ws_url = "wss://ws.ticosports.com/signalr/connect"
 
         params = {
             "transport": "webSockets",
             "clientProtocol": "1.5",
             "connectionToken": self.connection_token,
-            "connectionData": json.dumps([{"name": self.hub_name}])
+            "connectionData": json.dumps([{"name": self.hub_name}]),
         }
 
         # URL encode params
         query_string = urllib.parse.urlencode(params)
         full_url = f"{ws_url}?{query_string}"
 
-        logger.info(f"WebSocket URL: wss://ws.ticosports.com/signalr/connect?...")
+        logger.info("WebSocket URL: wss://ws.ticosports.com/signalr/connect?...")
 
         # Create WebSocket with callbacks
         try:
@@ -133,7 +132,7 @@ class SignalR1xClient:
                 on_message=self.on_message,
                 on_error=self.on_error,
                 on_close=self.on_close,
-                on_open=self.on_open
+                on_open=self.on_open,
             )
 
             return True
@@ -161,10 +160,9 @@ class SignalR1xClient:
             logger.info(f"[MESSAGE] {message}")
 
             # Save message
-            self.messages_received.append({
-                "timestamp": datetime.utcnow().isoformat(),
-                "raw_message": message
-            })
+            self.messages_received.append(
+                {"timestamp": datetime.utcnow().isoformat(), "raw_message": message}
+            )
 
             # Try to parse as JSON
             try:
@@ -230,9 +228,9 @@ class SignalR1xClient:
 
         message = {
             "H": self.hub_name,  # Hub name
-            "M": method,         # Method name
-            "A": args,           # Arguments
-            "I": self.message_id # Message ID
+            "M": method,  # Method name
+            "A": args,  # Arguments
+            "I": self.message_id,  # Message ID
         }
 
         logger.info(f"[INVOKE] {method}({args})")
@@ -242,10 +240,7 @@ class SignalR1xClient:
         """Subscribe as customer"""
         logger.info(f"Subscribing as customer: {self.customer_id}")
 
-        user_data = {
-            "customerId": self.customer_id,
-            "password": self.password
-        }
+        user_data = {"customerId": self.customer_id, "password": self.password}
 
         self.invoke_hub_method("SubscribeCustomer", [user_data])
 
@@ -280,12 +275,18 @@ class SignalR1xClient:
                 logger.info(f"  Arg {i}: {json.dumps(arg, indent=2)[:500]}")
 
         # Save specific types
-        if method and ("game" in method.lower() or "odds" in method.lower() or "line" in method.lower()):
-            self.games_received.append({
-                "timestamp": datetime.utcnow().isoformat(),
-                "method": method,
-                "data": args
-            })
+        if method and (
+            "game" in method.lower()
+            or "odds" in method.lower()
+            or "line" in method.lower()
+        ):
+            self.games_received.append(
+                {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "method": method,
+                    "data": args,
+                }
+            )
 
             self._save_game_data(method, args)
 
@@ -295,11 +296,10 @@ class SignalR1xClient:
 
         filename = f"output/signalr/messages/msg_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.json"
 
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump({
-                "timestamp": datetime.utcnow().isoformat(),
-                "data": data
-            }, f, indent=2)
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(
+                {"timestamp": datetime.utcnow().isoformat(), "data": data}, f, indent=2
+            )
 
     def _save_game_data(self, method: str, data: list):
         """Save game-related data"""
@@ -307,12 +307,16 @@ class SignalR1xClient:
 
         filename = f"output/signalr/games/{method}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump({
-                "timestamp": datetime.utcnow().isoformat(),
-                "method": method,
-                "data": data
-            }, f, indent=2)
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "method": method,
+                    "data": data,
+                },
+                f,
+                indent=2,
+            )
 
         logger.info(f"Saved game data to {filename}")
 
@@ -356,7 +360,9 @@ class SignalR1xClient:
 
                 # Status every 30 seconds
                 if int(time.time() - start_time) % 30 == 0:
-                    logger.info(f"Status: {len(self.messages_received)} messages, {len(self.games_received)} game updates")
+                    logger.info(
+                        f"Status: {len(self.messages_received)} messages, {len(self.games_received)} game updates"
+                    )
 
         except KeyboardInterrupt:
             logger.info("\nStopping (Ctrl+C pressed)...")

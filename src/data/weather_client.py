@@ -42,17 +42,13 @@ class WeatherClient:
 
         # Initialize clients if API keys provided
         try:
-            self._accuweather_client = AccuWeatherClient(
-                api_key=accuweather_api_key
-            )
+            self._accuweather_client = AccuWeatherClient(api_key=accuweather_api_key)
             logger.info("AccuWeather client initialized")
         except ValueError:
             logger.warning("AccuWeather API key not available")
 
         try:
-            self._openweather_client = OpenWeatherClient(
-                api_key=openweather_api_key
-            )
+            self._openweather_client = OpenWeatherClient(api_key=openweather_api_key)
             logger.info("OpenWeather client initialized")
         except ValueError:
             logger.warning("OpenWeather API key not available")
@@ -122,9 +118,7 @@ class WeatherClient:
         Raises:
             RuntimeError: If both services fail
         """
-        logger.info(
-            f"Getting game forecast for {city}, {state} at {game_time}"
-        )
+        logger.info(f"Getting game forecast for {city}, {state} at {game_time}")
 
         # Determine order to try services
         if self.prefer_accuweather:
@@ -148,9 +142,7 @@ class WeatherClient:
                 logger.info(f"Successfully fetched forecast from {primary_name}")
                 return forecast
             except Exception as e:
-                logger.warning(
-                    f"{primary_name} failed: {e}, trying fallback"
-                )
+                logger.warning(f"{primary_name} failed: {e}, trying fallback")
 
         # Try secondary service
         if secondary:
@@ -159,9 +151,7 @@ class WeatherClient:
                 forecast = await secondary.get_game_forecast(
                     city, state, game_time, max_retries=max_retries
                 )
-                logger.info(
-                    f"Successfully fetched forecast from {secondary_name}"
-                )
+                logger.info(f"Successfully fetched forecast from {secondary_name}")
                 return forecast
             except Exception as e:
                 logger.error(f"{secondary_name} failed: {e}")
@@ -198,10 +188,8 @@ class WeatherClient:
                 location_key = await self._accuweather_client.get_location_key(
                     city, state, max_retries=max_retries
                 )
-                weather = (
-                    await self._accuweather_client.get_current_conditions(
-                        location_key, max_retries=max_retries
-                    )
+                weather = await self._accuweather_client.get_current_conditions(
+                    location_key, max_retries=max_retries
                 )
                 logger.info("Successfully fetched from AccuWeather")
                 return weather
@@ -219,15 +207,11 @@ class WeatherClient:
                 return weather
             except Exception as e:
                 logger.error(f"OpenWeather failed: {e}")
-                raise RuntimeError(
-                    "Both weather services failed"
-                ) from e
+                raise RuntimeError("Both weather services failed") from e
 
         raise RuntimeError("No weather services available")
 
-    def normalize_weather_data(
-        self, weather: dict[str, Any]
-    ) -> dict[str, Any]:
+    def normalize_weather_data(self, weather: dict[str, Any]) -> dict[str, Any]:
         """
         Normalize weather data from different sources to common format.
 
@@ -247,9 +231,7 @@ class WeatherClient:
             logger.warning(f"Unknown weather source: {source}")
             return weather
 
-    def _normalize_accuweather(
-        self, weather: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _normalize_accuweather(self, weather: dict[str, Any]) -> dict[str, Any]:
         """Normalize AccuWeather data."""
         return {
             "temperature_f": weather.get("temperature_f"),
@@ -257,26 +239,19 @@ class WeatherClient:
             "wind_speed_mph": weather.get("wind_speed_mph"),
             "wind_direction": weather.get("wind_direction"),
             "humidity": weather.get("humidity"),
-            "precipitation_chance": weather.get(
-                "precipitation_probability"
-            ),
+            "precipitation_chance": weather.get("precipitation_probability"),
             "precipitation_type": weather.get("precipitation_type"),
-            "forecast_time": weather.get("forecast_time")
-            or weather.get("timestamp"),
+            "forecast_time": weather.get("forecast_time") or weather.get("timestamp"),
             "source": "accuweather",
         }
 
-    def _normalize_openweather(
-        self, weather: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _normalize_openweather(self, weather: dict[str, Any]) -> dict[str, Any]:
         """Normalize OpenWeather data."""
         # Convert wind direction from degrees to text if needed
         wind_dir_deg = weather.get("wind_direction_deg")
         wind_direction = None
         if wind_dir_deg is not None and self._openweather_client:
-            wind_direction = self._openweather_client.wind_direction_text(
-                wind_dir_deg
-            )
+            wind_direction = self._openweather_client.wind_direction_text(wind_dir_deg)
 
         return {
             "temperature_f": weather.get("temperature_f"),
@@ -286,8 +261,7 @@ class WeatherClient:
             "humidity": weather.get("humidity"),
             "precipitation_chance": weather.get("precipitation_chance"),
             "precipitation_type": weather.get("precipitation_type"),
-            "forecast_time": weather.get("forecast_time")
-            or weather.get("timestamp"),
+            "forecast_time": weather.get("forecast_time") or weather.get("timestamp"),
             "source": "openweather",
         }
 
@@ -298,9 +272,7 @@ async def main():
     async with WeatherClient() as client:
         # Get game forecast with automatic fallback
         game_time = datetime.now().replace(hour=13, minute=0, second=0)
-        forecast = await client.get_game_forecast(
-            "Kansas City", "MO", game_time
-        )
+        forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
 
         # Normalize data
         normalized = client.normalize_weather_data(forecast)
@@ -309,7 +281,9 @@ async def main():
         print(f"  Source: {normalized['source']}")
         print(f"  Temperature: {normalized['temperature_f']}°F")
         print(f"  Weather: {normalized['weather_text']}")
-        print(f"  Wind: {normalized['wind_speed_mph']} mph {normalized['wind_direction']}")
+        print(
+            f"  Wind: {normalized['wind_speed_mph']} mph {normalized['wind_direction']}"
+        )
         print(f"  Humidity: {normalized['humidity']}%")
         print(f"  Precipitation: {normalized['precipitation_chance']}%")
 

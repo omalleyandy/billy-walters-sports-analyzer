@@ -159,9 +159,7 @@ class OvertimeAPIClient:
                     f"{method} {endpoint} (attempt {attempt + 1}/{max_retries})"
                 )
 
-                response = await self._client.request(
-                    method, endpoint, **kwargs
-                )
+                response = await self._client.request(method, endpoint, **kwargs)
                 response.raise_for_status()
 
                 return response.json()
@@ -179,7 +177,7 @@ class OvertimeAPIClient:
 
                 # Retry server errors (5xx)
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
+                    wait_time = 2**attempt  # Exponential backoff
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -191,7 +189,7 @@ class OvertimeAPIClient:
                 logger.warning(f"Request error: {e}")
 
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -254,9 +252,7 @@ class OvertimeAPIClient:
 
         return enriched_games
 
-    def _enrich_game_data(
-        self, game: dict[str, Any], league: str
-    ) -> dict[str, Any]:
+    def _enrich_game_data(self, game: dict[str, Any], league: str) -> dict[str, Any]:
         """
         Enrich game data with additional computed fields.
 
@@ -275,17 +271,13 @@ class OvertimeAPIClient:
         enriched["fetch_time"] = datetime.now().isoformat()
 
         # Parse game date if needed
-        if "game_date" in enriched and isinstance(
-            enriched["game_date"], str
-        ):
+        if "game_date" in enriched and isinstance(enriched["game_date"], str):
             try:
                 enriched["game_date"] = datetime.fromisoformat(
                     enriched["game_date"].replace("Z", "+00:00")
                 )
             except Exception:
-                logger.warning(
-                    f"Failed to parse game_date: {enriched['game_date']}"
-                )
+                logger.warning(f"Failed to parse game_date: {enriched['game_date']}")
 
         # Add game status
         if "status" not in enriched:
@@ -400,8 +392,10 @@ async def main():
         print(f"\nFetched {len(nfl_games)} NFL games")
 
         for game in nfl_games[:3]:
-            print(f"\n{game.get('away_team_data', {}).get('name')} @ "
-                  f"{game.get('home_team_data', {}).get('name')}")
+            print(
+                f"\n{game.get('away_team_data', {}).get('name')} @ "
+                f"{game.get('home_team_data', {}).get('name')}"
+            )
             print(f"  Status: {game.get('status')}")
             print(f"  Date: {game.get('game_date')}")
 

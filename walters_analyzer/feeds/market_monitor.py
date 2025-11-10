@@ -1,6 +1,7 @@
 """
 Real-time market monitoring for sharp money detection
 """
+
 import asyncio
 import sys
 from typing import Dict, List, Optional
@@ -10,16 +11,21 @@ import json
 from pathlib import Path
 
 # Fix Windows console encoding for emojis
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import io
+
     try:
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+        sys.stdout = io.TextIOWrapper(
+            sys.stdout.buffer, encoding="utf-8", errors="replace"
+        )
+        sys.stderr = io.TextIOWrapper(
+            sys.stderr.buffer, encoding="utf-8", errors="replace"
+        )
     except AttributeError:
         pass  # Already wrapped or not applicable
 
 from walters_analyzer.config import get_settings
-from walters_analyzer.feeds.market_data_client import OddsAPIClient, get_client
+from walters_analyzer.feeds.market_data_client import OddsAPIClient
 
 
 class MarketMonitor:
@@ -45,7 +51,7 @@ class MarketMonitor:
         self,
         sport: str = "americanfootball_nfl",
         duration_minutes: int = 60,
-        check_interval: Optional[int] = None
+        check_interval: Optional[int] = None,
     ):
         """
         Monitor all games for a sport
@@ -66,7 +72,9 @@ class MarketMonitor:
 
         print(f"🔍 Monitoring {sport} for {duration_minutes} minutes...")
         print(f"   Checking every {check_interval} seconds")
-        print(f"   Alert threshold: {self.settings.skills.market_analysis.alert_threshold} points")
+        print(
+            f"   Alert threshold: {self.settings.skills.market_analysis.alert_threshold} points"
+        )
         print()
 
         iteration = 0
@@ -104,7 +112,7 @@ class MarketMonitor:
         self,
         game_id: str,
         sport: str = "americanfootball_nfl",
-        duration_minutes: int = 60
+        duration_minutes: int = 60,
     ):
         """
         Monitor a specific game for line movements
@@ -124,7 +132,7 @@ class MarketMonitor:
             all_odds = await self.client.get_odds(sport)
 
             # Filter for this game
-            game_odds = [o for o in all_odds if o['game_id'] == game_id]
+            game_odds = [o for o in all_odds if o["game_id"] == game_id]
 
             if game_odds:
                 # Analyze for sharp money
@@ -143,16 +151,14 @@ class MarketMonitor:
         games = defaultdict(list)
 
         for odd in odds:
-            game_id = odd.get('game_id')
+            game_id = odd.get("game_id")
             if game_id:
                 games[game_id].append(odd)
 
         return games
 
     def _detect_sharp_money(
-        self,
-        game_id: str,
-        game_odds: List[Dict]
+        self, game_id: str, game_odds: List[Dict]
     ) -> Optional[Dict]:
         """
         Detect reverse line movement (sharp money indicator)
@@ -168,10 +174,7 @@ class MarketMonitor:
         """
         # Store current odds snapshot
         timestamp = datetime.now()
-        self.line_history[game_id].append({
-            'timestamp': timestamp,
-            'odds': game_odds
-        })
+        self.line_history[game_id].append({"timestamp": timestamp, "odds": game_odds})
 
         # Need at least 2 snapshots to detect movement
         if len(self.line_history[game_id]) < 2:
@@ -186,42 +189,48 @@ class MarketMonitor:
         public_books = self.settings.skills.market_analysis.public_books
 
         # Calculate sharp book line movement
-        prev_sharp = self._avg_line(previous['odds'], sharp_books)
-        curr_sharp = self._avg_line(current['odds'], sharp_books)
+        prev_sharp = self._avg_line(previous["odds"], sharp_books)
+        curr_sharp = self._avg_line(current["odds"], sharp_books)
         sharp_movement = curr_sharp - prev_sharp if prev_sharp and curr_sharp else 0
 
         # Calculate public book line movement
-        prev_public = self._avg_line(previous['odds'], public_books)
-        curr_public = self._avg_line(current['odds'], public_books)
-        public_movement = curr_public - prev_public if prev_public and curr_public else 0
+        prev_public = self._avg_line(previous["odds"], public_books)
+        curr_public = self._avg_line(current["odds"], public_books)
+        public_movement = (
+            curr_public - prev_public if prev_public and curr_public else 0
+        )
 
         # Check for reverse line movement or significant sharp movement
         threshold = self.settings.skills.market_analysis.alert_threshold
 
         # Get game info
         game_info = game_odds[0] if game_odds else {}
-        teams = game_info.get('teams', {})
+        teams = game_info.get("teams", {})
 
         if abs(sharp_movement) >= threshold:
             # Significant sharp money detected
             divergence = sharp_movement - public_movement
 
             return {
-                'type': 'sharp_money',
-                'game_id': game_id,
-                'teams': teams,
-                'sharp_movement': round(sharp_movement, 2),
-                'public_movement': round(public_movement, 2),
-                'divergence': round(divergence, 2),
-                'current_sharp_line': round(curr_sharp, 1) if curr_sharp else None,
-                'current_public_line': round(curr_public, 1) if curr_public else None,
-                'direction': self._get_direction(sharp_movement, teams),
-                'confidence': min(abs(sharp_movement) / threshold * 100, 100),
-                'timestamp': timestamp.isoformat(),
-                'books_analyzed': {
-                    'sharp': [o['book'] for o in current['odds'] if o['book'] in sharp_books],
-                    'public': [o['book'] for o in current['odds'] if o['book'] in public_books]
-                }
+                "type": "sharp_money",
+                "game_id": game_id,
+                "teams": teams,
+                "sharp_movement": round(sharp_movement, 2),
+                "public_movement": round(public_movement, 2),
+                "divergence": round(divergence, 2),
+                "current_sharp_line": round(curr_sharp, 1) if curr_sharp else None,
+                "current_public_line": round(curr_public, 1) if curr_public else None,
+                "direction": self._get_direction(sharp_movement, teams),
+                "confidence": min(abs(sharp_movement) / threshold * 100, 100),
+                "timestamp": timestamp.isoformat(),
+                "books_analyzed": {
+                    "sharp": [
+                        o["book"] for o in current["odds"] if o["book"] in sharp_books
+                    ],
+                    "public": [
+                        o["book"] for o in current["odds"] if o["book"] in public_books
+                    ],
+                },
             }
 
         return None
@@ -231,10 +240,10 @@ class MarketMonitor:
         lines = []
 
         for odd in odds:
-            book = odd.get('book')
+            book = odd.get("book")
             if book in books:
-                spread = odd.get('markets', {}).get('spread', {})
-                home_line = spread.get('home', {}).get('line')
+                spread = odd.get("markets", {}).get("spread", {})
+                home_line = spread.get("home", {}).get("line")
 
                 if home_line is not None:
                     lines.append(home_line)
@@ -243,8 +252,8 @@ class MarketMonitor:
 
     def _get_direction(self, movement: float, teams: Dict) -> str:
         """Get human-readable direction of line movement"""
-        home = teams.get('home', 'Home')
-        away = teams.get('away', 'Away')
+        home = teams.get("home", "Home")
+        away = teams.get("away", "Away")
 
         if movement > 0:
             return f"SHARP MONEY ON {home.upper()} (line moved toward {away.upper()})"
@@ -276,8 +285,10 @@ class MarketMonitor:
         print("🚨 SHARP MONEY ALERT")
         print("=" * 80)
 
-        teams = alert.get('teams', {})
-        print(f"Game:      {teams.get('away', 'Unknown')} @ {teams.get('home', 'Unknown')}")
+        teams = alert.get("teams", {})
+        print(
+            f"Game:      {teams.get('away', 'Unknown')} @ {teams.get('home', 'Unknown')}"
+        )
         print(f"Direction: {alert.get('direction')}")
         print(f"Sharp Line Movement:  {alert.get('sharp_movement'):+.1f} points")
         print(f"Public Line Movement: {alert.get('public_movement'):+.1f} points")
@@ -285,8 +296,8 @@ class MarketMonitor:
         print(f"Current Sharp Line: {alert.get('current_sharp_line')}")
         print(f"Confidence: {alert.get('confidence', 0):.0f}%")
 
-        sharp_books = alert.get('books_analyzed', {}).get('sharp', [])
-        public_books = alert.get('books_analyzed', {}).get('public', [])
+        sharp_books = alert.get("books_analyzed", {}).get("sharp", [])
+        public_books = alert.get("books_analyzed", {}).get("public", [])
 
         if sharp_books:
             print(f"Sharp Books: {', '.join(sharp_books)}")
@@ -301,7 +312,7 @@ class MarketMonitor:
         log_path = Path(log_file)
         log_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(log_path, 'a') as f:
+        with open(log_path, "a") as f:
             f.write(json.dumps(alert) + "\n")
 
     def _send_webhook_alert(self, alert: Dict, webhook_url: str):
@@ -313,20 +324,21 @@ class MarketMonitor:
     def get_alert_summary(self) -> Dict:
         """Get summary of all alerts"""
         if not self.alerts:
-            return {'total_alerts': 0}
+            return {"total_alerts": 0}
 
         return {
-            'total_alerts': len(self.alerts),
-            'alerts_by_type': self._count_by_field('type'),
-            'most_alerted_games': self._top_games(),
-            'avg_confidence': sum(a.get('confidence', 0) for a in self.alerts) / len(self.alerts)
+            "total_alerts": len(self.alerts),
+            "alerts_by_type": self._count_by_field("type"),
+            "most_alerted_games": self._top_games(),
+            "avg_confidence": sum(a.get("confidence", 0) for a in self.alerts)
+            / len(self.alerts),
         }
 
     def _count_by_field(self, field: str) -> Dict:
         """Count alerts by a specific field"""
         counts = defaultdict(int)
         for alert in self.alerts:
-            value = alert.get(field, 'unknown')
+            value = alert.get(field, "unknown")
             counts[value] += 1
         return dict(counts)
 
@@ -336,21 +348,20 @@ class MarketMonitor:
         game_info = {}
 
         for alert in self.alerts:
-            game_id = alert.get('game_id')
+            game_id = alert.get("game_id")
             game_counts[game_id] += 1
 
             if game_id not in game_info:
-                teams = alert.get('teams', {})
+                teams = alert.get("teams", {})
                 game_info[game_id] = {
-                    'game_id': game_id,
-                    'matchup': f"{teams.get('away')} @ {teams.get('home')}"
+                    "game_id": game_id,
+                    "matchup": f"{teams.get('away')} @ {teams.get('home')}",
                 }
 
         top_games = sorted(game_counts.items(), key=lambda x: x[1], reverse=True)[:n]
 
         return [
-            {**game_info[game_id], 'alert_count': count}
-            for game_id, count in top_games
+            {**game_info[game_id], "alert_count": count} for game_id, count in top_games
         ]
 
 
@@ -360,10 +371,7 @@ async def main():
     monitor = MarketMonitor()
 
     # Monitor NFL for 2 hours
-    await monitor.monitor_sport(
-        sport="americanfootball_nfl",
-        duration_minutes=120
-    )
+    await monitor.monitor_sport(sport="americanfootball_nfl", duration_minutes=120)
 
     # Print summary
     summary = monitor.get_alert_summary()
@@ -372,7 +380,7 @@ async def main():
     print(f"Total Alerts: {summary.get('total_alerts')}")
     print(f"Average Confidence: {summary.get('avg_confidence', 0):.1f}%")
 
-    top_games = summary.get('most_alerted_games', [])
+    top_games = summary.get("most_alerted_games", [])
     if top_games:
         print("\nMost Active Games:")
         for game in top_games:

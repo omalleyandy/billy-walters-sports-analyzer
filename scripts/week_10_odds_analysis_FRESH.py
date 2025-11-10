@@ -6,7 +6,6 @@ Updated with fresh ESPN.com odds
 """
 
 from typing import Dict, List
-from datetime import datetime
 
 
 # OPENING LINES (from ESPN verified November 9, 2024)
@@ -21,84 +20,164 @@ OPENING_LINES = {
     "Arizona @ Seattle": {"spread": -7.5, "total": 44.5, "favorite": "Seattle"},
     "Detroit @ Washington": {"spread": -7.5, "total": 49.5, "favorite": "Detroit"},
     "LA Rams @ San Francisco": {"spread": -5.5, "total": 49.5, "favorite": "LA Rams"},
-    "Pittsburgh @ LA Chargers": {"spread": -2.5, "total": 44.5, "favorite": "LA Chargers"},
-    "Philadelphia @ Green Bay": {"spread": -1.5, "total": 45.5, "favorite": "Green Bay"},
+    "Pittsburgh @ LA Chargers": {
+        "spread": -2.5,
+        "total": 44.5,
+        "favorite": "LA Chargers",
+    },
+    "Philadelphia @ Green Bay": {
+        "spread": -1.5,
+        "total": 45.5,
+        "favorite": "Green Bay",
+    },
 }
 
 
 # CURRENT LINES (Fresh from ESPN.com - November 9, 2025 8:51 AM)
 CURRENT_LINES = [
     {
-        "away": "Cleveland", "home": "NY Jets",
-        "spread": {"favorite": "Cleveland", "line": 2.5, "away_juice": -105, "home_juice": -115},
+        "away": "Cleveland",
+        "home": "NY Jets",
+        "spread": {
+            "favorite": "Cleveland",
+            "line": 2.5,
+            "away_juice": -105,
+            "home_juice": -115,
+        },
         "total": {"line": 37.5, "over_juice": -110, "under_juice": -120},
-        "moneyline": {"away": -130, "home": +110}
+        "moneyline": {"away": -130, "home": +110},
     },
     {
-        "away": "Jacksonville", "home": "Houston",
-        "spread": {"favorite": "Houston", "line": 1.5, "away_juice": -120, "home_juice": 100},
+        "away": "Jacksonville",
+        "home": "Houston",
+        "spread": {
+            "favorite": "Houston",
+            "line": 1.5,
+            "away_juice": -120,
+            "home_juice": 100,
+        },
         "total": {"line": 37.5, "over_juice": -105, "under_juice": -115},
-        "moneyline": {"away": -105, "home": -115}
+        "moneyline": {"away": -105, "home": -115},
     },
     {
-        "away": "Buffalo", "home": "Miami",
-        "spread": {"favorite": "Buffalo", "line": 7.5, "away_juice": -115, "home_juice": -105},
+        "away": "Buffalo",
+        "home": "Miami",
+        "spread": {
+            "favorite": "Buffalo",
+            "line": 7.5,
+            "away_juice": -115,
+            "home_juice": -105,
+        },
         "total": {"line": 50.5, "over_juice": -105, "under_juice": -115},
-        "moneyline": {"away": -500, "home": +360}
+        "moneyline": {"away": -500, "home": +360},
     },
     {
-        "away": "New England", "home": "Tampa Bay",
-        "spread": {"favorite": "Tampa Bay", "line": 2.5, "away_juice": +105, "home_juice": -125},
+        "away": "New England",
+        "home": "Tampa Bay",
+        "spread": {
+            "favorite": "Tampa Bay",
+            "line": 2.5,
+            "away_juice": +105,
+            "home_juice": -125,
+        },
         "total": {"line": 48.5, "over_juice": -105, "under_juice": -115},
-        "moneyline": {"away": +135, "home": -155}
+        "moneyline": {"away": +135, "home": -155},
     },
     {
-        "away": "NY Giants", "home": "Chicago",
-        "spread": {"favorite": "Chicago", "line": 4.5, "away_juice": -110, "home_juice": -110},
+        "away": "NY Giants",
+        "home": "Chicago",
+        "spread": {
+            "favorite": "Chicago",
+            "line": 4.5,
+            "away_juice": -110,
+            "home_juice": -110,
+        },
         "total": {"line": 44.5, "over_juice": -115, "under_juice": -105},
-        "moneyline": {"away": +190, "home": -225}
+        "moneyline": {"away": +190, "home": -225},
     },
     {
-        "away": "Baltimore", "home": "Minnesota",
-        "spread": {"favorite": "Baltimore", "line": 4.5, "away_juice": -105, "home_juice": -115},
+        "away": "Baltimore",
+        "home": "Minnesota",
+        "spread": {
+            "favorite": "Baltimore",
+            "line": 4.5,
+            "away_juice": -105,
+            "home_juice": -115,
+        },
         "total": {"line": 48.5, "over_juice": -115, "under_juice": -105},
-        "moneyline": {"away": -240, "home": +200}
+        "moneyline": {"away": -240, "home": +200},
     },
     {
-        "away": "New Orleans", "home": "Carolina",
-        "spread": {"favorite": "Carolina", "line": 5.5, "away_juice": -115, "home_juice": -105},
+        "away": "New Orleans",
+        "home": "Carolina",
+        "spread": {
+            "favorite": "Carolina",
+            "line": 5.5,
+            "away_juice": -115,
+            "home_juice": -105,
+        },
         "total": {"line": 38.5, "over_juice": -105, "under_juice": -115},
-        "moneyline": {"away": +200, "home": -240}
+        "moneyline": {"away": +200, "home": -240},
     },
     {
-        "away": "Arizona", "home": "Seattle",
-        "spread": {"favorite": "Seattle", "line": 7.5, "away_juice": -125, "home_juice": +105},
+        "away": "Arizona",
+        "home": "Seattle",
+        "spread": {
+            "favorite": "Seattle",
+            "line": 7.5,
+            "away_juice": -125,
+            "home_juice": +105,
+        },
         "total": {"line": 44.5, "over_juice": -115, "under_juice": -105},
-        "moneyline": {"away": +260, "home": -320}
+        "moneyline": {"away": +260, "home": -320},
     },
     {
-        "away": "Detroit", "home": "Washington",
-        "spread": {"favorite": "Detroit", "line": 7.5, "away_juice": -115, "home_juice": -105},
+        "away": "Detroit",
+        "home": "Washington",
+        "spread": {
+            "favorite": "Detroit",
+            "line": 7.5,
+            "away_juice": -115,
+            "home_juice": -105,
+        },
         "total": {"line": 49.5, "over_juice": -115, "under_juice": -105},
-        "moneyline": {"away": -450, "home": +340}
+        "moneyline": {"away": -450, "home": +340},
     },
     {
-        "away": "LA Rams", "home": "San Francisco",
-        "spread": {"favorite": "LA Rams", "line": 5.5, "away_juice": -120, "home_juice": 100},
+        "away": "LA Rams",
+        "home": "San Francisco",
+        "spread": {
+            "favorite": "LA Rams",
+            "line": 5.5,
+            "away_juice": -120,
+            "home_juice": 100,
+        },
         "total": {"line": 49.5, "over_juice": 100, "under_juice": -120},
-        "moneyline": {"away": -260, "home": +215}
+        "moneyline": {"away": -260, "home": +215},
     },
     {
-        "away": "Pittsburgh", "home": "LA Chargers",
-        "spread": {"favorite": "LA Chargers", "line": 2.5, "away_juice": 100, "home_juice": -120},
+        "away": "Pittsburgh",
+        "home": "LA Chargers",
+        "spread": {
+            "favorite": "LA Chargers",
+            "line": 2.5,
+            "away_juice": 100,
+            "home_juice": -120,
+        },
         "total": {"line": 44.5, "over_juice": -115, "under_juice": -105},
-        "moneyline": {"away": +125, "home": -145}
+        "moneyline": {"away": +125, "home": -145},
     },
     {
-        "away": "Philadelphia", "home": "Green Bay",
-        "spread": {"favorite": "Green Bay", "line": 1.5, "away_juice": -125, "home_juice": +105},
+        "away": "Philadelphia",
+        "home": "Green Bay",
+        "spread": {
+            "favorite": "Green Bay",
+            "line": 1.5,
+            "away_juice": -125,
+            "home_juice": +105,
+        },
         "total": {"line": 45.5, "over_juice": -120, "under_juice": 100},
-        "moneyline": {"away": -105, "home": -115}
+        "moneyline": {"away": -105, "home": -115},
     },
 ]
 
@@ -136,12 +215,16 @@ def calculate_line_movement(opening: float, current: float) -> Dict:
     return {
         "movement": movement,
         "percentage": pct_change,
-        "direction": "UP" if movement > 0 else "DOWN" if movement < 0 else "NO CHANGE"
+        "direction": "UP" if movement > 0 else "DOWN" if movement < 0 else "NO CHANGE",
     }
 
 
-def identify_sharp_action(opening_spread: float, current_spread: float,
-                         opening_total: float, current_total: float) -> List[str]:
+def identify_sharp_action(
+    opening_spread: float,
+    current_spread: float,
+    opening_total: float,
+    current_total: float,
+) -> List[str]:
     """Identify indicators of sharp money"""
     indicators = []
 
@@ -159,14 +242,17 @@ def identify_sharp_action(opening_spread: float, current_spread: float,
     key_numbers = [3.0, 7.0, 10.0]
     for key in key_numbers:
         if opening_spread != current_spread:
-            if (opening_spread < key <= current_spread) or (current_spread < key <= opening_spread):
+            if (opening_spread < key <= current_spread) or (
+                current_spread < key <= opening_spread
+            ):
                 indicators.append(f"CROSSED KEY NUMBER ({key})")
 
     return indicators
 
 
-def calculate_expected_value(power_rating_edge: float, market_line: float,
-                            juice: int = -110) -> float:
+def calculate_expected_value(
+    power_rating_edge: float, market_line: float, juice: int = -110
+) -> float:
     """Calculate expected value (EV) of a bet"""
     implied_prob = calculate_implied_probability(juice)
 
@@ -184,7 +270,9 @@ def calculate_expected_value(power_rating_edge: float, market_line: float,
     win_amount = 100 / (abs(juice) / 100) if juice < 0 else 100 * (juice / 100)
     loss_amount = 100
 
-    ev = (estimated_win_prob/100 * win_amount) - ((100-estimated_win_prob)/100 * loss_amount)
+    ev = (estimated_win_prob / 100 * win_amount) - (
+        (100 - estimated_win_prob) / 100 * loss_amount
+    )
     ev_percentage = (ev / 100) * 100
 
     return ev_percentage
@@ -214,55 +302,64 @@ def main():
 
         # Get opening lines
         opening_data = OPENING_LINES.get(matchup, {})
-        opening_spread = opening_data.get("spread", game['spread']['line'])
-        opening_total = opening_data.get("total", game['total']['line'])
+        opening_spread = opening_data.get("spread", game["spread"]["line"])
+        opening_total = opening_data.get("total", game["total"]["line"])
 
         # Current lines
-        current_spread = game['spread']['line']
-        current_total = game['total']['line']
-        favorite = game['spread']['favorite']
+        current_spread = game["spread"]["line"]
+        current_total = game["total"]["line"]
+        favorite = game["spread"]["favorite"]
 
         # Calculate movements
         spread_movement = calculate_line_movement(opening_spread, current_spread)
         total_movement = calculate_line_movement(opening_total, current_total)
 
         # Sharp action indicators
-        sharp_indicators = identify_sharp_action(opening_spread, current_spread,
-                                                opening_total, current_total)
+        sharp_indicators = identify_sharp_action(
+            opening_spread, current_spread, opening_total, current_total
+        )
 
         # Juice for favorite
-        if favorite == game['away']:
-            spread_juice = game['spread']['away_juice']
+        if favorite == game["away"]:
+            spread_juice = game["spread"]["away_juice"]
         else:
-            spread_juice = game['spread']['home_juice']
+            spread_juice = game["spread"]["home_juice"]
 
         # Expected value
         ev = calculate_expected_value(edge, current_spread, spread_juice)
 
         # Implied probabilities
-        ml_away_prob = calculate_implied_probability(game['moneyline']['away'])
-        ml_home_prob = calculate_implied_probability(game['moneyline']['home'])
+        ml_away_prob = calculate_implied_probability(game["moneyline"]["away"])
+        ml_home_prob = calculate_implied_probability(game["moneyline"]["home"])
         book_edge = ml_away_prob + ml_home_prob - 100
 
         print(f"GAME: {matchup}")
         print("-" * 100)
 
         # Current lines
-        print(f"CURRENT LINES (November 9, 8:51 AM):")
+        print("CURRENT LINES (November 9, 8:51 AM):")
         fav_indicator = f"{favorite} -{current_spread}"
         print(f"  Spread:    {fav_indicator}")
-        print(f"  Total:     {current_total:.1f} (O: {game['total']['over_juice']:+d} | U: {game['total']['under_juice']:+d})")
-        print(f"  Moneyline: {game['away']} {game['moneyline']['away']:+d} | {game['home']} {game['moneyline']['home']:+d}")
+        print(
+            f"  Total:     {current_total:.1f} (O: {game['total']['over_juice']:+d} | U: {game['total']['under_juice']:+d})"
+        )
+        print(
+            f"  Moneyline: {game['away']} {game['moneyline']['away']:+d} | {game['home']} {game['moneyline']['home']:+d}"
+        )
         print()
 
         # Line movement
-        print(f"LINE MOVEMENT SINCE OPENING:")
-        print(f"  Spread:    {opening_spread:.1f} -> {current_spread:.1f} ({spread_movement['movement']:+.1f} pts, {spread_movement['direction']})")
-        print(f"  Total:     {opening_total:.1f} -> {current_total:.1f} ({total_movement['movement']:+.1f} pts, {total_movement['direction']})")
+        print("LINE MOVEMENT SINCE OPENING:")
+        print(
+            f"  Spread:    {opening_spread:.1f} -> {current_spread:.1f} ({spread_movement['movement']:+.1f} pts, {spread_movement['direction']})"
+        )
+        print(
+            f"  Total:     {opening_total:.1f} -> {current_total:.1f} ({total_movement['movement']:+.1f} pts, {total_movement['direction']})"
+        )
         print()
 
         # Implied probabilities
-        print(f"IMPLIED PROBABILITIES:")
+        print("IMPLIED PROBABILITIES:")
         print(f"  {game['away']} ML: {ml_away_prob:.1f}%")
         print(f"  {game['home']} ML: {ml_home_prob:.1f}%")
         print(f"  Book Edge (vig): {book_edge:.1f}%")
@@ -270,48 +367,56 @@ def main():
 
         # Sharp action
         if sharp_indicators:
-            print(f"SHARP ACTION INDICATORS:")
+            print("SHARP ACTION INDICATORS:")
             for indicator in sharp_indicators:
                 print(f"  [!] {indicator}")
             print()
 
         # Value assessment
-        print(f"VALUE ASSESSMENT:")
+        print("VALUE ASSESSMENT:")
         print(f"  Power Rating Edge: {edge:.1f} points")
         print(f"  Expected Value:    {ev:+.2f}%")
 
         if ev > 2.0 and edge >= 3.5:
-            print(f"  [OK] STRONG VALUE BET - BET THIS!")
-            high_value_bets.append({
-                "matchup": matchup,
-                "edge": edge,
-                "ev": ev,
-                "spread": current_spread,
-                "favorite": favorite,
-                "movement": spread_movement['movement']
-            })
+            print("  [OK] STRONG VALUE BET - BET THIS!")
+            high_value_bets.append(
+                {
+                    "matchup": matchup,
+                    "edge": edge,
+                    "ev": ev,
+                    "spread": current_spread,
+                    "favorite": favorite,
+                    "movement": spread_movement["movement"],
+                }
+            )
         elif ev > 0 and edge >= 3.5:
-            print(f"  [~] MARGINAL VALUE - PROCEED WITH CAUTION")
+            print("  [~] MARGINAL VALUE - PROCEED WITH CAUTION")
         else:
-            print(f"  [X] NO VALUE - PASS")
+            print("  [X] NO VALUE - PASS")
 
         print()
         print()
 
     # Summary
     print("=" * 100)
-    print(f"HIGH VALUE BETTING OPPORTUNITIES (EV > 2% AND EDGE >= 3.5 pts)")
+    print("HIGH VALUE BETTING OPPORTUNITIES (EV > 2% AND EDGE >= 3.5 pts)")
     print("=" * 100)
     print()
 
     if high_value_bets:
-        high_value_bets.sort(key=lambda x: x['ev'], reverse=True)
+        high_value_bets.sort(key=lambda x: x["ev"], reverse=True)
 
         for i, bet in enumerate(high_value_bets, 1):
-            move_str = f"(moved {bet['movement']:+.1f})" if bet['movement'] != 0 else "(no movement)"
+            move_str = (
+                f"(moved {bet['movement']:+.1f})"
+                if bet["movement"] != 0
+                else "(no movement)"
+            )
             print(f"{i}. {bet['matchup']:40s}")
             print(f"   BET: {bet['favorite']} -{bet['spread']:.1f}")
-            print(f"   Edge: {bet['edge']:.1f}pts | EV: {bet['ev']:+.2f}% | Line: {move_str}")
+            print(
+                f"   Edge: {bet['edge']:.1f}pts | EV: {bet['ev']:+.2f}% | Line: {move_str}"
+            )
             print()
     else:
         print("No strong value opportunities at current lines")

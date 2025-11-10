@@ -8,8 +8,7 @@ No authentication required!
 import os
 import json
 import requests
-from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 
 class ESPNAPIClient:
@@ -22,9 +21,11 @@ class ESPNAPIClient:
         self.web_api_url = "https://site.web.api.espn.com/apis/v3/sports/football"
 
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+        )
 
     # Scoreboards (Live Scores)
 
@@ -117,16 +118,15 @@ class ESPNAPIClient:
             limit: Maximum number of players to return
         """
         url = f"{self.core_api_url}/nfl/athletes"
-        params = {
-            "limit": limit,
-            "active": str(active_only).lower()
-        }
+        params = {"limit": limit, "active": str(active_only).lower()}
         r = self.session.get(url, params=params, timeout=30)
         return r.json()
 
     # Schedules
 
-    def get_nfl_schedule(self, week: Optional[int] = None, season_type: int = 2) -> Dict:
+    def get_nfl_schedule(
+        self, week: Optional[int] = None, season_type: int = 2
+    ) -> Dict:
         """
         Get NFL schedule
 
@@ -161,9 +161,9 @@ class ESPNAPIClient:
 
     def save_to_json(self, data: Dict, filename: str):
         """Save data to JSON file"""
-        os.makedirs(os.path.dirname(filename) or '.', exist_ok=True)
+        os.makedirs(os.path.dirname(filename) or ".", exist_ok=True)
 
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
         print(f"Saved to {filename}")
@@ -185,17 +185,17 @@ def main():
         print(f"   Season: {scoreboard.get('season', {}).get('year')}")
         print(f"   Week: {scoreboard.get('week', {}).get('number')}")
 
-        events = scoreboard.get('events', [])
+        events = scoreboard.get("events", [])
         print(f"   Games: {len(events)}")
 
         if events:
             game = events[0]
-            comps = game.get('competitions', [{}])[0]
-            teams = comps.get('competitors', [])
+            comps = game.get("competitions", [{}])[0]
+            teams = comps.get("competitors", [])
 
             if len(teams) >= 2:
-                away = teams[0].get('team', {}).get('displayName', 'Team 1')
-                home = teams[1].get('team', {}).get('displayName', 'Team 2')
+                away = teams[0].get("team", {}).get("displayName", "Team 1")
+                home = teams[1].get("team", {}).get("displayName", "Team 2")
                 print(f"\n   Sample game: {away} @ {home}")
 
         # Save
@@ -212,17 +212,17 @@ def main():
         print(f"   Season: {scoreboard.get('season', {}).get('year')}")
         print(f"   Week: {scoreboard.get('week', {}).get('number')}")
 
-        events = scoreboard.get('events', [])
+        events = scoreboard.get("events", [])
         print(f"   Games: {len(events)}")
 
         if events:
             game = events[0]
-            comps = game.get('competitions', [{}])[0]
-            teams = comps.get('competitors', [])
+            comps = game.get("competitions", [{}])[0]
+            teams = comps.get("competitors", [])
 
             if len(teams) >= 2:
-                away = teams[0].get('team', {}).get('displayName', 'Team 1')
-                home = teams[1].get('team', {}).get('displayName', 'Team 2')
+                away = teams[0].get("team", {}).get("displayName", "Team 1")
+                home = teams[1].get("team", {}).get("displayName", "Team 2")
                 print(f"\n   Sample game: {away} @ {home}")
 
         # Save
@@ -236,12 +236,16 @@ def main():
     try:
         teams = client.get_nfl_teams()
 
-        team_list = teams.get('sports', [{}])[0].get('leagues', [{}])[0].get('teams', [])
+        team_list = (
+            teams.get("sports", [{}])[0].get("leagues", [{}])[0].get("teams", [])
+        )
         print(f"   Teams: {len(team_list)}")
 
         if team_list:
-            team = team_list[0].get('team', {})
-            print(f"\n   Sample: {team.get('displayName')} ({team.get('abbreviation')})")
+            team = team_list[0].get("team", {})
+            print(
+                f"\n   Sample: {team.get('displayName')} ({team.get('abbreviation')})"
+            )
 
         # Save
         client.save_to_json(teams, "output/espn/nfl_teams.json")
@@ -254,14 +258,14 @@ def main():
     try:
         odds = client.get_nfl_odds()
 
-        items = odds.get('items', [])
+        items = odds.get("items", [])
         print(f"   Games with odds: {len(items)}")
 
         if items:
             game = items[0]
             print(f"\n   Sample: Event {game.get('id')}")
 
-            odds_providers = game.get('odds', [])
+            odds_providers = game.get("odds", [])
             print(f"   Sportsbooks: {len(odds_providers)}")
 
         # Save

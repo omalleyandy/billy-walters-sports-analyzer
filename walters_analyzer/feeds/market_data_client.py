@@ -1,6 +1,7 @@
 """
 Live market data feed clients for various sportsbooks
 """
+
 from typing import Dict, List, Optional
 from datetime import datetime
 from abc import ABC, abstractmethod
@@ -21,7 +22,9 @@ class MarketDataFeed(ABC):
         pass
 
     @abstractmethod
-    async def get_line_history(self, game_id: str, market: str = "spread") -> List[Dict]:
+    async def get_line_history(
+        self, game_id: str, market: str = "spread"
+    ) -> List[Dict]:
         """Get historical line movements for a game"""
         pass
 
@@ -38,7 +41,7 @@ class OddsAPIClient(MarketDataFeed):
     def __init__(self):
         super().__init__("OddsAPI")
         self.base_url = "https://api.the-odds-api.com/v4"
-        self.api_key = getattr(self.settings, 'odds_api_key', None)
+        self.api_key = getattr(self.settings, "odds_api_key", None)
         self.client = httpx.AsyncClient(timeout=30.0)
 
     async def get_odds(self, sport: str, game_id: Optional[str] = None) -> List[Dict]:
@@ -66,7 +69,7 @@ class OddsAPIClient(MarketDataFeed):
             "apiKey": self.api_key,
             "regions": "us",
             "markets": "spreads,totals,h2h",
-            "oddsFormat": "american"
+            "oddsFormat": "american",
         }
 
         try:
@@ -80,7 +83,9 @@ class OddsAPIClient(MarketDataFeed):
             print(f"❌ Error fetching odds: {e}")
             return []
 
-    async def get_line_history(self, game_id: str, market: str = "spread") -> List[Dict]:
+    async def get_line_history(
+        self, game_id: str, market: str = "spread"
+    ) -> List[Dict]:
         """
         Get historical line movements (requires paid tier)
 
@@ -121,27 +126,24 @@ class OddsAPIClient(MarketDataFeed):
 
         for game in raw_data:
             # Get basic game info
-            game_id = game.get('id')
-            sport_key = game.get('sport_key')
-            away_team = game.get('away_team')
-            home_team = game.get('home_team')
-            commence_time = game.get('commence_time')
+            game_id = game.get("id")
+            sport_key = game.get("sport_key")
+            away_team = game.get("away_team")
+            home_team = game.get("home_team")
+            commence_time = game.get("commence_time")
 
             # Extract bookmaker odds
             for bookmaker in game.get("bookmakers", []):
                 book_name = bookmaker.get("title")
 
                 normalized_game = {
-                    'book': book_name,
-                    'game_id': game_id,
-                    'sport': sport_key,
-                    'teams': {
-                        'away': away_team,
-                        'home': home_team
-                    },
-                    'commence_time': commence_time,
-                    'markets': self._extract_markets(bookmaker.get('markets', [])),
-                    'timestamp': datetime.utcnow().isoformat()
+                    "book": book_name,
+                    "game_id": game_id,
+                    "sport": sport_key,
+                    "teams": {"away": away_team, "home": home_team},
+                    "commence_time": commence_time,
+                    "markets": self._extract_markets(bookmaker.get("markets", [])),
+                    "timestamp": datetime.utcnow().isoformat(),
                 }
 
                 normalized.append(normalized_game)
@@ -153,40 +155,40 @@ class OddsAPIClient(MarketDataFeed):
         result = {}
 
         for market in markets:
-            market_key = market.get('key')
-            outcomes = market.get('outcomes', [])
+            market_key = market.get("key")
+            outcomes = market.get("outcomes", [])
 
-            if market_key == 'spreads' and len(outcomes) >= 2:
+            if market_key == "spreads" and len(outcomes) >= 2:
                 # Outcomes: [away, home]
-                result['spread'] = {
-                    'away': {
-                        'line': outcomes[0].get('point'),
-                        'price': outcomes[0].get('price')
+                result["spread"] = {
+                    "away": {
+                        "line": outcomes[0].get("point"),
+                        "price": outcomes[0].get("price"),
                     },
-                    'home': {
-                        'line': outcomes[1].get('point'),
-                        'price': outcomes[1].get('price')
-                    }
+                    "home": {
+                        "line": outcomes[1].get("point"),
+                        "price": outcomes[1].get("price"),
+                    },
                 }
 
-            elif market_key == 'totals' and len(outcomes) >= 2:
+            elif market_key == "totals" and len(outcomes) >= 2:
                 # Outcomes: [over, under]
-                result['total'] = {
-                    'over': {
-                        'line': outcomes[0].get('point'),
-                        'price': outcomes[0].get('price')
+                result["total"] = {
+                    "over": {
+                        "line": outcomes[0].get("point"),
+                        "price": outcomes[0].get("price"),
                     },
-                    'under': {
-                        'line': outcomes[1].get('point'),
-                        'price': outcomes[1].get('price')
-                    }
+                    "under": {
+                        "line": outcomes[1].get("point"),
+                        "price": outcomes[1].get("price"),
+                    },
                 }
 
-            elif market_key == 'h2h' and len(outcomes) >= 2:
+            elif market_key == "h2h" and len(outcomes) >= 2:
                 # Outcomes: [away, home]
-                result['moneyline'] = {
-                    'away': {'price': outcomes[0].get('price')},
-                    'home': {'price': outcomes[1].get('price')}
+                result["moneyline"] = {
+                    "away": {"price": outcomes[0].get("price")},
+                    "home": {"price": outcomes[1].get("price")},
                 }
 
         return result
@@ -203,7 +205,7 @@ class PinnacleClient(MarketDataFeed):
     def __init__(self):
         super().__init__("Pinnacle")
         self.base_url = self.settings.data_connections.pinnacle_api_endpoint
-        self.api_key = getattr(self.settings, 'pinnacle_api_key', None)
+        self.api_key = getattr(self.settings, "pinnacle_api_key", None)
         self.client = httpx.AsyncClient(timeout=30.0)
 
     async def get_odds(self, sport: str, game_id: Optional[str] = None) -> List[Dict]:
@@ -220,13 +222,13 @@ class PinnacleClient(MarketDataFeed):
 
         headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         }
 
         params = {
             "sportId": self._get_sport_id(sport),
             "oddsFormat": "AMERICAN",
-            "isLive": False
+            "isLive": False,
         }
 
         try:
@@ -240,7 +242,9 @@ class PinnacleClient(MarketDataFeed):
             print(f"❌ Error fetching Pinnacle odds: {e}")
             return []
 
-    async def get_line_history(self, game_id: str, market: str = "spread") -> List[Dict]:
+    async def get_line_history(
+        self, game_id: str, market: str = "spread"
+    ) -> List[Dict]:
         """Get Pinnacle line movement history"""
         # Pinnacle doesn't provide historical data via API
         print("⚠️  Pinnacle API doesn't provide historical line data")
@@ -248,13 +252,7 @@ class PinnacleClient(MarketDataFeed):
 
     def _get_sport_id(self, sport: str) -> int:
         """Map sport name to Pinnacle sport ID"""
-        sport_map = {
-            "nfl": 15,
-            "ncaaf": 8,
-            "nba": 4,
-            "mlb": 3,
-            "nhl": 1
-        }
+        sport_map = {"nfl": 15, "ncaaf": 8, "nba": 4, "mlb": 3, "nhl": 1}
         return sport_map.get(sport.lower(), 15)
 
     def _normalize_pinnacle_odds(self, raw_data: Dict) -> List[Dict]:
@@ -288,7 +286,9 @@ class DraftKingsClient(MarketDataFeed):
         print("⚠️  DraftKings doesn't have a public API. Use The Odds API instead.")
         return []
 
-    async def get_line_history(self, game_id: str, market: str = "spread") -> List[Dict]:
+    async def get_line_history(
+        self, game_id: str, market: str = "spread"
+    ) -> List[Dict]:
         """Get DraftKings line movement history"""
         print("⚠️  DraftKings doesn't have a public API. Use The Odds API instead.")
         return []

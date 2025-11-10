@@ -28,12 +28,10 @@ import logging
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from walters_analyzer.valuation.power_ratings import PowerRatingSystem, GameResult
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -189,7 +187,9 @@ class UnifiedWeeklyUpdater:
 
         try:
             # Run totals detector
-            totals_detector_path = self.project_root / "billy_walters_totals_detector.py"
+            totals_detector_path = (
+                self.project_root / "billy_walters_totals_detector.py"
+            )
 
             if not totals_detector_path.exists():
                 logger.warning(f"Totals detector not found: {totals_detector_path}")
@@ -211,7 +211,9 @@ class UnifiedWeeklyUpdater:
                 self.results["steps_completed"].append("edge_detection_totals")
                 return True
             else:
-                logger.warning(f"[WARNING] Totals detection had issues: {result.stderr}")
+                logger.warning(
+                    f"[WARNING] Totals detection had issues: {result.stderr}"
+                )
                 return True  # Non-critical, don't fail workflow
 
         except subprocess.TimeoutExpired:
@@ -241,7 +243,7 @@ class UnifiedWeeklyUpdater:
                 logger.warning(f"Ratings file not found: {ratings_file}")
                 return False
 
-            with open(ratings_file, 'r') as f:
+            with open(ratings_file, "r") as f:
                 ratings_data = json.load(f)
 
             # Generate report
@@ -260,7 +262,7 @@ class UnifiedWeeklyUpdater:
 
             # Save report
             report_file = self.reports_dir / f"week_{self.week_num:02d}_report.json"
-            with open(report_file, 'w') as f:
+            with open(report_file, "w") as f:
                 json.dump(report, f, indent=2)
 
             logger.info(f"[OK] Weekly report saved to: {report_file}")
@@ -283,8 +285,7 @@ class UnifiedWeeklyUpdater:
 
         # Convert to list and sort
         teams_list = [
-            {"team": team, "rating": rating}
-            for team, rating in ratings.items()
+            {"team": team, "rating": rating} for team, rating in ratings.items()
         ]
         teams_list.sort(key=lambda x: x["rating"], reverse=True)
 
@@ -300,7 +301,7 @@ class UnifiedWeeklyUpdater:
         # Check for spread edges
         spread_file = self.edge_dir / "nfl_edges_detected.jsonl"
         if spread_file.exists():
-            with open(spread_file, 'r') as f:
+            with open(spread_file, "r") as f:
                 edges = [json.loads(line) for line in f]
                 summary["spreads"]["count"] = len(edges)
                 summary["spreads"]["file"] = str(spread_file)
@@ -310,7 +311,7 @@ class UnifiedWeeklyUpdater:
         if totals_file.exists():
             summary["totals"]["file"] = str(totals_file)
             # Count edges in totals file
-            with open(totals_file, 'r') as f:
+            with open(totals_file, "r") as f:
                 content = f.read()
                 # Simple count of "Edge:" occurrences
                 summary["totals"]["count"] = content.count("Edge:")
@@ -332,13 +333,18 @@ class UnifiedWeeklyUpdater:
 
         # Edges detected
         edges = report["edges_detected"]
-        logger.info(f"\nEdges Detected:")
+        logger.info("\nEdges Detected:")
         logger.info(f"  Spreads: {edges['spreads']['count']}")
         logger.info(f"  Totals:  {edges['totals']['count']}")
 
         # Steps completed
-        logger.info(f"\nWorkflow Status:")
-        for step in ["power_ratings", "edge_detection_spreads", "edge_detection_totals", "weekly_report"]:
+        logger.info("\nWorkflow Status:")
+        for step in [
+            "power_ratings",
+            "edge_detection_spreads",
+            "edge_detection_totals",
+            "weekly_report",
+        ]:
             status = "[OK]" if step in self.results["steps_completed"] else "[SKIP]"
             logger.info(f"  {status} {step}")
 
@@ -395,23 +401,20 @@ class UnifiedWeeklyUpdater:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description='Unified weekly update for Billy Walters system'
+        description="Unified weekly update for Billy Walters system"
     )
     parser.add_argument(
-        '--week',
-        type=int,
-        required=True,
-        help='NFL week number to update (1-18)'
+        "--week", type=int, required=True, help="NFL week number to update (1-18)"
     )
     parser.add_argument(
-        '--games-file',
+        "--games-file",
         type=str,
-        help='Path to JSON file containing game results (optional)'
+        help="Path to JSON file containing game results (optional)",
     )
     parser.add_argument(
-        '--skip-edge-detection',
-        action='store_true',
-        help='Skip edge detection steps (for testing power ratings only)'
+        "--skip-edge-detection",
+        action="store_true",
+        help="Skip edge detection steps (for testing power ratings only)",
     )
 
     args = parser.parse_args()
@@ -423,8 +426,7 @@ def main():
 
     # Run unified workflow
     updater = UnifiedWeeklyUpdater(
-        week_num=args.week,
-        skip_edge_detection=args.skip_edge_detection
+        week_num=args.week, skip_edge_detection=args.skip_edge_detection
     )
 
     success = updater.run_full_workflow(games_file=args.games_file)

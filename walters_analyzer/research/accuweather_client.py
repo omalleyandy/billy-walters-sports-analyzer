@@ -63,7 +63,9 @@ class AccuWeatherClient:
                     if data:
                         return data[0]["Key"]
                 else:
-                    logger.error(f"AccuWeather location search failed: {response.status}")
+                    logger.error(
+                        f"AccuWeather location search failed: {response.status}"
+                    )
         except Exception as e:
             logger.error(f"Error searching for location: {e}", exc_info=True)
 
@@ -157,7 +159,8 @@ class AccuWeatherClient:
             "precipitation_probability": day_forecast["Day"].get(
                 "PrecipitationProbability", 0
             ),
-            "wind_speed": day_forecast["Day"].get("Wind", {})
+            "wind_speed": day_forecast["Day"]
+            .get("Wind", {})
             .get("Speed", {})
             .get("Value", 0),
             "wind_direction": day_forecast["Day"].get("Wind", {}).get("Direction", {}),
@@ -209,4 +212,3 @@ class AccuWeatherClient:
         """Close the HTTP session."""
         if self._session and not self._session.closed:
             await self._session.close()
-

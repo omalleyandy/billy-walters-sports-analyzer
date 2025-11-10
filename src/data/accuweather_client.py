@@ -119,9 +119,7 @@ class AccuWeatherClient:
 
         for attempt in range(max_retries):
             try:
-                logger.debug(
-                    f"GET {endpoint} (attempt {attempt + 1}/{max_retries})"
-                )
+                logger.debug(f"GET {endpoint} (attempt {attempt + 1}/{max_retries})")
 
                 response = await self._client.get(endpoint, params=params)
                 response.raise_for_status()
@@ -136,13 +134,12 @@ class AccuWeatherClient:
                 # Don't retry client errors (4xx)
                 if 400 <= e.response.status_code < 500:
                     raise RuntimeError(
-                        f"Client error {e.response.status_code}: "
-                        f"{e.response.text}"
+                        f"Client error {e.response.status_code}: {e.response.text}"
                     ) from e
 
                 # Retry server errors (5xx)
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
+                    wait_time = 2**attempt  # Exponential backoff
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -154,7 +151,7 @@ class AccuWeatherClient:
                 logger.warning(f"Request error: {e}")
 
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -266,9 +263,7 @@ class AccuWeatherClient:
         else:
             endpoint = f"/forecasts/v1/hourly/120hour/{location_key}"
 
-        logger.info(
-            f"Getting {hours}h forecast for location {location_key}"
-        )
+        logger.info(f"Getting {hours}h forecast for location {location_key}")
 
         data = await self._make_request(
             endpoint, params={"details": "true"}, max_retries=max_retries
@@ -283,9 +278,7 @@ class AccuWeatherClient:
         forecasts = [self._format_hourly(hour) for hour in data]
         return forecasts[:hours]  # Return only requested hours
 
-    def _format_conditions(
-        self, conditions: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _format_conditions(self, conditions: dict[str, Any]) -> dict[str, Any]:
         """Format current conditions data."""
         temp = conditions.get("Temperature", {}).get("Imperial", {})
         wind = conditions.get("Wind", {})
@@ -319,9 +312,7 @@ class AccuWeatherClient:
             "weather_text": hourly.get("IconPhrase"),
             "has_precipitation": hourly.get("HasPrecipitation", False),
             "precipitation_type": hourly.get("PrecipitationType"),
-            "precipitation_probability": hourly.get(
-                "PrecipitationProbability"
-            ),
+            "precipitation_probability": hourly.get("PrecipitationProbability"),
             "wind_speed_mph": wind_speed.get("Value"),
             "wind_direction": wind.get("Direction", {}).get("English"),
             "humidity": hourly.get("RelativeHumidity"),
@@ -351,14 +342,10 @@ class AccuWeatherClient:
         Raises:
             RuntimeError: If request fails
         """
-        logger.info(
-            f"Getting game forecast for {city}, {state} at {game_time}"
-        )
+        logger.info(f"Getting game forecast for {city}, {state} at {game_time}")
 
         # Get location key
-        location_key = await self.get_location_key(
-            city, state, max_retries=max_retries
-        )
+        location_key = await self.get_location_key(city, state, max_retries=max_retries)
 
         # Get hourly forecast
         hours_ahead = int((game_time - datetime.now()).total_seconds() / 3600)
@@ -379,14 +366,14 @@ class AccuWeatherClient:
         closest_forecast = min(
             forecasts,
             key=lambda f: abs(
-                datetime.fromisoformat(
-                    f["forecast_time"].replace("Z", "+00:00")
-                )
+                datetime.fromisoformat(f["forecast_time"].replace("Z", "+00:00"))
                 - game_time
             ),
         )
 
-        logger.info(f"Found forecast for game time: {closest_forecast['forecast_time']}")
+        logger.info(
+            f"Found forecast for game time: {closest_forecast['forecast_time']}"
+        )
         return closest_forecast
 
 
@@ -400,17 +387,17 @@ async def main():
 
         # Get current conditions
         conditions = await client.get_current_conditions(location_key)
-        print(f"\nCurrent conditions:")
+        print("\nCurrent conditions:")
         print(f"  Temperature: {conditions['temperature_f']}°F")
         print(f"  Weather: {conditions['weather_text']}")
-        print(f"  Wind: {conditions['wind_speed_mph']} mph {conditions['wind_direction']}")
+        print(
+            f"  Wind: {conditions['wind_speed_mph']} mph {conditions['wind_direction']}"
+        )
         print(f"  Humidity: {conditions['humidity']}%")
 
         # Get game forecast
         game_time = datetime.now().replace(hour=13, minute=0, second=0)
-        forecast = await client.get_game_forecast(
-            "Kansas City", "MO", game_time
-        )
+        forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
         print(f"\nGame forecast for {game_time}:")
         print(f"  Temperature: {forecast['temperature_f']}°F")
         print(f"  Weather: {forecast['weather_text']}")

@@ -51,7 +51,9 @@ async def fetch_week_10_games():
             # Check if game is completed
             status = event.get("status", {}).get("type", {}).get("name", "")
             if status != "STATUS_FINAL":
-                print(f"  Skipping {away_team['team']['displayName']} @ {home_team['team']['displayName']} - Status: {status}")
+                print(
+                    f"  Skipping {away_team['team']['displayName']} @ {home_team['team']['displayName']} - Status: {status}"
+                )
                 continue
 
             # Extract scores
@@ -61,7 +63,11 @@ async def fetch_week_10_games():
             # Get date
             date_str = event.get("date", "")
             if date_str:
-                game_date = datetime.fromisoformat(date_str.replace("Z", "+00:00")).date().isoformat()
+                game_date = (
+                    datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+                    .date()
+                    .isoformat()
+                )
             else:
                 game_date = "2024-11-10"  # Default for Week 10
 
@@ -74,11 +80,13 @@ async def fetch_week_10_games():
                 "away_score": away_score,
                 "home_injury_level": 0.0,
                 "away_injury_level": 0.0,
-                "location": "home"
+                "location": "home",
             }
 
             games.append(game)
-            print(f"  [OK] {away_team['team']['displayName']} @ {home_team['team']['displayName']} ({away_score}-{home_score})")
+            print(
+                f"  [OK] {away_team['team']['displayName']} @ {home_team['team']['displayName']} ({away_score}-{home_score})"
+            )
 
         # Save to file
         output_dir = project_root / "output" / "unified"
@@ -86,7 +94,7 @@ async def fetch_week_10_games():
 
         output_file = output_dir / "nfl_week_10_games.json"
 
-        with open(output_file, 'w') as f:
+        with open(output_file, "w") as f:
             json.dump({"games": games}, f, indent=2)
 
         print(f"\n[SUCCESS] Saved {len(games)} completed games to {output_file}")

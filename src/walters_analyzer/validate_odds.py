@@ -91,18 +91,14 @@ class OddsValidator:
         # Validate rotation number format
         rotation = game.get("rotation_number", "")
         if rotation and "-" not in rotation:
-            self.warnings.append(
-                f"{game_id}: Unusual rotation format '{rotation}'"
-            )
+            self.warnings.append(f"{game_id}: Unusual rotation format '{rotation}'")
 
         # Validate date format
         event_date = game.get("event_date", "")
         try:
             datetime.fromisoformat(event_date)
         except (ValueError, TypeError):
-            self.warnings.append(
-                f"{game_id}: Invalid date format '{event_date}'"
-            )
+            self.warnings.append(f"{game_id}: Invalid date format '{event_date}'")
 
         return not has_errors
 
@@ -177,13 +173,9 @@ class OddsValidator:
             self.issues.append(f"{game_id}: Missing total prices")
         else:
             if not -500 <= over_price <= 500:
-                self.warnings.append(
-                    f"{game_id}: Unusual over price {over_price}"
-                )
+                self.warnings.append(f"{game_id}: Unusual over price {over_price}")
             if not -500 <= under_price <= 500:
-                self.warnings.append(
-                    f"{game_id}: Unusual under price {under_price}"
-                )
+                self.warnings.append(f"{game_id}: Unusual under price {under_price}")
 
     def _validate_moneyline(self, ml: dict[str, Any], game_id: str) -> None:
         """Validate moneyline market"""
@@ -198,14 +190,10 @@ class OddsValidator:
         home_price = home.get("price") if home else None
 
         if away_price is not None and not -2000 <= away_price <= 2000:
-            self.warnings.append(
-                f"{game_id}: Unusual away ML price {away_price}"
-            )
+            self.warnings.append(f"{game_id}: Unusual away ML price {away_price}")
 
         if home_price is not None and not -2000 <= home_price <= 2000:
-            self.warnings.append(
-                f"{game_id}: Unusual home ML price {home_price}"
-            )
+            self.warnings.append(f"{game_id}: Unusual home ML price {home_price}")
 
     def validate_file(self, file_path: str) -> dict[str, Any]:
         """
@@ -304,27 +292,27 @@ class OddsValidator:
         print(f"\nFile: {report['file']}")
         print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-        print(f"\n>> SUMMARY:")
+        print("\n>> SUMMARY:")
         print(f"   Total Games: {report['total_games']}")
         print(f"   Valid Games: {report['valid_games']}")
         print(f"   Health Score: {report['health_score']}/100")
 
         stats = report["stats"]
-        print(f"\n>> MARKET COVERAGE:")
+        print("\n>> MARKET COVERAGE:")
         print(
             f"   Spread: {stats.get('games_with_spread', 0)}"
             f"/{report['total_games']} "
-            f"({stats.get('games_with_spread', 0)/report['total_games']*100:.1f}%)"
+            f"({stats.get('games_with_spread', 0) / report['total_games'] * 100:.1f}%)"
         )
         print(
             f"   Total:  {stats.get('games_with_total', 0)}"
             f"/{report['total_games']} "
-            f"({stats.get('games_with_total', 0)/report['total_games']*100:.1f}%)"
+            f"({stats.get('games_with_total', 0) / report['total_games'] * 100:.1f}%)"
         )
         print(
             f"   Moneyline: {stats.get('games_with_moneyline', 0)}"
             f"/{report['total_games']} "
-            f"({stats.get('games_with_moneyline', 0)/report['total_games']*100:.1f}%)"
+            f"({stats.get('games_with_moneyline', 0) / report['total_games'] * 100:.1f}%)"
         )
 
         if report["issues"]:
@@ -334,7 +322,7 @@ class OddsValidator:
             if len(report["issues"]) > 10:
                 print(f"   ... and {len(report['issues']) - 10} more")
         else:
-            print(f"\n>> CRITICAL ISSUES: None found")
+            print("\n>> CRITICAL ISSUES: None found")
 
         if report["warnings"]:
             print(f"\n>> WARNINGS ({len(report['warnings'])}):")
@@ -343,10 +331,10 @@ class OddsValidator:
             if len(report["warnings"]) > 10:
                 print(f"   ... and {len(report['warnings']) - 10} more")
         else:
-            print(f"\n>> WARNINGS: None found")
+            print("\n>> WARNINGS: None found")
 
         # Overall status
-        print(f"\n>> STATUS:", end=" ")
+        print("\n>> STATUS:", end=" ")
         if report["valid"]:
             print("PASS (Excellent quality)")
         elif report["health_score"] >= 80:
@@ -363,12 +351,8 @@ def main():
     """CLI interface for odds validation"""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Validate scraped betting odds data"
-    )
-    parser.add_argument(
-        "file", nargs="?", help="Path to JSON or JSONL odds file"
-    )
+    parser = argparse.ArgumentParser(description="Validate scraped betting odds data")
+    parser.add_argument("file", nargs="?", help="Path to JSON or JSONL odds file")
     parser.add_argument(
         "--json",
         action="store_true",
@@ -386,9 +370,7 @@ def main():
     if args.latest:
         odds_dir = Path("data/odds/nfl")
         if not odds_dir.exists():
-            print(
-                f"Error: Odds directory not found: {odds_dir}", file=sys.stderr
-            )
+            print(f"Error: Odds directory not found: {odds_dir}", file=sys.stderr)
             sys.exit(1)
 
         json_files = sorted(odds_dir.glob("*.json"))

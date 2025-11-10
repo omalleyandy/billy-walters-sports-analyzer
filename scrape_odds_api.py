@@ -35,7 +35,7 @@ def scrape_odds_api() -> list[dict]:
         "regions": "us",
         "markets": "h2h,spreads,totals",
         "oddsFormat": "american",
-        "dateFormat": "iso"
+        "dateFormat": "iso",
     }
 
     response = requests.get(url, params=params, timeout=30)
@@ -87,7 +87,7 @@ def convert_to_walters_format(event: dict) -> dict:
                 side = "away" if outcome["name"] == event["away_team"] else "home"
                 markets_data["spread"][side] = {
                     "line": float(outcome["point"]),
-                    "price": int(outcome["price"])
+                    "price": int(outcome["price"]),
                 }
 
         elif market_key == "totals":
@@ -96,7 +96,7 @@ def convert_to_walters_format(event: dict) -> dict:
                 markets_data["total"][side] = {
                     "side": side,
                     "line": float(outcome["point"]),
-                    "price": int(outcome["price"])
+                    "price": int(outcome["price"]),
                 }
 
         elif market_key == "h2h":
@@ -104,7 +104,7 @@ def convert_to_walters_format(event: dict) -> dict:
                 side = "away" if outcome["name"] == event["away_team"] else "home"
                 markets_data["moneyline"][side] = {
                     "line": None,
-                    "price": int(outcome["price"])
+                    "price": int(outcome["price"]),
                 }
 
     # Build game object
@@ -120,13 +120,10 @@ def convert_to_walters_format(event: dict) -> dict:
         "rotation_number": "",  # Odds API doesn't provide rotation numbers
         "event_date": event_date,
         "event_time": game_time,
-        "teams": {
-            "away": event["away_team"],
-            "home": event["home_team"]
-        },
+        "teams": {"away": event["away_team"], "home": event["home_team"]},
         "markets": markets_data,
         "state": {},
-        "is_live": False
+        "is_live": False,
     }
 
     return game
@@ -141,59 +138,70 @@ def save_games(games: list[dict], output_dir: str = "data/odds/nfl"):
 
     # Save as JSONL
     jsonl_file = output_path / f"nfl-odds-{timestamp}.jsonl"
-    with open(jsonl_file, 'w', encoding='utf-8') as f:
+    with open(jsonl_file, "w", encoding="utf-8") as f:
         for game in games:
-            f.write(json.dumps(game) + '\n')
+            f.write(json.dumps(game) + "\n")
 
     # Save as JSON
     json_file = output_path / f"nfl-odds-{timestamp}.json"
-    with open(json_file, 'w', encoding='utf-8') as f:
+    with open(json_file, "w", encoding="utf-8") as f:
         json.dump(games, f, indent=2)
 
     # Save as CSV
     csv_file = output_path / f"nfl-odds-{timestamp}.csv"
-    with open(csv_file, 'w', encoding='utf-8') as f:
+    with open(csv_file, "w", encoding="utf-8") as f:
         headers = [
-            "source", "sport", "league", "collected_at", "game_key",
-            "event_date", "event_time",
-            "away_team", "home_team",
-            "away_spread_line", "away_spread_price",
-            "home_spread_line", "home_spread_price",
-            "over_line", "over_price",
-            "under_line", "under_price",
-            "away_moneyline", "home_moneyline"
+            "source",
+            "sport",
+            "league",
+            "collected_at",
+            "game_key",
+            "event_date",
+            "event_time",
+            "away_team",
+            "home_team",
+            "away_spread_line",
+            "away_spread_price",
+            "home_spread_line",
+            "home_spread_price",
+            "over_line",
+            "over_price",
+            "under_line",
+            "under_price",
+            "away_moneyline",
+            "home_moneyline",
         ]
-        f.write(','.join(headers) + '\n')
+        f.write(",".join(headers) + "\n")
 
         for game in games:
-            teams = game['teams']
-            markets = game['markets']
-            spread = markets.get('spread', {})
-            total = markets.get('total', {})
-            ml = markets.get('moneyline', {})
+            teams = game["teams"]
+            markets = game["markets"]
+            spread = markets.get("spread", {})
+            total = markets.get("total", {})
+            ml = markets.get("moneyline", {})
 
             row = [
-                game.get('source', ''),
-                game.get('sport', ''),
-                game.get('league', ''),
-                game.get('collected_at', ''),
-                game.get('game_key', ''),
-                game.get('event_date', ''),
-                game.get('event_time', ''),
-                teams.get('away', ''),
-                teams.get('home', ''),
-                spread.get('away', {}).get('line', ''),
-                spread.get('away', {}).get('price', ''),
-                spread.get('home', {}).get('line', ''),
-                spread.get('home', {}).get('price', ''),
-                total.get('over', {}).get('line', ''),
-                total.get('over', {}).get('price', ''),
-                total.get('under', {}).get('line', ''),
-                total.get('under', {}).get('price', ''),
-                ml.get('away', {}).get('price', ''),
-                ml.get('home', {}).get('price', ''),
+                game.get("source", ""),
+                game.get("sport", ""),
+                game.get("league", ""),
+                game.get("collected_at", ""),
+                game.get("game_key", ""),
+                game.get("event_date", ""),
+                game.get("event_time", ""),
+                teams.get("away", ""),
+                teams.get("home", ""),
+                spread.get("away", {}).get("line", ""),
+                spread.get("away", {}).get("price", ""),
+                spread.get("home", {}).get("line", ""),
+                spread.get("home", {}).get("price", ""),
+                total.get("over", {}).get("line", ""),
+                total.get("over", {}).get("price", ""),
+                total.get("under", {}).get("line", ""),
+                total.get("under", {}).get("price", ""),
+                ml.get("away", {}).get("price", ""),
+                ml.get("home", {}).get("price", ""),
             ]
-            f.write(','.join(str(v) for v in row) + '\n')
+            f.write(",".join(str(v) for v in row) + "\n")
 
     print(f"\nSaved {len(games)} games to:")
     print(f"  JSONL: {jsonl_file}")
@@ -210,32 +218,34 @@ def display_summary(games: list[dict]):
     print("=" * 80)
 
     for game in games:
-        teams = game['teams']
-        time = game.get('event_time', '')
+        teams = game["teams"]
+        time = game.get("event_time", "")
 
         print(f"\n{teams['away']:30} @ {teams['home']}")
         print(f"  Time: {time}")
 
-        spread = game['markets']['spread']
-        if spread.get('away') and spread.get('home'):
-            away_line = spread['away'].get('line')
-            home_line = spread['home'].get('line')
-            away_price = spread['away'].get('price')
-            home_price = spread['home'].get('price')
-            print(f"  Spread: {away_line:+5.1f} ({away_price:+4}) / "
-                  f"{home_line:+5.1f} ({home_price:+4})")
+        spread = game["markets"]["spread"]
+        if spread.get("away") and spread.get("home"):
+            away_line = spread["away"].get("line")
+            home_line = spread["home"].get("line")
+            away_price = spread["away"].get("price")
+            home_price = spread["home"].get("price")
+            print(
+                f"  Spread: {away_line:+5.1f} ({away_price:+4}) / "
+                f"{home_line:+5.1f} ({home_price:+4})"
+            )
 
-        total = game['markets']['total']
-        if total.get('over') and total.get('under'):
-            over_line = total['over'].get('line')
-            over_price = total['over'].get('price')
-            under_price = total['under'].get('price')
+        total = game["markets"]["total"]
+        if total.get("over") and total.get("under"):
+            over_line = total["over"].get("line")
+            over_price = total["over"].get("price")
+            under_price = total["under"].get("price")
             print(f"  Total: O/U {over_line} ({over_price:+4}/{under_price:+4})")
 
-        ml = game['markets']['moneyline']
-        if ml.get('away') and ml.get('home'):
-            away_ml = ml['away'].get('price')
-            home_ml = ml['home'].get('price')
+        ml = game["markets"]["moneyline"]
+        if ml.get("away") and ml.get("home"):
+            away_ml = ml["away"].get("price")
+            home_ml = ml["home"].get("price")
             print(f"  ML: {away_ml:+4} / {home_ml:+4}")
 
 
@@ -253,4 +263,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error: {e}")
         import traceback
+
         traceback.print_exc()

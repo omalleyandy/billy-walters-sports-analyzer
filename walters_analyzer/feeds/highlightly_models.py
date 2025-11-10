@@ -2,8 +2,8 @@
 Pydantic models for Highlightly NFL/NCAA API
 Based on OpenAPI schema: https://highlightly.net/documentation/american-football/
 """
-from typing import Optional, List, Dict, Any
-from datetime import datetime
+
+from typing import Optional, List
 from pydantic import BaseModel, Field
 from enum import Enum
 
@@ -12,8 +12,10 @@ from enum import Enum
 # Enums
 # ============================================================================
 
+
 class MatchState(str, Enum):
     """Match state enum"""
+
     SUSPENDED = "Suspended"
     POSTPONED = "Postponed"
     CANCELLED = "Cancelled"
@@ -28,18 +30,21 @@ class MatchState(str, Enum):
 
 class OddsType(str, Enum):
     """Odds type enum"""
+
     PREMATCH = "prematch"
     LIVE = "live"
 
 
 class SeasonBreakdown(str, Enum):
     """Season breakdown enum"""
+
     ENTIRE = "Entire"
     SEASON = "Season"
 
 
 class StatCategory(str, Enum):
     """Stat category enum"""
+
     GENERAL = "General"
     DEFENSE = "Defense"
     RETURNING = "Returning"
@@ -55,8 +60,10 @@ class StatCategory(str, Enum):
 # Team Models
 # ============================================================================
 
+
 class HighlightlyTeam(BaseModel):
     """Team information"""
+
     id: int
     logo: Optional[str] = None
     name: str
@@ -72,8 +79,10 @@ class HighlightlyTeam(BaseModel):
 # Team Statistics Models
 # ============================================================================
 
+
 class TeamGameStats(BaseModel):
     """Team game statistics"""
+
     played: int
     wins: int
     loses: int
@@ -81,18 +90,21 @@ class TeamGameStats(BaseModel):
 
 class TeamPointStats(BaseModel):
     """Team point statistics"""
+
     scored: int
     received: int
 
 
 class TeamTotalStats(BaseModel):
     """Team total statistics"""
+
     games: TeamGameStats
     points: TeamPointStats
 
 
 class TeamStatistics(BaseModel):
     """Team statistics by season and round"""
+
     total: TeamTotalStats
     home: TeamTotalStats
     away: TeamTotalStats
@@ -107,8 +119,10 @@ class TeamStatistics(BaseModel):
 # Match Models
 # ============================================================================
 
+
 class MatchScore(BaseModel):
     """Match score information"""
+
     current: Optional[str] = None
     firstPeriod: Optional[str] = Field(None, alias="firstPeriod")
     secondPeriod: Optional[str] = Field(None, alias="secondPeriod")
@@ -123,6 +137,7 @@ class MatchScore(BaseModel):
 
 class MatchStateInfo(BaseModel):
     """Match state information"""
+
     period: Optional[int] = None
     clock: Optional[int] = None
     description: MatchState
@@ -132,6 +147,7 @@ class MatchStateInfo(BaseModel):
 
 class MatchTeam(BaseModel):
     """Match team (simplified)"""
+
     id: int
     logo: Optional[str] = None
     name: str
@@ -144,6 +160,7 @@ class MatchTeam(BaseModel):
 
 class HighlightlyMatch(BaseModel):
     """Match information"""
+
     id: int
     round: str
     date: str
@@ -161,8 +178,10 @@ class HighlightlyMatch(BaseModel):
 # Detailed Match Models
 # ============================================================================
 
+
 class Venue(BaseModel):
     """Venue information"""
+
     city: str
     name: str
     state: str
@@ -170,23 +189,27 @@ class Venue(BaseModel):
 
 class Forecast(BaseModel):
     """Weather forecast"""
+
     status: Optional[str] = None
     temperature: Optional[str] = None
 
 
 class StatisticsItem(BaseModel):
     """Statistics item"""
+
     name: str
     value: float
 
 
 class TeamMatchStatistics(BaseModel):
     """Team match statistics"""
+
     statistics: List[StatisticsItem]
 
 
 class MatchStatistics(BaseModel):
     """Match statistics for both teams"""
+
     homeTeam: TeamMatchStatistics = Field(..., alias="homeTeam")
     awayTeam: TeamMatchStatistics = Field(..., alias="awayTeam")
 
@@ -196,12 +219,14 @@ class MatchStatistics(BaseModel):
 
 class PlayerStatisticsItem(BaseModel):
     """Player statistics item"""
+
     name: str
     value: str
 
 
 class BoxScorePlayer(BaseModel):
     """Box score player"""
+
     playerName: str = Field(..., alias="playerName")
     statistics: List[PlayerStatisticsItem]
 
@@ -211,6 +236,7 @@ class BoxScorePlayer(BaseModel):
 
 class BoxScores(BaseModel):
     """Box scores for both teams"""
+
     homeTeam: List[BoxScorePlayer] = Field(..., alias="homeTeam")
     awayTeam: List[BoxScorePlayer] = Field(..., alias="awayTeam")
 
@@ -220,6 +246,7 @@ class BoxScores(BaseModel):
 
 class TopPerformer(BaseModel):
     """Top performer"""
+
     name: str
     playerName: str = Field(..., alias="playerName")
     playerPosition: str = Field(..., alias="playerPosition")
@@ -231,6 +258,7 @@ class TopPerformer(BaseModel):
 
 class TopPerformers(BaseModel):
     """Top performers for both teams"""
+
     homeTeam: List[TopPerformer] = Field(..., alias="homeTeam")
     awayTeam: List[TopPerformer] = Field(..., alias="awayTeam")
 
@@ -240,6 +268,7 @@ class TopPerformers(BaseModel):
 
 class InjuryPlayer(BaseModel):
     """Injury player info"""
+
     name: str
     jersey: Optional[int] = None
     position: Optional[str] = None
@@ -247,18 +276,21 @@ class InjuryPlayer(BaseModel):
 
 class InjuryItem(BaseModel):
     """Injury item"""
+
     status: str
     player: InjuryPlayer
 
 
 class TeamInjuries(BaseModel):
     """Team injuries"""
+
     team: HighlightlyTeam
     data: List[InjuryItem]
 
 
 class EventPosition(BaseModel):
     """Event position"""
+
     clock: str
     period: str
     yardLine: int = Field(..., alias="yardLine")
@@ -269,6 +301,7 @@ class EventPosition(BaseModel):
 
 class MatchEvent(BaseModel):
     """Match event"""
+
     end: EventPosition
     team: HighlightlyTeam
     plays: List[str]
@@ -283,6 +316,7 @@ class MatchEvent(BaseModel):
 
 class Prediction(BaseModel):
     """Prediction"""
+
     type: str
     modelType: str = Field(..., alias="modelType")
     generatedAt: str = Field(..., alias="generatedAt")
@@ -294,12 +328,14 @@ class Prediction(BaseModel):
 
 class PredictionData(BaseModel):
     """Prediction data"""
+
     home: List[Prediction]
     away: List[Prediction]
 
 
 class MatchDetails(BaseModel):
     """Detailed match information"""
+
     id: int
     round: str
     date: str
@@ -325,14 +361,17 @@ class MatchDetails(BaseModel):
 # Odds Models
 # ============================================================================
 
+
 class MarketSelection(BaseModel):
     """Market selection (outcome)"""
+
     odd: float
     value: str
 
 
 class BookmakerMarket(BaseModel):
     """Bookmaker market"""
+
     bookmakerId: int = Field(..., alias="bookmakerId")
     bookmakerName: Optional[str] = Field(None, alias="bookmakerName")
     type: str
@@ -345,6 +384,7 @@ class BookmakerMarket(BaseModel):
 
 class MatchOdds(BaseModel):
     """Match odds"""
+
     matchId: int = Field(..., alias="matchId")
     odds: List[BookmakerMarket]
 
@@ -354,6 +394,7 @@ class MatchOdds(BaseModel):
 
 class Bookmaker(BaseModel):
     """Bookmaker information"""
+
     id: int
     name: str
 
@@ -362,8 +403,10 @@ class Bookmaker(BaseModel):
 # Highlights Models
 # ============================================================================
 
+
 class HighlightlyHighlight(BaseModel):
     """Highlight information"""
+
     id: int
     type: str
     imgUrl: Optional[str] = Field(None, alias="imgUrl")
@@ -381,6 +424,7 @@ class HighlightlyHighlight(BaseModel):
 
 class GeoRestriction(BaseModel):
     """Geo restriction information"""
+
     state: str
     allowedCountries: List[str] = Field(..., alias="allowedCountries")
     blockedCountries: List[str] = Field(..., alias="blockedCountries")
@@ -394,8 +438,10 @@ class GeoRestriction(BaseModel):
 # Standings Models
 # ============================================================================
 
+
 class StandingsStatValue(BaseModel):
     """Standings stat value"""
+
     value: str
     displayName: str = Field(..., alias="displayName")
 
@@ -405,6 +451,7 @@ class StandingsStatValue(BaseModel):
 
 class StandingsTeam(BaseModel):
     """Standings team"""
+
     id: int
     logo: str
     name: str
@@ -417,12 +464,14 @@ class StandingsTeam(BaseModel):
 
 class TeamStanding(BaseModel):
     """Team standing"""
+
     team: StandingsTeam
     statistics: List[StandingsStatValue]
 
 
 class StandingsData(BaseModel):
     """Standings data"""
+
     leagueName: str = Field(..., alias="leagueName")
     abbreviation: str
     year: int
@@ -440,8 +489,10 @@ class StandingsData(BaseModel):
 # Lineup Models
 # ============================================================================
 
+
 class LineupPlayer(BaseModel):
     """Lineup player"""
+
     id: int
     jersey: Optional[int] = None
     player: str
@@ -455,12 +506,14 @@ class LineupPlayer(BaseModel):
 
 class TeamLineup(BaseModel):
     """Team lineup"""
+
     team: HighlightlyTeam
     lineup: List[LineupPlayer]
 
 
 class Lineups(BaseModel):
     """Match lineups"""
+
     home: TeamLineup
     away: TeamLineup
 
@@ -469,8 +522,10 @@ class Lineups(BaseModel):
 # Player Models
 # ============================================================================
 
+
 class HighlightlyPlayer(BaseModel):
     """Player information"""
+
     id: int
     fullName: Optional[str] = Field(None, alias="fullName")
     logo: Optional[str] = None
@@ -481,12 +536,14 @@ class HighlightlyPlayer(BaseModel):
 
 class PlayerPosition(BaseModel):
     """Player position"""
+
     main: Optional[str] = None
     abbreviation: Optional[str] = None
 
 
 class PlayerDraft(BaseModel):
     """Player draft info"""
+
     round: Optional[int] = None
     year: Optional[int] = None
     pick: Optional[int] = None
@@ -494,6 +551,7 @@ class PlayerDraft(BaseModel):
 
 class PlayerTeam(BaseModel):
     """Player team"""
+
     id: int
     logo: Optional[str] = None
     name: str
@@ -507,6 +565,7 @@ class PlayerTeam(BaseModel):
 
 class PlayerProfile(BaseModel):
     """Player profile"""
+
     fullName: Optional[str] = Field(None, alias="fullName")
     birthPlace: Optional[str] = Field(None, alias="birthPlace")
     birthDate: Optional[str] = Field(None, alias="birthDate")
@@ -524,6 +583,7 @@ class PlayerProfile(BaseModel):
 
 class PlayerSummary(BaseModel):
     """Player summary"""
+
     id: int
     fullName: Optional[str] = Field(None, alias="fullName")
     logo: Optional[str] = None
@@ -535,6 +595,7 @@ class PlayerSummary(BaseModel):
 
 class StatEntry(BaseModel):
     """Stat entry"""
+
     name: str
     value: float
     category: StatCategory
@@ -542,6 +603,7 @@ class StatEntry(BaseModel):
 
 class PlayerSeasonStats(BaseModel):
     """Player season statistics"""
+
     stats: List[StatEntry]
     teams: List[PlayerTeam]
     league: str
@@ -554,6 +616,7 @@ class PlayerSeasonStats(BaseModel):
 
 class PlayerStatistics(BaseModel):
     """Player statistics"""
+
     id: int
     fullName: Optional[str] = Field(None, alias="fullName")
     logo: Optional[str] = None
@@ -567,8 +630,10 @@ class PlayerStatistics(BaseModel):
 # Pagination Models
 # ============================================================================
 
+
 class Pagination(BaseModel):
     """Pagination information"""
+
     totalCount: int = Field(..., alias="totalCount")
     offset: int
     limit: int
@@ -579,6 +644,7 @@ class Pagination(BaseModel):
 
 class PlanInfo(BaseModel):
     """API plan information"""
+
     tier: str
     message: str
 
@@ -587,8 +653,10 @@ class PlanInfo(BaseModel):
 # Response Models
 # ============================================================================
 
+
 class TeamsResponse(BaseModel):
     """Teams response"""
+
     data: List[HighlightlyTeam]
     pagination: Pagination
     plan: PlanInfo
@@ -596,6 +664,7 @@ class TeamsResponse(BaseModel):
 
 class MatchesResponse(BaseModel):
     """Matches response"""
+
     data: List[HighlightlyMatch]
     pagination: Pagination
     plan: PlanInfo
@@ -603,6 +672,7 @@ class MatchesResponse(BaseModel):
 
 class HighlightsResponse(BaseModel):
     """Highlights response"""
+
     data: List[HighlightlyHighlight]
     pagination: Pagination
     plan: PlanInfo
@@ -610,6 +680,7 @@ class HighlightsResponse(BaseModel):
 
 class OddsResponse(BaseModel):
     """Odds response"""
+
     data: List[MatchOdds]
     pagination: Pagination
     plan: PlanInfo
@@ -617,6 +688,7 @@ class OddsResponse(BaseModel):
 
 class BookmakersResponse(BaseModel):
     """Bookmakers response"""
+
     data: List[Bookmaker]
     pagination: Pagination
     plan: PlanInfo
@@ -624,7 +696,7 @@ class BookmakersResponse(BaseModel):
 
 class PlayersResponse(BaseModel):
     """Players response"""
+
     data: List[HighlightlyPlayer]
     pagination: Pagination
     plan: PlanInfo
-

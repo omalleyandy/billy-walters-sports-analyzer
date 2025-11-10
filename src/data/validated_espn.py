@@ -251,9 +251,7 @@ class ESPNDataValidator:
             completeness_scores = []
             for team in validated:
                 fields = ["name", "abbreviation", "location", "nickname", "logo"]
-                filled = sum(
-                    1 for f in fields if getattr(team, f, None) is not None
-                )
+                filled = sum(1 for f in fields if getattr(team, f, None) is not None)
                 completeness_scores.append((filled / len(fields)) * 100)
             completeness = sum(completeness_scores) / len(completeness_scores)
         else:
@@ -267,9 +265,7 @@ class ESPNDataValidator:
             invalid_records=len(errors),
             validation_errors=errors[:10],  # Limit to 10 errors
             completeness_score=completeness,
-            quality_score=(
-                (len(validated) / len(raw_data)) * 100 if raw_data else 0.0
-            ),
+            quality_score=((len(validated) / len(raw_data)) * 100 if raw_data else 0.0),
         )
 
         return validated, report
@@ -311,13 +307,9 @@ class ESPNDataValidator:
                     "season",
                 ]
                 filled = sum(
-                    1
-                    for f in optional_fields
-                    if getattr(game, f, None) is not None
+                    1 for f in optional_fields if getattr(game, f, None) is not None
                 )
-                completeness_scores.append(
-                    (filled / len(optional_fields)) * 100
-                )
+                completeness_scores.append((filled / len(optional_fields)) * 100)
             completeness = sum(completeness_scores) / len(completeness_scores)
         else:
             completeness = 0.0
@@ -330,9 +322,7 @@ class ESPNDataValidator:
             invalid_records=len(errors),
             validation_errors=errors[:10],
             completeness_score=completeness,
-            quality_score=(
-                (len(validated) / len(raw_data)) * 100 if raw_data else 0.0
-            ),
+            quality_score=((len(validated) / len(raw_data)) * 100 if raw_data else 0.0),
         )
 
         return validated, report
@@ -375,9 +365,7 @@ class ESPNDataValidator:
                     "yards_allowed_per_game",
                 ]
                 filled = sum(
-                    1
-                    for f in stat_fields
-                    if getattr(stats, f, None) is not None
+                    1 for f in stat_fields if getattr(stats, f, None) is not None
                 )
                 completeness_scores.append((filled / len(stat_fields)) * 100)
             completeness = sum(completeness_scores) / len(completeness_scores)
@@ -392,9 +380,7 @@ class ESPNDataValidator:
             invalid_records=len(errors),
             validation_errors=errors[:10],
             completeness_score=completeness,
-            quality_score=(
-                (len(validated) / len(raw_data)) * 100 if raw_data else 0.0
-            ),
+            quality_score=((len(validated) / len(raw_data)) * 100 if raw_data else 0.0),
         )
 
         return validated, report
@@ -428,7 +414,7 @@ def example_validation():
     validator = ESPNDataValidator()
     validated_teams, report = validator.validate_teams(teams_data)
 
-    print(f"\nValidation Results:")
+    print("\nValidation Results:")
     print(f"  Total: {report.total_records}")
     print(f"  Valid: {report.valid_records}")
     print(f"  Invalid: {report.invalid_records}")
@@ -438,7 +424,7 @@ def example_validation():
     print(f"  Is Acceptable: {report.is_acceptable}")
 
     if report.validation_errors:
-        print(f"\nErrors:")
+        print("\nErrors:")
         for error in report.validation_errors:
             print(f"  - {error}")
 

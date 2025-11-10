@@ -5,7 +5,7 @@ Automatically determines current week, season phase, and schedule information
 based on the current date.
 """
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from enum import Enum
 
 

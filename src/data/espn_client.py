@@ -36,7 +36,9 @@ class ESPNClient:
 
     # ESPN API endpoints
     NFL_BASE_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
-    NCAAF_BASE_URL = "https://site.api.espn.com/apis/site/v2/sports/football/college-football"
+    NCAAF_BASE_URL = (
+        "https://site.api.espn.com/apis/site/v2/sports/football/college-football"
+    )
 
     def __init__(
         self,
@@ -110,9 +112,7 @@ class ESPNClient:
         self._circuit_breaker_failures += 1
         if self._circuit_breaker_failures >= self._circuit_breaker_threshold:
             # Open circuit breaker for 5 minutes
-            self._circuit_breaker_reset_time = (
-                asyncio.get_event_loop().time() + 300
-            )
+            self._circuit_breaker_reset_time = asyncio.get_event_loop().time() + 300
             logger.error(
                 f"Circuit breaker opened after {self._circuit_breaker_failures} failures"
             )
@@ -204,9 +204,7 @@ class ESPNClient:
         Returns:
             Scoreboard data with games
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/scoreboard"
 
         params = {}
@@ -241,9 +239,7 @@ class ESPNClient:
         Returns:
             Team statistics dictionary
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/teams/{team_id}/statistics"
 
         params = {}
@@ -270,9 +266,7 @@ class ESPNClient:
         Returns:
             Roster data with players
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/teams/{team_id}/roster"
 
         logger.info(f"Fetching {league} team {team_id} roster")
@@ -295,9 +289,7 @@ class ESPNClient:
         Returns:
             Standings data
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/standings"
 
         params = {}
@@ -324,9 +316,7 @@ class ESPNClient:
         Returns:
             Detailed game data
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/summary"
 
         params = {"event": game_id}
@@ -336,9 +326,7 @@ class ESPNClient:
         data = await self._make_request(url, params)
         return self._enrich_game_details(data, league, game_id)
 
-    async def get_teams(
-        self, league: Literal["NFL", "NCAAF"]
-    ) -> list[dict[str, Any]]:
+    async def get_teams(self, league: Literal["NFL", "NCAAF"]) -> list[dict[str, Any]]:
         """
         Get list of all teams in the league.
 
@@ -348,9 +336,7 @@ class ESPNClient:
         Returns:
             List of team dictionaries
         """
-        base_url = (
-            self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
-        )
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/teams"
 
         logger.info(f"Fetching {league} teams")
@@ -363,24 +349,26 @@ class ESPNClient:
             for league_data in sport.get("leagues", []):
                 for team in league_data.get("teams", []):
                     team_info = team.get("team", {})
-                    teams.append({
-                        "id": team_info.get("id"),
-                        "name": team_info.get("displayName"),
-                        "abbreviation": team_info.get("abbreviation"),
-                        "location": team_info.get("location"),
-                        "nickname": team_info.get("nickname"),
-                        "logo": team_info.get("logos", [{}])[0].get("href") if team_info.get("logos") else None,
-                        "league": league,
-                        "source": "espn",
-                        "fetch_time": datetime.now().isoformat(),
-                    })
+                    teams.append(
+                        {
+                            "id": team_info.get("id"),
+                            "name": team_info.get("displayName"),
+                            "abbreviation": team_info.get("abbreviation"),
+                            "location": team_info.get("location"),
+                            "nickname": team_info.get("nickname"),
+                            "logo": team_info.get("logos", [{}])[0].get("href")
+                            if team_info.get("logos")
+                            else None,
+                            "league": league,
+                            "source": "espn",
+                            "fetch_time": datetime.now().isoformat(),
+                        }
+                    )
 
         logger.info(f"Fetched {len(teams)} teams")
         return teams
 
-    def _enrich_scoreboard(
-        self, data: dict[str, Any], league: str
-    ) -> dict[str, Any]:
+    def _enrich_scoreboard(self, data: dict[str, Any], league: str) -> dict[str, Any]:
         """Add metadata to scoreboard data."""
         enriched = data.copy()
         enriched["league"] = league
@@ -410,9 +398,7 @@ class ESPNClient:
         enriched["fetch_time"] = datetime.now().isoformat()
         return enriched
 
-    def _enrich_standings(
-        self, data: dict[str, Any], league: str
-    ) -> dict[str, Any]:
+    def _enrich_standings(self, data: dict[str, Any], league: str) -> dict[str, Any]:
         """Add metadata to standings."""
         enriched = data.copy()
         enriched["league"] = league
@@ -444,7 +430,9 @@ async def main():
         # Get team stats
         if games:
             # Get first game's home team ID
-            home_team = games[0].get("competitions", [{}])[0].get("competitors", [{}])[1]
+            home_team = (
+                games[0].get("competitions", [{}])[0].get("competitors", [{}])[1]
+            )
             team_id = home_team.get("team", {}).get("id")
 
             if team_id:

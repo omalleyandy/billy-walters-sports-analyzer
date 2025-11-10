@@ -21,7 +21,7 @@ DEFAULT_TRACKED_SITUATIONS = [
     "lookahead_game",
     "revenge_game",
     "division_rivalry",
-    "primetime_under"
+    "primetime_under",
 ]
 
 # ==================== Autonomous Agent Defaults ====================

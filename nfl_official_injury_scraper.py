@@ -12,8 +12,7 @@ from playwright.async_api import async_playwright
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -56,7 +55,7 @@ class NFLOfficialInjuryScraper:
 
             # Wait for injury tables to load
             try:
-                await page.wait_for_selector('table', timeout=10000)
+                await page.wait_for_selector("table", timeout=10000)
                 logger.info("Injury tables loaded, extracting data...")
             except:
                 logger.warning("Could not find injury tables")
@@ -160,44 +159,48 @@ class NFLOfficialInjuryScraper:
 
         # Clean and normalize data
         for injury in injury_data:
-            injury['source'] = 'nfl_official'
-            injury['league'] = 'NFL'
-            injury['sport'] = 'nfl'
-            injury['collected_at'] = datetime.now().isoformat()
+            injury["source"] = "nfl_official"
+            injury["league"] = "NFL"
+            injury["sport"] = "nfl"
+            injury["collected_at"] = datetime.now().isoformat()
 
             # Normalize status
-            status = injury.get('game_status', '').lower()
-            if 'out' in status:
-                injury['injury_status'] = 'Out'
-            elif 'doubtful' in status:
-                injury['injury_status'] = 'Doubtful'
-            elif 'questionable' in status:
-                injury['injury_status'] = 'Questionable'
+            status = injury.get("game_status", "").lower()
+            if "out" in status:
+                injury["injury_status"] = "Out"
+            elif "doubtful" in status:
+                injury["injury_status"] = "Doubtful"
+            elif "questionable" in status:
+                injury["injury_status"] = "Questionable"
             else:
-                injury['injury_status'] = 'Questionable'
+                injury["injury_status"] = "Questionable"
 
         injuries = injury_data
 
         # Save data
         if save and injuries:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
             # Save as JSON
             json_file = f"{self.output_dir}/nfl_official_injuries_{timestamp}.json"
-            with open(json_file, 'w') as f:
-                json.dump({
-                    'injuries': injuries,
-                    'week': week,
-                    'scraped_at': datetime.now().isoformat(),
-                    'source': 'NFL.com Official'
-                }, f, indent=2)
+            with open(json_file, "w") as f:
+                json.dump(
+                    {
+                        "injuries": injuries,
+                        "week": week,
+                        "scraped_at": datetime.now().isoformat(),
+                        "source": "NFL.com Official",
+                    },
+                    f,
+                    indent=2,
+                )
             logger.info(f"Saved to {json_file}")
 
             # Save as JSONL
             jsonl_file = f"{self.output_dir}/nfl_official_injuries_{timestamp}.jsonl"
-            with open(jsonl_file, 'w') as f:
+            with open(jsonl_file, "w") as f:
                 for injury in injuries:
-                    f.write(json.dumps(injury) + '\n')
+                    f.write(json.dumps(injury) + "\n")
             logger.info(f"Saved JSONL to {jsonl_file}")
 
         return injuries
@@ -221,7 +224,7 @@ async def main():
         # Group by status
         by_status = {}
         for inj in injuries:
-            status = inj.get('injury_status', 'Unknown')
+            status = inj.get("injury_status", "Unknown")
             by_status[status] = by_status.get(status, 0) + 1
 
         logger.info("\nBy Status:")
@@ -231,7 +234,7 @@ async def main():
         # Group by team
         by_team = {}
         for inj in injuries:
-            team = inj.get('team', 'Unknown')
+            team = inj.get("team", "Unknown")
             by_team[team] = by_team.get(team, 0) + 1
 
         logger.info(f"\nTeams with injuries: {len(by_team)}")

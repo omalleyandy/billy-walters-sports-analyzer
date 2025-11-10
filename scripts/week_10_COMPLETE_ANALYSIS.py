@@ -5,7 +5,6 @@ Incorporating: Power Ratings + Injuries + Weather + Situational + Emotional Fact
 November 9, 2025
 """
 
-from typing import Dict, List
 
 print("=" * 120)
 print("NFL WEEK 10 COMPLETE ANALYSIS - BILLY WALTERS METHODOLOGY")
@@ -97,7 +96,9 @@ print("        Estimated impact: -3 to -5 points")
 print()
 
 print("SITUATIONAL ANALYSIS:")
-print("  - REVENGE GAME: Lions seeking revenge for playoff loss (45-31 in divisional round)")
+print(
+    "  - REVENGE GAME: Lions seeking revenge for playoff loss (45-31 in divisional round)"
+)
 print("  - Jared Goff publicly acknowledged motivation")
 print("  - Lions 12-0 record after losses (statement game mentality)")
 print("  - Detroit coming off disappointing 27-24 loss to Vikings")
@@ -113,7 +114,7 @@ print("EMOTIONAL FACTORS:")
 print("  [+++] STRONG: Detroit motivated by playoff revenge")
 print("  [+++] Lions' identity = bounce back after losses")
 print("  [---] Washington demoralized, backup QB, injury crisis")
-print("  [---] Game moved from \"America's Game\" due to Daniels injury")
+print('  [---] Game moved from "America\'s Game" due to Daniels injury')
 print()
 
 print("BILLY WALTERS ADJUSTMENTS:")

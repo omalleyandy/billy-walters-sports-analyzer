@@ -6,8 +6,7 @@ Analyzes betting odds, tracks line movements, identifies sharp action, calculate
 
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
-from datetime import datetime
+from typing import Dict, List
 
 
 # OPENING LINES (from initial scrape)
@@ -22,8 +21,16 @@ OPENING_LINES = {
     "Arizona @ Seattle": {"spread": -7.5, "total": 44.5, "favorite": "Seattle"},
     "Detroit @ Washington": {"spread": -7.5, "total": 49.5, "favorite": "Detroit"},
     "LA Rams @ San Francisco": {"spread": -5.5, "total": 49.5, "favorite": "LA Rams"},
-    "Pittsburgh @ LA Chargers": {"spread": -2.5, "total": 44.5, "favorite": "LA Chargers"},
-    "Philadelphia @ Green Bay": {"spread": -1.5, "total": 45.5, "favorite": "Green Bay"},
+    "Pittsburgh @ LA Chargers": {
+        "spread": -2.5,
+        "total": 44.5,
+        "favorite": "LA Chargers",
+    },
+    "Philadelphia @ Green Bay": {
+        "spread": -1.5,
+        "total": 45.5,
+        "favorite": "Green Bay",
+    },
 }
 
 
@@ -35,7 +42,7 @@ def load_latest_odds() -> List[Dict]:
         print(f"[WARNING] Odds file not found: {odds_file}")
         return []
 
-    with open(odds_file, 'r') as f:
+    with open(odds_file, "r") as f:
         return json.load(f)
 
 
@@ -90,12 +97,16 @@ def calculate_line_movement(opening: float, current: float) -> Dict:
     return {
         "movement": movement,
         "percentage": pct_change,
-        "direction": "MOVED TOWARD" if movement < 0 else "MOVED AWAY FROM"
+        "direction": "MOVED TOWARD" if movement < 0 else "MOVED AWAY FROM",
     }
 
 
-def identify_sharp_action(opening_spread: float, current_spread: float,
-                         opening_total: float, current_total: float) -> List[str]:
+def identify_sharp_action(
+    opening_spread: float,
+    current_spread: float,
+    opening_total: float,
+    current_total: float,
+) -> List[str]:
     """Identify indicators of sharp money"""
     indicators = []
 
@@ -113,14 +124,17 @@ def identify_sharp_action(opening_spread: float, current_spread: float,
     key_numbers = [3.0, 7.0, 10.0]
     for key in key_numbers:
         if opening_spread != current_spread:
-            if (opening_spread < key <= current_spread) or (current_spread < key <= opening_spread):
+            if (opening_spread < key <= current_spread) or (
+                current_spread < key <= opening_spread
+            ):
                 indicators.append(f"CROSSED KEY NUMBER ({key})")
 
     return indicators
 
 
-def calculate_expected_value(power_rating_edge: float, market_line: float,
-                            juice: int = -110) -> float:
+def calculate_expected_value(
+    power_rating_edge: float, market_line: float, juice: int = -110
+) -> float:
     """
     Calculate expected value (EV) of a bet
 
@@ -146,7 +160,9 @@ def calculate_expected_value(power_rating_edge: float, market_line: float,
     win_amount = 100 / (abs(juice) / 100)  # Based on $100 bet
     loss_amount = 100
 
-    ev = (estimated_win_prob/100 * win_amount) - ((100-estimated_win_prob)/100 * loss_amount)
+    ev = (estimated_win_prob / 100 * win_amount) - (
+        (100 - estimated_win_prob) / 100 * loss_amount
+    )
     ev_percentage = (ev / 100) * 100  # As percentage of bet
 
     return ev_percentage
@@ -177,8 +193,9 @@ def analyze_game_odds(game: Dict, power_ratings_edge: float) -> Dict:
     total_movement = calculate_line_movement(opening_total, current_total)
 
     # Sharp action indicators
-    sharp_indicators = identify_sharp_action(opening_spread, abs(current_spread),
-                                            opening_total, current_total)
+    sharp_indicators = identify_sharp_action(
+        opening_spread, abs(current_spread), opening_total, current_total
+    )
 
     # Implied probabilities
     spread_implied_prob = calculate_implied_probability(spread_juice)
@@ -274,62 +291,72 @@ def main():
         print("-" * 100)
 
         # Current lines
-        print(f"CURRENT LINES:")
-        print(f"  Spread:    {analysis['current_lines']['spread']:+.1f} (juice: {game['markets']['spread']['home']['price']})")
+        print("CURRENT LINES:")
+        print(
+            f"  Spread:    {analysis['current_lines']['spread']:+.1f} (juice: {game['markets']['spread']['home']['price']})"
+        )
         print(f"  Total:     {analysis['current_lines']['total']:.1f}")
-        print(f"  Moneyline: {away} {analysis['current_lines']['ml_away']:+d} | {home} {analysis['current_lines']['ml_home']:+d}")
+        print(
+            f"  Moneyline: {away} {analysis['current_lines']['ml_away']:+d} | {home} {analysis['current_lines']['ml_home']:+d}"
+        )
         print()
 
         # Line movement
-        spread_move = analysis['line_movement']['spread']
-        total_move = analysis['line_movement']['total']
-        print(f"LINE MOVEMENT:")
-        print(f"  Spread:    {analysis['opening_lines']['spread']:+.1f} -> {analysis['current_lines']['spread']:+.1f} ({spread_move['movement']:+.1f} pts)")
-        print(f"  Total:     {analysis['opening_lines']['total']:.1f} -> {analysis['current_lines']['total']:.1f} ({total_move['movement']:+.1f} pts)")
+        spread_move = analysis["line_movement"]["spread"]
+        total_move = analysis["line_movement"]["total"]
+        print("LINE MOVEMENT:")
+        print(
+            f"  Spread:    {analysis['opening_lines']['spread']:+.1f} -> {analysis['current_lines']['spread']:+.1f} ({spread_move['movement']:+.1f} pts)"
+        )
+        print(
+            f"  Total:     {analysis['opening_lines']['total']:.1f} -> {analysis['current_lines']['total']:.1f} ({total_move['movement']:+.1f} pts)"
+        )
         print()
 
         # Implied probabilities
-        probs = analysis['implied_probabilities']
-        print(f"IMPLIED PROBABILITIES:")
+        probs = analysis["implied_probabilities"]
+        print("IMPLIED PROBABILITIES:")
         print(f"  {away} ML: {probs['ml_away']:.1f}%")
         print(f"  {home} ML: {probs['ml_home']:.1f}%")
         print(f"  Book Edge (vig): {probs['total_book_edge']:.1f}%")
         print()
 
         # Sharp action
-        if analysis['sharp_indicators']:
-            print(f"SHARP ACTION INDICATORS:")
-            for indicator in analysis['sharp_indicators']:
+        if analysis["sharp_indicators"]:
+            print("SHARP ACTION INDICATORS:")
+            for indicator in analysis["sharp_indicators"]:
                 print(f"  [!] {indicator}")
             print()
 
         # Value assessment
-        print(f"VALUE ASSESSMENT:")
+        print("VALUE ASSESSMENT:")
         print(f"  Power Rating Edge: {analysis['power_rating_edge']:.1f} points")
         print(f"  Expected Value:    {analysis['expected_value']:+.2f}%")
 
-        if analysis['expected_value'] > 2.0:
-            print(f"  [OK] POSITIVE EV - VALUE BET")
+        if analysis["expected_value"] > 2.0:
+            print("  [OK] POSITIVE EV - VALUE BET")
             high_value_bets.append(analysis)
-        elif analysis['expected_value'] > 0:
-            print(f"  [~] SLIGHT EDGE - MARGINAL VALUE")
+        elif analysis["expected_value"] > 0:
+            print("  [~] SLIGHT EDGE - MARGINAL VALUE")
         else:
-            print(f"  [X] NEGATIVE EV - NO VALUE")
+            print("  [X] NEGATIVE EV - NO VALUE")
 
         print()
         print()
 
     # Summary
     print("=" * 100)
-    print(f"HIGH VALUE BETTING OPPORTUNITIES (EV > 2%)")
+    print("HIGH VALUE BETTING OPPORTUNITIES (EV > 2%)")
     print("=" * 100)
     print()
 
     if high_value_bets:
-        high_value_bets.sort(key=lambda x: x['expected_value'], reverse=True)
+        high_value_bets.sort(key=lambda x: x["expected_value"], reverse=True)
 
         for i, bet in enumerate(high_value_bets, 1):
-            print(f"{i}. {bet['matchup']:40s} - Edge: {bet['power_rating_edge']:.1f}pts | EV: {bet['expected_value']:+.2f}%")
+            print(
+                f"{i}. {bet['matchup']:40s} - Edge: {bet['power_rating_edge']:.1f}pts | EV: {bet['expected_value']:+.2f}%"
+            )
     else:
         print("No high-value opportunities identified")
 

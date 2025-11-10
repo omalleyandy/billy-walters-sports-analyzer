@@ -316,9 +316,9 @@ class DataOrchestrator:
                     CollectionTask(
                         source=DataSource.WEATHER,
                         description=f"Weather for {city}, {state}",
-                        function=lambda c=city, s=state, t=game_time: self._collect_weather(
-                            c, s, t
-                        ),
+                        function=lambda c=city,
+                        s=state,
+                        t=game_time: self._collect_weather(c, s, t),
                         priority=2,
                     )
                 )
@@ -389,7 +389,7 @@ class DataOrchestrator:
 
                     if attempt < task.max_retries - 1:
                         # Exponential backoff
-                        wait_time = 2 ** attempt
+                        wait_time = 2**attempt
                         logger.info(f"Retrying in {wait_time}s...")
                         await asyncio.sleep(wait_time)
                     else:
@@ -405,7 +405,7 @@ class DataOrchestrator:
                     task.retry_count = attempt + 1
 
                     if attempt < task.max_retries - 1:
-                        wait_time = 2 ** attempt
+                        wait_time = 2**attempt
                         logger.info(f"Retrying in {wait_time}s...")
                         await asyncio.sleep(wait_time)
                     else:
@@ -433,7 +433,10 @@ class DataOrchestrator:
             # Determine data type
             if "teams" in task.description.lower():
                 _, report = validator.validate_teams(task.result)
-            elif "games" in task.description.lower() or "scoreboard" in task.description.lower():
+            elif (
+                "games" in task.description.lower()
+                or "scoreboard" in task.description.lower()
+            ):
                 # Convert scoreboard to game format if needed
                 games_data = self._extract_games_from_scoreboard(task.result)
                 _, report = validator.validate_games(games_data)
@@ -477,8 +480,12 @@ class DataOrchestrator:
                     "away_team_name": away.get("team", {}).get("displayName", ""),
                     "away_team_score": away.get("score"),
                     "venue_name": competition.get("venue", {}).get("fullName"),
-                    "venue_city": competition.get("venue", {}).get("address", {}).get("city"),
-                    "venue_state": competition.get("venue", {}).get("address", {}).get("state"),
+                    "venue_city": competition.get("venue", {})
+                    .get("address", {})
+                    .get("city"),
+                    "venue_state": competition.get("venue", {})
+                    .get("address", {})
+                    .get("state"),
                     "is_indoor": competition.get("venue", {}).get("indoor", False),
                     "league": scoreboard_data.get("league", ""),
                     "week": event.get("week", {}).get("number"),
@@ -536,7 +543,9 @@ class DataOrchestrator:
         logger.info(f"Failed: {report.failed_sources}")
         logger.info(f"Degraded: {report.degraded_sources}")
         logger.info(f"Success Rate: {report.success_rate:.1f}%")
-        logger.info(f"Health Status: {'✓ HEALTHY' if report.is_healthy else '✗ UNHEALTHY'}")
+        logger.info(
+            f"Health Status: {'✓ HEALTHY' if report.is_healthy else '✗ UNHEALTHY'}"
+        )
 
         if report.get_failed_tasks():
             logger.info("\nFailed Tasks:")

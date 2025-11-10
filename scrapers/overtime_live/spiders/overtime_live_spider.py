@@ -8,13 +8,14 @@ from typing import Any, Dict, Optional, List
 import scrapy
 from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
-from playwright.async_api import Page, Frame, ElementHandle, TimeoutError as PWTimeout
+from playwright.async_api import Page, Frame, ElementHandle
 
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
 try:
     from dotenv import load_dotenv  # type: ignore
+
     load_dotenv()
 except Exception:
     pass
@@ -61,9 +62,7 @@ def _looks_like_event_block(txt: str) -> bool:
         return False
     normalized = txt.replace("½", ".5")
     has_price = bool(_prices_from_text(normalized))
-    has_spread = bool(
-        re.search(r"(?<![A-Za-z0-9])[+\-]\d{1,2}(?:\.\d+)?", normalized)
-    )
+    has_spread = bool(re.search(r"(?<![A-Za-z0-9])[+\-]\d{1,2}(?:\.\d+)?", normalized))
     has_total = bool(
         re.search(r"\b[ou]\s*[+\-]?\d{1,2}(?:\.\d+)?", normalized, flags=re.I)
     )
@@ -126,7 +125,10 @@ class OvertimeLiveSpider(scrapy.Spider):
 
     # -------- Scrapy async entry --------
     async def start(self):
-        live = os.getenv("OVERTIME_LIVE_URL") or "https://overtime.ag/sports#/integrations/liveBetting"
+        live = (
+            os.getenv("OVERTIME_LIVE_URL")
+            or "https://overtime.ag/sports#/integrations/liveBetting"
+        )
         start = os.getenv("OVERTIME_START_URL") or "https://overtime.ag"
         # Always start with main page, login will happen in parse_board callback
         target_url = start
@@ -140,7 +142,11 @@ class OvertimeLiveSpider(scrapy.Spider):
             context_kwargs = {"proxy": {"server": proxy_url}}
 
         # Hash routes rarely fire "load" → use domcontentloaded; fail faster on blocks
-        goto_kwargs = {"wait_until": "domcontentloaded", "timeout": 60_000, "referer": "https://overtime.ag/"}
+        goto_kwargs = {
+            "wait_until": "domcontentloaded",
+            "timeout": 60_000,
+            "referer": "https://overtime.ag/",
+        }
 
         meta = {
             "playwright": True,
@@ -237,7 +243,9 @@ class OvertimeLiveSpider(scrapy.Spider):
         password = os.getenv("OV_PASSWORD") or os.getenv("OV_CUSTOMER_PASSWORD")
 
         if not customer_id or not password:
-            self.logger.warning("No login credentials found in environment (OV_CUSTOMER_ID, OV_PASSWORD)")
+            self.logger.warning(
+                "No login credentials found in environment (OV_CUSTOMER_ID, OV_PASSWORD)"
+            )
             return False
 
         try:
@@ -256,20 +264,24 @@ class OvertimeLiveSpider(scrapy.Spider):
 
             # Fill in credentials
             self.logger.info("Filling login credentials...")
-            customer_id_input = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"], input[type="text"]')
+            customer_id_input = await page.query_selector(
+                'input[placeholder*="Customer"], input[name*="customer"], input[type="text"]'
+            )
             if customer_id_input:
                 await customer_id_input.fill(customer_id)
-            
+
             password_input = await page.query_selector('input[type="password"]')
             if password_input:
                 await password_input.fill(password)
-            
+
             # Click login button
-            login_btn = await page.query_selector('button:has-text("LOGIN"), button:has-text("Login")')
+            login_btn = await page.query_selector(
+                'button:has-text("LOGIN"), button:has-text("Login")'
+            )
             if login_btn:
                 await login_btn.click()
                 await page.wait_for_timeout(3000)
-                
+
                 # Check for successful login
                 current_hash = await page.evaluate("() => location.hash")
                 if "#/login" not in current_hash:
@@ -360,7 +372,12 @@ class OvertimeLiveSpider(scrapy.Spider):
 
         # Try a few common UI text buttons/anchors
         for t in labels:
-            for sel in (f"text={t}", f"button:has-text('{t}')", f"a:has-text('{t}')", f"[role='tab']:has-text('{t}')"):
+            for sel in (
+                f"text={t}",
+                f"button:has-text('{t}')",
+                f"a:has-text('{t}')",
+                f"[role='tab']:has-text('{t}')",
+            ):
                 try:
                     await root.click(sel, timeout=1200)
                     await root.wait_for_timeout(250)
@@ -368,16 +385,25 @@ class OvertimeLiveSpider(scrapy.Spider):
                 except Exception:
                     # Clicking a particular filter may fail if it is not
                     # present; ignore and continue but log at debug level.
-                    self.logger.debug("Failed to click sport filter %s", sel, exc_info=True)
+                    self.logger.debug(
+                        "Failed to click sport filter %s", sel, exc_info=True
+                    )
 
         for t in comps:
-            for sel in (f"text={t}", f"button:has-text('{t}')", f"a:has-text('{t}')", f"[role='tab']:has-text('{t}')"):
+            for sel in (
+                f"text={t}",
+                f"button:has-text('{t}')",
+                f"a:has-text('{t}')",
+                f"[role='tab']:has-text('{t}')",
+            ):
                 try:
                     await root.click(sel, timeout=1200)
                     await root.wait_for_timeout(350)
                     break
                 except Exception:
-                    self.logger.debug("Failed to click competition filter %s", sel, exc_info=True)
+                    self.logger.debug(
+                        "Failed to click competition filter %s", sel, exc_info=True
+                    )
 
     async def _extract_rows_js(self, root: Page | Frame) -> list[Dict[str, Any]]:
         js = """
@@ -429,10 +455,14 @@ class OvertimeLiveSpider(scrapy.Spider):
         money = Market()
 
         spread_lines = [t for t in toks if re.match(r"^[+\-]\d+(\.\d+)?$", t)]
-        total_lines = [t for t in toks if re.match(r"^[ou]\s*[+\-]?\d+(\.\d+)?$", t, flags=re.I)]
+        total_lines = [
+            t for t in toks if re.match(r"^[ou]\s*[+\-]?\d+(\.\d+)?$", t, flags=re.I)
+        ]
         prices = _prices_from_text(row_text)
 
-        def pull_line_price(ll: list[str], pp: list[int]) -> tuple[Optional[float], Optional[int]]:
+        def pull_line_price(
+            ll: list[str], pp: list[int]
+        ) -> tuple[Optional[float], Optional[int]]:
             line = to_float(ll.pop(0)) if ll else None
             price = pp.pop(0) if pp else None
             return line, price
@@ -444,8 +474,10 @@ class OvertimeLiveSpider(scrapy.Spider):
             spread.home = QuoteSide(h_ln, h_px)
 
         if total_lines:
+
             def clean(x: str) -> Optional[float]:
                 return to_float(x.lstrip("ou").strip())
+
             o_line = clean(total_lines.pop(0))
             o_px = prices.pop(0) if prices else None
             u_line = clean(total_lines.pop(0)) if total_lines else o_line
@@ -459,15 +491,21 @@ class OvertimeLiveSpider(scrapy.Spider):
             money.away = QuoteSide(None, a_ml)
             money.home = QuoteSide(None, h_ml)
 
-        has_any = any([
-            getattr(spread, "away", None) or getattr(spread, "home", None),
-            getattr(total, "over", None) or getattr(total, "under", None),
-            getattr(money, "away", None) or getattr(money, "home", None),
-        ])
+        has_any = any(
+            [
+                getattr(spread, "away", None) or getattr(spread, "home", None),
+                getattr(total, "over", None) or getattr(total, "under", None),
+                getattr(money, "away", None) or getattr(money, "home", None),
+            ]
+        )
         if not has_any:
             return None
 
-        return {"away": away, "home": home, "markets": {"spread": spread, "total": total, "moneyline": money}}
+        return {
+            "away": away,
+            "home": home,
+            "markets": {"spread": spread, "total": total, "moneyline": money},
+        }
 
     def _normalize_markets(self, markets: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -493,13 +531,17 @@ class OvertimeLiveSpider(scrapy.Spider):
                         # accept strings or numbers and convert halves
                         quote["line"] = to_float(str(line))
                     except Exception:
-                        self.logger.debug("Failed to normalise line %s", line, exc_info=True)
+                        self.logger.debug(
+                            "Failed to normalise line %s", line, exc_info=True
+                        )
                 # normalise price
                 if price is not None:
                     try:
                         quote["price"] = int(price)
                     except Exception:
-                        self.logger.debug("Failed to normalise price %s", price, exc_info=True)
+                        self.logger.debug(
+                            "Failed to normalise price %s", price, exc_info=True
+                        )
         return markets
 
     def _parse_state(self, text: str) -> Dict[str, Any]:
@@ -516,13 +558,19 @@ class OvertimeLiveSpider(scrapy.Spider):
         """
         state: Dict[str, Any] = {}
         # Look for patterns like "3rd Q 05:32" or "4th Quarter 1:23"
-        m = re.search(r"\b(\d)(?:st|nd|rd|th)?\s*(?:q(?:uarter)?|qtr)?\s*(\d{1,2}:\d{2})", text, re.IGNORECASE)
+        m = re.search(
+            r"\b(\d)(?:st|nd|rd|th)?\s*(?:q(?:uarter)?|qtr)?\s*(\d{1,2}:\d{2})",
+            text,
+            re.IGNORECASE,
+        )
         if m:
             try:
                 state["quarter"] = int(m.group(1))
                 state["clock"] = m.group(2)
             except Exception:
-                self.logger.debug("Failed to parse state from %s", m.group(0), exc_info=True)
+                self.logger.debug(
+                    "Failed to parse state from %s", m.group(0), exc_info=True
+                )
         return state
 
     # -------- API path (preferred) --------
@@ -658,13 +706,15 @@ class OvertimeLiveSpider(scrapy.Spider):
 
         # Attempt login first
         await self._perform_login(page)
-        
+
         # Navigate to live betting
         await self._hash_nudge_to_live(page)
 
         os.makedirs("snapshots", exist_ok=True)
         try:
-            await page.screenshot(path="snapshots/overtime_live_initial.png", full_page=True)
+            await page.screenshot(
+                path="snapshots/overtime_live_initial.png", full_page=True
+            )
         except Exception:
             pass
 
@@ -737,8 +787,10 @@ class OvertimeLiveSpider(scrapy.Spider):
             # dump a text snapshot if still nothing
             if emitted == 0:
                 try:
-                    txt = await (root.evaluate("() => document.body?.innerText || ''"))
-                    with open("snapshots/overtime_live_text.txt", "w", encoding="utf-8") as f:
+                    txt = await root.evaluate("() => document.body?.innerText || ''")
+                    with open(
+                        "snapshots/overtime_live_text.txt", "w", encoding="utf-8"
+                    ) as f:
                         f.write(txt[:120000])
                 except Exception:
                     pass

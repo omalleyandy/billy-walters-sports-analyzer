@@ -8,7 +8,6 @@ import os
 import json
 import asyncio
 from typing import List, Dict
-from datetime import datetime
 from playwright.async_api import async_playwright
 
 # Import your existing parser
@@ -43,26 +42,28 @@ async def scrape_overtime_with_cdp_proxy() -> List[Dict]:
         browser = await p.chromium.launch(
             headless=False,  # Visible for debugging
             args=[
-                f'--proxy-server={proxy_url}',  # Chrome parses credentials from URL
-                '--disable-blink-features=AutomationControlled',
-                '--disable-dev-shm-usage',
-                '--no-sandbox'
-            ]
+                f"--proxy-server={proxy_url}",  # Chrome parses credentials from URL
+                "--disable-blink-features=AutomationControlled",
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+            ],
         )
 
         try:
             # Create context
             context = await browser.new_context(
-                viewport={'width': 1920, 'height': 1080},
-                user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-                locale='en-US'
+                viewport={"width": 1920, "height": 1080},
+                user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                locale="en-US",
             )
 
             page = await context.new_page()
 
             # Navigate to overtime.ag
             print("Navigating to overtime.ag...")
-            await page.goto("https://overtime.ag", wait_until='domcontentloaded', timeout=60000)
+            await page.goto(
+                "https://overtime.ag", wait_until="domcontentloaded", timeout=60000
+            )
 
             # Wait for page to load
             await page.wait_for_timeout(3000)
@@ -80,16 +81,22 @@ async def scrape_overtime_with_cdp_proxy() -> List[Dict]:
                         await page.wait_for_timeout(2000)
 
                         # Fill credentials
-                        customer_input = await page.query_selector('input[placeholder*="Customer"], input[name*="customer"]')
+                        customer_input = await page.query_selector(
+                            'input[placeholder*="Customer"], input[name*="customer"]'
+                        )
                         if customer_input:
                             await customer_input.fill(ov_customer_id)
 
-                        password_input = await page.query_selector('input[type="password"]')
+                        password_input = await page.query_selector(
+                            'input[type="password"]'
+                        )
                         if password_input:
                             await password_input.fill(ov_password)
 
                         # Click login
-                        login_btn = await page.query_selector('button:has-text("LOGIN")')
+                        login_btn = await page.query_selector(
+                            'button:has-text("LOGIN")'
+                        )
                         if login_btn:
                             await login_btn.click()
                             await page.wait_for_timeout(3000)
@@ -99,21 +106,24 @@ async def scrape_overtime_with_cdp_proxy() -> List[Dict]:
 
             # Navigate to live betting page
             print("Navigating to live betting page...")
-            await page.goto("https://overtime.ag/sports#/integrations/liveBetting",
-                          wait_until='domcontentloaded', timeout=60000)
+            await page.goto(
+                "https://overtime.ag/sports#/integrations/liveBetting",
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
 
             await page.wait_for_timeout(5000)  # Wait for odds to load
 
             # Get accessibility snapshot
             print("Capturing accessibility snapshot...")
             cdp = await page.context.new_cdp_session(page)
-            snapshot = await cdp.send('Accessibility.getFullAXTree')
+            snapshot = await cdp.send("Accessibility.getFullAXTree")
 
             # Convert to text format for parser
             snapshot_text = accessibility_tree_to_text(snapshot)
 
             # Save snapshot for debugging
-            with open('overtime_snapshot.txt', 'w', encoding='utf-8') as f:
+            with open("overtime_snapshot.txt", "w", encoding="utf-8") as f:
                 f.write(snapshot_text)
             print("Snapshot saved to overtime_snapshot.txt")
 
@@ -124,9 +134,9 @@ async def scrape_overtime_with_cdp_proxy() -> List[Dict]:
             print(f"Extracted {len(games)} games")
 
             # Save games to JSON
-            output_file = 'output/overtime_cdp_odds.json'
-            os.makedirs('output', exist_ok=True)
-            with open(output_file, 'w', encoding='utf-8') as f:
+            output_file = "output/overtime_cdp_odds.json"
+            os.makedirs("output", exist_ok=True)
+            with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(games, f, indent=2)
             print(f"Games saved to {output_file}")
 
@@ -146,25 +156,25 @@ def accessibility_tree_to_text(ax_tree: dict) -> str:
             return
 
         # Get node properties
-        role = node.get('role', {}).get('value', '')
-        name = node.get('name', {}).get('value', '')
-        node_id = node.get('nodeId', '')
+        role = node.get("role", {}).get("value", "")
+        name = node.get("name", {}).get("value", "")
+        node_id = node.get("nodeId", "")
 
         # Format line similar to accessibility snapshot format
         if name:
             lines.append(f'uid={node_id} {role} "{name}"')
 
         # Traverse children
-        children = node.get('children', [])
+        children = node.get("children", [])
         for child in children:
             traverse(child, depth + 1)
 
     # Start traversal
-    nodes = ax_tree.get('nodes', [])
+    nodes = ax_tree.get("nodes", [])
     for node in nodes:
         traverse(node)
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 async def main():

@@ -17,13 +17,11 @@ from typing import Dict, Any, Optional
 
 from .settings import (
     Settings,
-    SkillsConfig,
     MarketAnalysisConfig,
     MLPowerRatingsConfig,
     SituationalDatabaseConfig,
     AutonomousAgentConfig,
     AgentSafetyConfig,
-    DataConnectionsConfig,
     MonitoringConfig,
     AlertChannelsConfig,
     MetricsConfig,
@@ -49,7 +47,7 @@ def load_json_file(file_path: Path) -> Optional[Dict[str, Any]]:
         return None
 
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON in {file_path}: {e}")
@@ -69,7 +67,9 @@ def load_billy_walters_config(project_root: Path) -> Optional[Dict[str, Any]]:
     Returns:
         Config dict or None
     """
-    config_path = project_root / "walters_analyzer" / "valuation" / "billy_walters_config.json"
+    config_path = (
+        project_root / "walters_analyzer" / "valuation" / "billy_walters_config.json"
+    )
     return load_json_file(config_path)
 
 
@@ -110,10 +110,18 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
             ma_config = skills_data["market-analysis"].get("config", {})
             settings.skills.market_analysis = MarketAnalysisConfig(
                 enabled=skills_data["market-analysis"].get("enabled", True),
-                sharp_books=ma_config.get("sharp_books", settings.skills.market_analysis.sharp_books),
-                public_books=ma_config.get("public_books", settings.skills.market_analysis.public_books),
-                alert_threshold=ma_config.get("alert_threshold", settings.skills.market_analysis.alert_threshold),
-                monitor_interval=ma_config.get("monitor_interval", settings.skills.market_analysis.monitor_interval),
+                sharp_books=ma_config.get(
+                    "sharp_books", settings.skills.market_analysis.sharp_books
+                ),
+                public_books=ma_config.get(
+                    "public_books", settings.skills.market_analysis.public_books
+                ),
+                alert_threshold=ma_config.get(
+                    "alert_threshold", settings.skills.market_analysis.alert_threshold
+                ),
+                monitor_interval=ma_config.get(
+                    "monitor_interval", settings.skills.market_analysis.monitor_interval
+                ),
             )
 
         # ML power ratings
@@ -122,8 +130,14 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
             settings.skills.ml_power_ratings = MLPowerRatingsConfig(
                 enabled=skills_data["ml-power-ratings"].get("enabled", True),
                 model=ml_config.get("model", settings.skills.ml_power_ratings.model),
-                update_frequency=ml_config.get("update_frequency", settings.skills.ml_power_ratings.update_frequency),
-                min_games_for_update=ml_config.get("min_games_for_update", settings.skills.ml_power_ratings.min_games_for_update),
+                update_frequency=ml_config.get(
+                    "update_frequency",
+                    settings.skills.ml_power_ratings.update_frequency,
+                ),
+                min_games_for_update=ml_config.get(
+                    "min_games_for_update",
+                    settings.skills.ml_power_ratings.min_games_for_update,
+                ),
             )
 
         # Situational database
@@ -131,7 +145,10 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
             sit_config = skills_data["situational-database"].get("config", {})
             settings.skills.situational_database = SituationalDatabaseConfig(
                 enabled=skills_data["situational-database"].get("enabled", True),
-                track_situations=sit_config.get("track_situations", settings.skills.situational_database.track_situations),
+                track_situations=sit_config.get(
+                    "track_situations",
+                    settings.skills.situational_database.track_situations,
+                ),
             )
 
     # Extract autonomous agent config
@@ -152,7 +169,7 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
                 daily_loss_limit=safety_data.get("daily_loss_limit", 5.0),
                 require_confirmation=safety_data.get("require_confirmation", True),
                 paper_trading_mode=safety_data.get("paper_trading_mode", True),
-            )
+            ),
         )
 
     # Extract data connections
@@ -163,23 +180,39 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
         if "sportsbooks" in dc_data:
             sb_data = dc_data["sportsbooks"]
             if "pinnacle" in sb_data:
-                settings.data_connections.pinnacle_enabled = sb_data["pinnacle"].get("enabled", False)
-                settings.data_connections.pinnacle_api_endpoint = sb_data["pinnacle"].get("api_endpoint", "https://api.pinnacle.com/")
+                settings.data_connections.pinnacle_enabled = sb_data["pinnacle"].get(
+                    "enabled", False
+                )
+                settings.data_connections.pinnacle_api_endpoint = sb_data[
+                    "pinnacle"
+                ].get("api_endpoint", "https://api.pinnacle.com/")
             if "draftkings" in sb_data:
-                settings.data_connections.draftkings_enabled = sb_data["draftkings"].get("enabled", False)
-                settings.data_connections.draftkings_api_endpoint = sb_data["draftkings"].get("api_endpoint", "https://api.draftkings.com/")
+                settings.data_connections.draftkings_enabled = sb_data[
+                    "draftkings"
+                ].get("enabled", False)
+                settings.data_connections.draftkings_api_endpoint = sb_data[
+                    "draftkings"
+                ].get("api_endpoint", "https://api.draftkings.com/")
 
         # Data providers
         if "data_providers" in dc_data:
             dp_data = dc_data["data_providers"]
             if "profootballdoc" in dp_data:
-                settings.data_connections.profootballdoc_enabled = dp_data["profootballdoc"].get("enabled", True)
+                settings.data_connections.profootballdoc_enabled = dp_data[
+                    "profootballdoc"
+                ].get("enabled", True)
                 if "base_url" in dp_data["profootballdoc"]:
-                    settings.data_connections.profootballdoc_base_url = dp_data["profootballdoc"]["base_url"]
+                    settings.data_connections.profootballdoc_base_url = dp_data[
+                        "profootballdoc"
+                    ]["base_url"]
             if "accuweather" in dp_data:
-                settings.data_connections.accuweather_enabled = dp_data["accuweather"].get("enabled", True)
+                settings.data_connections.accuweather_enabled = dp_data[
+                    "accuweather"
+                ].get("enabled", True)
             if "highlightly" in dp_data:
-                settings.data_connections.highlightly_enabled = dp_data["highlightly"].get("enabled", True)
+                settings.data_connections.highlightly_enabled = dp_data[
+                    "highlightly"
+                ].get("enabled", True)
 
     # Extract monitoring config
     if "monitoring" in mcp_config:
@@ -201,7 +234,7 @@ def merge_mcp_config(settings: Settings, mcp_config: Dict[str, Any]) -> Settings
                 track_win_rate=metrics_data.get("track_win_rate", True),
                 track_clv=metrics_data.get("track_clv", True),
                 track_sharp_accuracy=metrics_data.get("track_sharp_accuracy", True),
-            )
+            ),
         )
 
     # Extract global settings
@@ -255,8 +288,12 @@ def load_settings(
     settings = Settings(project_root=project_root)
 
     # Store config paths
-    settings.billy_walters_config_path = billy_walters_config_path or (project_root / "walters_analyzer" / "valuation" / "billy_walters_config.json")
-    settings.mcp_config_path = mcp_config_path or (project_root / ".claude" / "claude-desktop-config.json")
+    settings.billy_walters_config_path = billy_walters_config_path or (
+        project_root / "walters_analyzer" / "valuation" / "billy_walters_config.json"
+    )
+    settings.mcp_config_path = mcp_config_path or (
+        project_root / ".claude" / "claude-desktop-config.json"
+    )
 
     # Load Billy Walters config
     bw_config = load_billy_walters_config(project_root)

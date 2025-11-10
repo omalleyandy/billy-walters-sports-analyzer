@@ -8,7 +8,7 @@ import hashlib
 @dataclass
 class QuoteSide:
     line: Optional[float]  # spread/total number
-    price: Optional[int]   # American odds (e.g., -110)
+    price: Optional[int]  # American odds (e.g., -110)
 
 
 @dataclass
@@ -22,18 +22,20 @@ class Market:
 
 @dataclass
 class LiveGameItem:
-    source: str                 # "overtime.ag"
-    sport: str                  # "nfl" or "college_football"
-    league: str                 # "NFL" or "NCAAF"
-    collected_at: str           # ISO8601Z
-    game_key: str               # stable hash of matchup + date bucket
-    event_date: Optional[str]   # parsed date in ISO format (e.g., "2025-11-02")
-    event_time: Optional[str]   # game time as displayed (e.g., "1:00 PM ET")
+    source: str  # "overtime.ag"
+    sport: str  # "nfl" or "college_football"
+    league: str  # "NFL" or "NCAAF"
+    collected_at: str  # ISO8601Z
+    game_key: str  # stable hash of matchup + date bucket
+    event_date: Optional[str]  # parsed date in ISO format (e.g., "2025-11-02")
+    event_time: Optional[str]  # game time as displayed (e.g., "1:00 PM ET")
     rotation_number: Optional[str]  # e.g., "451-452" or "317-318"
-    teams: Dict[str, str]       # {"away": "...", "home": "..."}
-    state: Dict[str, Any]       # {"quarter": 4, "clock": "03:24"} best-effort
-    markets: Dict[str, Market]  # {"spread": Market(...), "total": Market(...), "moneyline": Market(...)}
-    is_live: bool = False       # True for live betting, False for pre-game
+    teams: Dict[str, str]  # {"away": "...", "home": "..."}
+    state: Dict[str, Any]  # {"quarter": 4, "clock": "03:24"} best-effort
+    markets: Dict[
+        str, Market
+    ]  # {"spread": Market(...), "total": Market(...), "moneyline": Market(...)}
+    is_live: bool = False  # True for live betting, False for pre-game
 
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -60,27 +62,28 @@ def iso_now() -> str:
 class InjuryReportItem:
     """
     Represents a player's injury status for a specific team/game.
-    
+
     Status values: "Out", "Doubtful", "Questionable", "Probable", "Day-to-Day"
     """
-    source: str                     # "espn", "team_site", etc.
-    sport: str                      # "college_football", "nfl"
-    league: str                     # "NCAAF", "NFL"
-    collected_at: str               # ISO8601Z timestamp
-    team: str                       # Team name
-    team_abbr: Optional[str]        # Team abbreviation (e.g., "ALA", "UGA")
-    player_name: str                # Full player name
-    position: Optional[str]         # "QB", "RB", "WR", etc.
-    injury_status: str              # "Out", "Doubtful", "Questionable", "Probable", "Day-to-Day"
-    injury_type: Optional[str]      # "Knee", "Ankle", "Concussion", etc.
-    date_reported: Optional[str]    # When injury was reported/updated
-    game_date: Optional[str]        # Upcoming game date (if available)
-    opponent: Optional[str]         # Opponent for upcoming game
-    notes: Optional[str]            # Additional context/notes
-    
+
+    source: str  # "espn", "team_site", etc.
+    sport: str  # "college_football", "nfl"
+    league: str  # "NCAAF", "NFL"
+    collected_at: str  # ISO8601Z timestamp
+    team: str  # Team name
+    team_abbr: Optional[str]  # Team abbreviation (e.g., "ALA", "UGA")
+    player_name: str  # Full player name
+    position: Optional[str]  # "QB", "RB", "WR", etc.
+    injury_status: str  # "Out", "Doubtful", "Questionable", "Probable", "Day-to-Day"
+    injury_type: Optional[str]  # "Knee", "Ankle", "Concussion", etc.
+    date_reported: Optional[str]  # When injury was reported/updated
+    game_date: Optional[str]  # Upcoming game date (if available)
+    opponent: Optional[str]  # Opponent for upcoming game
+    notes: Optional[str]  # Additional context/notes
+
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
-    
+
     def get_impact_score(self) -> int:
         """
         Return a numeric impact score based on injury status.

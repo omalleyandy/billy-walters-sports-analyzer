@@ -8,7 +8,6 @@ import asyncio
 import json
 import logging
 import subprocess
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
@@ -65,9 +64,7 @@ class ValidatedOvertimeClient:
         """Async context manager exit."""
         await self.client.close()
 
-    def _validate_data(
-        self, data_type: str, data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _validate_data(self, data_type: str, data: dict[str, Any]) -> dict[str, Any]:
         """
         Run validation script on data.
 
@@ -174,8 +171,7 @@ class ValidatedOvertimeClient:
                     home_team = game.get("home_team_data", {}).get("name", "Unknown")
                     away_team = game.get("away_team_data", {}).get("name", "Unknown")
                     warning_msg = (
-                        f"Warnings for {away_team} @ {home_team}: "
-                        f"{', '.join(warnings)}"
+                        f"Warnings for {away_team} @ {home_team}: {', '.join(warnings)}"
                     )
                     validation_warnings.append(warning_msg)
                     logger.warning(warning_msg)
@@ -228,9 +224,7 @@ class ValidatedOvertimeClient:
         logger.info(f"Fetching and validating game {game_id}")
 
         # Fetch game details
-        game = await self.client.fetch_game_details(
-            game_id, max_retries=max_retries
-        )
+        game = await self.client.fetch_game_details(game_id, max_retries=max_retries)
 
         # Validate
         validation_result = self._validate_data("game", game)
@@ -281,7 +275,7 @@ async def main():
         # Fetch and validate NFL games (strict mode)
         try:
             nfl_games = await client.fetch_nfl_games(strict=True)
-            print(f"\nNFL Games (validated):")
+            print("\nNFL Games (validated):")
             print(f"  Total games: {len(nfl_games)}")
 
             for game in nfl_games[:3]:
@@ -296,7 +290,7 @@ async def main():
 
         # Fetch NCAAF games (non-strict mode)
         ncaaf_games = await client.fetch_ncaaf_games(strict=False)
-        print(f"\n\nNCAAF Games (validated, warnings allowed):")
+        print("\n\nNCAAF Games (validated, warnings allowed):")
         print(f"  Total games: {len(ncaaf_games)}")
 
 

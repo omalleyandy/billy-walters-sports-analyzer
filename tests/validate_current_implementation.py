@@ -13,17 +13,23 @@ class ImplementationValidator:
     """Validates current implementation against best practices."""
 
     def __init__(self):
-        self.spider_path = Path(__file__).parent.parent / 'scrapers' / 'overtime_live' / 'spiders' / 'pregame_odds_spider.py'
+        self.spider_path = (
+            Path(__file__).parent.parent
+            / "scrapers"
+            / "overtime_live"
+            / "spiders"
+            / "pregame_odds_spider.py"
+        )
         self.findings = []
         self.recommendations = []
 
     def analyze_spider(self):
         """Analyze the spider implementation."""
-        print("="*80)
+        print("=" * 80)
         print("OVERTIME.AG SCRAPER IMPLEMENTATION VALIDATION")
-        print("="*80)
+        print("=" * 80)
 
-        with open(self.spider_path, 'r') as f:
+        with open(self.spider_path, "r") as f:
             content = f.read()
 
         # Check for login implementation
@@ -58,7 +64,9 @@ class ImplementationValidator:
         else:
             print("  ✗ Customer ID input locator NOT found")
             self.findings.append("✗ Login: Customer ID locator missing")
-            self.recommendations.append("Add Customer ID locator: //input[@placeholder='Customer Id']")
+            self.recommendations.append(
+                "Add Customer ID locator: //input[@placeholder='Customer Id']"
+            )
 
         # Check for Password input
         if "Password" in content or "txtPassword" in content:
@@ -69,7 +77,9 @@ class ImplementationValidator:
         else:
             print("  ✗ Password input locator NOT found")
             self.findings.append("✗ Login: Password locator missing")
-            self.recommendations.append("Add Password locator: //input[@placeholder='Password']")
+            self.recommendations.append(
+                "Add Password locator: //input[@placeholder='Password']"
+            )
 
         # Check for Login button
         if "btn-login" in content or "Login" in content:
@@ -80,7 +90,9 @@ class ImplementationValidator:
         else:
             print("  ✗ Login button locator NOT found")
             self.findings.append("✗ Login: Login button locator missing")
-            self.recommendations.append("Add Login button locator: //button[@class='btn btn-default btn-login ng-binding']")
+            self.recommendations.append(
+                "Add Login button locator: //button[@class='btn btn-default btn-login ng-binding']"
+            )
 
     def _check_period_selection(self, content: str):
         """Check for period selection implementation."""
@@ -88,10 +100,10 @@ class ImplementationValidator:
         print("-" * 80)
 
         periods = {
-            'Game': ['Game', 'GAME', 'full_game'],
-            '1st Half': ['1st Half', '1ST HALF', 'first_half'],
-            '1st Quarter': ['1st Quarter', '1ST QUARTER', 'first_quarter'],
-            'Team Totals': ['Team Totals', 'TEAM TOTALS', 'team_totals'],
+            "Game": ["Game", "GAME", "full_game"],
+            "1st Half": ["1st Half", "1ST HALF", "first_half"],
+            "1st Quarter": ["1st Quarter", "1ST QUARTER", "first_quarter"],
+            "Team Totals": ["Team Totals", "TEAM TOTALS", "team_totals"],
         }
 
         found_any = False
@@ -125,7 +137,9 @@ class ImplementationValidator:
             # Check if it's used for validation
             if "wait_for_selector" in content and "GameLines" in content:
                 print("    ✓ Using wait_for_selector for GameLines")
-                self.findings.append("✓ Container: Proper validation with wait_for_selector")
+                self.findings.append(
+                    "✓ Container: Proper validation with wait_for_selector"
+                )
             else:
                 print("    ⚠ GameLines not used with wait_for_selector")
                 self.findings.append("⚠ Container: No proper validation")
@@ -139,13 +153,17 @@ class ImplementationValidator:
 
         # Check for timeout-based waiting
         if "wait_for_timeout" in content:
-            timeout_matches = re.findall(r'wait_for_timeout\((\d+)\)', content)
+            timeout_matches = re.findall(r"wait_for_timeout\((\d+)\)", content)
             if timeout_matches:
                 timeouts = [int(t) for t in timeout_matches]
                 max_timeout = max(timeouts)
                 print(f"  ⚠ Using wait_for_timeout with max {max_timeout}ms")
-                print("    Recommendation: Replace with wait_for_selector for better reliability")
-                self.findings.append(f"⚠ Wait: Using timeout-based waiting ({max_timeout}ms)")
+                print(
+                    "    Recommendation: Replace with wait_for_selector for better reliability"
+                )
+                self.findings.append(
+                    f"⚠ Wait: Using timeout-based waiting ({max_timeout}ms)"
+                )
                 self.recommendations.append(
                     f"Replace wait_for_timeout({max_timeout}) with wait_for_selector('#GameLines', state='visible')"
                 )
@@ -155,7 +173,7 @@ class ImplementationValidator:
         print("\n4. Button Extraction")
         print("-" * 80)
 
-        button_ids = ['S1_', 'S2_', 'M1_', 'M2_', 'L1_', 'L2_']
+        button_ids = ["S1_", "S2_", "M1_", "M2_", "L1_", "L2_"]
 
         for btn_id in button_ids:
             if btn_id in content:
@@ -164,7 +182,9 @@ class ImplementationValidator:
             else:
                 print(f"  ✗ {btn_id} button extraction NOT found")
                 self.findings.append(f"✗ Buttons: {btn_id} missing")
-                self.recommendations.append(f"Add button extraction for: button[id^='{btn_id}']")
+                self.recommendations.append(
+                    f"Add button extraction for: button[id^='{btn_id}']"
+                )
 
         # Check for button-to-game association
         if "evaluate" in content and "querySelectorAll" in content:
@@ -193,7 +213,7 @@ class ImplementationValidator:
         print("\n5. Market Validation")
         print("-" * 80)
 
-        markets = ['Spread', 'Money Line', 'Totals']
+        markets = ["Spread", "Money Line", "Totals"]
 
         for market in markets:
             if market in content:
@@ -204,7 +224,7 @@ class ImplementationValidator:
                 self.findings.append(f"? Market: {market} not explicitly referenced")
 
         # Check for market header validation
-        if "normalize-space()='Spread'" in content or "has-text(\"Spread\")" in content:
+        if "normalize-space()='Spread'" in content or 'has-text("Spread")' in content:
             print("\n  ✓ Market header validation implemented")
             self.findings.append("✓ Market: Header validation implemented")
         else:
@@ -217,17 +237,17 @@ class ImplementationValidator:
 
     def _print_report(self):
         """Print validation report."""
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
         print("VALIDATION SUMMARY")
-        print("="*80)
+        print("=" * 80)
 
         # Count findings
-        success = sum(1 for f in self.findings if f.startswith('✓'))
-        warning = sum(1 for f in self.findings if f.startswith('⚠'))
-        missing = sum(1 for f in self.findings if f.startswith('✗'))
-        unknown = sum(1 for f in self.findings if f.startswith('?'))
+        success = sum(1 for f in self.findings if f.startswith("✓"))
+        warning = sum(1 for f in self.findings if f.startswith("⚠"))
+        missing = sum(1 for f in self.findings if f.startswith("✗"))
+        unknown = sum(1 for f in self.findings if f.startswith("?"))
 
-        print(f"\nFindings:")
+        print("\nFindings:")
         print(f"  ✓ Implemented: {success}")
         print(f"  ⚠ Needs Improvement: {warning}")
         print(f"  ✗ Missing: {missing}")
@@ -239,13 +259,13 @@ class ImplementationValidator:
             print(f"\nImplementation Score: {score:.1f}%")
 
         if self.recommendations:
-            print("\n" + "-"*80)
+            print("\n" + "-" * 80)
             print("RECOMMENDATIONS")
-            print("-"*80)
+            print("-" * 80)
             for i, rec in enumerate(self.recommendations, 1):
                 print(f"\n{i}. {rec}")
 
-        print("\n" + "="*80)
+        print("\n" + "=" * 80)
 
 
 def main():
@@ -254,5 +274,5 @@ def main():
     validator.analyze_spider()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

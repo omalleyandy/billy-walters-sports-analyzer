@@ -120,4 +120,3 @@ class ResearchEngine:
             await self.profootballdoc.close()
         except Exception as e:
             logger.error(f"Error closing research clients: {e}", exc_info=True)
-

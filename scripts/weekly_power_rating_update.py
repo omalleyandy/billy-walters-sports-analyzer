@@ -22,15 +22,11 @@ import logging
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from walters_analyzer.valuation.power_ratings import (
-    PowerRatingSystem,
-    GameResult
-)
+from walters_analyzer.valuation.power_ratings import PowerRatingSystem, GameResult
 
 # Setup logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -78,13 +74,15 @@ class WeeklyPowerRatingUpdater:
 
         if not prev_file.exists():
             logger.error(f"Previous week's ratings not found: {prev_file}")
-            logger.error("Please run backfill script first or manually create previous week")
+            logger.error(
+                "Please run backfill script first or manually create previous week"
+            )
             raise FileNotFoundError(f"Missing {prev_file}")
 
-        with open(prev_file, 'r') as f:
+        with open(prev_file, "r") as f:
             data = json.load(f)
 
-        self.prs.import_ratings(data['ratings'])
+        self.prs.import_ratings(data["ratings"])
         logger.info(f"Loaded Week {prev_week} ratings from {prev_file}")
         logger.info(f"Starting with {len(self.prs.ratings)} team ratings")
 
@@ -113,21 +111,23 @@ class WeeklyPowerRatingUpdater:
             logger.error("Please provide game results with --games-file option")
             raise FileNotFoundError(f"Missing {filepath}")
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
 
         # Handle different formats
         if isinstance(data, list):
             games = data
-        elif 'games' in data:
-            games = data['games']
+        elif "games" in data:
+            games = data["games"]
         else:
             raise ValueError(f"Unexpected format in {filepath}")
 
         # Filter to this week only
-        week_games = [g for g in games if g.get('week') == self.week_num]
+        week_games = [g for g in games if g.get("week") == self.week_num]
 
-        logger.info(f"Loaded {len(week_games)} games for Week {self.week_num} from {filepath}")
+        logger.info(
+            f"Loaded {len(week_games)} games for Week {self.week_num} from {filepath}"
+        )
 
         return week_games
 
@@ -142,18 +142,18 @@ class WeeklyPowerRatingUpdater:
             GameResult object
         """
         # Parse date
-        game_date = date.fromisoformat(game_dict['date'])
+        game_date = date.fromisoformat(game_dict["date"])
 
         # Create GameResult
         return GameResult(
             date=game_date,
-            home_team=game_dict['home_team'],
-            away_team=game_dict['away_team'],
-            home_score=game_dict['home_score'],
-            away_score=game_dict['away_score'],
-            home_injury_level=game_dict.get('home_injury_level', 0.0),
-            away_injury_level=game_dict.get('away_injury_level', 0.0),
-            location=game_dict.get('location', 'home')
+            home_team=game_dict["home_team"],
+            away_team=game_dict["away_team"],
+            home_score=game_dict["home_score"],
+            away_score=game_dict["away_score"],
+            home_injury_level=game_dict.get("home_injury_level", 0.0),
+            away_injury_level=game_dict.get("away_injury_level", 0.0),
+            location=game_dict.get("location", "home"),
         )
 
     def update_ratings_for_week(self, games: List[Dict]) -> None:
@@ -200,11 +200,11 @@ class WeeklyPowerRatingUpdater:
                 "old_rating_weight": self.prs.OLD_RATING_WEIGHT,
                 "true_performance_weight": self.prs.TRUE_PERFORMANCE_WEIGHT,
                 "home_field_advantage": self.prs.HOME_FIELD_ADVANTAGE,
-            }
+            },
         }
 
         # Save to file
-        with open(snapshot_file, 'w') as f:
+        with open(snapshot_file, "w") as f:
             json.dump(snapshot, f, indent=2)
 
         logger.info(f"Saved Week {self.week_num} snapshot to {snapshot_file}")
@@ -236,31 +236,35 @@ class WeeklyPowerRatingUpdater:
 
         # Analyze this week's games for biggest movers
         if self.prs.history:
-            logger.info(f"\nBiggest Rating Changes This Week:")
+            logger.info("\nBiggest Rating Changes This Week:")
 
             # Get only this week's games (last N entries)
             week_history = self.prs.history[-20:]  # Assume max 20 games per week
 
             changes = []
             for game in week_history:
-                home_change = game['home_rating_after'] - game['home_rating_before']
-                away_change = game['away_rating_after'] - game['away_rating_before']
+                home_change = game["home_rating_after"] - game["home_rating_before"]
+                away_change = game["away_rating_after"] - game["away_rating_before"]
 
-                changes.append({
-                    'team': game['home_team'],
-                    'change': home_change,
-                    'before': game['home_rating_before'],
-                    'after': game['home_rating_after']
-                })
-                changes.append({
-                    'team': game['away_team'],
-                    'change': away_change,
-                    'before': game['away_rating_before'],
-                    'after': game['away_rating_after']
-                })
+                changes.append(
+                    {
+                        "team": game["home_team"],
+                        "change": home_change,
+                        "before": game["home_rating_before"],
+                        "after": game["home_rating_after"],
+                    }
+                )
+                changes.append(
+                    {
+                        "team": game["away_team"],
+                        "change": away_change,
+                        "before": game["away_rating_before"],
+                        "after": game["away_rating_after"],
+                    }
+                )
 
             # Top 5 improvers this week
-            changes.sort(key=lambda x: x['change'], reverse=True)
+            changes.sort(key=lambda x: x["change"], reverse=True)
             logger.info("\n  Top Improvers:")
             for i, change_data in enumerate(changes[:5], 1):
                 logger.info(
@@ -322,18 +326,15 @@ class WeeklyPowerRatingUpdater:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description='Update power ratings for a specific NFL week'
+        description="Update power ratings for a specific NFL week"
     )
     parser.add_argument(
-        '--week',
-        type=int,
-        required=True,
-        help='NFL week number to update (1-18)'
+        "--week", type=int, required=True, help="NFL week number to update (1-18)"
     )
     parser.add_argument(
-        '--games-file',
+        "--games-file",
         type=str,
-        help='Path to JSON file containing game results (optional)'
+        help="Path to JSON file containing game results (optional)",
     )
 
     args = parser.parse_args()

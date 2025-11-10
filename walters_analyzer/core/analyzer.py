@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Iterable, List, Optional, Sequence
+from typing import Iterable, List, Optional
 
 from walters_analyzer.valuation.core import BillyWaltersValuation
 
@@ -14,7 +13,6 @@ from .models import (
     GameAnalysis,
     GameInput,
     InjuryBreakdown,
-    KeyNumberAlert,
 )
 from .point_analyzer import PointAnalyzer
 
@@ -41,8 +39,12 @@ class BillyWaltersAnalyzer:
 
     def analyze(self, matchup: GameInput) -> GameAnalysis:
         """Analyze a single matchup."""
-        home_report = self._build_injury_report(matchup.home_team.name, matchup.home_team.injuries)
-        away_report = self._build_injury_report(matchup.away_team.name, matchup.away_team.injuries)
+        home_report = self._build_injury_report(
+            matchup.home_team.name, matchup.home_team.injuries
+        )
+        away_report = self._build_injury_report(
+            matchup.away_team.name, matchup.away_team.injuries
+        )
 
         predicted_spread = self.valuation.calculate_predicted_spread(
             matchup.home_team.name,

@@ -10,7 +10,6 @@ import json
 import time
 import logging
 from datetime import datetime
-from typing import Dict, List, Optional
 from dotenv import load_dotenv
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
@@ -20,11 +19,11 @@ load_dotenv()
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
+    format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler('signalr_test.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+        logging.FileHandler("signalr_test.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -66,15 +65,17 @@ class OvertimeSignalRClient:
                     "skip_negotiation": False,  # Enable negotiation
                     "headers": {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-                    }
-                }
+                    },
+                },
             )
             .configure_logging(logging.INFO)
-            .with_automatic_reconnect({
-                "type": "interval",
-                "keep_alive_interval": 10,
-                "intervals": [1, 3, 5, 10, 20, 40]
-            })
+            .with_automatic_reconnect(
+                {
+                    "type": "interval",
+                    "keep_alive_interval": 10,
+                    "intervals": [1, 3, 5, 10, 20, 40],
+                }
+            )
             .build()
         )
 
@@ -143,21 +144,25 @@ class OvertimeSignalRClient:
     def on_game_update(self, data):
         """Handler for game updates"""
         logger.info(f"[GAME UPDATE] {json.dumps(data, indent=2)}")
-        self.games_received.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "game_update",
-            "data": data
-        })
+        self.games_received.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "game_update",
+                "data": data,
+            }
+        )
         self._save_data("games", data)
 
     def on_lines_update(self, data):
         """Handler for betting lines updates"""
         logger.info(f"[LINES UPDATE] {json.dumps(data, indent=2)}")
-        self.lines_received.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "lines_update",
-            "data": data
-        })
+        self.lines_received.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "lines_update",
+                "data": data,
+            }
+        )
         self._save_data("lines", data)
 
     def on_odds_update(self, data):
@@ -184,10 +189,7 @@ class OvertimeSignalRClient:
         """Subscribe as a customer"""
         logger.info(f"Subscribing as customer: {self.customer_id}")
 
-        user_data = {
-            "customerId": self.customer_id,
-            "password": self.password
-        }
+        user_data = {"customerId": self.customer_id, "password": self.password}
 
         self.connection.send(self.hub_name, "SubscribeCustomer", [user_data])
         logger.info("Sent SubscribeCustomer request")
@@ -201,11 +203,9 @@ class OvertimeSignalRClient:
             # Format 1: Sport names
             {"sport": "FOOTBALL", "league": "NFL"},
             {"sport": "FOOTBALL", "league": "NCAAF"},
-
             # Format 2: Sport IDs (common pattern)
             {"sportId": 1},  # Often football is sportId 1
             {"sportId": 2},  # College football might be 2
-
             # Format 3: Just sport names
             "FOOTBALL",
             "NFL",
@@ -235,7 +235,9 @@ class OvertimeSignalRClient:
     def get_game_lines(self, game_num: int, period_num: int = 0, store: str = ""):
         """Get betting lines for a game"""
         logger.info(f"Requesting lines for game {game_num}, period {period_num}...")
-        self.connection.send(self.hub_name, "GetGameLines", [game_num, period_num, store])
+        self.connection.send(
+            self.hub_name, "GetGameLines", [game_num, period_num, store]
+        )
 
     # Utility Methods
 
@@ -245,12 +247,16 @@ class OvertimeSignalRClient:
 
         filename = f"output/signalr/{data_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump({
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": data_type,
-                "data": data
-            }, f, indent=2)
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(
+                {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "type": data_type,
+                    "data": data,
+                },
+                f,
+                indent=2,
+            )
 
         logger.info(f"Saved {data_type} data to {filename}")
 
@@ -283,7 +289,9 @@ class OvertimeSignalRClient:
 
                 # Every 30 seconds, log status
                 if int(time.time() - start_time) % 30 == 0:
-                    logger.info(f"Status: {len(self.games_received)} games, {len(self.lines_received)} line updates received")
+                    logger.info(
+                        f"Status: {len(self.games_received)} games, {len(self.lines_received)} line updates received"
+                    )
 
         except KeyboardInterrupt:
             logger.info("\nStopping (Ctrl+C pressed)...")

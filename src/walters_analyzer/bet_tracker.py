@@ -5,7 +5,6 @@ Track active bets, monitor games, calculate CLV, and record results.
 """
 
 import json
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -42,9 +41,7 @@ class BetTracker:
                 return bet
         return None
 
-    def update_closing_line(
-        self, bet_id: str, closing_line: float
-    ) -> dict[str, float]:
+    def update_closing_line(self, bet_id: str, closing_line: float) -> dict[str, float]:
         """
         Update closing line and calculate CLV.
 
@@ -208,7 +205,7 @@ class BetTracker:
             print(f"   To Win: {details['to_win']:.2f} units")
 
             analysis = bet["analysis"]
-            print(f"\n   >> ANALYSIS:")
+            print("\n   >> ANALYSIS:")
             print(f"   Opening Line: {analysis['opening_line']['spread']}")
             print(
                 f"   Line Movement: "
@@ -230,20 +227,17 @@ class BetTracker:
                     f"Closing Line: {bet['tracking']['closing_line']:+.1f}"
                 )
 
-            print(f"\n   >> SHARP INDICATORS:")
+            print("\n   >> SHARP INDICATORS:")
             sharp = bet["sharp_indicators"]
             if sharp["reverse_line_movement"]:
                 print("   [X] Reverse Line Movement (RLM)")
             if sharp["crossed_key_number"]:
-                print(
-                    f"   [X] Crossed Key Numbers: "
-                    f"{sharp['key_numbers_crossed']}"
-                )
+                print(f"   [X] Crossed Key Numbers: {sharp['key_numbers_crossed']}")
             if sharp["steam_move"]:
                 print("   [X] Steam Move Detected")
             print(f"   Confidence Score: {sharp['confidence_score']}/10")
 
-            print(f"\n   >> KEY FACTORS:")
+            print("\n   >> KEY FACTORS:")
             for factor in bet["key_factors"][:3]:
                 print(f"   - {factor}")
 
@@ -269,25 +263,17 @@ class BetTracker:
         active_bets = [b for b in bets if b["status"] == "active"]
 
         wins = len([b for b in completed_bets if b["tracking"]["result"] == "win"])
-        losses = len(
-            [b for b in completed_bets if b["tracking"]["result"] == "loss"]
-        )
-        pushes = len(
-            [b for b in completed_bets if b["tracking"]["result"] == "push"]
-        )
+        losses = len([b for b in completed_bets if b["tracking"]["result"] == "loss"])
+        pushes = len([b for b in completed_bets if b["tracking"]["result"] == "push"])
 
-        total_profit = sum(
-            b["tracking"]["profit_loss"] or 0 for b in completed_bets
-        )
+        total_profit = sum(b["tracking"]["profit_loss"] or 0 for b in completed_bets)
         total_staked = sum(b["bet_details"]["stake"] for b in completed_bets)
 
         roi = (total_profit / total_staked * 100) if total_staked > 0 else 0
 
         # CLV analysis
         bets_with_clv = [
-            b
-            for b in completed_bets
-            if b["tracking"]["closing_line_value"] is not None
+            b for b in completed_bets if b["tracking"]["closing_line_value"] is not None
         ]
         avg_clv = (
             sum(b["tracking"]["closing_line_value"] for b in bets_with_clv)
@@ -301,9 +287,7 @@ class BetTracker:
             "active": len(active_bets),
             "completed": len(completed_bets),
             "record": {"wins": wins, "losses": losses, "pushes": pushes},
-            "win_rate": (wins / len(completed_bets) * 100)
-            if completed_bets
-            else 0,
+            "win_rate": (wins / len(completed_bets) * 100) if completed_bets else 0,
             "total_profit_loss": total_profit,
             "total_staked": total_staked,
             "roi": roi,
@@ -319,7 +303,7 @@ class BetTracker:
         print("BETTING PERFORMANCE SUMMARY")
         print("=" * 80)
 
-        print(f"\n>> OVERALL RECORD:")
+        print("\n>> OVERALL RECORD:")
         print(
             f"   Total Bets: {stats['total_bets']} "
             f"(Active: {stats['active']}, Completed: {stats['completed']})"
@@ -330,13 +314,13 @@ class BetTracker:
         )
         print(f"   Win Rate: {stats['win_rate']:.1f}%")
 
-        print(f"\n>> FINANCIAL:")
+        print("\n>> FINANCIAL:")
         print(f"   Total Staked: {stats['total_staked']:.2f} units")
         print(f"   Total P/L: {stats['total_profit_loss']:+.2f} units")
         print(f"   ROI: {stats['roi']:+.1f}%")
 
         if stats["clv_sample_size"] > 0:
-            print(f"\n>> CLOSING LINE VALUE:")
+            print("\n>> CLOSING LINE VALUE:")
             print(
                 f"   Average CLV: {stats['average_clv']:+.2f} points "
                 f"(n={stats['clv_sample_size']})"
@@ -350,9 +334,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Track sports betting performance")
-    parser.add_argument(
-        "--list", action="store_true", help="List all active bets"
-    )
+    parser.add_argument("--list", action="store_true", help="List all active bets")
     parser.add_argument(
         "--summary", action="store_true", help="Show performance summary"
     )
@@ -376,9 +358,7 @@ def main():
         tracker.display_performance_summary()
     elif args.bet_id:
         if args.update_closing_line is not None:
-            result = tracker.update_closing_line(
-                args.bet_id, args.update_closing_line
-            )
+            result = tracker.update_closing_line(args.bet_id, args.update_closing_line)
             print(f"\n✅ Updated closing line for {args.bet_id}")
             print(f"   Bet Line: {result['bet_line']:+.1f}")
             print(f"   Closing Line: {result['closing_line']:+.1f}")

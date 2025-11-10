@@ -6,81 +6,105 @@ Compare Billy Walters power ratings vs market odds for spreads, moneylines, and 
 
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 # Market odds from Action Network (November 9, 2025)
 WEEK_10_MARKET_ODDS = [
     {
-        "away": "Buffalo", "home": "Miami",
+        "away": "Buffalo",
+        "home": "Miami",
         "spread": {"line": -5.5, "favorite": "Miami"},
         "total": 45.5,
-        "ml_away": +105, "ml_home": -125
+        "ml_away": +105,
+        "ml_home": -125,
     },
     {
-        "away": "NY Giants", "home": "Chicago",
+        "away": "NY Giants",
+        "home": "Chicago",
         "spread": {"line": -4.5, "favorite": "Chicago"},
         "total": 42.5,
-        "ml_away": +110, "ml_home": -110
+        "ml_away": +110,
+        "ml_home": -110,
     },
     {
-        "away": "New Orleans", "home": "Carolina",
+        "away": "New Orleans",
+        "home": "Carolina",
         "spread": {"line": -5.5, "favorite": "Carolina"},
         "total": 40.5,
-        "ml_away": +110, "ml_home": -130
+        "ml_away": +110,
+        "ml_home": -130,
     },
     {
-        "away": "Cleveland", "home": "NY Jets",
+        "away": "Cleveland",
+        "home": "NY Jets",
         "spread": {"line": -2.0, "favorite": "NY Jets"},
         "total": 42.5,
-        "ml_away": +110, "ml_home": -110
+        "ml_away": +110,
+        "ml_home": -110,
     },
     {
-        "away": "Jacksonville", "home": "Houston",
+        "away": "Jacksonville",
+        "home": "Houston",
         "spread": {"line": -1.0, "favorite": "Houston"},
         "total": 47.0,
-        "ml_away": +105, "ml_home": -115
+        "ml_away": +105,
+        "ml_home": -115,
     },
     {
-        "away": "New England", "home": "Tampa Bay",
+        "away": "New England",
+        "home": "Tampa Bay",
         "spread": {"line": -2.5, "favorite": "Tampa Bay"},
         "total": 42.5,
-        "ml_away": +105, "ml_home": -125
+        "ml_away": +105,
+        "ml_home": -125,
     },
     {
-        "away": "Baltimore", "home": "Minnesota",
+        "away": "Baltimore",
+        "home": "Minnesota",
         "spread": {"line": +4.0, "favorite": "Minnesota"},
         "total": 48.5,
-        "ml_away": +105, "ml_home": -105
+        "ml_away": +105,
+        "ml_home": -105,
     },
     {
-        "away": "Arizona", "home": "Seattle",
+        "away": "Arizona",
+        "home": "Seattle",
         "spread": {"line": -7.0, "favorite": "Seattle"},
         "total": 45.0,
-        "ml_away": +110, "ml_home": -110
+        "ml_away": +110,
+        "ml_home": -110,
     },
     {
-        "away": "Detroit", "home": "Washington",
+        "away": "Detroit",
+        "home": "Washington",
         "spread": {"line": -8.0, "favorite": "Washington"},
         "total": 55.5,
-        "ml_away": +110, "ml_home": -110
+        "ml_away": +110,
+        "ml_home": -110,
     },
     {
-        "away": "LA Rams", "home": "San Francisco",
+        "away": "LA Rams",
+        "home": "San Francisco",
         "spread": {"line": -5.5, "favorite": "San Francisco"},
         "total": 47.0,
-        "ml_away": +110, "ml_home": -110
+        "ml_away": +110,
+        "ml_home": -110,
     },
     {
-        "away": "Pittsburgh", "home": "LA Chargers",
+        "away": "Pittsburgh",
+        "home": "LA Chargers",
         "spread": {"line": -2.5, "favorite": "LA Chargers"},
         "total": 43.5,
-        "ml_away": +105, "ml_home": -115
+        "ml_away": +105,
+        "ml_home": -115,
     },
     {
-        "away": "Philadelphia", "home": "Green Bay",
+        "away": "Philadelphia",
+        "home": "Green Bay",
         "spread": {"line": +1.0, "favorite": "Green Bay"},
         "total": 43.5,
-        "ml_away": -125, "ml_home": +105
+        "ml_away": -125,
+        "ml_home": +105,
     },
 ]
 
@@ -89,10 +113,10 @@ def load_power_ratings() -> Dict[str, float]:
     """Load Week 9 power ratings"""
     ratings_file = Path("data/power_ratings/nfl_2025_week_09.json")
 
-    with open(ratings_file, 'r') as f:
+    with open(ratings_file, "r") as f:
         data = json.load(f)
 
-    return data['ratings']
+    return data["ratings"]
 
 
 def calculate_implied_probability(american_odds: int) -> float:
@@ -117,7 +141,9 @@ def calculate_predicted_spread(away_rating: float, home_rating: float) -> float:
     return predicted_margin
 
 
-def calculate_spread_edge(predicted_spread: float, market_spread: float, favorite: str, home_team: str) -> Tuple[float, str]:
+def calculate_spread_edge(
+    predicted_spread: float, market_spread: float, favorite: str, home_team: str
+) -> Tuple[float, str]:
     """
     Calculate edge on spread bet
     Returns: (edge_magnitude, recommendation)
@@ -138,12 +164,14 @@ def calculate_spread_edge(predicted_spread: float, market_spread: float, favorit
         recommendation = f"BET {home_team}"
     else:
         # Our model thinks away team is stronger than market suggests
-        recommendation = f"BET AWAY"
+        recommendation = "BET AWAY"
 
     return edge, recommendation
 
 
-def analyze_moneyline_value(away_rating: float, home_rating: float, ml_away: int, ml_home: int) -> Dict:
+def analyze_moneyline_value(
+    away_rating: float, home_rating: float, ml_away: int, ml_home: int
+) -> Dict:
     """Analyze moneyline betting value"""
     HOME_FIELD_ADVANTAGE = 2.0
 
@@ -171,7 +199,9 @@ def analyze_moneyline_value(away_rating: float, home_rating: float, ml_away: int
         "market_away_win%": market_away_prob * 100,
         "home_edge%": home_edge,
         "away_edge%": away_edge,
-        "recommendation": "HOME" if home_edge > 5 else ("AWAY" if away_edge > 5 else "NO BET")
+        "recommendation": "HOME"
+        if home_edge > 5
+        else ("AWAY" if away_edge > 5 else "NO BET"),
     }
 
 
@@ -203,8 +233,8 @@ def main():
     strong_ml_edges = []
 
     for i, game in enumerate(WEEK_10_MARKET_ODDS, 1):
-        away = game['away']
-        home = game['home']
+        away = game["away"]
+        home = game["home"]
 
         # Get ratings
         away_rating = ratings.get(away, 0.0)
@@ -214,70 +244,86 @@ def main():
         predicted_spread = calculate_predicted_spread(away_rating, home_rating)
 
         # Get market data
-        market_spread = game['spread']['line']
-        favorite = game['spread']['favorite']
-        market_total = game['total']
-        ml_away = game['ml_away']
-        ml_home = game['ml_home']
+        market_spread = game["spread"]["line"]
+        favorite = game["spread"]["favorite"]
+        market_total = game["total"]
+        ml_away = game["ml_away"]
+        ml_home = game["ml_home"]
 
         # Calculate edges
-        spread_edge, spread_rec = calculate_spread_edge(predicted_spread, market_spread, favorite, home)
-        ml_analysis = analyze_moneyline_value(away_rating, home_rating, ml_away, ml_home)
+        spread_edge, spread_rec = calculate_spread_edge(
+            predicted_spread, market_spread, favorite, home
+        )
+        ml_analysis = analyze_moneyline_value(
+            away_rating, home_rating, ml_away, ml_home
+        )
 
         # Print matchup header
         print(f"GAME {i}: {away} @ {home}")
         print("-" * 100)
 
         # Power ratings
-        print(f"Power Ratings:  {away} ({away_rating:.2f}) @ {home} ({home_rating:.2f})")
+        print(
+            f"Power Ratings:  {away} ({away_rating:.2f}) @ {home} ({home_rating:.2f})"
+        )
 
         # SPREAD ANALYSIS
-        print(f"\nSPREAD ANALYSIS:")
+        print("\nSPREAD ANALYSIS:")
         print(f"  System Prediction: {home} by {predicted_spread:.1f}")
         print(f"  Market Line:       {favorite} -{market_spread}")
         print(f"  Edge:              {spread_edge:.1f} points")
 
         if spread_edge >= 3.5:
             print(f"  Recommendation:    [BET] {spread_rec} (STRONG EDGE)")
-            strong_spread_edges.append({
-                "game": f"{away} @ {home}",
-                "edge": spread_edge,
-                "rec": spread_rec
-            })
+            strong_spread_edges.append(
+                {"game": f"{away} @ {home}", "edge": spread_edge, "rec": spread_rec}
+            )
         elif spread_edge >= 2.0:
             print(f"  Recommendation:    {spread_rec} (Moderate)")
         else:
-            print(f"  Recommendation:    NO BET (Edge too small)")
+            print("  Recommendation:    NO BET (Edge too small)")
 
         # MONEYLINE ANALYSIS
-        print(f"\nMONEYLINE ANALYSIS:")
+        print("\nMONEYLINE ANALYSIS:")
         print(f"  Market Odds:       {away} {ml_away:+d} / {home} {ml_home:+d}")
-        print(f"  Model Win Prob:    {away} {ml_analysis['model_away_win%']:.1f}% / {home} {ml_analysis['model_home_win%']:.1f}%")
-        print(f"  Market Win Prob:   {away} {ml_analysis['market_away_win%']:.1f}% / {home} {ml_analysis['market_home_win%']:.1f}%")
-        print(f"  Edge:              {away} {ml_analysis['away_edge%']:+.1f}% / {home} {ml_analysis['home_edge%']:+.1f}%")
+        print(
+            f"  Model Win Prob:    {away} {ml_analysis['model_away_win%']:.1f}% / {home} {ml_analysis['model_home_win%']:.1f}%"
+        )
+        print(
+            f"  Market Win Prob:   {away} {ml_analysis['market_away_win%']:.1f}% / {home} {ml_analysis['market_home_win%']:.1f}%"
+        )
+        print(
+            f"  Edge:              {away} {ml_analysis['away_edge%']:+.1f}% / {home} {ml_analysis['home_edge%']:+.1f}%"
+        )
 
-        if abs(ml_analysis['home_edge%']) > 5 or abs(ml_analysis['away_edge%']) > 5:
-            if ml_analysis['home_edge%'] > 5:
+        if abs(ml_analysis["home_edge%"]) > 5 or abs(ml_analysis["away_edge%"]) > 5:
+            if ml_analysis["home_edge%"] > 5:
                 print(f"  Recommendation:    [BET] BET {home} ML (STRONG EDGE)")
-                strong_ml_edges.append({
-                    "game": f"{away} @ {home}",
-                    "pick": f"{home} ML",
-                    "edge": ml_analysis['home_edge%']
-                })
-            elif ml_analysis['away_edge%'] > 5:
+                strong_ml_edges.append(
+                    {
+                        "game": f"{away} @ {home}",
+                        "pick": f"{home} ML",
+                        "edge": ml_analysis["home_edge%"],
+                    }
+                )
+            elif ml_analysis["away_edge%"] > 5:
                 print(f"  Recommendation:    [BET] BET {away} ML (STRONG EDGE)")
-                strong_ml_edges.append({
-                    "game": f"{away} @ {home}",
-                    "pick": f"{away} ML",
-                    "edge": ml_analysis['away_edge%']
-                })
+                strong_ml_edges.append(
+                    {
+                        "game": f"{away} @ {home}",
+                        "pick": f"{away} ML",
+                        "edge": ml_analysis["away_edge%"],
+                    }
+                )
         else:
-            print(f"  Recommendation:    NO BET (Edge too small)")
+            print("  Recommendation:    NO BET (Edge too small)")
 
         # TOTALS ANALYSIS
-        print(f"\nTOTALS ANALYSIS:")
+        print("\nTOTALS ANALYSIS:")
         print(f"  Market Total:      {market_total}")
-        print(f"  (Note: Detailed totals analysis requires offensive/defensive ratings)")
+        print(
+            "  (Note: Detailed totals analysis requires offensive/defensive ratings)"
+        )
 
         print()
         print("=" * 100)
@@ -293,7 +339,9 @@ def main():
     print("-" * 100)
     if strong_spread_edges:
         for i, edge in enumerate(strong_spread_edges, 1):
-            print(f"  {i}. {edge['game']:40s} - {edge['rec']:30s} ({edge['edge']:.1f} pt edge)")
+            print(
+                f"  {i}. {edge['game']:40s} - {edge['rec']:30s} ({edge['edge']:.1f} pt edge)"
+            )
     else:
         print("  None found")
 
@@ -302,7 +350,9 @@ def main():
     print("-" * 100)
     if strong_ml_edges:
         for i, edge in enumerate(strong_ml_edges, 1):
-            print(f"  {i}. {edge['game']:40s} - {edge['pick']:20s} ({edge['edge']:+.1f}% edge)")
+            print(
+                f"  {i}. {edge['game']:40s} - {edge['pick']:20s} ({edge['edge']:+.1f}% edge)"
+            )
     else:
         print("  None found")
 

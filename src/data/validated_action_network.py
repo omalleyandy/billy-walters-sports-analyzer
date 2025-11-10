@@ -66,9 +66,7 @@ class ValidatedActionNetworkClient:
         """Async context manager exit."""
         await self.client.close()
 
-    def _validate_data(
-        self, data_type: str, data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _validate_data(self, data_type: str, data: dict[str, Any]) -> dict[str, Any]:
         """
         Run validation script on data.
 
@@ -83,9 +81,7 @@ class ValidatedActionNetworkClient:
             RuntimeError: If validation script execution fails
         """
         if not self.validation_script_path.exists():
-            logger.warning(
-                "Validation script not found, skipping validation"
-            )
+            logger.warning("Validation script not found, skipping validation")
             return {"valid": True, "errors": [], "warnings": []}
 
         try:
@@ -102,9 +98,7 @@ class ValidatedActionNetworkClient:
                 return json.loads(result.stdout)
             else:
                 logger.error(f"Validation script error: {result.stderr}")
-                raise RuntimeError(
-                    f"Validation failed: {result.stderr}"
-                )
+                raise RuntimeError(f"Validation failed: {result.stderr}")
 
         except subprocess.TimeoutExpired:
             logger.error("Validation script timed out")
@@ -139,9 +133,7 @@ class ValidatedActionNetworkClient:
         """
         # Fetch raw odds data
         logger.info(f"Fetching {league} odds from Action Network")
-        raw_games = await self.client.fetch_odds(
-            league, max_retries=max_retries
-        )
+        raw_games = await self.client.fetch_odds(league, max_retries=max_retries)
 
         # Validate each game
         validated_games: list[dict[str, Any]] = []
@@ -237,7 +229,7 @@ async def main():
         # Fetch and validate NFL odds (strict mode)
         try:
             nfl_response = await client.fetch_nfl_odds(strict=True)
-            print(f"\nNFL Odds (validated):")
+            print("\nNFL Odds (validated):")
             print(f"  Total games: {nfl_response.total_games}")
             print(f"  Fetch time: {nfl_response.fetch_time}")
 
@@ -251,7 +243,7 @@ async def main():
 
         # Fetch NCAAF odds (non-strict mode - allow warnings)
         ncaaf_response = await client.fetch_ncaaf_odds(strict=False)
-        print(f"\n\nNCAAF Odds (validated, warnings allowed):")
+        print("\n\nNCAAF Odds (validated, warnings allowed):")
         print(f"  Total games: {ncaaf_response.total_games}")
 
 

@@ -16,7 +16,7 @@ Based on Billy Walters' Advanced Masterclass Principles:
 
 import os
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
@@ -26,19 +26,20 @@ from accuweather_client import AccuWeatherClient
 
 # Import injury and player valuation modules
 import sys
-sys.path.insert(0, 'src')
-from walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator, InjuryType
+
+sys.path.insert(0, "src")
+from walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
 from walters_analyzer.valuation.player_values import PlayerValuation
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 
 class EdgeType(Enum):
     """Types of betting edges"""
+
     POWER_RATING = "power_rating"
     SHARP_ACTION = "sharp_action"
     WEATHER = "weather"
@@ -50,6 +51,7 @@ class EdgeType(Enum):
 @dataclass
 class PowerRating:
     """Team power rating"""
+
     team: str
     rating: float  # 70-100 scale
     offensive_rating: float
@@ -61,6 +63,7 @@ class PowerRating:
 @dataclass
 class SituationalFactor:
     """S-factor components"""
+
     rest_days: int = 7
     rest_advantage: float = 0.0  # -3 to +3 points
     travel_distance: int = 0
@@ -76,6 +79,7 @@ class SituationalFactor:
 @dataclass
 class WeatherImpact:
     """Weather impact on game"""
+
     temperature: Optional[float] = None  # Fahrenheit
     wind_speed: Optional[float] = None  # MPH
     precipitation: Optional[str] = None  # "rain", "snow", "none"
@@ -87,6 +91,7 @@ class WeatherImpact:
 @dataclass
 class InjuryImpact:
     """Injury impact on team performance"""
+
     team: str
     total_impact: float = 0.0  # Total point impact
     critical_injuries: List[Dict] = None  # Critical injuries (≥2.0 pts)
@@ -111,6 +116,7 @@ class InjuryImpact:
 @dataclass
 class SharpAction:
     """Sharp vs public betting analysis"""
+
     line_movement: float = 0.0  # Positive = moved toward favorite
     money_percent: float = 50.0  # Sharp money %
     tickets_percent: float = 50.0  # Public tickets %
@@ -122,6 +128,7 @@ class SharpAction:
 @dataclass
 class BettingEdge:
     """Identified betting edge"""
+
     game_id: str
     matchup: str
     week: int
@@ -279,40 +286,42 @@ class BillyWaltersEdgeDetector:
         """
         logger.info(f"Loading Massey {league.upper()} ratings from {filepath}")
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
 
-        for team in data.get('teams', []):
-            team_name = team['team']
+        for team in data.get("teams", []):
+            team_name = team["team"]
 
             # Massey already uses appropriate scale for each league
             # NFL: ~7-10 rating scale
             # NCAAF: ~60-90 rating scale
-            rating = float(team['rating']) if team['rating'] else 70.0
+            rating = float(team["rating"]) if team["rating"] else 70.0
 
             # Convert to consistent 70-100 scale if needed
             if league == "nfl":
                 # NFL ratings are 7-10, scale to 70-100
-                rating = (rating * 10)  # 7.0 -> 70, 9.0 -> 90
+                rating = rating * 10  # 7.0 -> 70, 9.0 -> 90
 
             # Extract offensive and defensive ratings from rawData
             offensive_rating = 0.0
             defensive_rating = 0.0
 
-            raw_data = team.get('rawData', [])
+            raw_data = team.get("rawData", [])
             if len(raw_data) > 6:
                 try:
                     # rawData[5] = "12\n25.59" -> offensive (rank\nrating)
-                    off_parts = raw_data[5].split('\n')
+                    off_parts = raw_data[5].split("\n")
                     if len(off_parts) > 1:
                         offensive_rating = float(off_parts[1])
 
                     # rawData[6] = "2\n4.67" -> defensive (rank\nrating)
-                    def_parts = raw_data[6].split('\n')
+                    def_parts = raw_data[6].split("\n")
                     if len(def_parts) > 1:
                         defensive_rating = float(def_parts[1])
                 except (ValueError, IndexError) as e:
-                    logger.warning(f"Could not extract Off/Def ratings for {team_name}: {e}")
+                    logger.warning(
+                        f"Could not extract Off/Def ratings for {team_name}: {e}"
+                    )
 
             self.power_ratings[team_name] = PowerRating(
                 team=team_name,
@@ -320,7 +329,7 @@ class BillyWaltersEdgeDetector:
                 offensive_rating=offensive_rating,
                 defensive_rating=defensive_rating,
                 home_field_advantage=2.5,  # Standard NFL HFA
-                source="massey"
+                source="massey",
             )
 
         logger.info(f"Loaded {len(self.power_ratings)} {league.upper()} power ratings")
@@ -344,14 +353,16 @@ class BillyWaltersEdgeDetector:
 
         if not os.path.exists(ratings_file):
             logger.error(f"Proprietary ratings file not found: {ratings_file}")
-            logger.error("Please run backfill script: python scripts/backfill_weekly_ratings.py")
+            logger.error(
+                "Please run backfill script: python scripts/backfill_weekly_ratings.py"
+            )
             raise FileNotFoundError(f"Missing {ratings_file}")
 
-        with open(ratings_file, 'r') as f:
+        with open(ratings_file, "r") as f:
             data = json.load(f)
 
         # Load ratings dictionary
-        ratings_dict = data.get('ratings', {})
+        ratings_dict = data.get("ratings", {})
 
         for team_name, rating in ratings_dict.items():
             # Ratings are already on correct scale from 90/10 formula
@@ -364,12 +375,16 @@ class BillyWaltersEdgeDetector:
                 offensive_rating=0.0,  # TODO: Extract from separate system
                 defensive_rating=0.0,
                 home_field_advantage=2.0,  # Billy Walters uses 2.0
-                source="proprietary_90_10"
+                source="proprietary_90_10",
             )
 
-        week_info = f"Week {data.get('week')}" if 'week' in data else "Master file"
-        logger.info(f"Loaded {len(self.power_ratings)} proprietary ratings ({week_info})")
-        logger.info(f"System: 90/10 formula, {data.get('games_processed_total', 'N/A')} games processed")
+        week_info = f"Week {data.get('week')}" if "week" in data else "Master file"
+        logger.info(
+            f"Loaded {len(self.power_ratings)} proprietary ratings ({week_info})"
+        )
+        logger.info(
+            f"System: 90/10 formula, {data.get('games_processed_total', 'N/A')} games processed"
+        )
 
     def load_action_network_odds(self, filepath: str):
         """
@@ -380,15 +395,15 @@ class BillyWaltersEdgeDetector:
         """
         logger.info(f"Loading Action Network data from {filepath}")
 
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
 
         # Find scoreboard response
         scoreboard = None
         if isinstance(data, list):
             for item in data:
-                if 'url' in item and 'scoreboard' in item['url']:
-                    scoreboard = item['data']
+                if "url" in item and "scoreboard" in item["url"]:
+                    scoreboard = item["data"]
                     break
 
         if not scoreboard:
@@ -396,8 +411,8 @@ class BillyWaltersEdgeDetector:
             return {}
 
         games_data = {}
-        for game in scoreboard.get('games', []):
-            game_id = str(game['id'])
+        for game in scoreboard.get("games", []):
+            game_id = str(game["id"])
             games_data[game_id] = game
 
         logger.info(f"Loaded {len(games_data)} games from Action Network")
@@ -416,7 +431,7 @@ class BillyWaltersEdgeDetector:
         last_game_date: Optional[datetime] = None,
         is_divisional: bool = False,
         is_rivalry: bool = False,
-        recent_performance: Optional[List[str]] = None
+        recent_performance: Optional[List[str]] = None,
     ) -> SituationalFactor:
         """
         Calculate S-factor (situational adjustments)
@@ -429,8 +444,7 @@ class BillyWaltersEdgeDetector:
         - Lookahead/letdown spots
         """
         s_factor = SituationalFactor(
-            divisional_game=is_divisional,
-            rivalry_game=is_rivalry
+            divisional_game=is_divisional, rivalry_game=is_rivalry
         )
 
         # Rest advantage
@@ -459,10 +473,7 @@ class BillyWaltersEdgeDetector:
                 s_factor.letdown_spot = True
                 s_factor.total_adjustment -= 1.0
 
-        s_factor.total_adjustment = (
-            s_factor.rest_advantage +
-            s_factor.travel_penalty
-        )
+        s_factor.total_adjustment = s_factor.rest_advantage + s_factor.travel_penalty
 
         return s_factor
 
@@ -475,7 +486,7 @@ class BillyWaltersEdgeDetector:
         temperature: Optional[float],
         wind_speed: Optional[float],
         precipitation: Optional[str],
-        indoor: bool = False
+        indoor: bool = False,
     ) -> WeatherImpact:
         """
         Calculate weather impact on game
@@ -490,7 +501,7 @@ class BillyWaltersEdgeDetector:
             temperature=temperature,
             wind_speed=wind_speed,
             precipitation=precipitation,
-            indoor=indoor
+            indoor=indoor,
         )
 
         if indoor:
@@ -517,7 +528,9 @@ class BillyWaltersEdgeDetector:
     # INJURY ANALYSIS
     # =================================================================
 
-    def load_injury_data(self, injury_file: Optional[str] = None) -> Dict[str, List[Dict]]:
+    def load_injury_data(
+        self, injury_file: Optional[str] = None
+    ) -> Dict[str, List[Dict]]:
         """
         Load injury data from NFL official scraper output
 
@@ -534,7 +547,11 @@ class BillyWaltersEdgeDetector:
                 logger.warning(f"Injury directory {injury_dir} not found")
                 return {}
 
-            injury_files = [f for f in os.listdir(injury_dir) if f.endswith('.json') and 'nfl_official' in f]
+            injury_files = [
+                f
+                for f in os.listdir(injury_dir)
+                if f.endswith(".json") and "nfl_official" in f
+            ]
             if not injury_files:
                 logger.warning("No NFL official injury files found")
                 return {}
@@ -549,15 +566,17 @@ class BillyWaltersEdgeDetector:
                 data = json.load(f)
 
             injuries_by_team = {}
-            injuries_list = data.get('injuries', [])
+            injuries_list = data.get("injuries", [])
 
             for injury in injuries_list:
-                team = injury.get('team', 'Unknown')
+                team = injury.get("team", "Unknown")
                 if team not in injuries_by_team:
                     injuries_by_team[team] = []
                 injuries_by_team[team].append(injury)
 
-            logger.info(f"Loaded {len(injuries_list)} injuries across {len(injuries_by_team)} teams")
+            logger.info(
+                f"Loaded {len(injuries_list)} injuries across {len(injuries_by_team)} teams"
+            )
             self.injury_data = injuries_by_team
             return injuries_by_team
 
@@ -586,9 +605,9 @@ class BillyWaltersEdgeDetector:
         injured_players = []
 
         for injury in team_injuries:
-            position = injury.get('position', '')
-            injury_type_str = injury.get('injury_type', '')
-            game_status = injury.get('game_status', 'Questionable')
+            position = injury.get("position", "")
+            injury_type_str = injury.get("injury_type", "")
+            game_status = injury.get("game_status", "Questionable")
 
             # Parse injury type
             injury_type = self.injury_calculator.parse_injury_status(
@@ -598,26 +617,30 @@ class BillyWaltersEdgeDetector:
             # Get player value based on position
             player_value = self.player_valuation.calculate_player_value(position)
 
-            injured_players.append({
-                'name': injury.get('player_name', ''),
-                'position': position,
-                'value': player_value,
-                'injury_type': injury_type,
-                'days_since_injury': 0  # Default to current injury
-            })
+            injured_players.append(
+                {
+                    "name": injury.get("player_name", ""),
+                    "position": position,
+                    "value": player_value,
+                    "injury_type": injury_type,
+                    "days_since_injury": 0,  # Default to current injury
+                }
+            )
 
         # Calculate team-level impact
-        impact_data = self.injury_calculator.calculate_team_injury_impact(injured_players)
+        impact_data = self.injury_calculator.calculate_team_injury_impact(
+            injured_players
+        )
 
         return InjuryImpact(
             team=team_name,
-            total_impact=impact_data['total_impact'],
-            critical_injuries=impact_data['critical_injuries'],
-            moderate_injuries=impact_data['moderate_injuries'],
-            minor_injuries=impact_data['minor_injuries'],
-            severity=impact_data['severity'],
-            confidence=impact_data['confidence'],
-            injury_count=impact_data['injury_count']
+            total_impact=impact_data["total_impact"],
+            critical_injuries=impact_data["critical_injuries"],
+            moderate_injuries=impact_data["moderate_injuries"],
+            minor_injuries=impact_data["minor_injuries"],
+            severity=impact_data["severity"],
+            confidence=impact_data["confidence"],
+            injury_count=impact_data["injury_count"],
         )
 
     # =================================================================
@@ -625,10 +648,7 @@ class BillyWaltersEdgeDetector:
     # =================================================================
 
     def analyze_sharp_action(
-        self,
-        money_percent: float,
-        tickets_percent: float,
-        line_movement: float = 0.0
+        self, money_percent: float, tickets_percent: float, line_movement: float = 0.0
     ) -> SharpAction:
         """
         Analyze sharp vs public betting
@@ -641,7 +661,7 @@ class BillyWaltersEdgeDetector:
         action = SharpAction(
             money_percent=money_percent,
             tickets_percent=tickets_percent,
-            line_movement=line_movement
+            line_movement=line_movement,
         )
 
         # Calculate discrepancy
@@ -676,7 +696,7 @@ class BillyWaltersEdgeDetector:
         away_team: str,
         home_team: str,
         situational_adj: float = 0.0,
-        weather_adj: float = 0.0
+        weather_adj: float = 0.0,
     ) -> Tuple[float, float, float]:
         """
         Calculate predicted spread using power ratings
@@ -693,11 +713,11 @@ class BillyWaltersEdgeDetector:
 
         # Base calculation: Home - Away + HFA
         predicted = (
-            home_rating.rating -
-            away_rating.rating +
-            home_rating.home_field_advantage +
-            situational_adj +
-            weather_adj
+            home_rating.rating
+            - away_rating.rating
+            + home_rating.home_field_advantage
+            + situational_adj
+            + weather_adj
         )
 
         return predicted, away_rating.rating, home_rating.rating
@@ -714,7 +734,7 @@ class BillyWaltersEdgeDetector:
         situational: Optional[SituationalFactor] = None,
         weather: Optional[WeatherImpact] = None,
         sharp_action: Optional[SharpAction] = None,
-        best_odds: int = -110
+        best_odds: int = -110,
     ) -> Optional[BettingEdge]:
         """
         Detect betting edge following Billy Walters principles
@@ -730,9 +750,15 @@ class BillyWaltersEdgeDetector:
         # Positive = favors home, Negative = favors away
         injury_adj = away_injury_impact.total_impact - home_injury_impact.total_impact
 
-        logger.info(f"{away_team} injuries: {away_injury_impact.total_impact:.1f} pts ({away_injury_impact.severity})")
-        logger.info(f"{home_team} injuries: {home_injury_impact.total_impact:.1f} pts ({home_injury_impact.severity})")
-        logger.info(f"Net injury adjustment: {injury_adj:+.1f} pts (favors {'home' if injury_adj > 0 else 'away'})")
+        logger.info(
+            f"{away_team} injuries: {away_injury_impact.total_impact:.1f} pts ({away_injury_impact.severity})"
+        )
+        logger.info(
+            f"{home_team} injuries: {home_injury_impact.total_impact:.1f} pts ({home_injury_impact.severity})"
+        )
+        logger.info(
+            f"Net injury adjustment: {injury_adj:+.1f} pts (favors {'home' if injury_adj > 0 else 'away'})"
+        )
 
         # Calculate other adjustments
         sit_adj = situational.total_adjustment if situational else 0.0
@@ -763,7 +789,11 @@ class BillyWaltersEdgeDetector:
         crosses_key = False
         key_number_value = None
         for key_num in self.KEY_NUMBERS:
-            if min(predicted_spread, market_spread) < key_num < max(predicted_spread, market_spread):
+            if (
+                min(predicted_spread, market_spread)
+                < key_num
+                < max(predicted_spread, market_spread)
+            ):
                 crosses_key = True
                 key_number_value = key_num
                 # Add value for crossing key number
@@ -832,7 +862,7 @@ class BillyWaltersEdgeDetector:
             kelly_fraction=kelly,
             confidence_score=confidence,
             timestamp=datetime.now().isoformat(),
-            data_sources=["massey", "action_network", "nfl_official_injuries"]
+            data_sources=["massey", "action_network", "nfl_official_injuries"],
         )
 
         return edge
@@ -845,12 +875,12 @@ class BillyWaltersEdgeDetector:
         """Save detected edges to JSONL format"""
         filepath = os.path.join(self.output_dir, filename)
 
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             for edge in edges:
                 # Convert to dict
                 edge_dict = asdict(edge)
                 # Write as JSON line
-                f.write(json.dumps(edge_dict) + '\n')
+                f.write(json.dumps(edge_dict) + "\n")
 
         logger.info(f"Saved {len(edges)} edges to {filepath}")
 
@@ -873,12 +903,20 @@ class BillyWaltersEdgeDetector:
         for i, edge in enumerate(edges_sorted, 1):
             report.append(f"{i}. {edge.matchup} (Week {edge.week})")
             report.append(f"   Time: {edge.game_time}")
-            report.append(f"   Power Ratings: {edge.away_team} {edge.away_rating:.1f} @ {edge.home_team} {edge.home_rating:.1f}")
+            report.append(
+                f"   Power Ratings: {edge.away_team} {edge.away_rating:.1f} @ {edge.home_team} {edge.home_rating:.1f}"
+            )
             report.append(f"   Predicted Spread: {edge.predicted_spread:+.1f}")
             report.append(f"   Market Spread: {edge.market_spread:+.1f}")
-            report.append(f"   EDGE: {edge.edge_points:.1f} points ({edge.edge_strength.upper()})")
-            report.append(f"   Recommendation: BET {edge.recommended_bet.upper() if edge.recommended_bet else 'NONE'}")
-            report.append(f"   Kelly Sizing: {edge.kelly_fraction*100:.1f}% of bankroll")
+            report.append(
+                f"   EDGE: {edge.edge_points:.1f} points ({edge.edge_strength.upper()})"
+            )
+            report.append(
+                f"   Recommendation: BET {edge.recommended_bet.upper() if edge.recommended_bet else 'NONE'}"
+            )
+            report.append(
+                f"   Kelly Sizing: {edge.kelly_fraction * 100:.1f}% of bankroll"
+            )
             report.append(f"   Confidence: {edge.confidence_score:.0f}/100")
 
             if edge.situational_adjustment != 0:
@@ -886,7 +924,7 @@ class BillyWaltersEdgeDetector:
             if edge.weather_adjustment != 0:
                 report.append(f"   Weather Adj: {edge.weather_adjustment:+.1f}")
             if edge.sharp_action.reverse_line_movement:
-                report.append(f"   [!] REVERSE LINE MOVEMENT DETECTED!")
+                report.append("   [!] REVERSE LINE MOVEMENT DETECTED!")
             if edge.crosses_key_number:
                 report.append(f"   [KEY] Crosses key number: {edge.key_number_value}")
 
@@ -894,7 +932,9 @@ class BillyWaltersEdgeDetector:
 
         report.append("=" * 80)
         report.append(f"Total Edges Found: {len(edges)}")
-        report.append(f"Strong/Very Strong: {sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}")
+        report.append(
+            f"Strong/Very Strong: {sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}"
+        )
         report.append("=" * 80)
 
         return "\n".join(report)
@@ -934,10 +974,13 @@ def main():
         # Restore proprietary ratings for spread detection
         detector.power_ratings = spread_ratings
 
-        logger.info(f"Loaded {len(massey_ratings_for_totals)} Massey ratings with Off/Def for totals")
+        logger.info(
+            f"Loaded {len(massey_ratings_for_totals)} Massey ratings with Off/Def for totals"
+        )
 
     # Initialize totals detector
     from billy_walters_totals_detector import BillyWaltersTotalsDetector
+
     totals_detector = BillyWaltersTotalsDetector()
     totals_detector.load_power_ratings(massey_ratings_for_totals)
     totals_detector.injury_data = {}  # Will share injury data
@@ -956,39 +999,39 @@ def main():
         totals_edges = []
         for game_id, game in games_data.items():
             # Extract teams
-            teams = game.get('teams', [])
+            teams = game.get("teams", [])
             if len(teams) < 2:
                 continue
 
             # Normalize team names for Massey lookup
-            home_team = detector.normalize_team_name(teams[0]['display_name'])
-            away_team = detector.normalize_team_name(teams[1]['display_name'])
+            home_team = detector.normalize_team_name(teams[0]["display_name"])
+            away_team = detector.normalize_team_name(teams[1]["display_name"])
 
             # Extract market data
-            markets = game.get('markets', {})
+            markets = game.get("markets", {})
             if not markets:
                 continue
 
             # Get first sportsbook's odds
             first_book = list(markets.values())[0]
-            event_markets = first_book.get('event', {})
+            event_markets = first_book.get("event", {})
 
             # Extract spread
-            spread_data = event_markets.get('spread', [])
+            spread_data = event_markets.get("spread", [])
             if not spread_data:
                 continue
 
-            market_spread = spread_data[0].get('value', 0)
+            market_spread = spread_data[0].get("value", 0)
 
             # Extract total
-            total_data = event_markets.get('total', [])
-            market_total = total_data[0].get('value', 47.0) if total_data else 47.0
+            total_data = event_markets.get("total", [])
+            market_total = total_data[0].get("value", 47.0) if total_data else 47.0
 
             # Extract sharp action
-            if spread_data and 'bet_info' in spread_data[0]:
-                bet_info = spread_data[0]['bet_info']
-                money_pct = bet_info.get('money', {}).get('percent', 50)
-                tickets_pct = bet_info.get('tickets', {}).get('percent', 50)
+            if spread_data and "bet_info" in spread_data[0]:
+                bet_info = spread_data[0]["bet_info"]
+                money_pct = bet_info.get("money", {}).get("percent", 50)
+                tickets_pct = bet_info.get("tickets", {}).get("percent", 50)
 
                 sharp = detector.analyze_sharp_action(money_pct, tickets_pct)
             else:
@@ -996,12 +1039,12 @@ def main():
 
             # Fetch weather data for the game
             weather_impact = None
-            game_time_str = game.get('start_time', '')
+            game_time_str = game.get("start_time", "")
             if weather_client.api_key and game_time_str:
                 try:
                     # Parse game time (format: "2025-11-09T18:00:00.000Z")
                     game_time = datetime.fromisoformat(
-                        game_time_str.replace('Z', '+00:00')
+                        game_time_str.replace("Z", "+00:00")
                     )
 
                     # Get weather for home team's location
@@ -1015,12 +1058,12 @@ def main():
 
                         # Create WeatherImpact object
                         weather_impact = WeatherImpact(
-                            temperature=weather_data.get('temperature'),
-                            wind_speed=weather_data.get('wind_speed'),
-                            precipitation=weather_data.get('precipitation'),
-                            indoor=weather_data.get('indoor', False),
+                            temperature=weather_data.get("temperature"),
+                            wind_speed=weather_data.get("wind_speed"),
+                            precipitation=weather_data.get("precipitation"),
+                            indoor=weather_data.get("indoor", False),
                             total_adjustment=total_adj,
-                            spread_adjustment=spread_adj
+                            spread_adjustment=spread_adj,
                         )
 
                         logger.info(
@@ -1039,10 +1082,10 @@ def main():
                 home_team=home_team,
                 market_spread=market_spread,
                 market_total=market_total,
-                week=game.get('week', 10),
-                game_time=game.get('start_time', ''),
+                week=game.get("week", 10),
+                game_time=game.get("start_time", ""),
                 weather=weather_impact,
-                sharp_action=sharp
+                sharp_action=sharp,
             )
 
             if edge:
@@ -1054,14 +1097,18 @@ def main():
                 away_team=away_team,
                 home_team=home_team,
                 market_total=market_total,
-                market_over_odds=total_data[0].get('odds', -110) if total_data else -110,
-                market_under_odds=total_data[1].get('odds', -110) if len(total_data) > 1 else -110,
-                week=game.get('week', 10),
-                game_time=game.get('start_time', ''),
+                market_over_odds=total_data[0].get("odds", -110)
+                if total_data
+                else -110,
+                market_under_odds=total_data[1].get("odds", -110)
+                if len(total_data) > 1
+                else -110,
+                week=game.get("week", 10),
+                game_time=game.get("start_time", ""),
                 weather=weather_impact,
                 sharp_action=sharp,
                 away_injuries=detector.calculate_team_injury_impact(away_team),
-                home_injuries=detector.calculate_team_injury_impact(home_team)
+                home_injuries=detector.calculate_team_injury_impact(home_team),
             )
 
             if totals_edge:
@@ -1074,7 +1121,7 @@ def main():
             print(report)
 
             # Save report
-            with open(f"{detector.output_dir}/edge_report.txt", 'w') as f:
+            with open(f"{detector.output_dir}/edge_report.txt", "w") as f:
                 f.write(report)
         else:
             logger.info("No spread edges detected above threshold")
@@ -1089,10 +1136,12 @@ def main():
                 print("\n" + totals_report)
             except UnicodeEncodeError:
                 # Fallback: encode to ASCII, replacing special characters
-                print("\n" + totals_report.encode('ascii', 'replace').decode('ascii'))
+                print("\n" + totals_report.encode("ascii", "replace").decode("ascii"))
 
             # Save totals report
-            with open(f"{totals_detector.output_dir}/totals_report.txt", 'w', encoding='utf-8') as f:
+            with open(
+                f"{totals_detector.output_dir}/totals_report.txt", "w", encoding="utf-8"
+            ) as f:
                 f.write(totals_report)
         else:
             logger.info("No totals edges detected above threshold")

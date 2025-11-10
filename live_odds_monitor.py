@@ -44,7 +44,7 @@ class LiveOddsMonitor:
             "regions": "us",
             "markets": "h2h,spreads,totals",
             "oddsFormat": "american",
-            "dateFormat": "iso"
+            "dateFormat": "iso",
         }
 
         try:
@@ -73,8 +73,9 @@ class LiveOddsMonitor:
             away = game["away_team"].lower()
             home = game["home_team"].lower()
 
-            if (team1_lower in away or team1_lower in home) and \
-               (team2_lower in away or team2_lower in home):
+            if (team1_lower in away or team1_lower in home) and (
+                team2_lower in away or team2_lower in home
+            ):
                 return game
 
         return None
@@ -86,7 +87,7 @@ class LiveOddsMonitor:
             "total": 0,
             "moneyline_away": 0,
             "moneyline_home": 0,
-            "significant": False
+            "significant": False,
         }
 
         # Get first bookmaker data
@@ -100,17 +101,23 @@ class LiveOddsMonitor:
         for market in curr_bm.get("markets", []):
             if market["key"] == "spreads":
                 curr_home_spread = next(
-                    (o["point"] for o in market["outcomes"]
-                     if o["name"] == current["home_team"]),
-                    None
+                    (
+                        o["point"]
+                        for o in market["outcomes"]
+                        if o["name"] == current["home_team"]
+                    ),
+                    None,
                 )
 
                 for prev_market in prev_bm.get("markets", []):
                     if prev_market["key"] == "spreads":
                         prev_home_spread = next(
-                            (o["point"] for o in prev_market["outcomes"]
-                             if o["name"] == previous["home_team"]),
-                            None
+                            (
+                                o["point"]
+                                for o in prev_market["outcomes"]
+                                if o["name"] == previous["home_team"]
+                            ),
+                            None,
                         )
 
                         if curr_home_spread and prev_home_spread:
@@ -120,15 +127,18 @@ class LiveOddsMonitor:
             elif market["key"] == "totals":
                 curr_total = next(
                     (o["point"] for o in market["outcomes"] if o["name"] == "Over"),
-                    None
+                    None,
                 )
 
                 for prev_market in prev_bm.get("markets", []):
                     if prev_market["key"] == "totals":
                         prev_total = next(
-                            (o["point"] for o in prev_market["outcomes"]
-                             if o["name"] == "Over"),
-                            None
+                            (
+                                o["point"]
+                                for o in prev_market["outcomes"]
+                                if o["name"] == "Over"
+                            ),
+                            None,
                         )
 
                         if curr_total and prev_total:
@@ -177,18 +187,24 @@ class LiveOddsMonitor:
                 if movements["significant"]:
                     print("\n[ALERT] SIGNIFICANT LINE MOVEMENT DETECTED!")
                     if movements["spread"]:
-                        direction = "toward favorite" if movements["spread"] < 0 else "toward dog"
+                        direction = (
+                            "toward favorite"
+                            if movements["spread"] < 0
+                            else "toward dog"
+                        )
                         print(f"  Spread: {movements['spread']:+.1f} ({direction})")
                     if movements["total"]:
                         direction = "DOWN" if movements["total"] < 0 else "UP"
                         print(f"  Total: {movements['total']:+.1f} ({direction})")
 
             # Store history
-            self.odds_history.append({
-                "timestamp": timestamp,
-                "game": current_game,
-                "movements": movements if previous_odds else None
-            })
+            self.odds_history.append(
+                {
+                    "timestamp": timestamp,
+                    "game": current_game,
+                    "movements": movements if previous_odds else None,
+                }
+            )
 
             previous_odds = current_game
 
@@ -211,32 +227,40 @@ class LiveOddsMonitor:
             if market["key"] == "spreads":
                 away_spread = next(
                     (o for o in market["outcomes"] if o["name"] == game["away_team"]),
-                    None
+                    None,
                 )
                 home_spread = next(
                     (o for o in market["outcomes"] if o["name"] == game["home_team"]),
-                    None
+                    None,
                 )
 
                 if away_spread and home_spread:
-                    print(f"  Spread: {away_spread['point']:+.1f} ({away_spread['price']:+d}) / "
-                          f"{home_spread['point']:+.1f} ({home_spread['price']:+d})")
+                    print(
+                        f"  Spread: {away_spread['point']:+.1f} ({away_spread['price']:+d}) / "
+                        f"{home_spread['point']:+.1f} ({home_spread['price']:+d})"
+                    )
 
             elif market["key"] == "totals":
-                over = next((o for o in market["outcomes"] if o["name"] == "Over"), None)
-                under = next((o for o in market["outcomes"] if o["name"] == "Under"), None)
+                over = next(
+                    (o for o in market["outcomes"] if o["name"] == "Over"), None
+                )
+                under = next(
+                    (o for o in market["outcomes"] if o["name"] == "Under"), None
+                )
 
                 if over and under:
-                    print(f"  Total: O/U {over['point']} ({over['price']:+d}/{under['price']:+d})")
+                    print(
+                        f"  Total: O/U {over['point']} ({over['price']:+d}/{under['price']:+d})"
+                    )
 
             elif market["key"] == "h2h":
                 away_ml = next(
                     (o for o in market["outcomes"] if o["name"] == game["away_team"]),
-                    None
+                    None,
                 )
                 home_ml = next(
                     (o for o in market["outcomes"] if o["name"] == game["home_team"]),
-                    None
+                    None,
                 )
 
                 if away_ml and home_ml:
@@ -250,7 +274,7 @@ class LiveOddsMonitor:
         filename = f"{team1.replace(' ', '_')}_vs_{team2.replace(' ', '_')}.json"
         filepath = output_dir / filename
 
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(self.odds_history, f, indent=2, default=str)
 
     def stop(self, signum=None, frame=None):
@@ -325,12 +349,10 @@ if __name__ == "__main__":
         "--interval",
         type=int,
         default=900,
-        help="Monitoring interval in seconds (default: 900 = 15 min)"
+        help="Monitoring interval in seconds (default: 900 = 15 min)",
     )
     parser.add_argument(
-        "--now",
-        action="store_true",
-        help="Get instant odds (one-time check)"
+        "--now", action="store_true", help="Get instant odds (one-time check)"
     )
 
     args = parser.parse_args()

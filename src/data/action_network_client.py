@@ -170,11 +170,9 @@ class ActionNetworkClient:
                 )
                 return await self._fetch_odds_impl(league)
             except Exception as e:
-                logger.warning(
-                    f"Attempt {attempt + 1} failed: {e}", exc_info=True
-                )
+                logger.warning(f"Attempt {attempt + 1} failed: {e}", exc_info=True)
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
+                    wait_time = 2**attempt  # Exponential backoff
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -271,31 +269,21 @@ class ActionNetworkClient:
 
             # Extract game date/time
             game_time_elem = await row.query_selector(".game-time")
-            game_time_text = (
-                await game_time_elem.inner_text() if game_time_elem else ""
-            )
+            game_time_text = await game_time_elem.inner_text() if game_time_elem else ""
 
             # Extract rotation numbers
             rotation_elems = await row.query_selector_all(".rotation-number")
             away_rotation = (
-                await rotation_elems[0].inner_text()
-                if len(rotation_elems) > 0
-                else ""
+                await rotation_elems[0].inner_text() if len(rotation_elems) > 0 else ""
             )
             home_rotation = (
-                await rotation_elems[1].inner_text()
-                if len(rotation_elems) > 1
-                else ""
+                await rotation_elems[1].inner_text() if len(rotation_elems) > 1 else ""
             )
 
             # Extract best odds (marked with bookmark icon)
-            best_spread_elem = await row.query_selector(
-                ".spread-cell .best-odds"
-            )
+            best_spread_elem = await row.query_selector(".spread-cell .best-odds")
             best_total_elem = await row.query_selector(".total-cell .best-odds")
-            best_ml_elem = await row.query_selector(
-                ".moneyline-cell .best-odds"
-            )
+            best_ml_elem = await row.query_selector(".moneyline-cell .best-odds")
 
             # Extract spread data
             spread_value = None
@@ -330,9 +318,7 @@ class ActionNetworkClient:
 
             # Extract sportsbook name
             sportsbook_elem = await row.query_selector(".sportsbook-name")
-            sportsbook = (
-                await sportsbook_elem.inner_text() if sportsbook_elem else None
-            )
+            sportsbook = await sportsbook_elem.inner_text() if sportsbook_elem else None
 
             # Build game data dictionary
             game_data: dict[str, Any] = {
@@ -359,15 +345,11 @@ class ActionNetworkClient:
             logger.warning(f"Error extracting game row: {e}", exc_info=True)
             return None
 
-    async def fetch_nfl_odds(
-        self, max_retries: int = 3
-    ) -> list[dict[str, Any]]:
+    async def fetch_nfl_odds(self, max_retries: int = 3) -> list[dict[str, Any]]:
         """Convenience method to fetch NFL odds."""
         return await self.fetch_odds("NFL", max_retries=max_retries)
 
-    async def fetch_ncaaf_odds(
-        self, max_retries: int = 3
-    ) -> list[dict[str, Any]]:
+    async def fetch_ncaaf_odds(self, max_retries: int = 3) -> list[dict[str, Any]]:
         """Convenience method to fetch NCAAF odds."""
         return await self.fetch_odds("NCAAF", max_retries=max_retries)
 

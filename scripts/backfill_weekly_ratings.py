@@ -21,15 +21,17 @@ sys.path.insert(0, str(project_root))
 
 from walters_analyzer.valuation.power_ratings import PowerRatingSystem, GameResult
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Backfill power ratings')
-    parser.add_argument('--start-week', type=int, default=1)
-    parser.add_argument('--end-week', type=int, default=9)
-    parser.add_argument('--dry-run', action='store_true')
+    parser = argparse.ArgumentParser(description="Backfill power ratings")
+    parser.add_argument("--start-week", type=int, default=1)
+    parser.add_argument("--end-week", type=int, default=9)
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
     # Load initial ratings and games
@@ -43,28 +45,30 @@ def main():
     games_file = project_root / "data" / "nfl_2025_games_weeks_1_9.json"
     with open(games_file) as f:
         data = json.load(f)
-    all_games = data['games'] if 'games' in data else data
+    all_games = data["games"] if "games" in data else data
 
     # Process each week
     ratings_dir = project_root / "data" / "power_ratings"
     ratings_dir.mkdir(exist_ok=True)
 
     for week_num in range(args.start_week, args.end_week + 1):
-        logger.info(f"\n{'='*60}\nWEEK {week_num}\n{'='*60}")
-        week_games = [g for g in all_games if g['week'] == week_num]
+        logger.info(f"\n{'=' * 60}\nWEEK {week_num}\n{'=' * 60}")
+        week_games = [g for g in all_games if g["week"] == week_num]
 
         for game in week_games:
             result = GameResult(
-                date=date.fromisoformat(game['date']),
-                home_team=game['home_team'],
-                away_team=game['away_team'],
-                home_score=game['home_score'],
-                away_score=game['away_score'],
-                home_injury_level=game.get('home_injury_level', 0.0),
-                away_injury_level=game.get('away_injury_level', 0.0),
-                location='home'
+                date=date.fromisoformat(game["date"]),
+                home_team=game["home_team"],
+                away_team=game["away_team"],
+                home_score=game["home_score"],
+                away_score=game["away_score"],
+                home_injury_level=game.get("home_injury_level", 0.0),
+                away_injury_level=game.get("away_injury_level", 0.0),
+                location="home",
             )
-            logger.info(f"  {result.away_team} @ {result.home_team} ({result.away_score}-{result.home_score})")
+            logger.info(
+                f"  {result.away_team} @ {result.home_team} ({result.away_score}-{result.home_score})"
+            )
             prs.update_ratings_from_game(result)
 
         # Save snapshot
@@ -79,9 +83,9 @@ def main():
                     "old_rating_weight": prs.OLD_RATING_WEIGHT,
                     "true_performance_weight": prs.TRUE_PERFORMANCE_WEIGHT,
                     "home_field_advantage": prs.HOME_FIELD_ADVANTAGE,
-                }
+                },
             }
-            with open(snapshot_file, 'w') as f:
+            with open(snapshot_file, "w") as f:
                 json.dump(snapshot, f, indent=2)
             logger.info(f"Saved to {snapshot_file.name}")
 

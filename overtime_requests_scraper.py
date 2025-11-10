@@ -31,7 +31,7 @@ class OvertimeRequestsScraper:
         # Use http:// scheme for both HTTP and HTTPS (requests library requirement)
         self.proxies = {
             "http": "http://{}".format(proxy_auth),
-            "https": "http://{}".format(proxy_auth)
+            "https": "http://{}".format(proxy_auth),
         }
 
         print(f"Configured proxy: {proxy}")
@@ -47,15 +47,17 @@ class OvertimeRequestsScraper:
         # Session for maintaining login state
         self.session = requests.Session()
         self.session.proxies.update(self.proxies)
-        self.session.headers.update({
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/131.0.0.0 Safari/537.36"
-            ),
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/131.0.0.0 Safari/537.36"
+                ),
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+            }
+        )
 
         self.base_url = "https://overtime.ag"
         self.live_betting_url = "https://overtime.ag/sports#/integrations/liveBetting"
@@ -92,11 +94,7 @@ class OvertimeRequestsScraper:
         for endpoint in login_endpoints:
             try:
                 print(f"Trying login endpoint: {endpoint}")
-                r = self.session.post(
-                    endpoint,
-                    json=login_data,
-                    timeout=30
-                )
+                r = self.session.post(endpoint, json=login_data, timeout=30)
                 if r.status_code == 200:
                     print("Login successful!")
                     return True
@@ -194,20 +192,26 @@ class OvertimeRequestsScraper:
             pass
 
         # Save HTML for debugging
-        os.makedirs('snapshots', exist_ok=True)
-        snapshot_file = f'snapshots/overtime_html_{datetime.now().strftime("%Y%m%d_%H%M%S")}.html'
-        with open(snapshot_file, 'w', encoding='utf-8') as f:
+        os.makedirs("snapshots", exist_ok=True)
+        snapshot_file = (
+            f"snapshots/overtime_html_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        )
+        with open(snapshot_file, "w", encoding="utf-8") as f:
             f.write(content)
         print(f"Saved HTML snapshot to {snapshot_file}")
 
         # Parse as HTML
-        soup = BeautifulSoup(content, 'html.parser')
+        soup = BeautifulSoup(content, "html.parser")
 
         # Look for embedded JSON in script tags (common in SPAs)
-        for script in soup.find_all('script'):
-            if script.string and ('odds' in script.string.lower() or 'game' in script.string.lower()):
+        for script in soup.find_all("script"):
+            if script.string and (
+                "odds" in script.string.lower() or "game" in script.string.lower()
+            ):
                 # Try to extract JSON objects
-                matches = re.findall(r'\{[^{}]*"(?:odds|game|event)"[^{}]*\}', script.string)
+                matches = re.findall(
+                    r'\{[^{}]*"(?:odds|game|event)"[^{}]*\}', script.string
+                )
                 for match in matches:
                     try:
                         game_data = json.loads(match)
@@ -233,7 +237,9 @@ class OvertimeRequestsScraper:
             items = data
         elif isinstance(data, dict):
             # Try common keys
-            items = data.get('games') or data.get('events') or data.get('data') or [data]
+            items = (
+                data.get("games") or data.get("events") or data.get("data") or [data]
+            )
         else:
             return games
 
@@ -248,28 +254,28 @@ class OvertimeRequestsScraper:
         """Parse individual game data into Billy Walters format"""
         try:
             # Extract team names
-            home_team = data.get('homeTeam') or data.get('home') or data.get('team1')
-            away_team = data.get('awayTeam') or data.get('away') or data.get('team2')
+            home_team = data.get("homeTeam") or data.get("home") or data.get("team1")
+            away_team = data.get("awayTeam") or data.get("away") or data.get("team2")
 
             if not home_team or not away_team:
                 return None
 
             # Extract markets
-            markets = data.get('markets') or data.get('odds') or {}
+            markets = data.get("markets") or data.get("odds") or {}
 
             game = {
                 "timestamp": datetime.utcnow().isoformat(),
                 "source": "overtime.ag",
-                "sport": data.get('sport', 'FOOTBALL'),
-                "league": data.get('league', 'NFL'),
+                "sport": data.get("sport", "FOOTBALL"),
+                "league": data.get("league", "NFL"),
                 "home_team": home_team,
                 "away_team": away_team,
-                "game_time": data.get('gameTime') or data.get('startTime'),
+                "game_time": data.get("gameTime") or data.get("startTime"),
                 "markets": {
-                    "spread": self._extract_market(markets, 'spread'),
-                    "total": self._extract_market(markets, 'total'),
-                    "moneyline": self._extract_market(markets, 'moneyline'),
-                }
+                    "spread": self._extract_market(markets, "spread"),
+                    "total": self._extract_market(markets, "total"),
+                    "moneyline": self._extract_market(markets, "moneyline"),
+                },
             }
 
             return game
@@ -284,9 +290,9 @@ class OvertimeRequestsScraper:
             return None
 
         return {
-            "home": market.get('home') or market.get('home_odds'),
-            "away": market.get('away') or market.get('away_odds'),
-            "line": market.get('line') or market.get('handicap'),
+            "home": market.get("home") or market.get("home_odds"),
+            "away": market.get("away") or market.get("away_odds"),
+            "line": market.get("line") or market.get("handicap"),
         }
 
     def _parse_html_odds(self, soup: BeautifulSoup) -> List[Dict]:
@@ -295,7 +301,9 @@ class OvertimeRequestsScraper:
 
         # This will need to be customized based on actual HTML structure
         # For now, return empty list - will need live game to inspect HTML
-        print("HTML parsing not yet implemented - need live game HTML to inspect structure")
+        print(
+            "HTML parsing not yet implemented - need live game HTML to inspect structure"
+        )
 
         return games
 
@@ -307,11 +315,11 @@ class OvertimeRequestsScraper:
             games: List of game dictionaries
             output_file: Path to output file
         """
-        os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
+        os.makedirs(os.path.dirname(output_file) or ".", exist_ok=True)
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for game in games:
-                f.write(json.dumps(game) + '\n')
+                f.write(json.dumps(game) + "\n")
 
         print(f"Saved {len(games)} games to {output_file}")
 
@@ -375,6 +383,7 @@ def main():
     except Exception as e:
         print(f"\n[ERROR] {e}")
         import traceback
+
         traceback.print_exc()
 
 

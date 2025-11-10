@@ -16,11 +16,13 @@ try:
     # Try v2.0.0+ API first
     try:
         from playwright_stealth import Stealth
+
         stealth_async = lambda page: Stealth().apply_stealth_async(page)
         STEALTH_AVAILABLE = True
     except (ImportError, AttributeError):
         # Fall back to v1.0.6 API
         from playwright_stealth import stealth_async
+
         STEALTH_AVAILABLE = True
 except ImportError:
     STEALTH_AVAILABLE = False
@@ -32,6 +34,7 @@ from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except Exception:
     pass
@@ -50,7 +53,9 @@ def to_float(s: Optional[str]) -> Optional[float]:
             return None
 
 
-def parse_date_time(date_str: str, time_str: str) -> tuple[Optional[str], Optional[str]]:
+def parse_date_time(
+    date_str: str, time_str: str
+) -> tuple[Optional[str], Optional[str]]:
     """
     Parse date/time strings from overtime.ag format.
     Date format: "Sun Nov 2" or "Mon Nov 3"
@@ -67,7 +72,9 @@ def parse_date_time(date_str: str, time_str: str) -> tuple[Optional[str], Option
             day_str = date_parts[2]
             dt = datetime.strptime(f"{current_year} {month_str} {day_str}", "%Y %b %d")
             iso_date = dt.strftime("%Y-%m-%d")
-            time_with_tz = f"{time_str} ET" if time_str and "ET" not in time_str else time_str
+            time_with_tz = (
+                f"{time_str} ET" if time_str and "ET" not in time_str else time_str
+            )
             return iso_date, time_with_tz
     except Exception:
         pass
@@ -118,7 +125,15 @@ class PregameOddsSpider(scrapy.Spider):
         "ROBOTSTXT_OBEY": False,
         "LOG_LEVEL": "INFO",
         "RETRY_TIMES": 5,
-        "RETRY_HTTP_CODES": [403, 407, 429, 500, 502, 503, 504],  # 407 = Proxy Auth Required
+        "RETRY_HTTP_CODES": [
+            403,
+            407,
+            429,
+            500,
+            502,
+            503,
+            504,
+        ],  # 407 = Proxy Auth Required
         "RETRY_BACKOFF_BASE": 2,
         "RETRY_BACKOFF_MAX": 60,
     }
@@ -129,7 +144,11 @@ class PregameOddsSpider(scrapy.Spider):
 
         # Log proxy configuration
         if self._proxy_url:
-            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
+            proxy_display = (
+                self._proxy_url.split("@")[1]
+                if "@" in self._proxy_url
+                else self._proxy_url
+            )
             self.logger.info(f"✓ Using residential proxy: {proxy_display}")
         else:
             self.logger.warning("⚠ No proxy configured - using direct connection")
@@ -151,7 +170,9 @@ class PregameOddsSpider(scrapy.Spider):
             ],
         }
 
-        yield scrapy.Request(url, meta=meta, callback=self.parse_main, errback=self.errback)
+        yield scrapy.Request(
+            url, meta=meta, callback=self.parse_main, errback=self.errback
+        )
 
     async def errback(self, failure):
         self.logger.error("Request failed: %r", failure)
@@ -172,7 +193,9 @@ class PregameOddsSpider(scrapy.Spider):
 
         try:
             self.logger.info("Verifying proxy IP...")
-            await page.goto("https://ipinfo.io/json", timeout=30_000)  # Increased for proxy
+            await page.goto(
+                "https://ipinfo.io/json", timeout=30_000
+            )  # Increased for proxy
 
             # Extract IP info from the page
             ip_info = await page.evaluate("""
@@ -230,19 +253,26 @@ class PregameOddsSpider(scrapy.Spider):
             self.logger.info("Attempting login on sports page...")
 
             # Customer ID field: //input[@placeholder='Customer Id']
-            customer_id_input = await page.wait_for_selector("xpath=//input[@placeholder='Customer Id']", timeout=5000)
+            customer_id_input = await page.wait_for_selector(
+                "xpath=//input[@placeholder='Customer Id']", timeout=5000
+            )
             if customer_id_input:
                 await customer_id_input.fill(customer_id)
                 self.logger.info("✓ Customer ID filled")
 
             # Password field: //input[@placeholder='Password']
-            password_input = await page.wait_for_selector("xpath=//input[@placeholder='Password']", timeout=5000)
+            password_input = await page.wait_for_selector(
+                "xpath=//input[@placeholder='Password']", timeout=5000
+            )
             if password_input:
                 await password_input.fill(password)
                 self.logger.info("✓ Password filled")
 
             # Login button: //button[@class='btn btn-default btn-login ng-binding']
-            login_btn = await page.wait_for_selector("xpath=//button[@class='btn btn-default btn-login ng-binding']", timeout=5000)
+            login_btn = await page.wait_for_selector(
+                "xpath=//button[@class='btn btn-default btn-login ng-binding']",
+                timeout=5000,
+            )
             if login_btn:
                 await login_btn.click()
                 self.logger.info("✓ Login button clicked")
@@ -269,13 +299,21 @@ class PregameOddsSpider(scrapy.Spider):
             except Exception as e:
                 self.logger.warning(f"Failed to apply stealth: {e}")
         else:
-            self.logger.warning("⚠ Stealth mode not available - may be blocked by Cloudflare")
+            self.logger.warning(
+                "⚠ Stealth mode not available - may be blocked by Cloudflare"
+            )
 
         # Skip IP verification - it's slow and causes timeouts with Cloudflare
         # The simple proxy test confirms proxy works, so we skip this step
         if self._proxy_url:
-            proxy_display = self._proxy_url.split('@')[1] if '@' in self._proxy_url else self._proxy_url
-            self.logger.info(f"Using proxy: {proxy_display} (skipping IP verification to avoid Cloudflare)")
+            proxy_display = (
+                self._proxy_url.split("@")[1]
+                if "@" in self._proxy_url
+                else self._proxy_url
+            )
+            self.logger.info(
+                f"Using proxy: {proxy_display} (skipping IP verification to avoid Cloudflare)"
+            )
 
         # Already on sports page from start() - just wait for it to settle
         self.logger.info("Waiting for sports page to load...")
@@ -373,7 +411,11 @@ class PregameOddsSpider(scrapy.Spider):
                 sport=sport_name,
                 league=league,
                 collected_at=iso_now(),
-                game_key=game_key_from(game_data["away_team"], game_data["home_team"], game_data.get("event_date")),
+                game_key=game_key_from(
+                    game_data["away_team"],
+                    game_data["home_team"],
+                    game_data.get("event_date"),
+                ),
                 event_date=game_data.get("event_date"),
                 event_time=game_data.get("event_time"),
                 rotation_number=game_data.get("rotation_number"),
@@ -529,10 +571,10 @@ class PregameOddsSpider(scrapy.Spider):
             return games;
         }
         """
-        
+
         try:
             raw_games = await page.evaluate(js_code)
-            
+
             # Process and clean the data
             processed_games = []
             for game in raw_games:
@@ -540,36 +582,47 @@ class PregameOddsSpider(scrapy.Spider):
                 date_str = game.get("event_date")
                 time_str = game.get("event_time")
                 iso_date, time_with_tz = parse_date_time(date_str or "", time_str or "")
-                
+
                 game["event_date"] = iso_date
                 game["event_time"] = time_with_tz
-                
+
                 # Convert markets to proper structure
                 markets_dict = game.get("markets", {})
                 spread = Market(
-                    away=QuoteSide(**markets_dict.get("spread", {}).get("away", {})) if markets_dict.get("spread", {}).get("away") else None,
-                    home=QuoteSide(**markets_dict.get("spread", {}).get("home", {})) if markets_dict.get("spread", {}).get("home") else None,
+                    away=QuoteSide(**markets_dict.get("spread", {}).get("away", {}))
+                    if markets_dict.get("spread", {}).get("away")
+                    else None,
+                    home=QuoteSide(**markets_dict.get("spread", {}).get("home", {}))
+                    if markets_dict.get("spread", {}).get("home")
+                    else None,
                 )
                 total = Market(
-                    over=QuoteSide(**markets_dict.get("total", {}).get("over", {})) if markets_dict.get("total", {}).get("over") else None,
-                    under=QuoteSide(**markets_dict.get("total", {}).get("under", {})) if markets_dict.get("total", {}).get("under") else None,
+                    over=QuoteSide(**markets_dict.get("total", {}).get("over", {}))
+                    if markets_dict.get("total", {}).get("over")
+                    else None,
+                    under=QuoteSide(**markets_dict.get("total", {}).get("under", {}))
+                    if markets_dict.get("total", {}).get("under")
+                    else None,
                 )
                 moneyline = Market(
-                    away=QuoteSide(**markets_dict.get("moneyline", {}).get("away", {})) if markets_dict.get("moneyline", {}).get("away") else None,
-                    home=QuoteSide(**markets_dict.get("moneyline", {}).get("home", {})) if markets_dict.get("moneyline", {}).get("home") else None,
+                    away=QuoteSide(**markets_dict.get("moneyline", {}).get("away", {}))
+                    if markets_dict.get("moneyline", {}).get("away")
+                    else None,
+                    home=QuoteSide(**markets_dict.get("moneyline", {}).get("home", {}))
+                    if markets_dict.get("moneyline", {}).get("home")
+                    else None,
                 )
-                
+
                 game["markets"] = {
                     "spread": spread,
                     "total": total,
                     "moneyline": moneyline,
                 }
-                
+
                 processed_games.append(game)
-            
+
             return processed_games
-            
+
         except Exception as e:
             self.logger.error(f"JavaScript extraction failed: {e}", exc_info=True)
             return []
-

@@ -6,7 +6,7 @@ Uses verified ESPN odds and corrected power ratings with safety checks
 
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
 # VERIFIED 2024 NFL WEEK 10 ODDS (November 9, 2024)
 # Source: ESPN.com/nfl/lines
@@ -14,19 +14,115 @@ from typing import Dict, List, Tuple
 
 VERIFIED_WEEK_10_ODDS = [
     # Sunday, November 10
-    {"away": "Cleveland", "home": "NY Jets", "favorite": "Cleveland", "spread": 1.5, "total": 37.5, "ml_away": -130, "ml_home": +110},
-    {"away": "Jacksonville", "home": "Houston", "favorite": "Houston", "spread": 1.5, "total": 37.5, "ml_away": -105, "ml_home": -115},
-    {"away": "Buffalo", "home": "Miami", "favorite": "Buffalo", "spread": 8.5, "total": 50.5, "ml_away": -500, "ml_home": +360},
-    {"away": "New England", "home": "Tampa Bay", "favorite": "Tampa Bay", "spread": 2.5, "total": 48.5, "ml_away": +135, "ml_home": -155},
-    {"away": "NY Giants", "home": "Chicago", "favorite": "Chicago", "spread": 4.5, "total": 44.5, "ml_away": +190, "ml_home": -225},
-    {"away": "Baltimore", "home": "Minnesota", "favorite": "Baltimore", "spread": 4.5, "total": 48.5, "ml_away": -240, "ml_home": +200},
-    {"away": "New Orleans", "home": "Carolina", "favorite": "Carolina", "spread": 5.5, "total": 38.5, "ml_away": +200, "ml_home": -240},
-    {"away": "Arizona", "home": "Seattle", "favorite": "Seattle", "spread": 7.5, "total": 44.5, "ml_away": +260, "ml_home": -320},
-    {"away": "Detroit", "home": "Washington", "favorite": "Detroit", "spread": 7.5, "total": 49.5, "ml_away": -400, "ml_home": +300},
-    {"away": "LA Rams", "home": "San Francisco", "favorite": "LA Rams", "spread": 5.5, "total": 49.5, "ml_away": -260, "ml_home": +215},
+    {
+        "away": "Cleveland",
+        "home": "NY Jets",
+        "favorite": "Cleveland",
+        "spread": 1.5,
+        "total": 37.5,
+        "ml_away": -130,
+        "ml_home": +110,
+    },
+    {
+        "away": "Jacksonville",
+        "home": "Houston",
+        "favorite": "Houston",
+        "spread": 1.5,
+        "total": 37.5,
+        "ml_away": -105,
+        "ml_home": -115,
+    },
+    {
+        "away": "Buffalo",
+        "home": "Miami",
+        "favorite": "Buffalo",
+        "spread": 8.5,
+        "total": 50.5,
+        "ml_away": -500,
+        "ml_home": +360,
+    },
+    {
+        "away": "New England",
+        "home": "Tampa Bay",
+        "favorite": "Tampa Bay",
+        "spread": 2.5,
+        "total": 48.5,
+        "ml_away": +135,
+        "ml_home": -155,
+    },
+    {
+        "away": "NY Giants",
+        "home": "Chicago",
+        "favorite": "Chicago",
+        "spread": 4.5,
+        "total": 44.5,
+        "ml_away": +190,
+        "ml_home": -225,
+    },
+    {
+        "away": "Baltimore",
+        "home": "Minnesota",
+        "favorite": "Baltimore",
+        "spread": 4.5,
+        "total": 48.5,
+        "ml_away": -240,
+        "ml_home": +200,
+    },
+    {
+        "away": "New Orleans",
+        "home": "Carolina",
+        "favorite": "Carolina",
+        "spread": 5.5,
+        "total": 38.5,
+        "ml_away": +200,
+        "ml_home": -240,
+    },
+    {
+        "away": "Arizona",
+        "home": "Seattle",
+        "favorite": "Seattle",
+        "spread": 7.5,
+        "total": 44.5,
+        "ml_away": +260,
+        "ml_home": -320,
+    },
+    {
+        "away": "Detroit",
+        "home": "Washington",
+        "favorite": "Detroit",
+        "spread": 7.5,
+        "total": 49.5,
+        "ml_away": -400,
+        "ml_home": +300,
+    },
+    {
+        "away": "LA Rams",
+        "home": "San Francisco",
+        "favorite": "LA Rams",
+        "spread": 5.5,
+        "total": 49.5,
+        "ml_away": -260,
+        "ml_home": +215,
+    },
     # Monday, November 11
-    {"away": "Pittsburgh", "home": "LA Chargers", "favorite": "LA Chargers", "spread": 2.5, "total": 44.5, "ml_away": +125, "ml_home": -145},
-    {"away": "Philadelphia", "home": "Green Bay", "favorite": "Green Bay", "spread": 1.5, "total": 45.5, "ml_away": -105, "ml_home": -115},
+    {
+        "away": "Pittsburgh",
+        "home": "LA Chargers",
+        "favorite": "LA Chargers",
+        "spread": 2.5,
+        "total": 44.5,
+        "ml_away": +125,
+        "ml_home": -145,
+    },
+    {
+        "away": "Philadelphia",
+        "home": "Green Bay",
+        "favorite": "Green Bay",
+        "spread": 1.5,
+        "total": 45.5,
+        "ml_away": -105,
+        "ml_home": -115,
+    },
 ]
 
 
@@ -37,10 +133,10 @@ def load_power_ratings() -> Dict[str, float]:
     if not ratings_file.exists():
         raise FileNotFoundError(f"Power ratings file not found: {ratings_file}")
 
-    with open(ratings_file, 'r') as f:
+    with open(ratings_file, "r") as f:
         data = json.load(f)
 
-    return data['ratings']
+    return data["ratings"]
 
 
 def calculate_predicted_spread(away_rating: float, home_rating: float) -> float:
@@ -62,10 +158,10 @@ def validate_spread(game: Dict, ratings: Dict) -> Tuple[bool, str]:
     Validate that spread makes logical sense
     Returns: (is_valid, error_message)
     """
-    away = game['away']
-    home = game['home']
-    favorite = game['favorite']
-    spread = game['spread']
+    away = game["away"]
+    home = game["home"]
+    favorite = game["favorite"]
+    spread = game["spread"]
 
     # Get ratings
     away_rating = ratings.get(away, 0.0)
@@ -73,10 +169,16 @@ def validate_spread(game: Dict, ratings: Dict) -> Tuple[bool, str]:
 
     # Check 1: Favorite should have higher rating (generally)
     if favorite == home and home_rating < away_rating - 5:
-        return False, f"WARNING: {home} favored by market but has much lower rating than {away}"
+        return (
+            False,
+            f"WARNING: {home} favored by market but has much lower rating than {away}",
+        )
 
     if favorite == away and away_rating < home_rating - 5:
-        return False, f"WARNING: {away} favored by market but has much lower rating than {home}"
+        return (
+            False,
+            f"WARNING: {away} favored by market but has much lower rating than {home}",
+        )
 
     # Check 2: Spread should be positive number
     if spread < 0:
@@ -87,11 +189,11 @@ def validate_spread(game: Dict, ratings: Dict) -> Tuple[bool, str]:
 
 def analyze_game(game: Dict, ratings: Dict) -> Dict:
     """Analyze a single game for edges"""
-    away = game['away']
-    home = game['home']
-    favorite = game['favorite']
-    market_spread = game['spread']
-    total = game['total']
+    away = game["away"]
+    home = game["home"]
+    favorite = game["favorite"]
+    market_spread = game["spread"]
+    total = game["total"]
 
     # Get ratings
     away_rating = ratings.get(away, 0.0)
@@ -134,7 +236,9 @@ def analyze_game(game: Dict, ratings: Dict) -> Dict:
         "edge": edge,
         "recommendation": rec if edge >= 3.5 else "NO BET",
         "total": total,
-        "confidence": "STRONG" if edge >= 7.0 else ("MEDIUM" if edge >= 3.5 else "WEAK")
+        "confidence": "STRONG"
+        if edge >= 7.0
+        else ("MEDIUM" if edge >= 3.5 else "WEAK"),
     }
 
 
@@ -183,17 +287,23 @@ def main():
         # Print analysis
         print(f"GAME {i}: {analysis['game']}")
         print("-" * 100)
-        print(f"Power Ratings:     {game['away']} ({analysis['away_rating']:.2f}) @ {game['home']} ({analysis['home_rating']:.2f})")
-        print(f"System Prediction: {analysis['predicted_spread']:+.1f} (positive = home favored)")
+        print(
+            f"Power Ratings:     {game['away']} ({analysis['away_rating']:.2f}) @ {game['home']} ({analysis['home_rating']:.2f})"
+        )
+        print(
+            f"System Prediction: {analysis['predicted_spread']:+.1f} (positive = home favored)"
+        )
         print(f"Market Line:       {game['favorite']} -{game['spread']}")
         print(f"Edge:              {analysis['edge']:.1f} points")
         print(f"Total:             {game['total']}")
-        print(f"Recommendation:    {analysis['recommendation']} ({analysis['confidence']})")
+        print(
+            f"Recommendation:    {analysis['recommendation']} ({analysis['confidence']})"
+        )
 
         if not is_valid:
             print(f"[WARNING] {msg}")
 
-        if analysis['edge'] >= 3.5:
+        if analysis["edge"] >= 3.5:
             strong_edges.append(analysis)
 
         print()
@@ -206,10 +316,12 @@ def main():
 
     if strong_edges:
         # Sort by edge
-        strong_edges.sort(key=lambda x: x['edge'], reverse=True)
+        strong_edges.sort(key=lambda x: x["edge"], reverse=True)
 
         for i, edge in enumerate(strong_edges, 1):
-            print(f"{i}. {edge['game']:40s} - {edge['recommendation']:30s} ({edge['edge']:.1f} pt edge)")
+            print(
+                f"{i}. {edge['game']:40s} - {edge['recommendation']:30s} ({edge['edge']:.1f} pt edge)"
+            )
     else:
         print("No strong edges found (all edges < 3.5 points)")
 

@@ -12,14 +12,12 @@ Or use PYTHONPATH:
 """
 
 import sys
-from datetime import date
 from pathlib import Path
 
 # Add src to path for standalone execution
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from walters_analyzer.season_calendar import (
-    League,
     SeasonPhase,
     format_season_status,
     get_nfl_season_phase,

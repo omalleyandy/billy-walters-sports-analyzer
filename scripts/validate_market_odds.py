@@ -21,7 +21,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Carolina",
             "spread": -6.5,  # Giants favored by 6.5
             "total": 40.5,
-            "notes": "Giants -6.5"
+            "notes": "Giants -6.5",
         },
         {
             "game": "Bears @ Patriots",
@@ -29,7 +29,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "New England",
             "spread": -6.0,  # Bears favored by 6
             "total": None,
-            "notes": "Bears -6.0"
+            "notes": "Bears -6.0",
         },
         {
             "game": "Bills @ Colts",
@@ -37,7 +37,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Indianapolis",
             "spread": -3.5,  # Bills favored by 3.5
             "total": 47.0,
-            "notes": "Bills -3.5"
+            "notes": "Bills -3.5",
         },
         {
             "game": "Chiefs @ Broncos",
@@ -45,7 +45,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Denver",
             "spread": -7.5,  # Chiefs favored by 7.5
             "total": 42.0,
-            "notes": "Chiefs -7.5"
+            "notes": "Chiefs -7.5",
         },
         {
             "game": "Falcons @ Saints",
@@ -53,7 +53,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "New Orleans",
             "spread": -3.5,  # Falcons favored by 3.5
             "total": 46.0,
-            "notes": "Falcons -3.5"
+            "notes": "Falcons -3.5",
         },
         {
             "game": "49ers @ Buccaneers",
@@ -61,7 +61,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Tampa Bay",
             "spread": -6.0,  # 49ers favored by 6
             "total": 50.5,
-            "notes": "49ers -6.0"
+            "notes": "49ers -6.0",
         },
         {
             "game": "Commanders @ Steelers",
@@ -69,7 +69,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Pittsburgh",
             "spread": -3.0,  # Commanders favored by 3
             "total": 45.0,
-            "notes": "Washington -3.0"
+            "notes": "Washington -3.0",
         },
         {
             "game": "Vikings @ Jaguars",
@@ -77,7 +77,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Jacksonville",
             "spread": -7.0,  # Vikings favored by 7
             "total": 43.0,
-            "notes": "Vikings -7.0"
+            "notes": "Vikings -7.0",
         },
         {
             "game": "Chargers @ Titans",
@@ -85,7 +85,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Tennessee",
             "spread": -7.0,  # Chargers favored by 7
             "total": 39.0,
-            "notes": "Chargers -7.0"
+            "notes": "Chargers -7.0",
         },
         {
             "game": "Eagles @ Cowboys",
@@ -93,7 +93,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Dallas",
             "spread": -7.5,  # Eagles favored by 7.5
             "total": 43.5,
-            "notes": "Eagles -7.5"
+            "notes": "Eagles -7.5",
         },
         {
             "game": "Jets @ Cardinals",
@@ -101,7 +101,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Arizona",
             "spread": -2.0,  # Jets favored by 2
             "total": 46.5,
-            "notes": "Jets -2.0"
+            "notes": "Jets -2.0",
         },
         {
             "game": "Lions @ Commanders",
@@ -109,7 +109,7 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Washington",
             "spread": -8.5,  # Lions favored by 8.5
             "total": 49.5,
-            "notes": "Detroit -8.5 (VERIFIED)"
+            "notes": "Detroit -8.5 (VERIFIED)",
         },
         {
             "game": "Dolphins @ Bills",  # NOTE: Bills already played Colts, this might be wrong
@@ -117,9 +117,9 @@ VERIFIED_WEEK_10_ODDS_2024 = {
             "underdog": "Miami",
             "spread": -9.5,  # Bills favored by 9.5
             "total": 45.5,
-            "notes": "Buffalo -9.5 (VERIFIED) - CHECK IF THIS GAME EXISTS"
+            "notes": "Buffalo -9.5 (VERIFIED) - CHECK IF THIS GAME EXISTS",
         },
-    ]
+    ],
 }
 
 
@@ -131,7 +131,7 @@ def print_verified_odds():
     print("=" * 100)
     print()
 
-    for game in VERIFIED_WEEK_10_ODDS_2024['games']:
+    for game in VERIFIED_WEEK_10_ODDS_2024["games"]:
         print(f"{game['game']:40s} | {game['notes']:25s} | O/U: {game['total']}")
 
     print()

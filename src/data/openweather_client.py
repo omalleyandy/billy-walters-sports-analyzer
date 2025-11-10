@@ -120,9 +120,7 @@ class OpenWeatherClient:
 
         for attempt in range(max_retries):
             try:
-                logger.debug(
-                    f"GET {endpoint} (attempt {attempt + 1}/{max_retries})"
-                )
+                logger.debug(f"GET {endpoint} (attempt {attempt + 1}/{max_retries})")
 
                 response = await self._client.get(endpoint, params=params)
                 response.raise_for_status()
@@ -137,13 +135,12 @@ class OpenWeatherClient:
                 # Don't retry client errors (4xx)
                 if 400 <= e.response.status_code < 500:
                     raise RuntimeError(
-                        f"Client error {e.response.status_code}: "
-                        f"{e.response.text}"
+                        f"Client error {e.response.status_code}: {e.response.text}"
                     ) from e
 
                 # Retry server errors (5xx)
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt  # Exponential backoff
+                    wait_time = 2**attempt  # Exponential backoff
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -155,7 +152,7 @@ class OpenWeatherClient:
                 logger.warning(f"Request error: {e}")
 
                 if attempt < max_retries - 1:
-                    wait_time = 2 ** attempt
+                    wait_time = 2**attempt
                     logger.info(f"Retrying in {wait_time}s...")
                     await asyncio.sleep(wait_time)
                 else:
@@ -221,9 +218,7 @@ class OpenWeatherClient:
 
         return [self._format_forecast(item) for item in forecast_list]
 
-    def _format_current_weather(
-        self, data: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _format_current_weather(self, data: dict[str, Any]) -> dict[str, Any]:
         """Format current weather data."""
         main = data.get("main", {})
         wind = data.get("wind", {})
@@ -254,9 +249,7 @@ class OpenWeatherClient:
             "rain_1h": rain.get("1h", 0),
             "snow_1h": snow.get("1h", 0),
             "visibility_m": data.get("visibility"),
-            "timestamp": datetime.fromtimestamp(
-                data.get("dt", 0)
-            ).isoformat(),
+            "timestamp": datetime.fromtimestamp(data.get("dt", 0)).isoformat(),
             "source": "openweather",
         }
 
@@ -278,9 +271,7 @@ class OpenWeatherClient:
             precipitation_type = "snow"
 
         return {
-            "forecast_time": datetime.fromtimestamp(
-                data.get("dt", 0)
-            ).isoformat(),
+            "forecast_time": datetime.fromtimestamp(data.get("dt", 0)).isoformat(),
             "temperature_f": main.get("temp"),
             "feels_like_f": main.get("feels_like"),
             "humidity": main.get("humidity"),
@@ -321,9 +312,7 @@ class OpenWeatherClient:
         Raises:
             RuntimeError: If request fails
         """
-        logger.info(
-            f"Getting game forecast for {city}, {state} at {game_time}"
-        )
+        logger.info(f"Getting game forecast for {city}, {state} at {game_time}")
 
         # Check if game is in the past or very near future
         hours_ahead = (game_time - datetime.now()).total_seconds() / 3600
@@ -331,14 +320,10 @@ class OpenWeatherClient:
         if hours_ahead < 0:
             # Game in the past - get current weather
             logger.warning("Game time is in the past, getting current weather")
-            return await self.get_current_weather(
-                city, state, max_retries=max_retries
-            )
+            return await self.get_current_weather(city, state, max_retries=max_retries)
 
         # Get forecast
-        forecasts = await self.get_forecast(
-            city, state, max_retries=max_retries
-        )
+        forecasts = await self.get_forecast(city, state, max_retries=max_retries)
 
         if not forecasts:
             raise RuntimeError("No forecast data available")
@@ -346,9 +331,7 @@ class OpenWeatherClient:
         # Find closest forecast to game time
         closest_forecast = min(
             forecasts,
-            key=lambda f: abs(
-                datetime.fromisoformat(f["forecast_time"]) - game_time
-            ),
+            key=lambda f: abs(datetime.fromisoformat(f["forecast_time"]) - game_time),
         )
 
         logger.info(
@@ -389,7 +372,7 @@ async def main():
     async with OpenWeatherClient() as client:
         # Get current weather
         current = await client.get_current_weather("Kansas City", "MO")
-        print(f"\nCurrent weather in Kansas City, MO:")
+        print("\nCurrent weather in Kansas City, MO:")
         print(f"  Temperature: {current['temperature_f']}°F")
         print(f"  Feels like: {current['feels_like_f']}°F")
         print(f"  Weather: {current['weather_text']}")
@@ -398,9 +381,7 @@ async def main():
 
         # Get game forecast
         game_time = datetime.now().replace(hour=13, minute=0, second=0)
-        forecast = await client.get_game_forecast(
-            "Kansas City", "MO", game_time
-        )
+        forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
         print(f"\nGame forecast for {game_time}:")
         print(f"  Temperature: {forecast['temperature_f']}°F")
         print(f"  Weather: {forecast['weather_text']}")
@@ -408,9 +389,7 @@ async def main():
         print(f"  Wind: {forecast['wind_speed_mph']} mph")
 
         # Convert wind direction
-        wind_dir = client.wind_direction_text(
-            forecast.get("wind_direction_deg")
-        )
+        wind_dir = client.wind_direction_text(forecast.get("wind_direction_deg"))
         print(f"  Wind direction: {wind_dir}")
 
 

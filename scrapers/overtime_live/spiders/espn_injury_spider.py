@@ -3,19 +3,20 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List
 from datetime import datetime
 
 import scrapy
 from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
-from playwright.async_api import Page, TimeoutError as PWTimeout
+from playwright.async_api import Page
 
 # Local modules
 from ..items import InjuryReportItem, iso_now
 
 try:
     from dotenv import load_dotenv  # type: ignore
+
     load_dotenv()
 except Exception:
     pass
@@ -24,13 +25,13 @@ except Exception:
 class ESPNInjurySpider(scrapy.Spider):
     """
     Scraper for ESPN injury reports (focus: NCAAF).
-    
+
     Collects player injury status (Out, Doubtful, Questionable, Probable)
     to inform betting decisions and gate logic.
-    
+
     Usage:
         scrapy crawl espn_injuries
-        
+
     Environment variables:
         ESPN_INJURY_URL - custom injury report URL (optional)
         ESPN_SPORT - sport filter: "football", "basketball" (default: football)
@@ -67,11 +68,11 @@ class ESPNInjurySpider(scrapy.Spider):
         # Allow override via environment
         sport = os.getenv("ESPN_SPORT", "football")
         league = os.getenv("ESPN_LEAGUE", "college-football")
-        
+
         # Store sport/league for later use
         self.sport = sport
         self.league = league
-        
+
         # Map league to proper sport/league labels for data export
         if league == "nfl":
             self.sport_label = "nfl"
@@ -79,14 +80,20 @@ class ESPNInjurySpider(scrapy.Spider):
         else:
             self.sport_label = "college_football"
             self.league_label = "NCAAF"
-        
+
         # ESPN injury report URLs
         # NFL uses /nfl/injuries, college football uses /college-football/injuries
         if league == "nfl":
-            injury_url = os.getenv("ESPN_INJURY_URL") or f"https://www.espn.com/{league}/injuries"
+            injury_url = (
+                os.getenv("ESPN_INJURY_URL")
+                or f"https://www.espn.com/{league}/injuries"
+            )
         else:
-            injury_url = os.getenv("ESPN_INJURY_URL") or f"https://www.espn.com/{sport}/{league}/injuries"
-        
+            injury_url = (
+                os.getenv("ESPN_INJURY_URL")
+                or f"https://www.espn.com/{sport}/{league}/injuries"
+            )
+
         self.logger.info(f"Starting ESPN injury scraper for: {injury_url}")
 
         meta = {
@@ -115,8 +122,12 @@ class ESPNInjurySpider(scrapy.Spider):
         if page:
             os.makedirs("snapshots", exist_ok=True)
             try:
-                await page.screenshot(path="snapshots/espn_injury_error.png", full_page=True)
-                self.logger.error("Saved error screenshot to snapshots/espn_injury_error.png")
+                await page.screenshot(
+                    path="snapshots/espn_injury_error.png", full_page=True
+                )
+                self.logger.error(
+                    "Saved error screenshot to snapshots/espn_injury_error.png"
+                )
             except Exception:
                 self.logger.debug("Could not write error screenshot", exc_info=True)
             try:
@@ -127,7 +138,7 @@ class ESPNInjurySpider(scrapy.Spider):
     async def parse_injury_page(self, response: Response):
         """Parse the ESPN injury report page."""
         page: Page = response.meta["playwright_page"]
-        
+
         # Take a snapshot for debugging
         os.makedirs("snapshots", exist_ok=True)
         try:
@@ -138,14 +149,14 @@ class ESPNInjurySpider(scrapy.Spider):
 
         # Try multiple parsing strategies
         injuries = []
-        
+
         # Strategy 1: Try to extract from ESPN's JSON data embedded in page
         injuries.extend(await self._extract_from_json(page))
-        
+
         # Strategy 2: Parse DOM structure
         if not injuries:
             injuries.extend(await self._extract_from_dom(page))
-        
+
         # Strategy 3: Text-based extraction (fallback)
         if not injuries:
             injuries.extend(await self._extract_from_text(page))
@@ -210,35 +221,41 @@ class ESPNInjurySpider(scrapy.Spider):
                 return self._parse_json_injuries(data)
         except Exception:
             self.logger.debug("No JSON data found", exc_info=True)
-        
+
         return []
 
     def _parse_json_injuries(self, data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Parse injury data from ESPN's JSON structure."""
         injuries = []
-        
+
         # ESPN's structure may vary - handle common patterns
         teams = data.get("teams", [])
         if isinstance(teams, list):
             for team in teams:
                 team_name = team.get("team", {}).get("displayName", "")
                 team_abbr = team.get("team", {}).get("abbreviation", "")
-                
+
                 players = team.get("injuries", [])
                 for player in players:
-                    injuries.append({
-                        "team": team_name,
-                        "team_abbr": team_abbr,
-                        "player_name": player.get("athlete", {}).get("displayName", ""),
-                        "position": player.get("athlete", {}).get("position", {}).get("abbreviation", ""),
-                        "injury_status": player.get("status", ""),
-                        "injury_type": player.get("type", ""),
-                        "date_reported": player.get("date", ""),
-                        "game_date": None,
-                        "opponent": None,
-                        "notes": player.get("details", ""),
-                    })
-        
+                    injuries.append(
+                        {
+                            "team": team_name,
+                            "team_abbr": team_abbr,
+                            "player_name": player.get("athlete", {}).get(
+                                "displayName", ""
+                            ),
+                            "position": player.get("athlete", {})
+                            .get("position", {})
+                            .get("abbreviation", ""),
+                            "injury_status": player.get("status", ""),
+                            "injury_type": player.get("type", ""),
+                            "date_reported": player.get("date", ""),
+                            "game_date": None,
+                            "opponent": None,
+                            "notes": player.get("details", ""),
+                        }
+                    )
+
         return injuries
 
     async def _extract_from_dom(self, page: Page) -> List[Dict[str, Any]]:
@@ -343,7 +360,7 @@ class ESPNInjurySpider(scrapy.Spider):
             return injuries;
         }
         """
-        
+
         try:
             results = await page.evaluate(script)
             if isinstance(results, list) and results:
@@ -351,7 +368,7 @@ class ESPNInjurySpider(scrapy.Spider):
                 return self._normalize_injuries(results)
         except Exception:
             self.logger.debug("DOM extraction failed", exc_info=True)
-        
+
         return []
 
     async def _extract_from_text(self, page: Page) -> List[Dict[str, Any]]:
@@ -360,44 +377,50 @@ class ESPNInjurySpider(scrapy.Spider):
         """
         try:
             page_text = await page.evaluate("() => document.body.innerText")
-            
+
             # Save for debugging
             os.makedirs("snapshots", exist_ok=True)
             with open("snapshots/espn_injury_text.txt", "w", encoding="utf-8") as f:
                 f.write(page_text[:50000])
-            
+
             injuries = []
-            
+
             # Pattern: Look for player names followed by injury status
             # Example: "Joe Smith QB Out Knee injury"
-            pattern = r'([A-Z][a-z]+\s+[A-Z][a-z]+)\s+(\w{1,3})\s+(Out|Doubtful|Questionable|Probable|Day-to-Day)\s*([A-Za-z\s]*)?'
-            
+            pattern = r"([A-Z][a-z]+\s+[A-Z][a-z]+)\s+(\w{1,3})\s+(Out|Doubtful|Questionable|Probable|Day-to-Day)\s*([A-Za-z\s]*)?"
+
             matches = re.finditer(pattern, page_text, re.MULTILINE)
             for match in matches:
-                injuries.append({
-                    "team": "",
-                    "player_name": match.group(1),
-                    "position": match.group(2),
-                    "injury_status": match.group(3),
-                    "injury_type": match.group(4).strip() if match.group(4) else None,
-                })
-            
+                injuries.append(
+                    {
+                        "team": "",
+                        "player_name": match.group(1),
+                        "position": match.group(2),
+                        "injury_status": match.group(3),
+                        "injury_type": match.group(4).strip()
+                        if match.group(4)
+                        else None,
+                    }
+                )
+
             if injuries:
                 self.logger.info(f"Extracted {len(injuries)} injuries from text")
                 return self._normalize_injuries(injuries)
-                
+
         except Exception:
             self.logger.debug("Text extraction failed", exc_info=True)
-        
+
         return []
 
-    def _normalize_injuries(self, raw_injuries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _normalize_injuries(
+        self, raw_injuries: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """
         Normalize injury data to consistent format.
         Clean up text, standardize status values, etc.
         """
         normalized = []
-        
+
         for injury in raw_injuries:
             # Clean up status
             status = injury.get("injury_status", "").strip()
@@ -410,23 +433,25 @@ class ESPNInjurySpider(scrapy.Spider):
                 "dtd": "Day-to-Day",
             }
             normalized_status = status_map.get(status.lower(), status)
-            
+
             # Only include if we have minimum required data
             if injury.get("player_name") and normalized_status:
-                normalized.append({
-                    "sport": getattr(self, 'sport_label', 'college_football'),
-                    "league": getattr(self, 'league_label', 'NCAAF'),
-                    "team": injury.get("team", "").strip(),
-                    "team_abbr": injury.get("team_abbr", ""),
-                    "player_name": injury.get("player_name", "").strip(),
-                    "position": injury.get("position", "").strip() or None,
-                    "injury_status": normalized_status,
-                    "injury_type": injury.get("injury_type", "").strip() or None,
-                    "date_reported": injury.get("date_reported") or datetime.now().strftime("%Y-%m-%d"),
-                    "game_date": injury.get("game_date"),
-                    "opponent": injury.get("opponent"),
-                    "notes": injury.get("notes"),
-                })
-        
-        return normalized
+                normalized.append(
+                    {
+                        "sport": getattr(self, "sport_label", "college_football"),
+                        "league": getattr(self, "league_label", "NCAAF"),
+                        "team": injury.get("team", "").strip(),
+                        "team_abbr": injury.get("team_abbr", ""),
+                        "player_name": injury.get("player_name", "").strip(),
+                        "position": injury.get("position", "").strip() or None,
+                        "injury_status": normalized_status,
+                        "injury_type": injury.get("injury_type", "").strip() or None,
+                        "date_reported": injury.get("date_reported")
+                        or datetime.now().strftime("%Y-%m-%d"),
+                        "game_date": injury.get("game_date"),
+                        "opponent": injury.get("opponent"),
+                        "notes": injury.get("notes"),
+                    }
+                )
 
+        return normalized

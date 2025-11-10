@@ -20,8 +20,7 @@ import logging
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -116,7 +115,9 @@ class AccuWeatherClient:
                 if admin_area.get("ID") == state:
                     location_key = location.get("Key")
                     self.location_cache[cache_key] = location_key
-                    logger.info(f"Found location key for {city}, {state}: {location_key}")
+                    logger.info(
+                        f"Found location key for {city}, {state}: {location_key}"
+                    )
                     return location_key
 
             logger.warning(f"No location key found for {city}, {state}")
@@ -127,9 +128,7 @@ class AccuWeatherClient:
             return None
 
     def get_hourly_forecast(
-        self,
-        location_key: str,
-        hours_ahead: int = 12
+        self, location_key: str, hours_ahead: int = 12
     ) -> Optional[Dict]:
         """
         Get hourly forecast for a location
@@ -146,7 +145,9 @@ class AccuWeatherClient:
 
         try:
             # Hourly forecast endpoint
-            url = f"{self.base_url}/forecasts/v1/hourly/{hours_ahead}hour/{location_key}"
+            url = (
+                f"{self.base_url}/forecasts/v1/hourly/{hours_ahead}hour/{location_key}"
+            )
             params = {
                 "apikey": self.api_key,
                 "details": "true",  # Include wind, precipitation
@@ -163,11 +164,7 @@ class AccuWeatherClient:
             logger.error(f"Error getting forecast for location {location_key}: {e}")
             return None
 
-    def get_game_weather(
-        self,
-        team: str,
-        game_time: datetime
-    ) -> Optional[Dict]:
+    def get_game_weather(self, team: str, game_time: datetime) -> Optional[Dict]:
         """
         Get weather forecast for a specific game
 
@@ -191,13 +188,12 @@ class AccuWeatherClient:
                 "temperature": None,
                 "wind_speed": None,
                 "precipitation": None,
-                "conditions": "Indoor"
+                "conditions": "Indoor",
             }
 
         # Get location key
         location_key = self.get_location_key(
-            stadium_info["city"],
-            stadium_info["state"]
+            stadium_info["city"], stadium_info["state"]
         )
 
         if not location_key:
@@ -210,7 +206,7 @@ class AccuWeatherClient:
 
         # Find closest forecast to game time
         closest_forecast = None
-        min_time_diff = float('inf')
+        min_time_diff = float("inf")
 
         for hour_forecast in forecast:
             forecast_time = datetime.fromisoformat(
@@ -240,7 +236,7 @@ class AccuWeatherClient:
             "conditions": icon_phrase,
             "forecast_time": closest_forecast["DateTime"],
             "city": stadium_info["city"],
-            "state": stadium_info["state"]
+            "state": stadium_info["state"],
         }
 
         logger.info(
@@ -250,10 +246,7 @@ class AccuWeatherClient:
 
         return weather_data
 
-    def calculate_weather_impact(
-        self,
-        weather_data: Dict
-    ) -> Tuple[float, float]:
+    def calculate_weather_impact(self, weather_data: Dict) -> Tuple[float, float]:
         """
         Calculate weather impact on total and spread
 
@@ -285,7 +278,9 @@ class AccuWeatherClient:
             total_adj -= wind_impact
             spread_adj -= 1.0  # Favors defense
 
-            logger.info(f"High wind ({wind_speed} MPH): Total -{wind_impact:.1f}, Spread -1.0")
+            logger.info(
+                f"High wind ({wind_speed} MPH): Total -{wind_impact:.1f}, Spread -1.0"
+            )
 
         # Temperature impact
         if temperature and temperature < 32:
@@ -293,7 +288,9 @@ class AccuWeatherClient:
             total_adj -= temp_impact
             spread_adj -= 0.5  # Favors rushing teams
 
-            logger.info(f"Cold weather ({temperature}°F): Total -{temp_impact}, Spread -0.5")
+            logger.info(
+                f"Cold weather ({temperature}°F): Total -{temp_impact}, Spread -0.5"
+            )
 
         # Precipitation
         if precipitation and precipitation.lower() in ["rain", "snow"]:
@@ -301,7 +298,9 @@ class AccuWeatherClient:
             total_adj -= precip_impact
             spread_adj -= 1.0
 
-            logger.info(f"Precipitation ({precipitation}): Total -{precip_impact}, Spread -1.0")
+            logger.info(
+                f"Precipitation ({precipitation}): Total -{precip_impact}, Spread -1.0"
+            )
 
         return total_adj, spread_adj
 
@@ -320,7 +319,7 @@ def main():
 
     if weather:
         print("\n" + "=" * 60)
-        print(f"Weather for Green Bay Packers")
+        print("Weather for Green Bay Packers")
         print("=" * 60)
         print(f"Indoor: {weather['indoor']}")
         print(f"Temperature: {weather.get('temperature')}°F")
@@ -330,7 +329,7 @@ def main():
 
         # Calculate impact
         total_adj, spread_adj = client.calculate_weather_impact(weather)
-        print(f"\nBilly Walters Impact:")
+        print("\nBilly Walters Impact:")
         print(f"Total Adjustment: {total_adj:+.1f} points")
         print(f"Spread Adjustment: {spread_adj:+.1f} points")
         print("=" * 60)

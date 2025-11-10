@@ -13,7 +13,9 @@ COLLEGE_FOOTBALL_HEADING = "COLLEGE FOOTBALL"
 BOARD_CONTAINER = "div:has-text('COLLEGE FOOTBALL') >> xpath=../.."
 
 # A single game “row” (teams + markets). This is intentionally lax.
-GAME_ROW = "[class*=row],[class*=event],[class*=market]"  # pick whichever matches in your DOM
+GAME_ROW = (
+    "[class*=row],[class*=event],[class*=market]"  # pick whichever matches in your DOM
+)
 
 # Inside a row, elements that resemble team names:
 TEAM_NAME_CANDIDATE = "div:has-text(' @ '), span, a, strong"

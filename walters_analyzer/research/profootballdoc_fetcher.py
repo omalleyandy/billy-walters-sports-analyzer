@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import logging
-import os
 from typing import Any, Dict, List, Optional
 
 import aiohttp
-from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
@@ -180,4 +178,3 @@ class ProFootballDocFetcher:
         """Close the HTTP session."""
         if self._session and not self._session.closed:
             await self._session.close()
-

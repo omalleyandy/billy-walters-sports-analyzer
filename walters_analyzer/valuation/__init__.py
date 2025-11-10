@@ -10,16 +10,15 @@ from .config import load_config, get_config
 from .core import BillyWaltersValuation
 
 __all__ = [
-    'BillyWaltersValuation',
-    'PlayerPosition',
-    'PlayerValuation',
-    'InjuryType',
-    'InjuryImpactCalculator',
-    'MarketAnalyzer',
-    'load_config',
-    'get_config',
+    "BillyWaltersValuation",
+    "PlayerPosition",
+    "PlayerValuation",
+    "InjuryType",
+    "InjuryImpactCalculator",
+    "MarketAnalyzer",
+    "load_config",
+    "get_config",
 ]
 
 # Version
-__version__ = '1.0.0'
-
+__version__ = "1.0.0"

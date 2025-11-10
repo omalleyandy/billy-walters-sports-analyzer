@@ -12,8 +12,7 @@ from playwright.async_api import async_playwright
 import logging
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -36,13 +35,15 @@ class MasseyRatingsScraper:
         request = route.request
 
         # Log API calls
-        if 'json' in request.url or '/flOm' in request.url:
+        if "json" in request.url or "/flOm" in request.url:
             logger.info(f"API Request: {request.method} {request.url}")
-            self.captured_requests.append({
-                'url': request.url,
-                'method': request.method,
-                'headers': request.headers
-            })
+            self.captured_requests.append(
+                {
+                    "url": request.url,
+                    "method": request.method,
+                    "headers": request.headers,
+                }
+            )
 
         # Continue the request
         await route.continue_()
@@ -52,15 +53,20 @@ class MasseyRatingsScraper:
         request = response.request
 
         # Capture JSON responses
-        if response.ok and ('json' in request.url or 'application/json' in response.headers.get('content-type', '')):
+        if response.ok and (
+            "json" in request.url
+            or "application/json" in response.headers.get("content-type", "")
+        ):
             try:
                 data = await response.json()
                 logger.info(f"Captured JSON response from: {request.url[:100]}...")
-                self.captured_responses.append({
-                    'url': request.url,
-                    'data': data,
-                    'timestamp': datetime.now().isoformat()
-                })
+                self.captured_responses.append(
+                    {
+                        "url": request.url,
+                        "data": data,
+                        "timestamp": datetime.now().isoformat(),
+                    }
+                )
             except Exception as e:
                 logger.debug(f"Could not parse JSON: {e}")
 
@@ -83,13 +89,29 @@ class MasseyRatingsScraper:
             page = await context.new_page()
 
             # Block ads and trackers
-            await page.route("**/*", lambda route: (
-                route.abort() if any(x in route.request.url for x in [
-                    'doubleclick.net', 'googlesyndication', 'googletagmanager',
-                    'advertising', 'analytics', 'tracking', 'adnxs.com',
-                    'amazon-adsystem', 'rubiconproject', 'pubmatic', 'criteo'
-                ]) else self.intercept_route(route)
-            ))
+            await page.route(
+                "**/*",
+                lambda route: (
+                    route.abort()
+                    if any(
+                        x in route.request.url
+                        for x in [
+                            "doubleclick.net",
+                            "googlesyndication",
+                            "googletagmanager",
+                            "advertising",
+                            "analytics",
+                            "tracking",
+                            "adnxs.com",
+                            "amazon-adsystem",
+                            "rubiconproject",
+                            "pubmatic",
+                            "criteo",
+                        ]
+                    )
+                    else self.intercept_route(route)
+                ),
+            )
             page.on("response", self.handle_response)
 
             # Navigate and wait for content
@@ -159,16 +181,18 @@ class MasseyRatingsScraper:
         # Save data
         if save:
             filepath = f"{self.output_dir}/nfl_ratings_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            with open(filepath, 'w') as f:
+            with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
                 api_file = f"{self.output_dir}/nfl_api_responses_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-                with open(api_file, 'w') as f:
+                with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
-                logger.info(f"Saved {len(self.captured_responses)} API responses to {api_file}")
+                logger.info(
+                    f"Saved {len(self.captured_responses)} API responses to {api_file}"
+                )
 
         return ratings_data
 
@@ -195,13 +219,29 @@ class MasseyRatingsScraper:
             page = await context.new_page()
 
             # Block ads and trackers
-            await page.route("**/*", lambda route: (
-                route.abort() if any(x in route.request.url for x in [
-                    'doubleclick.net', 'googlesyndication', 'googletagmanager',
-                    'advertising', 'analytics', 'tracking', 'adnxs.com',
-                    'amazon-adsystem', 'rubiconproject', 'pubmatic', 'criteo'
-                ]) else self.intercept_route(route)
-            ))
+            await page.route(
+                "**/*",
+                lambda route: (
+                    route.abort()
+                    if any(
+                        x in route.request.url
+                        for x in [
+                            "doubleclick.net",
+                            "googlesyndication",
+                            "googletagmanager",
+                            "advertising",
+                            "analytics",
+                            "tracking",
+                            "adnxs.com",
+                            "amazon-adsystem",
+                            "rubiconproject",
+                            "pubmatic",
+                            "criteo",
+                        ]
+                    )
+                    else self.intercept_route(route)
+                ),
+            )
             page.on("response", self.handle_response)
 
             # Navigate and wait for content
@@ -277,16 +317,18 @@ class MasseyRatingsScraper:
         # Save data
         if save:
             filepath = f"{self.output_dir}/ncaaf_ratings_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            with open(filepath, 'w') as f:
+            with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
                 api_file = f"{self.output_dir}/ncaaf_api_responses_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-                with open(api_file, 'w') as f:
+                with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
-                logger.info(f"Saved {len(self.captured_responses)} API responses to {api_file}")
+                logger.info(
+                    f"Saved {len(self.captured_responses)} API responses to {api_file}"
+                )
 
         return ratings_data
 
@@ -295,10 +337,7 @@ class MasseyRatingsScraper:
         nfl_data = await self.scrape_nfl_ratings()
         ncaaf_data = await self.scrape_ncaaf_ratings()
 
-        return {
-            'nfl': nfl_data,
-            'ncaaf': ncaaf_data
-        }
+        return {"nfl": nfl_data, "ncaaf": ncaaf_data}
 
 
 async def main():

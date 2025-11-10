@@ -19,9 +19,9 @@ from src.data.espn_client import ESPNClient
 
 async def fetch_real_2024_nfl_data():
     """Fetch actual 2024 NFL game results for weeks 1-10"""
-    print("="*70)
+    print("=" * 70)
     print("FETCHING REAL 2024 NFL DATA FROM ESPN")
-    print("="*70)
+    print("=" * 70)
     print()
 
     all_games = []
@@ -65,7 +65,11 @@ async def fetch_real_2024_nfl_data():
                     # Extract game data
                     game_date = event.get("date", "")
                     if game_date:
-                        game_date = datetime.fromisoformat(game_date.replace("Z", "+00:00")).date().isoformat()
+                        game_date = (
+                            datetime.fromisoformat(game_date.replace("Z", "+00:00"))
+                            .date()
+                            .isoformat()
+                        )
 
                     game = {
                         "week": week,
@@ -76,7 +80,7 @@ async def fetch_real_2024_nfl_data():
                         "away_score": int(away_team.get("score", 0)),
                         "home_injury_level": 0.0,
                         "away_injury_level": 0.0,
-                        "location": "home"
+                        "location": "home",
                     }
 
                     week_games.append(game)
@@ -87,7 +91,9 @@ async def fetch_real_2024_nfl_data():
                 # Show sample
                 if week_games:
                     sample = week_games[0]
-                    print(f"  Example: {sample['away_team']} @ {sample['home_team']} ({sample['away_score']}-{sample['home_score']})")
+                    print(
+                        f"  Example: {sample['away_team']} @ {sample['home_team']} ({sample['away_score']}-{sample['home_score']})"
+                    )
 
             except Exception as e:
                 print(f"  ERROR fetching Week {week}: {e}")
@@ -103,47 +109,51 @@ async def fetch_real_2024_nfl_data():
         "fetched": datetime.now().isoformat(),
         "note": "Real game data from ESPN - NOT simulated",
         "total_games": len(all_games),
-        "games": all_games
+        "games": all_games,
     }
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(output_data, f, indent=2)
 
     print()
-    print("="*70)
+    print("=" * 70)
     print(f"[SUCCESS] Saved {len(all_games)} real games to:")
     print(f"  {output_file}")
-    print("="*70)
+    print("=" * 70)
     print()
 
     # Validate New Orleans data
     print("VALIDATING NEW ORLEANS DATA:")
-    print("-"*70)
+    print("-" * 70)
 
-    no_games = [g for g in all_games if 'New Orleans' in g['home_team'] or 'New Orleans' in g['away_team']]
+    no_games = [
+        g
+        for g in all_games
+        if "New Orleans" in g["home_team"] or "New Orleans" in g["away_team"]
+    ]
 
     wins = 0
     losses = 0
 
     for game in no_games[:9]:  # First 9 weeks
-        home = game['home_team']
-        away = game['away_team']
-        home_score = game['home_score']
-        away_score = game['away_score']
+        home = game["home_team"]
+        away = game["away_team"]
+        home_score = game["home_score"]
+        away_score = game["away_score"]
 
-        if 'New Orleans' in home:
-            result = 'W' if home_score > away_score else 'L'
+        if "New Orleans" in home:
+            result = "W" if home_score > away_score else "L"
             score = f"{home_score}-{away_score}"
         else:
-            result = 'W' if away_score > home_score else 'L'
+            result = "W" if away_score > home_score else "L"
             score = f"{away_score}-{home_score}"
 
-        if result == 'W':
+        if result == "W":
             wins += 1
         else:
             losses += 1
 
-        opponent = away if 'New Orleans' in home else home
+        opponent = away if "New Orleans" in home else home
         print(f"Week {game['week']:2d}: {result} vs {opponent:20s} {score}")
 
     print(f"\nNew Orleans Record (Weeks 1-9): {wins}-{losses}")

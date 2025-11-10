@@ -8,7 +8,7 @@ import asyncio
 import json
 import logging
 from collections import deque
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from pathlib import Path
@@ -418,7 +418,9 @@ class HealthMonitor:
                 success_str = f"{metrics.success_rate:.1f}%"
                 checks_str = f"{metrics.successful_checks}/{metrics.total_checks}"
 
-                print(f"{source:<30} {status_str:<12} {success_str:<15} {checks_str:<10}")
+                print(
+                    f"{source:<30} {status_str:<12} {success_str:<15} {checks_str:<10}"
+                )
 
         # Recent alerts
         recent_alerts = list(self._alerts)[-5:]

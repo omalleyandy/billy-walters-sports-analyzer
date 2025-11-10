@@ -15,8 +15,7 @@ import logging
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s'
+    level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -44,13 +43,15 @@ class ActionNetworkScraper:
         request = route.request
 
         # Log API calls to Action Network API
-        if 'api.actionnetwork.com' in request.url:
+        if "api.actionnetwork.com" in request.url:
             logger.info(f"API Request: {request.method} {request.url[:100]}...")
-            self.captured_requests.append({
-                'url': request.url,
-                'method': request.method,
-                'headers': dict(request.headers)
-            })
+            self.captured_requests.append(
+                {
+                    "url": request.url,
+                    "method": request.method,
+                    "headers": dict(request.headers),
+                }
+            )
 
         # Continue the request
         await route.continue_()
@@ -60,18 +61,20 @@ class ActionNetworkScraper:
         request = response.request
 
         # Capture JSON responses from Action Network API
-        if response.ok and 'api.actionnetwork.com' in request.url:
+        if response.ok and "api.actionnetwork.com" in request.url:
             try:
                 # Check if response is JSON
-                content_type = response.headers.get('content-type', '')
-                if 'application/json' in content_type:
+                content_type = response.headers.get("content-type", "")
+                if "application/json" in content_type:
                     data = await response.json()
                     logger.info(f"Captured JSON response from: {request.url[:80]}...")
-                    self.captured_responses.append({
-                        'url': request.url,
-                        'data': data,
-                        'timestamp': datetime.now().isoformat()
-                    })
+                    self.captured_responses.append(
+                        {
+                            "url": request.url,
+                            "data": data,
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                    )
             except Exception as e:
                 logger.debug(f"Could not parse JSON: {e}")
 
@@ -147,11 +150,14 @@ class ActionNetworkScraper:
 
             # Wait for odds table to load
             try:
-                await page.wait_for_selector('.betting-odds-table__body, [class*="odds-table"]',
-                                            timeout=30000)
+                await page.wait_for_selector(
+                    '.betting-odds-table__body, [class*="odds-table"]', timeout=30000
+                )
                 logger.info("Odds table loaded, extracting data...")
             except:
-                logger.warning("Odds table selector not found, attempting alternative...")
+                logger.warning(
+                    "Odds table selector not found, attempting alternative..."
+                )
                 await page.wait_for_timeout(5000)
 
             # Extract odds data using JavaScript
@@ -213,26 +219,28 @@ class ActionNetworkScraper:
 
         # Save data
         if save:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
             # Save extracted odds
             odds_file = f"{self.output_dir}/nfl_odds_{timestamp}.json"
-            with open(odds_file, 'w') as f:
+            with open(odds_file, "w") as f:
                 json.dump(odds_data, f, indent=2)
             logger.info(f"Saved odds data to {odds_file}")
 
             # Save captured API calls
             if self.captured_responses:
                 api_file = f"{self.output_dir}/nfl_api_responses_{timestamp}.json"
-                with open(api_file, 'w') as f:
+                with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
-                logger.info(f"Saved {len(self.captured_responses)} API responses to {api_file}")
+                logger.info(
+                    f"Saved {len(self.captured_responses)} API responses to {api_file}"
+                )
 
                 # Also save as JSONL
                 jsonl_file = f"{self.output_dir}/nfl_api_responses_{timestamp}.jsonl"
-                with open(jsonl_file, 'w') as f:
+                with open(jsonl_file, "w") as f:
                     for response in self.captured_responses:
-                        f.write(json.dumps(response) + '\n')
+                        f.write(json.dumps(response) + "\n")
                 logger.info(f"Saved JSONL to {jsonl_file}")
 
         return odds_data
@@ -278,11 +286,14 @@ class ActionNetworkScraper:
 
             # Wait for odds table to load
             try:
-                await page.wait_for_selector('.betting-odds-table__body, [class*="odds-table"]',
-                                            timeout=30000)
+                await page.wait_for_selector(
+                    '.betting-odds-table__body, [class*="odds-table"]', timeout=30000
+                )
                 logger.info("Odds table loaded, extracting data...")
             except:
-                logger.warning("Odds table selector not found, attempting alternative...")
+                logger.warning(
+                    "Odds table selector not found, attempting alternative..."
+                )
                 await page.wait_for_timeout(5000)
 
             # Extract odds data
@@ -341,26 +352,28 @@ class ActionNetworkScraper:
 
         # Save data
         if save:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
             # Save extracted odds
             odds_file = f"{self.output_dir}/ncaaf_odds_{timestamp}.json"
-            with open(odds_file, 'w') as f:
+            with open(odds_file, "w") as f:
                 json.dump(odds_data, f, indent=2)
             logger.info(f"Saved odds data to {odds_file}")
 
             # Save captured API calls
             if self.captured_responses:
                 api_file = f"{self.output_dir}/ncaaf_api_responses_{timestamp}.json"
-                with open(api_file, 'w') as f:
+                with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
-                logger.info(f"Saved {len(self.captured_responses)} API responses to {api_file}")
+                logger.info(
+                    f"Saved {len(self.captured_responses)} API responses to {api_file}"
+                )
 
                 # Also save as JSONL
                 jsonl_file = f"{self.output_dir}/ncaaf_api_responses_{timestamp}.jsonl"
-                with open(jsonl_file, 'w') as f:
+                with open(jsonl_file, "w") as f:
                     for response in self.captured_responses:
-                        f.write(json.dumps(response) + '\n')
+                        f.write(json.dumps(response) + "\n")
                 logger.info(f"Saved JSONL to {jsonl_file}")
 
         return odds_data
@@ -442,20 +455,20 @@ class ActionNetworkScraper:
 
         # Save data
         if save:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
             # Save full injury data
             injury_file = f"{self.output_dir}/{league}_injuries_{timestamp}.json"
-            with open(injury_file, 'w') as f:
+            with open(injury_file, "w") as f:
                 json.dump(injury_data, f, indent=2)
             logger.info(f"Saved injury data to {injury_file}")
 
             # Also save as JSONL
-            if injury_data.get('injuries'):
+            if injury_data.get("injuries"):
                 jsonl_file = f"{self.output_dir}/{league}_injuries_{timestamp}.jsonl"
-                with open(jsonl_file, 'w') as f:
-                    for injury in injury_data['injuries']:
-                        f.write(json.dumps(injury) + '\n')
+                with open(jsonl_file, "w") as f:
+                    for injury in injury_data["injuries"]:
+                        f.write(json.dumps(injury) + "\n")
                 logger.info(f"Saved JSONL to {jsonl_file}")
 
         return injury_data
@@ -465,10 +478,7 @@ class ActionNetworkScraper:
         nfl_data = await self.scrape_nfl_odds(week=nfl_week)
         ncaaf_data = await self.scrape_ncaaf_odds(week=ncaaf_week)
 
-        return {
-            'nfl': nfl_data,
-            'ncaaf': ncaaf_data
-        }
+        return {"nfl": nfl_data, "ncaaf": ncaaf_data}
 
 
 async def main():
