@@ -4,14 +4,30 @@ __pycache__/
 .venv/
 .scrapy/
 playwright/.cache/
+# Secrets and credentials (NEVER commit)
 .env
 .env.*
+.env_master
+*.env
+API_CREDENTIALS_STATUS.md
+*_credentials.json
+*credentials*
+secrets/
+*.pem
+*.key
+id_rsa*
+
+# System files
 .DS_Store
 .overtime_state.json
 snapshots/*.json
 
 # Windows Zone.Identifier files
 *:Zone.Identifier
+
+# IDE/Editor configs
+.vscode/settings.json
+.idea/
 
 # Data files (large, regenerable)
 data/**/*.jsonl
@@ -21,6 +37,13 @@ data/**/*.csv
 data/**/*.xml
 data/**/*.zip
 !data/**/README.md
+
+# Databases with real data (NEVER commit)
+data/**/*.db
+*.sqlite
+*.sqlite3
+dumps/
+backups/
 
 # Temporary files (but not in tests/ directory)
 /test_*.py
