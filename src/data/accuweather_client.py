@@ -3,6 +3,12 @@ AccuWeather API Client
 
 Fetches weather forecasts for game locations.
 Implements rate limiting, retry logic, and error handling.
+
+Billy Walters Weather Impact Principles:
+- Wind >15 MPH: Reduce total by 3-5 points, favor defense
+- Temp <32°F: Reduce total by 2-3 points, favor rushing
+- Rain/Snow: Reduce total by 2-4 points
+- Indoor: No adjustments
 """
 
 import asyncio
@@ -20,6 +26,42 @@ class AccuWeatherClient:
     """Client for fetching weather data from AccuWeather API."""
 
     BASE_URL = "http://dataservice.accuweather.com"
+
+    # NFL Stadium locations (city for location key lookup)
+    NFL_STADIUM_LOCATIONS = {
+        "Arizona": {"city": "Glendale", "state": "AZ", "indoor": True},
+        "Atlanta": {"city": "Atlanta", "state": "GA", "indoor": True},
+        "Baltimore": {"city": "Baltimore", "state": "MD", "indoor": False},
+        "Buffalo": {"city": "Buffalo", "state": "NY", "indoor": False},
+        "Carolina": {"city": "Charlotte", "state": "NC", "indoor": False},
+        "Chicago": {"city": "Chicago", "state": "IL", "indoor": False},
+        "Cincinnati": {"city": "Cincinnati", "state": "OH", "indoor": False},
+        "Cleveland": {"city": "Cleveland", "state": "OH", "indoor": False},
+        "Dallas": {"city": "Arlington", "state": "TX", "indoor": True},
+        "Denver": {"city": "Denver", "state": "CO", "indoor": False},
+        "Detroit": {"city": "Detroit", "state": "MI", "indoor": True},
+        "Green Bay": {"city": "Green Bay", "state": "WI", "indoor": False},
+        "Houston": {"city": "Houston", "state": "TX", "indoor": True},
+        "Indianapolis": {"city": "Indianapolis", "state": "IN", "indoor": True},
+        "Jacksonville": {"city": "Jacksonville", "state": "FL", "indoor": False},
+        "Kansas City": {"city": "Kansas City", "state": "MO", "indoor": False},
+        "Las Vegas": {"city": "Las Vegas", "state": "NV", "indoor": True},
+        "LA Chargers": {"city": "Inglewood", "state": "CA", "indoor": False},
+        "LA Rams": {"city": "Inglewood", "state": "CA", "indoor": False},
+        "Miami": {"city": "Miami Gardens", "state": "FL", "indoor": False},
+        "Minnesota": {"city": "Minneapolis", "state": "MN", "indoor": True},
+        "New England": {"city": "Foxborough", "state": "MA", "indoor": False},
+        "New Orleans": {"city": "New Orleans", "state": "LA", "indoor": True},
+        "NY Giants": {"city": "East Rutherford", "state": "NJ", "indoor": False},
+        "NY Jets": {"city": "East Rutherford", "state": "NJ", "indoor": False},
+        "Philadelphia": {"city": "Philadelphia", "state": "PA", "indoor": False},
+        "Pittsburgh": {"city": "Pittsburgh", "state": "PA", "indoor": False},
+        "San Francisco": {"city": "Santa Clara", "state": "CA", "indoor": False},
+        "Seattle": {"city": "Seattle", "state": "WA", "indoor": False},
+        "Tampa Bay": {"city": "Tampa", "state": "FL", "indoor": False},
+        "Tennessee": {"city": "Nashville", "state": "TN", "indoor": False},
+        "Washington": {"city": "Landover", "state": "MD", "indoor": False},
+    }
 
     def __init__(
         self,
@@ -376,32 +418,138 @@ class AccuWeatherClient:
         )
         return closest_forecast
 
+    async def get_game_weather(
+        self, team: str, game_time: datetime, max_retries: int = 3
+    ) -> dict[str, Any] | None:
+        """
+        Get weather forecast for a specific NFL game using team name.
+
+        Args:
+            team: Home team name (e.g., "Green Bay", "Kansas City")
+            game_time: Game start time
+            max_retries: Maximum retry attempts
+
+        Returns:
+            Weather data dict with temperature, wind, precipitation, or None
+
+        Raises:
+            RuntimeError: If request fails
+        """
+        # Get stadium info
+        stadium_info = self.NFL_STADIUM_LOCATIONS.get(team)
+        if not stadium_info:
+            logger.warning(f"No stadium info for team: {team}")
+            return None
+
+        # Indoor stadium = no weather impact
+        if stadium_info.get("indoor"):
+            return {
+                "indoor": True,
+                "temperature_f": None,
+                "wind_speed_mph": None,
+                "precipitation_type": None,
+                "weather_text": "Indoor",
+                "city": stadium_info["city"],
+                "state": stadium_info["state"],
+            }
+
+        # Get forecast for outdoor stadium
+        forecast = await self.get_game_forecast(
+            stadium_info["city"], stadium_info["state"], game_time, max_retries
+        )
+
+        # Add stadium info to forecast
+        forecast["indoor"] = False
+        forecast["city"] = stadium_info["city"]
+        forecast["state"] = stadium_info["state"]
+
+        return forecast
+
+    def calculate_weather_impact(
+        self, weather_data: dict[str, Any]
+    ) -> tuple[float, float]:
+        """
+        Calculate weather impact on total and spread using Billy Walters principles.
+
+        Principles:
+        - Wind >15 MPH: Reduce total by 3-5 points, favor defense
+        - Temp <32°F: Reduce total by 2-3 points, favor rushing
+        - Rain/Snow: Reduce total by 2-4 points
+
+        Args:
+            weather_data: Weather data from get_game_weather or get_game_forecast
+
+        Returns:
+            (total_adjustment, spread_adjustment) in points
+        """
+        if weather_data.get("indoor"):
+            return 0.0, 0.0
+
+        total_adj = 0.0
+        spread_adj = 0.0
+
+        temperature = weather_data.get("temperature_f")
+        wind_speed = weather_data.get("wind_speed_mph")
+        precipitation = weather_data.get("precipitation_type")
+
+        # Wind impact (most important for passing)
+        if wind_speed and wind_speed > 15:
+            # Reduce total by 0.3 points per MPH over 15, max 5 points
+            wind_impact = min((wind_speed - 15) * 0.3, 5.0)
+            total_adj -= wind_impact
+            spread_adj -= 1.0  # Favors defense
+
+            logger.info(
+                f"High wind ({wind_speed} MPH): Total -{wind_impact:.1f}, Spread -1.0"
+            )
+
+        # Temperature impact
+        if temperature and temperature < 32:
+            temp_impact = 2.5
+            total_adj -= temp_impact
+            spread_adj -= 0.5  # Favors rushing teams
+
+            logger.info(
+                f"Cold weather ({temperature}°F): Total -{temp_impact}, Spread -0.5"
+            )
+
+        # Precipitation
+        if precipitation and precipitation.lower() in ["rain", "snow"]:
+            precip_impact = 3.0
+            total_adj -= precip_impact
+            spread_adj -= 1.0
+
+            logger.info(
+                f"Precipitation ({precipitation}): Total -{precip_impact}, Spread -1.0"
+            )
+
+        return total_adj, spread_adj
+
 
 # Example usage
 async def main():
-    """Example usage of AccuWeatherClient."""
+    """Example usage of AccuWeatherClient with Billy Walters analysis."""
     async with AccuWeatherClient() as client:
-        # Get location key
-        location_key = await client.get_location_key("Kansas City", "MO")
-        print(f"\nLocation key for Kansas City, MO: {location_key}")
+        # Test: Get weather for Green Bay (outdoor, cold weather stadium)
+        test_time = datetime.now().replace(hour=13, minute=0, second=0)
+        weather = await client.get_game_weather("Green Bay", test_time)
 
-        # Get current conditions
-        conditions = await client.get_current_conditions(location_key)
-        print("\nCurrent conditions:")
-        print(f"  Temperature: {conditions['temperature_f']}°F")
-        print(f"  Weather: {conditions['weather_text']}")
-        print(
-            f"  Wind: {conditions['wind_speed_mph']} mph {conditions['wind_direction']}"
-        )
-        print(f"  Humidity: {conditions['humidity']}%")
+        if weather:
+            print("\n" + "=" * 60)
+            print("Weather for Green Bay Packers")
+            print("=" * 60)
+            print(f"Indoor: {weather['indoor']}")
+            print(f"Temperature: {weather.get('temperature_f')}°F")
+            print(f"Wind Speed: {weather.get('wind_speed_mph')} MPH")
+            print(f"Precipitation: {weather.get('precipitation_type')}")
+            print(f"Conditions: {weather.get('weather_text')}")
 
-        # Get game forecast
-        game_time = datetime.now().replace(hour=13, minute=0, second=0)
-        forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
-        print(f"\nGame forecast for {game_time}:")
-        print(f"  Temperature: {forecast['temperature_f']}°F")
-        print(f"  Weather: {forecast['weather_text']}")
-        print(f"  Precipitation: {forecast['precipitation_probability']}%")
+            # Calculate Billy Walters impact
+            total_adj, spread_adj = client.calculate_weather_impact(weather)
+            print("\nBilly Walters Impact:")
+            print(f"Total Adjustment: {total_adj:+.1f} points")
+            print(f"Spread Adjustment: {spread_adj:+.1f} points")
+            print("=" * 60)
 
 
 if __name__ == "__main__":
