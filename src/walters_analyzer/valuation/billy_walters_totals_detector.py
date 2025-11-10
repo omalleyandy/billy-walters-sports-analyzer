@@ -21,7 +21,7 @@ from datetime import datetime
 import logging
 
 # Import shared components from edge detector
-from billy_walters_edge_detector import (
+from .billy_walters_edge_detector import (
     PowerRating,
     WeatherImpact,
     SharpAction,

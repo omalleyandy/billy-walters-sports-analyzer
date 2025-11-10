@@ -22,14 +22,11 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import logging
 
-from accuweather_client import AccuWeatherClient
+from src.data.accuweather_client import AccuWeatherClient
 
 # Import injury and player valuation modules
-import sys
-
-sys.path.insert(0, "src")
-from walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
-from walters_analyzer.valuation.player_values import PlayerValuation
+from src.walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
+from src.walters_analyzer.valuation.player_values import PlayerValuation
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
