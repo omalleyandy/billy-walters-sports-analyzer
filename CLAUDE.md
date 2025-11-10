@@ -199,21 +199,56 @@ Use Pydantic for all data models:
 
 billy-walters-sports-analyzer/
 ├── src/
-│   ├── data/              # Data acquisition
-│   ├── analysis/          # Analytics engine
-│   ├── db/                # Database layer
-│   └── utils/             # Utilities
+│   ├── data/                    # Data collection (13 scrapers & clients)
+│   │   ├── accuweather_client.py
+│   │   ├── espn_api_client.py
+│   │   ├── overtime_signalr_client.py
+│   │   └── ...
+│   ├── walters_analyzer/        # Core analysis system
+│   │   ├── valuation/           # Edge detection & analysis
+│   │   │   ├── billy_walters_edge_detector.py
+│   │   │   ├── billy_walters_totals_detector.py
+│   │   │   ├── analyze_games_with_injuries.py
+│   │   │   └── analyze_injuries_by_position.py
+│   │   ├── query/               # Display utilities
+│   │   │   ├── check_game.py
+│   │   │   ├── show_current_odds.py
+│   │   │   └── watch_alerts.py
+│   │   └── ...
+│   └── db/                      # Database layer
+├── scripts/                     # Operational scripts
+│   ├── analysis/                # Weekly analysis (8 scripts)
+│   ├── validation/              # Data validation (3 scripts)
+│   ├── backtest/                # Backtesting (2 scripts)
+│   ├── utilities/               # Helper scripts (5 scripts)
+│   └── dev/                     # Development/deployment (14 scripts)
+├── tests/                       # Test suite (146 tests)
+│   └── test_validation_integration.py
+├── examples/                    # Example scripts
 ├── .claude/
 │   ├── walters_mcp_server.py
 │   ├── walters_autonomous_agent.py
 │   ├── billy_walters_analytics_prd.md
 │   ├── hooks/
 │   └── commands/
-├── tests/
 ├── .env.example
 ├── .gitignore
 ├── CLAUDE.md
 └── README.md
+
+### Directory Guidelines
+
+**When adding new files:**
+- Data scrapers/clients → `src/data/`
+- Edge detection/analysis → `src/walters_analyzer/valuation/`
+- Query/display utilities → `src/walters_analyzer/query/`
+- Weekly analysis scripts → `scripts/analysis/`
+- Data validation → `scripts/validation/`
+- Backtesting → `scripts/backtest/`
+- Helper utilities → `scripts/utilities/`
+- Dev/deployment → `scripts/dev/`
+- Tests → `tests/`
+- Examples → `examples/`
 
 ## Responsible Use
 
