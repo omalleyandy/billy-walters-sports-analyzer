@@ -9,8 +9,8 @@ import json
 import sys
 from pathlib import Path
 
-# Add hooks to path
-sys.path.insert(0, str(Path(__file__).parent / "hooks"))
+# Add hooks to path (now in tests/, need to go up to project root then to .claude/hooks)
+sys.path.insert(0, str(Path(__file__).parent.parent / ".claude" / "hooks"))
 
 from validation_logger import ValidationLogger, get_logger
 from mcp_validation import (
@@ -20,7 +20,10 @@ from mcp_validation import (
     fetch_and_validate_odds
 )
 
+import pytest
 
+
+@pytest.mark.asyncio
 async def test_validation_integration():
     """Test the full validation integration."""
     print("=" * 60)
