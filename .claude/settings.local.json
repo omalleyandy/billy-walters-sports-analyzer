@@ -25,7 +25,15 @@
       "Bash(rm:*)",
       "Bash(uv sync:*)",
       "Bash(find:*)",
-      "SlashCommand(/document-lesson)"
+      "SlashCommand(/document-lesson)",
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch:*)",
+      "Bash(git rm:*)",
+      "Bash(GIT_EDITOR='cat' git rebase -i cc88704)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"sed -i ''1s/^pick/edit/''\" git rebase -i cc88704)",
+      "Bash(git mv:*)",
+      "Bash(mv:*)",
+      "Bash(git restore:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
