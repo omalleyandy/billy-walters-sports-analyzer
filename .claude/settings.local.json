@@ -23,7 +23,8 @@
       "Bash(NUL)",
       "Bash(del nul)",
       "Bash(rm:*)",
-      "Bash(uv sync:*)"
+      "Bash(uv sync:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
