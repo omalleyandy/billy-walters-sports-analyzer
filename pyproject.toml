@@ -1,0 +1,102 @@
+[project]
+name = "walters-analyzer"
+version = "0.1.0"
+description = "Billy Walters Sports Analyzer (WSA) — CLI + scraping skeleton using uv."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Andy + ChatGPT", email = "noreply@example.com" }]
+
+# Base deps used by the CLI + scraper. Keep scrapy + scrapy-playwright here,
+# and add playwright so the browser engine is present (you'll still run
+# `playwright install chromium` once after syncing).
+dependencies = [
+    "orjson>=3.11.4",
+    "pyarrow>=21.0.0",
+    "python-dotenv>=1.2.1",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "scrapy>=2.13.3",
+    "scrapy-playwright>=0.0.44",
+    "playwright>=1.47.0",
+    "playwright-stealth>=1.0.6",
+    "aiohttp>=3.13.2",
+    "beautifulsoup4>=4.14.2",
+    "scikit-learn>=1.7.2",
+    "xgboost>=3.1.1",
+    "httpx>=0.28.1",
+    "pytest-asyncio>=1.2.0",
+    "signalrcore>=0.9.5",
+    "websocket-client>=1.0.0",
+    "tenacity>=8.2.0",
+]
+
+[project.scripts]
+walters-analyzer = "walters_analyzer.cli:main"
+
+[project.optional-dependencies]
+# Keep this extra for things that are helpful for auxiliary HTML parsing / retries,
+# but are not strictly required to run the spider end-to-end.
+scraping = [
+  "beautifulsoup4>=4.12",
+  "tenacity>=8.2",
+]
+
+# MCP Server dependencies for Claude Desktop integration
+mcp = [
+  "fastmcp>=0.2.0",
+  "pydantic>=2.0",
+  "aiohttp>=3.9",
+  "uvicorn>=0.27",
+]
+
+# Machine Learning dependencies for autonomous agent
+ml = [
+  "scikit-learn>=1.3",
+  "xgboost>=2.0",
+  "numpy>=1.24",
+  "pandas>=2.0",
+]
+
+# Deep Learning (optional, for advanced pattern recognition)
+dl = [
+  "torch>=2.0",
+]
+
+# Research API integrations
+research = [
+  "requests>=2.31",
+  "beautifulsoup4>=4.12",
+  "lxml>=4.9",
+]
+
+# All AI/ML features (MCP + Autonomous Agent)
+ai = [
+  "fastmcp>=0.2.0",
+  "pydantic>=2.0",
+  "aiohttp>=3.9",
+  "uvicorn>=0.27",
+  "scikit-learn>=1.3",
+  "xgboost>=2.0",
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "requests>=2.31",
+  "beautifulsoup4>=4.12",
+  "lxml>=4.9",
+]
+
+# Optional: a small, handy dev/test extra.
+dev = [
+  "pytest>=7.4",
+  "pytest-cov>=4.1",
+  "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+]
