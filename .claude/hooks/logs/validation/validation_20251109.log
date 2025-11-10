@@ -1,0 +1,4 @@
+2025-11-09 00:21:24,585 - validation - INFO - odds_validation - odds validation PASSED: {"game_id": "NFL_2025_W10_BUF_KC", "spread": -2.5, "over_under": 47.5, "moneyline_home": -135, "moneyline_away": 115}
+2025-11-09 00:21:24,585 - validation - ERROR - odds_validation - odds validation FAILED: ['Invalid spread: -75.5 (must be between -50 and 50)', 'Invalid over/under: 15 (must be between 20 and 100)'] | Context: {"game_id": "NFL_2025_W10_DET_GB", "spread": -75.5, "over_under": 15, "moneyline_home": -150, "moneyline_away": 130}
+2025-11-09 00:21:24,586 - validation - INFO - Validation report saved to logs\validation\validation_report_20251109_002124.json
+2025-11-09 00:23:39,597 - validation - INFO - odds_validation - odds validation PASSED: {"game_id": "NFL_2025_W10_BUF_KC", "spread": -3.5, "over_under": 45.5, "moneyline_home": -150, "moneyline_away": 130}

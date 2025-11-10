@@ -1,0 +1,22 @@
+﻿{
+    "when":  {
+                 "value":  "\/Date(1762489660118)\/",
+                 "DisplayHint":  2,
+                 "DateTime":  "Thursday, November 6, 2025 8:27:40 PM"
+             },
+    "zip":  null,
+    "target":  "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools",
+    "adds":  [
+
+             ],
+    "conflicts":  [
+
+                  ],
+    "identical":  [
+
+                  ],
+    "overwrite":  false,
+    "dry_run":  false,
+    "no_backup":  false,
+    "backup_dir":  "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\backups\\tools-20251106-202734"
+}

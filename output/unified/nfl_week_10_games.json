@@ -1,0 +1,15 @@
+{
+  "games": [
+    {
+      "week": 10,
+      "date": "2025-11-07",
+      "home_team": "Denver Broncos",
+      "away_team": "Las Vegas Raiders",
+      "home_score": 10,
+      "away_score": 7,
+      "home_injury_level": 0.0,
+      "away_injury_level": 0.0,
+      "location": "home"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "version": "3.0.0",
+  "tags": [
+    {
+      "uuid": "183e57e78d62c077",
+      "tag_id": 9735442,
+      "auction_id": "8715815131446130524",
+      "nobid": true,
+      "ad_profile_id": 0
+    },
+    {
+      "uuid": "1845acfb3a2a9023",
+      "tag_id": 9735442,
+      "auction_id": "3234997871271880103",
+      "nobid": true,
+      "ad_profile_id": 0
+    },
+    {
+      "uuid": "185d79d8ed05834d",
+      "tag_id": 9735442,
+      "auction_id": "1075235527558352426",
+      "nobid": true,
+      "ad_profile_id": 0
+    },
+    {
+      "uuid": "186ea852acfaea24",
+      "tag_id": 9735442,
+      "auction_id": "398272813724262521",
+      "nobid": true,
+      "ad_profile_id": 0
+    }
+  ]
+}

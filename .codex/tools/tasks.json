@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json.schemastore.org/task.json",
+  "version": "2.0.0",
+  "name": "Billy Walters Sports Analyzer - Tasks",
+  "description": "Automated tasks for daily betting analysis workflow",
+  "tasks": [
+    {
+      "id": "collect-all-data",
+      "name": "Collect All Data",
+      "description": "Scrape injuries, odds, and team data from all sources",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}/.codex/super-run.ps1",
+        "-Task",
+        "collect-data",
+        "-Sport",
+        "${input:sport}",
+        "-Verbose"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "analyze-slate",
+      "name": "Analyze Today's Slate",
+      "description": "Analyze all games for today with AI assistance",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}/.codex/super-run.ps1",
+        "-Task",
+        "analyze-slate",
+        "-Sport",
+        "${input:sport}",
+        "-Bankroll",
+        "${input:bankroll}"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": [],
+      "dependsOn": ["collect-all-data"]
+    },
+    {
+      "id": "monitor-sharp-money",
+      "name": "Monitor Sharp Money",
+      "description": "Monitor market for sharp money movements",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}/.codex/super-run.ps1",
+        "-Task",
+        "monitor-sharp",
+        "-Sport",
+        "${input:sport}"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "full-workflow",
+      "name": "Run Full Workflow",
+      "description": "Execute complete daily betting workflow",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}/.codex/super-run.ps1",
+        "-Task",
+        "full-workflow",
+        "-Sport",
+        "${input:sport}",
+        "-Bankroll",
+        "${input:bankroll}",
+        "-DryRun"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "test-system",
+      "name": "Test System",
+      "description": "Run system diagnostics and tests",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}/.codex/super-run.ps1",
+        "-Task",
+        "test-system"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "analyze-game-cli",
+      "name": "Analyze Single Game",
+      "description": "Analyze a specific game with research",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "analyze-game",
+        "--home",
+        "${input:homeTeam}",
+        "--away",
+        "${input:awayTeam}",
+        "--spread",
+        "${input:spread}",
+        "--research",
+        "--bankroll",
+        "${input:bankroll}"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "interactive-mode",
+      "name": "Start Interactive Mode",
+      "description": "Launch interactive slash command REPL",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "interactive",
+        "--bankroll",
+        "${input:bankroll}"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "isBackground": false,
+      "problemMatcher": []
+    },
+    {
+      "id": "scrape-ai",
+      "name": "AI-Assisted Scraping",
+      "description": "Scrape odds with AI performance monitoring",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "scrape-ai",
+        "--sport",
+        "${input:sport}"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "scrape-injuries",
+      "name": "Scrape Injuries",
+      "description": "Scrape injury reports from ESPN",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "scrape-injuries",
+        "--sport",
+        "${input:sport}"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "scrape-highlightly",
+      "name": "Scrape Highlightly Data",
+      "description": "Fetch data from Highlightly API",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "scrape-highlightly",
+        "--endpoint",
+        "all",
+        "--sport",
+        "${input:sport}",
+        "--date",
+        "${input:date}"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "view-odds",
+      "name": "View Scraped Odds",
+      "description": "View and filter scraped odds data",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "view-odds",
+        "--today"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "wk-card-preview",
+      "name": "Preview Week Card",
+      "description": "Preview week card with bankroll display",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "walters-analyzer",
+        "wk-card",
+        "--file",
+        "${input:cardFile}",
+        "--dry-run",
+        "--show-bankroll",
+        "--bankroll",
+        "${input:bankroll}"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "organize-docs",
+      "name": "Organize Documentation",
+      "description": "Run doc organization script",
+      "type": "shell",
+      "command": "python",
+      "args": [
+        "${workspaceFolder}/scripts/organize_docs.py",
+        "--skip-archive"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "id": "run-tests",
+      "name": "Run Test Suite",
+      "description": "Execute pytest test suite",
+      "type": "shell",
+      "command": "uv",
+      "args": [
+        "run",
+        "pytest",
+        "tests/",
+        "-v",
+        "--tb=short"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": ["$python"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "sport",
+      "description": "Sport to analyze",
+      "type": "pickString",
+      "options": ["nfl", "ncaaf", "both"],
+      "default": "nfl"
+    },
+    {
+      "id": "bankroll",
+      "description": "Starting bankroll amount",
+      "type": "promptString",
+      "default": "10000"
+    },
+    {
+      "id": "homeTeam",
+      "description": "Home team name",
+      "type": "promptString"
+    },
+    {
+      "id": "awayTeam",
+      "description": "Away team name",
+      "type": "promptString"
+    },
+    {
+      "id": "spread",
+      "description": "Current spread (home team perspective)",
+      "type": "promptString"
+    },
+    {
+      "id": "date",
+      "description": "Date (YYYY-MM-DD)",
+      "type": "promptString",
+      "default": "today"
+    },
+    {
+      "id": "cardFile",
+      "description": "Path to week card JSON file",
+      "type": "promptString",
+      "default": "cards/week10.json"
+    }
+  ]
+}
+

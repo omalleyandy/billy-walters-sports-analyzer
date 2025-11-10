@@ -1,0 +1,7 @@
+{
+  "name": "Overtime Scrape (NFL+NCAAF)",
+  "shell": "pwsh",
+  "command": "uv run walters odds scrape-overtime --export-dir exports",
+  "env": {},
+  "timeoutSec": 900
+}

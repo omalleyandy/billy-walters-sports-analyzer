@@ -1,0 +1,71 @@
+{
+  "week": 10,
+  "season": "2025",
+  "timestamp": "2025-11-09T08:10:41.746756",
+  "power_ratings": {
+    "top_10_teams": [
+      {
+        "team": "Buffalo",
+        "rating": 19.1
+      },
+      {
+        "team": "Detroit",
+        "rating": 18.92
+      },
+      {
+        "team": "Kansas City",
+        "rating": 17.69
+      },
+      {
+        "team": "Seattle",
+        "rating": 15.02
+      },
+      {
+        "team": "Houston",
+        "rating": 13.67
+      },
+      {
+        "team": "Philadelphia",
+        "rating": 13.26
+      },
+      {
+        "team": "LA Rams",
+        "rating": 12.37
+      },
+      {
+        "team": "Indianapolis",
+        "rating": 11.9
+      },
+      {
+        "team": "LA Chargers",
+        "rating": 11.88
+      },
+      {
+        "team": "Green Bay",
+        "rating": 11.55
+      }
+    ],
+    "total_teams": 34,
+    "games_processed": 1
+  },
+  "edges_detected": {
+    "spreads": {
+      "count": 8,
+      "file": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\output\\edge_detection\\nfl_edges_detected.jsonl"
+    },
+    "totals": {
+      "count": 0,
+      "file": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\output\\edge_detection\\totals_report.txt"
+    }
+  },
+  "workflow_results": {
+    "week": 10,
+    "timestamp": "2025-11-09T08:10:31.142704",
+    "steps_completed": [
+      "power_ratings",
+      "edge_detection_spreads",
+      "edge_detection_totals"
+    ],
+    "errors": []
+  }
+}

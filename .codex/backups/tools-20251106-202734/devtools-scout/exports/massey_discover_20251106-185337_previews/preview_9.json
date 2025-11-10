@@ -1,0 +1,33 @@
+{
+  "status": "error",
+  "reason": "internal-error",
+  "error_code": "17",
+  "account_id": 12556,
+  "site_id": 110932,
+  "zone_id": 523774,
+  "size_id": 2,
+  "alt_size_ids": [
+    55
+  ],
+  "tracking": "",
+  "inventory": {
+    "sitecont_cat": "sports",
+    "sectioncat": "IAB17,483",
+    "pos": "standard",
+    "cat": "IAB17,483",
+    "mobile": "0",
+    "page": "https://masseyratings.com/cf/fbs/games",
+    "adunit": "standard_iab_head1",
+    "pagecat": "IAB17,483",
+    "pbadslot": "standard_iab_head1",
+    "domain": "masseyratings.com"
+  },
+  "ads": [
+    {
+      "status": "error",
+      "reason": "internal-error",
+      "error_code": "17",
+      "impression_id": "5a71fae0-c1ad-4962-9278-128a8810f6df"
+    }
+  ]
+}

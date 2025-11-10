@@ -1,0 +1,286 @@
+{
+  "url": "https://overtime.ag/sports#/",
+  "count": 15,
+  "captures": [
+    {
+      "method": "GET",
+      "url": "https://overtime.ag/sports/data/wagerTypes.json",
+      "status": 200,
+      "content_type": "application/json",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/data/wagerTypes.json\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_1.json"
+    },
+    {
+      "method": "GET",
+      "url": "https://overtime.ag/lang//data/lang/ENG.json",
+      "status": 200,
+      "content_type": "application/json",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/lang//data/lang/ENG.json\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_2.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Config.asmx/Get",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Config.asmx/Get\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_3.json"
+    },
+    {
+      "method": "GET",
+      "url": "https://overtime.ag/sports/data/sidebarBanners.json?v=20150628-2",
+      "status": 200,
+      "content_type": "application/json",
+      "qs": {
+        "v": "20150628-2"
+      },
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/data/sidebarBanners.json?v=20150628-2\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_4.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/customer.asmx/Get",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/customer.asmx/Get\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{\\\"resetLastSession\\\":true}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_5.json"
+    },
+    {
+      "method": "GET",
+      "url": "https://ws.ticosports.com/signalr/negotiate?clientProtocol=1.5&connectionData=%5B%7B%22name%22%3A%22gbshub%22%7D%5D&_=1762484056312",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "qs": {
+        "clientProtocol": "1.5",
+        "connectionData": "[{\"name\":\"gbshub\"}]",
+        "_": "1762484056312"
+      },
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "text/plain, */*; q=0.01",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://ws.ticosports.com/signalr/negotiate?clientProtocol=1.5&connectionData=%5B%7B%22name%22%3A%22gbshub%22%7D%5D&_=1762484056312\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: text/plain, */*; q=0.01\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/x-www-form-urlencoded; charset=UTF-8\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_6.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/customer.asmx/Get",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/customer.asmx/Get\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{\\\"resetLastSession\\\":true}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_7.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/BetType.asmx/GetCurrent",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/BetType.asmx/GetCurrent\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_8.json"
+    },
+    {
+      "method": "GET",
+      "url": "https://bv2-us.digitalsportstech.com/api/schedule?sb=ticosports-asi",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {
+        "sb": "ticosports-asi"
+      },
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://bv2-us.digitalsportstech.com/api/schedule?sb=ticosports-asi\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_9.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Betting.asmx/New",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Betting.asmx/New\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{\\\"wGBS\\\":50.53553431707954}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_10.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Betting.asmx/GetWagerPicks",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Betting.asmx/GetWagerPicks\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_11.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Betting.asmx/GetServerDateTime",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Betting.asmx/GetServerDateTime\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_12.json"
+    },
+    {
+      "method": "GET",
+      "url": "https://ws.ticosports.com/signalr/start?transport=webSockets&clientProtocol=1.5&connectionToken=Zzl5wWujez8q9jTrgyhsCeOBlYP6FNZobb0mQJzh9e5yntRVOJgbPAvUm8oGV5UQ6zuMxex0FNkFVxfHiF7EPo9M8FehFAg9fx1tH4s0yMqH%2Bt3WArKPI4%2B%2FQG2bvECY&connectionData=%5B%7B%22name%22%3A%22gbshub%22%7D%5D&_=1762484056313",
+      "status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "qs": {
+        "transport": "webSockets",
+        "clientProtocol": "1.5",
+        "connectionToken": "Zzl5wWujez8q9jTrgyhsCeOBlYP6FNZobb0mQJzh9e5yntRVOJgbPAvUm8oGV5UQ6zuMxex0FNkFVxfHiF7EPo9M8FehFAg9fx1tH4s0yMqH+t3WArKPI4+/QG2bvECY",
+        "connectionData": "[{\"name\":\"gbshub\"}]",
+        "_": "1762484056313"
+      },
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "text/plain, */*; q=0.01",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://ws.ticosports.com/signalr/start?transport=webSockets&clientProtocol=1.5&connectionToken=Zzl5wWujez8q9jTrgyhsCeOBlYP6FNZobb0mQJzh9e5yntRVOJgbPAvUm8oGV5UQ6zuMxex0FNkFVxfHiF7EPo9M8FehFAg9fx1tH4s0yMqH%2Bt3WArKPI4%2B%2FQG2bvECY&connectionData=%5B%7B%22name%22%3A%22gbshub%22%7D%5D&_=1762484056313\" -X GET -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: text/plain, */*; q=0.01\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/x-www-form-urlencoded; charset=UTF-8\" -H \"sec-ch-ua-mobile: ?0\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_13.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Offering.asmx/GetSports",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Offering.asmx/GetSports\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{\\\"getInactiveSports\\\":false}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_14.json"
+    },
+    {
+      "method": "POST",
+      "url": "https://overtime.ag/sports/Api/Offering.asmx/GetSportOffering",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "qs": {},
+      "headers": {
+        "sec-ch-ua-platform": "\"Windows\"",
+        "referer": "https://overtime.ag/sports",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36",
+        "accept": "application/json, text/plain, */*",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"99\", \"HeadlessChrome\";v=\"139\", \"Chromium\";v=\"139\"",
+        "content-type": "application/json",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "curl": "curl -sS \"https://overtime.ag/sports/Api/Offering.asmx/GetSportOffering\" -X POST -H \"sec-ch-ua-platform: \\\"Windows\\\"\" -H \"referer: https://overtime.ag/sports\" -H \"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/139.0.7258.5 Safari/537.36\" -H \"accept: application/json, text/plain, */*\" -H \"sec-ch-ua: \\\"Not;A=Brand\\\";v=\\\"99\\\", \\\"HeadlessChrome\\\";v=\\\"139\\\", \\\"Chromium\\\";v=\\\"139\\\"\" -H \"content-type: application/json\" -H \"sec-ch-ua-mobile: ?0\" --data-raw \"{\\\"sportType\\\":\\\"Football\\\",\\\"sportSubType\\\":\\\"NFL\\\",\\\"wagerType\\\":\\\"Straight Bet\\\",\\\"hoursAdjustment\\\":0,\\\"periodNumber\\\":null,\\\"gameNum\\\":null,\\\"parentGameNum\\\":null,\\\"teaserName\\\":\\\"\\\",\\\"requestMode\\\":null}\"",
+      "preview_path": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\.codex\\tools\\devtools-scout\\exports\\overtime_discover_20251106-185414_previews\\preview_15.json"
+    }
+  ]
+}

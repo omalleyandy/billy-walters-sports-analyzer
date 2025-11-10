@@ -1,0 +1,13 @@
+{
+  "id": "27650b698026cf348",
+  "ext": {
+    "features": {
+      "pbjs_allow_all_eids": {
+        "activated": true
+      },
+      "pbjs_enable_multiformat": {
+        "activated": true
+      }
+    }
+  }
+}

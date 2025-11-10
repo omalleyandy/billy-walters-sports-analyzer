@@ -1,0 +1,75 @@
+================================================================================
+BILLY WALTERS TOTALS EDGE DETECTION REPORT
+Generated: 2025-11-09 08:10:41
+================================================================================
+
+1. Houston @ Jacksonville (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: Houston 22.0 | Jacksonville 22.4
+   Defensive: Houston 4.2 | Jacksonville 0.1
+   Predicted Total: 47.8
+   Market Total: 37.5
+   EDGE: 10.3 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 23.4% of bankroll
+   Confidence: 100/100
+   [KEY] Crosses key total: 37
+
+2. Carolina @ New Orleans (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: Carolina 20.2 | New Orleans 19.0
+   Defensive: Carolina -0.9 | New Orleans -0.4
+   Predicted Total: 48.5
+   Market Total: 38.5
+   EDGE: 10.0 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 22.7% of bankroll
+   Confidence: 100/100
+
+3. NY Jets @ Cleveland (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: NY Jets 20.9 | Cleveland 18.1
+   Defensive: NY Jets -1.4 | Cleveland 0.9
+   Predicted Total: 47.4
+   Market Total: 37.5
+   EDGE: 9.9 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 22.5% of bankroll
+   Confidence: 100/100
+   Weather Adj: -0.7 pts
+   [KEY] Crosses key total: 37
+
+4. Las Vegas @ Denver (Week 10)
+   Time: 2025-11-07T01:15:00.000Z
+   Offensive: Las Vegas 19.2 | Denver 22.3
+   Defensive: Las Vegas 0.1 | Denver 4.2
+   Predicted Total: 46.9
+   Market Total: 42.5
+   EDGE: 4.4 points → BET OVER (WEAK)
+   Kelly Sizing: 10.1% of bankroll
+   Confidence: 100/100
+   [KEY] Crosses key total: 43
+
+5. Arizona @ Seattle (Week 10)
+   Time: 2025-11-09T21:05:00.000Z
+   Offensive: Arizona 23.4 | Seattle 26.5
+   Defensive: Arizona 1.6 | Seattle 2.8
+   Predicted Total: 49.4
+   Market Total: 45.5
+   EDGE: 3.9 points → BET OVER (WEAK)
+   Kelly Sizing: 8.9% of bankroll
+   Confidence: 100/100
+
+6. Washington @ Detroit (Week 10)
+   Time: 2025-11-09T21:25:00.000Z
+   Offensive: Washington 24.1 | Detroit 29.0
+   Defensive: Washington -2.1 | Detroit 1.0
+   Predicted Total: 52.6
+   Market Total: 49.0
+   EDGE: 3.6 points → BET OVER (WEAK)
+   Kelly Sizing: 8.2% of bankroll
+   Confidence: 100/100
+
+================================================================================
+Total Edges Found: 6
+Strong/Very Strong: 3
+Over bets: 6
+Under bets: 0
+================================================================================

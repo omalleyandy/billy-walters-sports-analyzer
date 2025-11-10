@@ -1,0 +1,22 @@
+{
+  "d": {
+    "Data": {
+      "Code": "S",
+      "WebCode": 0,
+      "Name": "Straight Bet",
+      "ExtendedName": "/ Buy Pts",
+      "IsTeaser": false,
+      "IsStraightBet": true,
+      "IsParlay": false,
+      "IsActionReverse": false,
+      "IsIfBet": false,
+      "IsIfBetFamily": false
+    },
+    "Code": 0,
+    "Message": "",
+    "Server": null,
+    "IsSuccess": true,
+    "AppLastUpdate": null,
+    "SessionExpired": false
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "generated_at": "2025-11-09T00:21:24.585762",
+  "statistics": {
+    "total_validations": 2,
+    "successful": 1,
+    "failed": 1,
+    "by_type": {
+      "odds": {
+        "success": 1,
+        "failed": 1
+      }
+    },
+    "success_rate": 50.0
+  },
+  "recent_events": [
+    {
+      "timestamp": "2025-11-09T00:21:24.585464",
+      "event_name": "odds_validation",
+      "data_type": "odds",
+      "valid": true,
+      "errors": [],
+      "context": {
+        "game_id": "NFL_2025_W10_BUF_KC",
+        "spread": -2.5,
+        "over_under": 47.5,
+        "moneyline_home": -135,
+        "moneyline_away": 115
+      }
+    },
+    {
+      "timestamp": "2025-11-09T00:21:24.585632",
+      "event_name": "odds_validation",
+      "data_type": "odds",
+      "valid": false,
+      "errors": [
+        "Invalid spread: -75.5 (must be between -50 and 50)",
+        "Invalid over/under: 15 (must be between 20 and 100)"
+      ],
+      "context": {
+        "game_id": "NFL_2025_W10_DET_GB",
+        "spread": -75.5,
+        "over_under": 15,
+        "moneyline_home": -150,
+        "moneyline_away": 130
+      }
+    }
+  ],
+  "failed_validations": [
+    {
+      "timestamp": "2025-11-09T00:21:24.585632",
+      "event_name": "odds_validation",
+      "data_type": "odds",
+      "valid": false,
+      "errors": [
+        "Invalid spread: -75.5 (must be between -50 and 50)",
+        "Invalid over/under: 15 (must be between 20 and 100)"
+      ],
+      "context": {
+        "game_id": "NFL_2025_W10_DET_GB",
+        "spread": -75.5,
+        "over_under": 15,
+        "moneyline_home": -150,
+        "moneyline_away": 130
+      }
+    }
+  ]
+}

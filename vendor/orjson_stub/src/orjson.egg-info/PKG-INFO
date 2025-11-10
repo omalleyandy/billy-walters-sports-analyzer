@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: orjson
+Version: 3.11.4
+Summary: Pure-Python fallback for orjson (stubbed for offline environments).
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+Stub package providing a minimal, pure-Python implementation of the ``orjson`` API (``dumps``/``loads``) so the Billy Walters Sports Analyzer can run in offline environments.

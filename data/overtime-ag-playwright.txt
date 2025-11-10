@@ -1,0 +1,124 @@
+page.getByRole('textbox', { name: 'Customer Id' })
+page.getByRole('textbox', { name: 'Password' })
+page.getByRole('button', { name: 'Login' })
+
+page.getByLabel('NFL-Game/1H/2H/Qrts')
+page.getByLabel('NFL-Game/1H/2H/Qrts', { exact: true })
+page.getByText('NFL-Game/1H/2H/Qrts', { exact: true })
+page.getByText('NFL-Game/1H/2H/Qrts')
+page.locator('label:has-text("NFL-Game/1H/2H/Qrts")')
+page.locator("//label[normalize-space()='NFL-Game/1H/2H/Qrts']")
+
+page.getByLabel('COLLEGE FB(1H/2H/Q)')
+page.getByLabel('COLLEGE FB(1H/2H/Q)', { exact: true })
+page.getByText('COLLEGE FB(1H/2H/Q)', { exact: true })
+page.getByText('COLLEGE FB(1H/2H/Q)')
+page.locator('label:has-text("COLLEGE FB(1H/2H/Q)")')
+page.locator("//label[normalize-space()='COLLEGE FB(1H/2H/Q)']")
+
+page.getByRole('button', { name: 'Game' })
+page.getByRole('button', { name: /Game/i })
+page.locator('button:has-text("GAME")')
+page.locator("//button[normalize-space()='Game']")
+page.locator(".btn.btn-small.btn-period.ng-binding.ng-scope.active[aria-hidden='true'][ng-show='WagerTypesView.Selected.id != WagerTypesView.Ids.Teaser && p.PeriodDescription != null']")
+
+page.getByRole('button', { name: '1st Half' })
+page.getByRole('button', { name: '1st Half' })
+page.locator('button:has-text("1ST HALF")')
+page.locator("//button[normalize-space()='1st Half']")
+page.locator("div[id='GameLines'] button:nth-child(2)")
+
+page.getByRole('button', { name: '1st Quarter' })
+page.getByRole('button', { name: /1st Half/i })
+page.locator('button:has-text("1ST HALF")')
+page.locator("//button[normalize-space()='1st Half']")
+page.locator("div[id='GameLines'] button:nth-child(2)")
+
+page.getByRole('button', { name: 'TEAM TOTALS' })
+page.getByRole('button', { name: /TEAM TOTALS/i })
+page.getByText('TEAM TOTALS', { exact: true })
+page.getByText('TEAM TOTALS')
+page.locator('button:has-text("TEAM TOTALS")')
+page.locator("//button[normalize-space()='TEAM TOTALS']")
+
+page.locator('#GameLines')
+page.locator('div.inset.page-content.ng-scope')
+page.locator("//div[@id='GameLines']")
+page.locator("#GameLines")
+
+
+
+
+page.getByText('Thu Nov 6', { exact: true })
+li:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(1) any:nth-child(1)
+$("li:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(1) any:nth-child(1)")
+
+page.locator("//li[1]//div[1]//div[1]//div[2]//div[1]//div[1]//div[1]//div[1]//span[1]")
+page.locator("li:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(2) div:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(1) span:nth-child(1)")
+page.getByText('Spread', { exact: true })
+
+page.locator("//li[1]//div[1]//div[1]//div[2]//div[1]//div[1]//div[1]//div[2]//span[1]")
+page.locator("li:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(2) div:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(2) span:nth-child(1)")
+page.getByText('Money Line', { exact: true })
+
+
+page.locator("//li[1]//div[1]//div[1]//div[2]//div[1]//div[1]//div[1]//div[3]//span[1]")
+page.locator("li:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(2) div:nth-child(1) div:nth-child(1) div:nth-child(1) div:nth-child(3) span:nth-child(1)")
+page.getByText('Totals', { exact: true })
+
+page.locator("//body/div[@id='app']/div[@id='wrapper']/div[@id='lineDiv']/div[@class='page-content-wrapper-inner']/ng-view[@class='ng-scope']/div[@class='ng-scope']/div[@id='GameLines']/div[@role='main']/div[@id='gamesAccordion']/div[@id='divSubSport_NFL']/div[@class='panel panel-default']/div[@class='ng-scope']/div[@id='subSport_NFL']/ul[@class='bettinglines']/li[1]/div[2]/div[1]/div[1]/div[1]/div[1]/span[1]")
+page.locator("body > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > ng-view:nth-child(2) > div:nth-child(1) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > ul:nth-child(1) > li:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)")
+page.getByText('8:15 PM', { exact: true })
+
+page.getByText('NFL WEEK 10 Thursday, November 6th', { exact: true })
+page.getByText('NFL WEEK 10 Thursday, November 6th')
+page.locator("//span[normalize-space()='NFL WEEK 10 Thursday, November 6th']")
+
+page.locator("//li[1]//div[2]//div[1]//div[2]//div[2]//div[1]//section[1]//img[1]")
+page.locator("img[height='33px'][width='33px'][ng-src='/sports/assets_core/sport_types/Las_Vegas_Raiders.png']")
+
+page.getByText('109', { exact: true })
+page.locator("//span[normalize-space()='109']")
+page.locator("body > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > ng-view:nth-child(2) > div:nth-child(1) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > ul:nth-child(1) > li:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > section:nth-child(1) > span:nth-child(2)")
+
+page.getByText('Las Vegas Raiders', { exact: true })
+page.getByText('Las Vegas Raiders')
+page.locator('span:has-text("Las Vegas Raiders")')
+page.locator("//span[normalize-space()='Las Vegas Raiders']")
+page.locator("li:nth-child(1) div:nth-child(2) div:nth-child(1) div:nth-child(2) div:nth-child(2) div:nth-child(1) section:nth-child(1) span:nth-child(2)")
+
+page.locator('span:has-text("+9 -110")')
+page.locator("//button[@id='S1_114482805_0']//span[@class='ng-binding'][contains(text(),'+9')]")
+page.locator("button[id='S1_114482805_0'] span[class='ng-binding']")
+
+page.locator("//button[@id='M1_114482805_0']//span[@class='ng-binding'][normalize-space()='+380']")
+page.locator("button[id='M1_114482805_0'] span[class='ng-binding']")
+page.getByText('+380', { exact: true })
+
+page.locator('span:has-text("O 43 -110")')
+page.locator("//button[@id='L1_114482805_0']//span[@class='ng-binding'][contains(text(),'O')]")
+page.locator("button[id='L1_114482805_0'] span[class='ng-binding']")
+
+page.locator("//li[1]//div[2]//div[1]//div[2]//div[3]//div[1]//section[1]//img[1]")
+page.locator("li:nth-child(1) div:nth-child(2) div:nth-child(1) div:nth-child(2) div:nth-child(3) div:nth-child(1) section:nth-child(1) img:nth-child(1)")
+
+page.getByText('110', { exact: true })
+page.locator("//span[normalize-space()='110']")
+page.locator("body > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > ng-view:nth-child(2) > div:nth-child(1) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > ul:nth-child(1) > li:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > section:nth-child(1) > span:nth-child(2)")
+
+page.getByText('Denver Broncos', { exact: true })
+page.getByText('Denver Broncos')
+page.locator('span:has-text("Denver Broncos")')
+page.locator("//span[normalize-space()='Denver Broncos']")
+
+page.locator('span:has-text("-9 -110")')
+page.locator("//button[@id='S2_114482805_0']//span[@class='ng-binding'][contains(text(),'-9')]")
+page.locator("button[id='S2_114482805_0'] span[class='ng-binding']")
+
+page.locator("//button[@id='M2_114482805_0']//span[@class='ng-binding'][normalize-space()='-515']")
+page.locator("button[id='M2_114482805_0'] span[class='ng-binding']")
+
+page.locator('span:has-text("U 43 -110")')
+page.locator("//button[@id='L2_114482805_0']//span[@class='ng-binding'][contains(text(),'U')]")
+page.locator("button[id='L2_114482805_0'] span[class='ng-binding']")
+

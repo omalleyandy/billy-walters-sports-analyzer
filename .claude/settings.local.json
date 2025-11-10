@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(/current-week)",
+      "Bash(uv run python:*)",
+      "Bash(mkdir:*)",
+      "Bash(dir /s /b \"C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\data\")",
+      "Bash(findstr:*)",
+      "Bash(dir /b \"C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\data\")",
+      "Bash(dir:*)",
+      "Bash(node --version:*)",
+      "Bash(npx:*)",
+      "Bash(npm search:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(curl:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(NUL)",
+      "Bash(del nul)",
+      "Bash(rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

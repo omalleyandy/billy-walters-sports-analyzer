@@ -1,0 +1,219 @@
+2025-11-09 02:21:37,096 [INFO] Initialized SignalR client for https://ws.ticosports.com/signalr
+2025-11-09 02:21:37,096 [INFO] Hub: gbsHub
+2025-11-09 02:21:37,096 [INFO] Customer: DAL519
+2025-11-09 02:21:37,096 [INFO] ============================================================
+2025-11-09 02:21:37,096 [INFO] Overtime.ag SignalR Client Starting
+2025-11-09 02:21:37,096 [INFO] ============================================================
+2025-11-09 02:21:37,096 [INFO] Building SignalR connection...
+2025-11-09 02:21:37,097 [INFO] Registered all event handlers
+2025-11-09 02:21:37,097 [INFO] SignalR connection built successfully
+2025-11-09 02:21:37,097 [INFO] Starting SignalR connection...
+2025-11-09 02:21:37,629 [INFO] Listening for 20 seconds...
+2025-11-09 02:21:37,630 [INFO] Press Ctrl+C to stop early
+2025-11-09 02:21:37,631 [ERROR] Traceback (most recent call last):
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_app.py", line 305, in run_forever
+    self.sock.connect(
+    ~~~~~~~~~~~~~~~~~^
+        self.url, header=self.header, cookie=self.cookie,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        host=host, origin=origin, suppress_origin=suppress_origin,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        proxy_type=proxy_type)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_core.py", line 249, in connect
+    self.sock, addrs = connect(url, self.sock_opt, proxy_info(**options),
+                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               options.pop('socket', None))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_http.py", line 102, in connect
+    hostname, port, resource, is_secure = parse_url(url)
+                                          ~~~~~~~~~^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_url.py", line 68, in parse_url
+    raise ValueError("scheme %s is invalid" % scheme)
+ValueError: scheme https is invalid
+
+2025-11-09 02:21:37,631 [ERROR] <signalrcore.transport.websockets.websocket_transport.WebsocketTransport object at 0x00000219468FB4D0> scheme https is invalid
+2025-11-09 02:21:37,631 [ERROR] scheme https is invalid <class 'ValueError'>
+2025-11-09 02:21:37,631 [INFO] on_disconnect not defined
+2025-11-09 02:21:37,632 [INFO] on_disconnect not defined
+2025-11-09 02:21:57,635 [INFO] Closing SignalR connection...
+2025-11-09 02:21:57,635 [INFO] ============================================================
+2025-11-09 02:21:57,635 [INFO] Session Summary:
+2025-11-09 02:21:57,635 [INFO] Games received: 0
+2025-11-09 02:21:57,635 [INFO] Lines received: 0
+2025-11-09 02:21:57,635 [INFO] ============================================================
+2025-11-09 02:22:21,354 [INFO] Initialized SignalR client for wss://ws.ticosports.com/signalr
+2025-11-09 02:22:21,354 [INFO] Hub: gbsHub
+2025-11-09 02:22:21,355 [INFO] Customer: DAL519
+2025-11-09 02:22:21,355 [INFO] ============================================================
+2025-11-09 02:22:21,355 [INFO] Overtime.ag SignalR Client Starting
+2025-11-09 02:22:21,355 [INFO] ============================================================
+2025-11-09 02:22:21,355 [INFO] Building SignalR connection...
+2025-11-09 02:22:21,355 [INFO] Registered all event handlers
+2025-11-09 02:22:21,355 [INFO] SignalR connection built successfully
+2025-11-09 02:22:21,355 [INFO] Starting SignalR connection...
+2025-11-09 02:22:21,751 [INFO] Listening for 20 seconds...
+2025-11-09 02:22:21,751 [INFO] Press Ctrl+C to stop early
+2025-11-09 02:22:22,040 [ERROR] Traceback (most recent call last):
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_app.py", line 305, in run_forever
+    self.sock.connect(
+    ~~~~~~~~~~~~~~~~~^
+        self.url, header=self.header, cookie=self.cookie,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        host=host, origin=origin, suppress_origin=suppress_origin,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        proxy_type=proxy_type)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_core.py", line 253, in connect
+    self.handshake_response = handshake(self.sock, *addrs, **options)
+                              ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_handshake.py", line 59, in handshake
+    status, resp = _get_resp_headers(sock)
+                   ~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_handshake.py", line 145, in _get_resp_headers
+    raise WebSocketBadStatusException("Handshake status %d %s", status, status_message, resp_headers)
+websocket._exceptions.WebSocketBadStatusException: Handshake status 400 Bad Request
+
+2025-11-09 02:22:22,040 [ERROR] <signalrcore.transport.websockets.websocket_transport.WebsocketTransport object at 0x000002914A35F4D0> Handshake status 400 Bad Request
+2025-11-09 02:22:22,040 [ERROR] Handshake status 400 Bad Request <class 'websocket._exceptions.WebSocketBadStatusException'>
+2025-11-09 02:22:22,040 [INFO] on_disconnect not defined
+2025-11-09 02:22:22,040 [INFO] on_disconnect not defined
+2025-11-09 02:22:41,757 [INFO] Closing SignalR connection...
+2025-11-09 02:22:41,757 [INFO] ============================================================
+2025-11-09 02:22:41,757 [INFO] Session Summary:
+2025-11-09 02:22:41,757 [INFO] Games received: 0
+2025-11-09 02:22:41,757 [INFO] Lines received: 0
+2025-11-09 02:22:41,757 [INFO] ============================================================
+2025-11-09 02:23:08,814 [INFO] Initialized SignalR client for https://ws.ticosports.com/signalr
+2025-11-09 02:23:08,814 [INFO] Hub: gbsHub
+2025-11-09 02:23:08,814 [INFO] Customer: DAL519
+2025-11-09 02:23:08,814 [INFO] ============================================================
+2025-11-09 02:23:08,814 [INFO] Overtime.ag SignalR Client Starting
+2025-11-09 02:23:08,814 [INFO] ============================================================
+2025-11-09 02:23:08,814 [INFO] Building SignalR connection...
+2025-11-09 02:23:08,814 [INFO] Registered all event handlers
+2025-11-09 02:23:08,814 [INFO] SignalR connection built successfully
+2025-11-09 02:23:08,814 [INFO] Starting SignalR connection...
+2025-11-09 02:23:09,204 [INFO] Listening for 30 seconds...
+2025-11-09 02:23:09,204 [INFO] Press Ctrl+C to stop early
+2025-11-09 02:23:09,205 [ERROR] Traceback (most recent call last):
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_app.py", line 305, in run_forever
+    self.sock.connect(
+    ~~~~~~~~~~~~~~~~~^
+        self.url, header=self.header, cookie=self.cookie,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        host=host, origin=origin, suppress_origin=suppress_origin,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        proxy_type=proxy_type)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_core.py", line 249, in connect
+    self.sock, addrs = connect(url, self.sock_opt, proxy_info(**options),
+                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               options.pop('socket', None))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_http.py", line 102, in connect
+    hostname, port, resource, is_secure = parse_url(url)
+                                          ~~~~~~~~~^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_url.py", line 68, in parse_url
+    raise ValueError("scheme %s is invalid" % scheme)
+ValueError: scheme https is invalid
+
+2025-11-09 02:23:09,206 [ERROR] <signalrcore.transport.websockets.websocket_transport.WebsocketTransport object at 0x000001F9AF1BF4D0> scheme https is invalid
+2025-11-09 02:23:09,206 [ERROR] scheme https is invalid <class 'ValueError'>
+2025-11-09 02:23:09,206 [INFO] on_disconnect not defined
+2025-11-09 02:23:09,206 [INFO] on_disconnect not defined
+2025-11-09 02:23:39,212 [INFO] Status: 0 games, 0 line updates received
+2025-11-09 02:23:39,212 [INFO] Closing SignalR connection...
+2025-11-09 02:23:39,212 [INFO] ============================================================
+2025-11-09 02:23:39,212 [INFO] Session Summary:
+2025-11-09 02:23:39,212 [INFO] Games received: 0
+2025-11-09 02:23:39,212 [INFO] Lines received: 0
+2025-11-09 02:23:39,212 [INFO] ============================================================
+2025-11-09 02:24:11,374 [INFO] Initialized SignalR client for https://ws.ticosports.com/signalr
+2025-11-09 02:24:11,374 [INFO] Hub: gbsHub
+2025-11-09 02:24:11,374 [INFO] Customer: DAL519
+2025-11-09 02:24:11,374 [INFO] ============================================================
+2025-11-09 02:24:11,374 [INFO] Overtime.ag SignalR Client Starting
+2025-11-09 02:24:11,374 [INFO] ============================================================
+2025-11-09 02:24:11,374 [INFO] Building SignalR connection...
+2025-11-09 02:24:11,375 [INFO] Registered all event handlers
+2025-11-09 02:24:11,375 [INFO] SignalR connection built successfully
+2025-11-09 02:24:11,375 [INFO] Starting SignalR connection...
+2025-11-09 02:24:11,885 [INFO] Listening for 30 seconds...
+2025-11-09 02:24:11,885 [INFO] Press Ctrl+C to stop early
+2025-11-09 02:24:11,887 [ERROR] Traceback (most recent call last):
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_app.py", line 305, in run_forever
+    self.sock.connect(
+    ~~~~~~~~~~~~~~~~~^
+        self.url, header=self.header, cookie=self.cookie,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        host=host, origin=origin, suppress_origin=suppress_origin,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        proxy_type=proxy_type)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_core.py", line 249, in connect
+    self.sock, addrs = connect(url, self.sock_opt, proxy_info(**options),
+                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               options.pop('socket', None))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_http.py", line 102, in connect
+    hostname, port, resource, is_secure = parse_url(url)
+                                          ~~~~~~~~~^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_url.py", line 68, in parse_url
+    raise ValueError("scheme %s is invalid" % scheme)
+ValueError: scheme https is invalid
+
+2025-11-09 02:24:11,887 [ERROR] <signalrcore.transport.websockets.websocket_transport.WebsocketTransport object at 0x0000015EF3B7F4D0> scheme https is invalid
+2025-11-09 02:24:11,887 [ERROR] scheme https is invalid <class 'ValueError'>
+2025-11-09 02:24:11,887 [INFO] on_disconnect not defined
+2025-11-09 02:24:11,887 [INFO] on_disconnect not defined
+2025-11-09 02:24:41,893 [INFO] Status: 0 games, 0 line updates received
+2025-11-09 02:24:41,893 [INFO] Closing SignalR connection...
+2025-11-09 02:24:41,893 [INFO] ============================================================
+2025-11-09 02:24:41,893 [INFO] Session Summary:
+2025-11-09 02:24:41,893 [INFO] Games received: 0
+2025-11-09 02:24:41,894 [INFO] Lines received: 0
+2025-11-09 02:24:41,894 [INFO] ============================================================
+2025-11-09 18:06:32,891 [INFO] Initialized SignalR client for https://ws.ticosports.com/signalr
+2025-11-09 18:06:32,891 [INFO] Hub: gbsHub
+2025-11-09 18:06:32,891 [INFO] Customer: DAL519
+2025-11-09 18:06:32,892 [INFO] ============================================================
+2025-11-09 18:06:32,892 [INFO] Overtime.ag SignalR Client Starting
+2025-11-09 18:06:32,892 [INFO] ============================================================
+2025-11-09 18:06:32,892 [INFO] Building SignalR connection...
+2025-11-09 18:06:32,892 [INFO] Registered all event handlers
+2025-11-09 18:06:32,892 [INFO] SignalR connection built successfully
+2025-11-09 18:06:32,892 [INFO] Starting SignalR connection...
+2025-11-09 18:06:33,339 [INFO] Listening for 300 seconds...
+2025-11-09 18:06:33,339 [INFO] Press Ctrl+C to stop early
+2025-11-09 18:06:33,387 [ERROR] Traceback (most recent call last):
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_app.py", line 305, in run_forever
+    self.sock.connect(
+    ~~~~~~~~~~~~~~~~~^
+        self.url, header=self.header, cookie=self.cookie,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        host=host, origin=origin, suppress_origin=suppress_origin,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        proxy_type=proxy_type)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_core.py", line 249, in connect
+    self.sock, addrs = connect(url, self.sock_opt, proxy_info(**options),
+                       ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                               options.pop('socket', None))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_http.py", line 102, in connect
+    hostname, port, resource, is_secure = parse_url(url)
+                                          ~~~~~~~~~^^^^^
+  File "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\.venv\Lib\site-packages\websocket\_url.py", line 68, in parse_url
+    raise ValueError("scheme %s is invalid" % scheme)
+ValueError: scheme https is invalid
+
+2025-11-09 18:06:33,387 [ERROR] <signalrcore.transport.websockets.websocket_transport.WebsocketTransport object at 0x000001E9AFA2F4D0> scheme https is invalid
+2025-11-09 18:06:33,387 [ERROR] scheme https is invalid <class 'ValueError'>
+2025-11-09 18:06:33,387 [INFO] on_disconnect not defined
+2025-11-09 18:06:33,387 [INFO] on_disconnect not defined

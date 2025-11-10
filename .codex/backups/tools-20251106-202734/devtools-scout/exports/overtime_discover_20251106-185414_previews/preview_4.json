@@ -1,0 +1,26 @@
+{
+  "LeftBanners": [
+    {
+      "Name": "Banner2",
+      "Image": "/assets/banners/banner2.jfif",
+      "Link": "",
+      "Action": "ChangePath('/horsesApp')",
+      "Sequence": 1,
+      "Active": true,
+      "ActiveFrom": "2020-01-01",
+      "ActiveTo": "2020-12-01"
+    }
+  ],
+  "RightBanners": [
+    {
+      "Name": "Banner1",
+      "Image": "/assets/banners/banner1.jpg",
+      "Link": "",
+      "Action": "ChangePath('/horsesApp')",
+      "Sequence": 2,
+      "Active": true,
+      "ActiveFrom": "2020-01-01",
+      "ActiveTo": "2020-12-01"
+    }
+  ]
+}

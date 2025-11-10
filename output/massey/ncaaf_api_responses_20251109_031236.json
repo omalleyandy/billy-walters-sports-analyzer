@@ -1,0 +1,125 @@
+[
+  {
+    "url": "https://masseyratings.com/json/lgland.php?argv=4d0z3k4TZr-mLmyt6priN3CYAumrQc1pgFZT7H8MJV7EUc3iCXSEXdFFKrCkkuah&task=json",
+    "data": {
+      "TI": {
+        "dohead": 1,
+        "dotail": 0,
+        "dotits": 0,
+        "dosort": 0,
+        "rowsingroup": 20
+      },
+      "CI": [
+        {
+          "title": "Link",
+          "style": "flandlink almond",
+          "sort": 9,
+          "gfac": 0
+        }
+      ],
+      "RI": [],
+      "DI": [
+        [
+          [
+            "Ratings",
+            "",
+            "/cf/fbs/ratings"
+          ]
+        ],
+        [
+          [
+            "Games",
+            "",
+            "/cf/fbs/games"
+          ]
+        ],
+        [
+          [
+            "#1 Ohio State University",
+            "cWin",
+            "/cf2025/5850"
+          ]
+        ],
+        [
+          [
+            "#2 Indiana University",
+            "cWin",
+            "/cf2025/3484"
+          ]
+        ],
+        [
+          [
+            "Conferences",
+            "",
+            "/cf/fbs/ratings?c=1"
+          ]
+        ],
+        [
+          [
+            "Matchup Tool",
+            "",
+            "/game.php?s=cf2025"
+          ]
+        ],
+        [
+          [
+            "Previous Season (2024)",
+            "",
+            "/cf2024/fbs"
+          ]
+        ],
+        [
+          [
+            "Rating Archive",
+            "",
+            "cf/fbs/archive"
+          ]
+        ],
+        [
+          [
+            "Top Teams All-time",
+            "",
+            "/top?lg=cf&y0=1945&y1=2099"
+          ]
+        ],
+        [
+          [
+            "Map",
+            "",
+            "/map.php?s=627248&t=11604"
+          ]
+        ],
+        [
+          [
+            "Transitive Path",
+            "",
+            "/path?s=cf2025"
+          ]
+        ],
+        [
+          [
+            "Scoring Distribution",
+            "",
+            "/scoredist?s=cf2025&sub=fbs&x=s"
+          ]
+        ],
+        [
+          [
+            "Biggest Upsets",
+            "",
+            "/extgms?s=cf2025&sub=fbs&x=U"
+          ]
+        ],
+        [
+          [
+            "Scores/Schedule Data",
+            "",
+            "scores.php?s=cf2025&sub=fbs"
+          ]
+        ]
+      ],
+      "timestamp": 1762686557000
+    },
+    "timestamp": "2025-11-09T03:12:36.127906"
+  }
+]

@@ -1,0 +1,69 @@
+{
+  "status": "no_cookie",
+  "bidder_status": [
+    {
+      "bidder": "rubicon",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://secure-assets.rubiconproject.com/utils/xapi/multi-sync.html?p=pbs-Playwire&gdpr=&gdpr_consent=&us_privacy=1NNY",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "undertone",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://cdn.undertone.com/js/usersync.html?gdpr=&gdpr_consent=&us_privacy=1NNY&redirect=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dundertone%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D%24UID",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "triplelift",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://eb2.3lift.com/sync?gdpr=&cmp_cs=&us_privacy=1NNY&gpp=&gpp_sid=&redir=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dtriplelift%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D%24UID",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "openx",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://u.openx.net/w/1.0/cm?id=891039ac-a916-42bb-a651-4be9e3b201da&ph=a3aece0c-9e80-4316-8deb-faf804779bd1&gdpr=&gdpr_consent=&r=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dopenx%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D%7BOPENX_ID%7D",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "sonobi",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://sync.go.sonobi.com/uc.html?gdpr=&gdpr_consent=&us_privacy=1NNY&loc=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dsonobi%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D%5BUID%5D",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "rise",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://pbs-cs.yellowblue.io/pbs-iframe?gdpr=&gdpr_consent=&us_privacy=1NNY&gpp=&gpp_sid=&redirect=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Drise%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D%5BPBS_UID%5D",
+        "type": "iframe"
+      }
+    },
+    {
+      "bidder": "appnexus",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://ib.adnxs.com/getuid?https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dappnexus%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Di%26uid%3D%24UID",
+        "type": "redirect"
+      }
+    },
+    {
+      "bidder": "pubmatic",
+      "no_cookie": true,
+      "usersync": {
+        "url": "https://ads.pubmatic.com/AdServer/js/user_sync.html?gdpr=&gdpr_consent=&us_privacy=1NNY&predirect=https%3A%2F%2Fprebid.intergient.com%2Fsetuid%3Fbidder%3Dpubmatic%26gdpr%3D%26gdpr_consent%3D%26gpp%3D%26gpp_sid%3D%26f%3Db%26uid%3D",
+        "type": "iframe"
+      }
+    }
+  ]
+}

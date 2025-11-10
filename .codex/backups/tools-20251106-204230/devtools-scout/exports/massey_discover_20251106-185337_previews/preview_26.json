@@ -1,0 +1,17 @@
+{
+  "brand_safety_checked": true,
+  "contextualclassifications": [
+    {
+      "type": "carbon_segment_id",
+      "id": "462684160",
+      "value": 1,
+      "name": ""
+    },
+    {
+      "type": "iab_intent",
+      "id": "533",
+      "value": 1,
+      "name": "Sports.Soccer"
+    }
+  ]
+}

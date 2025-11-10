@@ -1,0 +1,49 @@
+{
+  "selected": null,
+  "wagerTypes": [
+    {
+      "name": "Straight Bet",
+      "id": 0,
+      "code": "SB",
+      "title": "Straights"
+    },
+    {
+      "name": "Parlay",
+      "id": 1,
+      "code": "P",
+      "multiple": true,
+      "title": "Multiple"
+    },
+    {
+      "name": "Teaser",
+      "id": 2,
+      "code": "T",
+      "title": "Teasers",
+      "descriptions": {
+        "NFLTeaser": "Contains at least one NFL side or total. push and a win results in NO ACTION for a two team teaser, a push and a loss results in a LOSS",
+        "StandardTeaser": "Does not contain any NFL sides or totals. A push and a win results in NO ACTION for a two team teaser, a push and a loss results in a LOSS",
+        "SpecialTeaser": "Same for all sports NFL and non-NFL TIES = LOSS"
+      }
+    },
+    {
+      "name": "If Win or Push",
+      "id": 3,
+      "code": "I",
+      "multiple": true
+    },
+    {
+      "name": "If Win Only",
+      "id": 4,
+      "code": "I",
+      "multiple": true
+    },
+    {
+      "name": "Action Reverse",
+      "id": 5,
+      "code": "I",
+      "multiple": true
+    }
+  ],
+  "teaserType": "Teaser",
+  "ContestType": "Futures and Props"
+}

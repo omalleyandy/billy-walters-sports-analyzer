@@ -1,0 +1,40 @@
+version: 1
+root: "."
+commands:
+
+  - id: espn.discover
+    name: espn.discover
+    description: "Scrape ESPN scoreboard discovery endpoints"
+    cwd: "."
+    cmd:
+      - pwsh
+      - -NoProfile
+      - -File
+      - .codex/commands/devtools-espn-discover.ps1
+    argspec: []
+
+  - id: espn.pull
+    name: espn.pull
+    description: "Pull ESPN scoreboard JSON for date range"
+    cwd: "."
+    cmd:
+      - pwsh
+      - -NoProfile
+      - -File
+      - .codex/commands/devtools-espn-pull.ps1
+    argspec:
+      - name: dates
+        required: true
+      - name: limit
+        required: false
+
+  - id: overtime.discover
+    name: overtime.discover
+    description: "Scrape Overtime.ag discovery JSON endpoints"
+    cwd: "."
+    cmd:
+      - pwsh
+      - -NoProfile
+      - -File
+      - .codex/commands/devtools-overtime-discover.ps1
+    argspec: []

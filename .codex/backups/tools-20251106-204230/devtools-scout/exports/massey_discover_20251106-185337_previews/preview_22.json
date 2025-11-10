@@ -1,0 +1,31 @@
+{
+  "id": "641dcd34-d4a0-4a0a-9992-d4e5bc739d63",
+  "ext": {
+    "warnings": {
+      "general": [
+        {
+          "code": 10002,
+          "message": "debug turned off for account"
+        }
+      ]
+    },
+    "responsetimemillis": {
+      "s2s_appnexus": 9,
+      "s2s_gumgum": 8,
+      "s2s_ix": 8,
+      "s2s_medianet": 41,
+      "s2s_openx": 21,
+      "s2s_pubmatic": 34,
+      "s2s_rise": 10,
+      "s2s_rubicon": 19,
+      "s2s_sharethrough": 32,
+      "s2s_sonobi": 9,
+      "s2s_triplelift": 6,
+      "s2s_undertone": 3
+    },
+    "tmaxrequest": 2250,
+    "prebid": {
+      "auctiontimestamp": 1762484025176
+    }
+  }
+}

@@ -1,0 +1,335 @@
+﻿{
+  "$schema": "https://example.com/codex-commands.schema.json",
+  "version": "1.3",
+  "meta": {
+    "name": "codex-devtools-and-bwsa",
+    "last_updated": "2025-11-06",
+    "notes": "DevTools scout (ESPN live) + BWSA helper scripts"
+  },
+  "commands": [
+    {
+      "id": "hooks.export-manifest",
+      "title": "Summarize latest exports",
+      "cwd": ".codex",
+      "cmd": [
+        "uv",
+        "run",
+        "-p",
+        ".codex/tools/devtools-scout",
+        "python",
+        "tools/devtools-scout/hooks/export_manifest.py"
+      ],
+      "outputs": [
+        "stdout"
+      ]
+    },
+    {
+      "id": "devtools.scout",
+      "title": "DevTools Scout",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/tools/devtools-scout/hooks/devtools-scout.ps1"
+      ],
+      "argspec": [
+        {
+          "name": "--no-headless",
+          "type": "flag"
+        },
+        {
+          "name": "--wait-ms",
+          "type": "int",
+          "default": 5000
+        }
+      ]
+    },
+    {
+      "id": "espn.discover",
+      "title": "Discover ESPN scoreboard endpoint",
+      "cwd": ".codex/tools/devtools-scout",
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "espn",
+        "discover"
+      ],
+      "outputs": [
+        "stdout",
+        "exports"
+      ]
+    },
+    {
+      "id": "espn.pull",
+      "title": "Pull ESPN scoreboard",
+      "cwd": ".codex/tools/devtools-scout",
+      "argspec": [
+        {
+          "name": "dates",
+          "type": "str",
+          "required": true,
+          "example": "20251106-20251109"
+        },
+        {
+          "name": "groups",
+          "type": "str",
+          "required": false
+        },
+        {
+          "name": "week",
+          "type": "str",
+          "required": false
+        },
+        {
+          "name": "seasontype",
+          "type": "str",
+          "required": false
+        },
+        {
+          "name": "limit",
+          "type": "str",
+          "required": false,
+          "default": "500"
+        }
+      ],
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "espn",
+        "pull",
+        "--dates",
+        "${dates}",
+        "--groups",
+        "${groups}",
+        "--week",
+        "${week}",
+        "--seasontype",
+        "${seasontype}",
+        "--limit",
+        "${limit}"
+      ],
+      "outputs": [
+        "stdout",
+        "exports"
+      ]
+    },
+    {
+      "id": "massey.discover",
+      "title": "Discover Massey endpoint (stub until implemented)",
+      "cwd": ".codex/tools/devtools-scout",
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "massey",
+        "discover"
+      ]
+    },
+    {
+      "id": "massey.pull",
+      "title": "Pull Massey games (stub until implemented)",
+      "cwd": ".codex/tools/devtools-scout",
+      "argspec": [
+        {
+          "name": "season",
+          "type": "str",
+          "required": false
+        },
+        {
+          "name": "week",
+          "type": "str",
+          "required": false
+        }
+      ],
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "massey",
+        "pull",
+        "--season",
+        "${season}",
+        "--week",
+        "${week}"
+      ]
+    },
+    {
+      "id": "overtime.discover",
+      "title": "Discover Overtime endpoint (stub until implemented)",
+      "cwd": ".codex/tools/devtools-scout",
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "overtime",
+        "discover"
+      ]
+    },
+    {
+      "id": "overtime.replay",
+      "title": "Replay Overtime endpoint (stub until implemented)",
+      "cwd": ".codex/tools/devtools-scout",
+      "argspec": [
+        {
+          "name": "url",
+          "type": "str",
+          "required": true
+        }
+      ],
+      "cmd": [
+        "uv",
+        "run",
+        "codex-devtools",
+        "overtime",
+        "replay",
+        "--url",
+        "${url}"
+      ]
+    },
+    {
+      "id": "ps.sync-dev",
+      "title": "Sync dev environment",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/sync-dev.ps1"
+      ]
+    },
+    {
+      "id": "ps.sync-secrets",
+      "title": "Sync secrets (env -> project)",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/sync-secrets.ps1"
+      ]
+    },
+    {
+      "id": "ps.typecheck",
+      "title": "Type-check project",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/typecheck.ps1"
+      ]
+    },
+    {
+      "id": "ps.lint",
+      "title": "Lint project",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/lint.ps1"
+      ]
+    },
+    {
+      "id": "ps.run-tests",
+      "title": "Run tests",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/run-tests.ps1"
+      ]
+    },
+    {
+      "id": "ps.list-tools",
+      "title": "List tools/commands",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/list-tools.ps1"
+      ]
+    },
+    {
+      "id": "ps.validate-config",
+      "title": "Validate BWSA config",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/validate-config.ps1"
+      ]
+    },
+    {
+      "id": "ps.render-week-card",
+      "title": "Render Week Card (HTML/PDF)",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/render-week-card.ps1"
+      ]
+    },
+    {
+      "id": "ps.wk-card-adv",
+      "title": "Render Advanced Week Card",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/wk-card-adv.ps1"
+      ]
+    },
+    {
+      "id": "ps.update-clickmaps",
+      "title": "Update scraping clickmaps",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/update-clickmaps.ps1"
+      ]
+    },
+    {
+      "id": "ps.scrape-overtime",
+      "title": "Scrape Overtime (playwright/scrapy wrapper)",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/scrape-overtime.ps1"
+      ]
+    },
+    {
+      "id": "ps.gh-comment",
+      "title": "Post GitHub PR comment",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/gh-comment.ps1"
+      ]
+    },
+    {
+      "id": "ps.gh-merge",
+      "title": "Merge GitHub PR",
+      "cwd": ".",
+      "cmd": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        ".codex/scripts/gh-merge.ps1"
+      ]
+    }
+  ]
+}
