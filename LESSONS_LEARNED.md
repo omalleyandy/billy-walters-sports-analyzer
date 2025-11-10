@@ -314,6 +314,211 @@ All test failures resolved successfully with clean test suite.
 
 ---
 
+## Session: 2025-11-10 - Project Structure Reorganization
+
+### Context
+Reorganized scattered scripts and code into a clean, categorical structure with clear placement guidelines for future development.
+
+### Issue: Scripts and Code Scattered Across Multiple Locations
+
+**Problem:**
+- 32+ scripts scattered between root `scripts/`, `tests/`, and `src/`
+- No clear convention for where to place new files
+- Difficult to find specific functionality
+- Test scripts mixed with operational scripts
+- Analysis scripts mixed with data collection
+
+**Impact:**
+- Slowed development (time wasted searching for files)
+- Inconsistent file placement
+- Poor maintainability
+- Confusion about project structure
+
+**Root Cause:**
+- Project grew organically without organizational structure
+- Scripts added ad-hoc as needs arose
+- No documented guidelines for file placement
+- No systematic reorganization as complexity increased
+
+---
+
+### Solution: Categorical Directory Structure
+
+**Implementation:**
+Created clear categorical organization with 6 commits:
+
+**1. Data Collection Consolidation**
+- Moved all scrapers/clients to `src/data/`
+- 27 data collection modules in one location
+- Commit: `148a8f3` - refactor(data): consolidate data collection
+
+**2. Edge Detection Organization**
+- Moved analysis to `src/walters_analyzer/valuation/`
+- 11 edge detection and analysis modules
+- Commit: `d8d42c3` - refactor(analysis): move edge detection
+
+**3. Display Utilities Grouping**
+- Created `src/walters_analyzer/query/`
+- 6 display and monitoring utilities
+- Commit: `8e8c0fc` - refactor(query): organize display utilities
+
+**4. Test Consolidation**
+- Moved all tests to `tests/` directory
+- Single location for 146 test suite
+- Commit: `4e7ff06` - test: consolidate all test scripts
+
+**5. Scripts Categorization**
+- Created 5 subdirectories under `scripts/`:
+  - `analysis/` - 8 weekly analysis scripts
+  - `validation/` - 3 data validation scripts
+  - `backtest/` - 2 backtesting scripts
+  - `utilities/` - 5 helper utilities
+  - `dev/` - 14 development/deployment scripts
+- Commit: `fe0c93f` - refactor(scripts): organize into subdirectories
+
+**6. Import Path Updates**
+- Fixed all import paths after reorganization
+- Updated test references to new locations
+- Commits: `19dcb1f`, `1b3e358` - fix: update import paths
+
+---
+
+### Documentation: Clear Placement Guidelines
+
+**Added to CLAUDE.md (lines 239-251):**
+
+```markdown
+### Directory Guidelines
+
+When adding new files:
+- Data scrapers/clients → src/data/
+- Edge detection/analysis → src/walters_analyzer/valuation/
+- Query/display utilities → src/walters_analyzer/query/
+- Weekly analysis scripts → scripts/analysis/
+- Data validation → scripts/validation/
+- Backtesting → scripts/backtest/
+- Helper utilities → scripts/utilities/
+- Dev/deployment → scripts/dev/
+- Tests → tests/
+- Examples → examples/
+```
+
+**Files Affected:**
+- `CLAUDE.md:198-264` (added structure documentation)
+- `scripts/analysis/` (8 files moved)
+- `scripts/validation/` (3 files moved)
+- `scripts/backtest/` (2 files moved)
+- `scripts/utilities/` (5 files moved)
+- `tests/` (consolidated test suite)
+- `src/walters_analyzer/valuation/` (11 modules)
+- `src/walters_analyzer/query/` (6 modules)
+
+---
+
+### Results
+
+**Before:**
+- Scripts in 3+ different locations
+- No clear file placement rules
+- Time wasted searching for code
+
+**After:**
+- Clear categorical structure
+- Explicit placement guidelines in CLAUDE.md
+- Easy to find any functionality
+- New developers know exactly where to place code
+
+**Metrics:**
+- 6 commits documenting reorganization
+- 32+ scripts organized into 5 categories
+- 100% test pass rate maintained (146 tests)
+- Zero functionality broken during reorganization
+
+---
+
+### Best Practices Established
+
+**1. Reorganization Process**
+   - Plan structure before moving files
+   - Move files in logical groups (one commit per category)
+   - Update imports immediately after each move
+   - Run tests after each commit to verify nothing broke
+   - Document new structure before finishing
+
+**2. Directory Design Principles**
+   - Separate by function, not file type
+   - Group related functionality together
+   - Keep operational scripts separate from source code
+   - Examples and tests in their own directories
+   - Clear, self-documenting directory names
+
+**3. Documentation**
+   - Explicit "When adding new files" guidelines
+   - Document structure in CLAUDE.md
+   - Include directory purpose in comments
+   - Update documentation as structure evolves
+
+**4. Migration Strategy**
+   - Identify all scattered files first
+   - Design target structure
+   - Create new directories
+   - Move files in categories (one commit each)
+   - Fix imports and paths
+   - Run full test suite
+   - Update documentation
+
+**5. Prevention**
+   - Document file placement rules BEFORE they're needed
+   - Review PR file locations during code review
+   - Periodically audit for misplaced files
+   - Resist urge to create new top-level directories
+
+---
+
+### Project Structure Reference
+
+```
+billy-walters-sports-analyzer/
+├── src/
+│   ├── data/                    # 27 scrapers & clients
+│   └── walters_analyzer/
+│       ├── valuation/           # 11 edge detection modules
+│       ├── query/               # 6 display utilities
+│       ├── backtest/            # Backtesting framework
+│       ├── config/              # Configuration
+│       ├── core/                # Core system
+│       ├── feeds/               # Data feeds
+│       ├── ingest/              # Data ingestion
+│       └── research/            # Research tools
+├── scripts/
+│   ├── analysis/                # 8 weekly analysis scripts
+│   ├── validation/              # 3 data validation
+│   ├── backtest/                # 2 backtesting scripts
+│   ├── utilities/               # 5 helper utilities
+│   └── dev/                     # 14 dev/deployment scripts
+├── tests/                       # 146 test suite
+├── examples/                    # Example scripts
+└── .claude/                     # MCP server, agent, hooks
+```
+
+---
+
+### Key Commits
+
+- `148a8f3` - Data collection consolidation
+- `d8d42c3` - Edge detection organization
+- `8e8c0fc` - Display utilities grouping
+- `4e7ff06` - Test consolidation
+- `fe0c93f` - Scripts categorization
+- `19dcb1f` - Import path fixes
+- `1b3e358` - Test reference updates
+- `b86e738` - Documentation updates
+- `71be44e` - Example file addition
+
+All commits include proper conventional commit format with detailed descriptions.
+
+---
+
 ## Template for Future Entries
 
 ### Session: YYYY-MM-DD - Brief Description
