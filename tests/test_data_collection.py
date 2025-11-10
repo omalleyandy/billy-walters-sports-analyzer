@@ -376,7 +376,11 @@ class TestDataOrchestrator:
     @pytest.mark.asyncio
     async def test_collection_report_metrics(self):
         """Test collection report metrics calculation."""
-        from src.data.data_orchestrator import CollectionReport, CollectionTask, DataSource
+        from src.data.data_orchestrator import (
+            CollectionReport,
+            CollectionTask,
+            DataSource,
+        )
 
         report = CollectionReport(start_time=datetime.now())
 

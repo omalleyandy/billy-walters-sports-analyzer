@@ -35,17 +35,34 @@ def test_billy_walters_analyzer_outputs_recommendation():
         home_team=TeamSnapshot(
             name="Kansas City Chiefs",
             injuries=[
-                {"player_name": "Patrick Mahomes", "position": "QB", "injury_status": "Questionable", "tier": "elite"}
+                {
+                    "player_name": "Patrick Mahomes",
+                    "position": "QB",
+                    "injury_status": "Questionable",
+                    "tier": "elite",
+                }
             ],
         ),
         away_team=TeamSnapshot(
             name="Buffalo Bills",
             injuries=[
-                {"player_name": "Josh Allen", "position": "QB", "injury_status": "Out", "tier": "elite"},
-                {"player_name": "Stefon Diggs", "position": "WR", "injury_status": "Out", "tier": "elite"},
+                {
+                    "player_name": "Josh Allen",
+                    "position": "QB",
+                    "injury_status": "Out",
+                    "tier": "elite",
+                },
+                {
+                    "player_name": "Stefon Diggs",
+                    "position": "WR",
+                    "injury_status": "Out",
+                    "tier": "elite",
+                },
             ],
         ),
-        odds=GameOdds(spread=SpreadLine(home_spread=-2.5, home_price=-110, away_price=-110)),
+        odds=GameOdds(
+            spread=SpreadLine(home_spread=-2.5, home_price=-110, away_price=-110)
+        ),
     )
 
     analyzer = BillyWaltersAnalyzer()

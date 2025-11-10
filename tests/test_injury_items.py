@@ -1,6 +1,6 @@
 """Test injury report item structure and methods."""
+
 import json
-from datetime import datetime
 from scrapers.overtime_live.items import InjuryReportItem, iso_now
 
 
@@ -22,7 +22,7 @@ def test_injury_item_creation():
         opponent="LSU Tigers",
         notes="Limited in practice",
     )
-    
+
     assert item.player_name == "Jalen Milroe"
     assert item.position == "QB"
     assert item.injury_status == "Questionable"
@@ -47,9 +47,9 @@ def test_injury_item_to_dict():
         opponent=None,
         notes=None,
     )
-    
+
     data = item.to_dict()
-    
+
     assert isinstance(data, dict)
     assert data["player_name"] == "Will Howard"
     assert data["injury_status"] == "Out"
@@ -76,7 +76,7 @@ def test_injury_impact_score():
         notes=None,
     )
     assert item_out.get_impact_score() == 100
-    
+
     # Doubtful = 75
     item_doubtful = InjuryReportItem(
         source="espn",
@@ -95,7 +95,7 @@ def test_injury_impact_score():
         notes=None,
     )
     assert item_doubtful.get_impact_score() == 75
-    
+
     # Questionable = 50
     item_questionable = InjuryReportItem(
         source="espn",
@@ -114,7 +114,7 @@ def test_injury_impact_score():
         notes=None,
     )
     assert item_questionable.get_impact_score() == 50
-    
+
     # Probable = 25
     item_probable = InjuryReportItem(
         source="espn",
@@ -153,13 +153,13 @@ def test_injury_json_serialization():
         opponent="Florida Gators",
         notes="Full participant in practice",
     )
-    
+
     # Convert to dict and then to JSON
     json_str = json.dumps(item.to_dict())
-    
+
     # Parse back
     parsed = json.loads(json_str)
-    
+
     assert parsed["player_name"] == "Carson Beck"
     assert parsed["position"] == "QB"
     assert parsed["injury_status"] == "Probable"
@@ -169,15 +169,14 @@ if __name__ == "__main__":
     print("Running injury item tests...")
     test_injury_item_creation()
     print("[PASS] Item creation test passed")
-    
+
     test_injury_item_to_dict()
     print("[PASS] to_dict() test passed")
-    
+
     test_injury_impact_score()
     print("[PASS] Impact score test passed")
-    
+
     test_injury_json_serialization()
     print("[PASS] JSON serialization test passed")
-    
-    print("\n[SUCCESS] All injury item tests passed!")
 
+    print("\n[SUCCESS] All injury item tests passed!")

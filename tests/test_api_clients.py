@@ -12,8 +12,7 @@ import pytest
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -21,9 +20,9 @@ logger = logging.getLogger(__name__)
 @pytest.mark.asyncio
 async def test_action_network_client():
     """Test Action Network client without validation."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 1: Action Network Client (Basic)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.action_network_client import ActionNetworkClient
@@ -36,7 +35,7 @@ async def test_action_network_client():
 
             if nfl_odds:
                 game = nfl_odds[0]
-                print(f"\nSample game:")
+                print("\nSample game:")
                 print(f"  {game['away_team']} @ {game['home_team']}")
                 print(f"  Spread: {game['spread']} ({game['spread_odds']})")
                 print(f"  O/U: {game['over_under']} ({game['total_odds']})")
@@ -55,9 +54,9 @@ async def test_action_network_client():
 @pytest.mark.asyncio
 async def test_validated_action_network():
     """Test Action Network client with validation."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 2: Action Network Client (With Validation)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.validated_action_network import ValidatedActionNetworkClient
@@ -68,7 +67,7 @@ async def test_validated_action_network():
             # Test strict mode
             try:
                 nfl_response = await client.fetch_nfl_odds(strict=True)
-                print(f"\n✅ Strict validation passed")
+                print("\n✅ Strict validation passed")
                 print(f"  Valid games: {nfl_response.total_games}")
                 print(f"  Fetch time: {nfl_response.fetch_time}")
 
@@ -77,7 +76,7 @@ async def test_validated_action_network():
 
                 # Try non-strict mode
                 nfl_response = await client.fetch_nfl_odds(strict=False)
-                print(f"\n✅ Non-strict validation passed")
+                print("\n✅ Non-strict validation passed")
                 print(f"  Games with warnings: {nfl_response.total_games}")
 
         print("\n✅ Validated Action Network test PASSED")
@@ -92,9 +91,9 @@ async def test_validated_action_network():
 @pytest.mark.asyncio
 async def test_overtime_client():
     """Test Overtime API client without validation."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 3: Overtime API Client (Basic)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.overtime_client import OvertimeAPIClient
@@ -107,20 +106,20 @@ async def test_overtime_client():
 
             if nfl_games:
                 game = nfl_games[0]
-                home = game.get('home_team_data', {}).get('name', 'Unknown')
-                away = game.get('away_team_data', {}).get('name', 'Unknown')
-                print(f"\nSample game:")
+                home = game.get("home_team_data", {}).get("name", "Unknown")
+                away = game.get("away_team_data", {}).get("name", "Unknown")
+                print("\nSample game:")
                 print(f"  {away} @ {home}")
                 print(f"  Status: {game.get('status')}")
                 print(f"  Date: {game.get('game_date')}")
                 print(f"  League: {game.get('league')}")
 
                 # Test game details fetch
-                game_id = game.get('game_id')
+                game_id = game.get("game_id")
                 if game_id:
                     logger.info(f"Testing game details fetch for {game_id}...")
                     details = await client.fetch_game_details(game_id)
-                    print(f"\n✅ Fetched game details")
+                    print("\n✅ Fetched game details")
                     print(f"  Home score: {details.get('home_score')}")
                     print(f"  Away score: {details.get('away_score')}")
 
@@ -136,9 +135,9 @@ async def test_overtime_client():
 @pytest.mark.asyncio
 async def test_validated_overtime():
     """Test Overtime API client with validation."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 4: Overtime API Client (With Validation)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.validated_overtime import ValidatedOvertimeClient
@@ -149,7 +148,7 @@ async def test_validated_overtime():
             # Test strict mode
             try:
                 nfl_games = await client.fetch_nfl_games(strict=True)
-                print(f"\n✅ Strict validation passed")
+                print("\n✅ Strict validation passed")
                 print(f"  Valid games: {len(nfl_games)}")
 
             except ValueError as e:
@@ -157,7 +156,7 @@ async def test_validated_overtime():
 
                 # Try non-strict mode
                 nfl_games = await client.fetch_nfl_games(strict=False)
-                print(f"\n✅ Non-strict validation passed")
+                print("\n✅ Non-strict validation passed")
                 print(f"  Games with warnings: {len(nfl_games)}")
 
         print("\n✅ Validated Overtime test PASSED")
@@ -172,9 +171,9 @@ async def test_validated_overtime():
 @pytest.mark.asyncio
 async def test_accuweather_client():
     """Test AccuWeather client."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 5: AccuWeather Client")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.accuweather_client import AccuWeatherClient
@@ -188,16 +187,18 @@ async def test_accuweather_client():
 
             # Get current conditions
             conditions = await client.get_current_conditions(location_key)
-            print(f"\nCurrent conditions:")
+            print("\nCurrent conditions:")
             print(f"  Temperature: {conditions['temperature_f']}°F")
             print(f"  Weather: {conditions['weather_text']}")
-            print(f"  Wind: {conditions['wind_speed_mph']} mph {conditions['wind_direction']}")
+            print(
+                f"  Wind: {conditions['wind_speed_mph']} mph {conditions['wind_direction']}"
+            )
             print(f"  Humidity: {conditions['humidity']}%")
 
             # Get game forecast
             game_time = datetime.now().replace(hour=13, minute=0, second=0)
             forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
-            print(f"\nGame forecast:")
+            print("\nGame forecast:")
             print(f"  Temperature: {forecast['temperature_f']}°F")
             print(f"  Weather: {forecast['weather_text']}")
             print(f"  Precipitation: {forecast.get('precipitation_probability', 0)}%")
@@ -214,9 +215,9 @@ async def test_accuweather_client():
 @pytest.mark.asyncio
 async def test_openweather_client():
     """Test OpenWeather client."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 6: OpenWeather Client")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.openweather_client import OpenWeatherClient
@@ -226,7 +227,7 @@ async def test_openweather_client():
 
             # Get current weather
             current = await client.get_current_weather("Kansas City", "MO")
-            print(f"\nCurrent weather:")
+            print("\nCurrent weather:")
             print(f"  Temperature: {current['temperature_f']}°F")
             print(f"  Feels like: {current['feels_like_f']}°F")
             print(f"  Weather: {current['weather_text']}")
@@ -236,13 +237,13 @@ async def test_openweather_client():
             # Get game forecast
             game_time = datetime.now().replace(hour=13, minute=0, second=0)
             forecast = await client.get_game_forecast("Kansas City", "MO", game_time)
-            print(f"\nGame forecast:")
+            print("\nGame forecast:")
             print(f"  Temperature: {forecast['temperature_f']}°F")
             print(f"  Weather: {forecast['weather_text']}")
             print(f"  Precipitation: {forecast['precipitation_chance']}%")
 
             # Test wind direction conversion
-            wind_dir = client.wind_direction_text(forecast.get('wind_direction_deg'))
+            wind_dir = client.wind_direction_text(forecast.get("wind_direction_deg"))
             print(f"  Wind direction: {wind_dir}")
 
         print("\n✅ OpenWeather client test PASSED")
@@ -257,9 +258,9 @@ async def test_openweather_client():
 @pytest.mark.asyncio
 async def test_unified_weather_client():
     """Test unified weather client with fallback."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 7: Unified Weather Client (With Fallback)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.weather_client import WeatherClient
@@ -273,11 +274,13 @@ async def test_unified_weather_client():
             # Normalize data
             normalized = client.normalize_weather_data(forecast)
 
-            print(f"\n✅ Unified weather fetch successful")
+            print("\n✅ Unified weather fetch successful")
             print(f"  Source: {normalized['source']}")
             print(f"  Temperature: {normalized['temperature_f']}°F")
             print(f"  Weather: {normalized['weather_text']}")
-            print(f"  Wind: {normalized['wind_speed_mph']} mph {normalized.get('wind_direction', 'N/A')}")
+            print(
+                f"  Wind: {normalized['wind_speed_mph']} mph {normalized.get('wind_direction', 'N/A')}"
+            )
             print(f"  Humidity: {normalized['humidity']}%")
             print(f"  Precipitation: {normalized.get('precipitation_chance', 0)}%")
 
@@ -293,9 +296,9 @@ async def test_unified_weather_client():
 @pytest.mark.asyncio
 async def test_validated_weather():
     """Test validated weather client."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 8: Validated Weather Client")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.validated_weather import ValidatedWeatherClient
@@ -309,7 +312,7 @@ async def test_validated_weather():
                 forecast = await client.get_and_validate_game_forecast(
                     "Kansas City", "MO", game_time, strict=True
                 )
-                print(f"\n✅ Weather validation passed")
+                print("\n✅ Weather validation passed")
                 print(f"  Source: {forecast['source']}")
                 print(f"  Temperature: {forecast['temperature_f']}°F")
                 print(f"  Weather: {forecast['weather_text']}")
@@ -321,7 +324,7 @@ async def test_validated_weather():
                 forecast = await client.get_and_validate_game_forecast(
                     "Kansas City", "MO", game_time, strict=False
                 )
-                print(f"\n✅ Non-strict validation passed")
+                print("\n✅ Non-strict validation passed")
 
         print("\n✅ Validated weather test PASSED")
         return True
@@ -335,9 +338,9 @@ async def test_validated_weather():
 @pytest.mark.asyncio
 async def test_full_integration():
     """Test full integration of all clients."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 9: Full Integration (All Clients)")
-    print("="*70)
+    print("=" * 70)
 
     try:
         from src.data.validated_action_network import ValidatedActionNetworkClient
@@ -382,9 +385,11 @@ async def test_full_integration():
                 weather = await weather_client.get_and_validate_game_forecast(
                     city, state, game_time, strict=False
                 )
-                print(f"✅ Weather: {weather['temperature_f']}°F, {weather['weather_text']}")
+                print(
+                    f"✅ Weather: {weather['temperature_f']}°F, {weather['weather_text']}"
+                )
 
-                print(f"\n✅ Complete game data:")
+                print("\n✅ Complete game data:")
                 print(f"  Matchup: {game['away_team']} @ {game['home_team']}")
                 print(f"  Spread: {game['spread']}")
                 print(f"  O/U: {game['over_under']}")
@@ -401,9 +406,9 @@ async def test_full_integration():
 
 async def run_all_tests():
     """Run all tests and report results."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("BILLY WALTERS SPORTS ANALYZER - API CLIENT TEST SUITE")
-    print("="*70)
+    print("=" * 70)
 
     tests = [
         ("Action Network Basic", test_action_network_client),
@@ -428,9 +433,9 @@ async def run_all_tests():
             results[test_name] = False
 
     # Print summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
     passed = sum(1 for r in results.values() if r)
     total = len(results)
@@ -439,7 +444,7 @@ async def run_all_tests():
         status = "✅ PASSED" if result else "❌ FAILED"
         print(f"{test_name:30} {status}")
 
-    print(f"\n{passed}/{total} tests passed ({passed/total*100:.1f}%)")
+    print(f"\n{passed}/{total} tests passed ({passed / total * 100:.1f}%)")
 
     if passed == total:
         print("\n🎉 All tests passed! API integration is working correctly.")

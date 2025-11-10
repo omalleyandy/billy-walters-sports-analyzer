@@ -15,9 +15,10 @@ import sys
 from pathlib import Path
 
 # Fix Windows console encoding for emojis
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -49,7 +50,7 @@ async def test_api_connection():
         print()
         return False
 
-    print(f"✅ API key configured")
+    print("✅ API key configured")
     print()
 
     # Fetch NFL odds
@@ -64,7 +65,7 @@ async def test_api_connection():
         print("   - API rate limit reached")
         return False
 
-    print(f"✅ Successfully fetched odds!")
+    print("✅ Successfully fetched odds!")
     print(f"   Total book/game combinations: {len(odds)}")
     print(f"   Unique games: {len(set(o['game_id'] for o in odds))}")
     print()
@@ -72,21 +73,18 @@ async def test_api_connection():
     # Show sample games
     games = {}
     for odd in odds:
-        game_id = odd['game_id']
+        game_id = odd["game_id"]
         if game_id not in games:
-            games[game_id] = {
-                'teams': odd['teams'],
-                'books': []
-            }
-        games[game_id]['books'].append(odd['book'])
+            games[game_id] = {"teams": odd["teams"], "books": []}
+        games[game_id]["books"].append(odd["book"])
 
     print("Sample Games:")
     print("-" * 80)
 
     for i, (game_id, game_info) in enumerate(list(games.items())[:3]):
-        teams = game_info['teams']
-        books = game_info['books']
-        print(f"{i+1}. {teams['away']} @ {teams['home']}")
+        teams = game_info["teams"]
+        books = game_info["books"]
+        print(f"{i + 1}. {teams['away']} @ {teams['home']}")
         print(f"   Books: {', '.join(books[:5])}")
         if len(books) > 5:
             print(f"   ... and {len(books) - 5} more")
@@ -117,7 +115,7 @@ async def test_line_extraction():
     # Analyze first game
     game_odds = {}
     for odd in odds:
-        game_id = odd['game_id']
+        game_id = odd["game_id"]
         if game_id not in game_odds:
             game_odds[game_id] = []
         game_odds[game_id].append(odd)
@@ -132,7 +130,7 @@ async def test_line_extraction():
 
     # Get game info
     sample = first_game_odds[0]
-    teams = sample['teams']
+    teams = sample["teams"]
 
     print(f"Analyzing: {teams['away']} @ {teams['home']}")
     print(f"Game ID: {first_game_id}")
@@ -145,13 +143,19 @@ async def test_line_extraction():
     print("-" * 80)
 
     for odd in first_game_odds:
-        book = odd['book']
-        book_type = "SHARP" if book in sharp_books else "PUBLIC" if book in public_books else "OTHER"
+        book = odd["book"]
+        book_type = (
+            "SHARP"
+            if book in sharp_books
+            else "PUBLIC"
+            if book in public_books
+            else "OTHER"
+        )
 
-        spread = odd.get('markets', {}).get('spread', {})
-        home_spread = spread.get('home', {})
-        line = home_spread.get('line')
-        price = home_spread.get('price')
+        spread = odd.get("markets", {}).get("spread", {})
+        home_spread = spread.get("home", {})
+        line = home_spread.get("line")
+        price = home_spread.get("price")
 
         if line is not None:
             print(f"{book:<20} {book_type:<15} {line:+6.1f} ({price:+4d})")
@@ -171,8 +175,12 @@ async def test_monitoring():
     print("Configuration:")
     print(f"  Sharp Books: {', '.join(settings.skills.market_analysis.sharp_books)}")
     print(f"  Public Books: {', '.join(settings.skills.market_analysis.public_books)}")
-    print(f"  Alert Threshold: {settings.skills.market_analysis.alert_threshold} points")
-    print(f"  Check Interval: {settings.skills.market_analysis.monitor_interval} seconds")
+    print(
+        f"  Alert Threshold: {settings.skills.market_analysis.alert_threshold} points"
+    )
+    print(
+        f"  Check Interval: {settings.skills.market_analysis.monitor_interval} seconds"
+    )
     print()
 
     print("Starting 2-minute monitoring test...")
@@ -183,10 +191,7 @@ async def test_monitoring():
 
     try:
         # Monitor for 2 minutes
-        await monitor.monitor_sport(
-            sport="americanfootball_nfl",
-            duration_minutes=2
-        )
+        await monitor.monitor_sport(sport="americanfootball_nfl", duration_minutes=2)
 
         # Show summary
         summary = monitor.get_alert_summary()
@@ -196,10 +201,10 @@ async def test_monitoring():
         print("=" * 80)
         print(f"Total Alerts: {summary.get('total_alerts', 0)}")
 
-        if summary.get('total_alerts', 0) > 0:
+        if summary.get("total_alerts", 0) > 0:
             print(f"Average Confidence: {summary.get('avg_confidence', 0):.1f}%")
 
-            top_games = summary.get('most_alerted_games', [])
+            top_games = summary.get("most_alerted_games", [])
             if top_games:
                 print("\nMost Active Games:")
                 for game in top_games:
@@ -240,7 +245,7 @@ async def main():
     print("This will use API quota and take 2 minutes.")
     response = input("Run monitoring test? (y/N): ").strip().lower()
 
-    if response == 'y':
+    if response == "y":
         await test_monitoring()
         print("✅ Test 3 passed!\n")
     else:

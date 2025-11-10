@@ -321,9 +321,7 @@ def main():
         # TOTALS ANALYSIS
         print("\nTOTALS ANALYSIS:")
         print(f"  Market Total:      {market_total}")
-        print(
-            "  (Note: Detailed totals analysis requires offensive/defensive ratings)"
-        )
+        print("  (Note: Detailed totals analysis requires offensive/defensive ratings)")
 
         print()
         print("=" * 100)

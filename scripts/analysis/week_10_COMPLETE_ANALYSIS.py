@@ -5,7 +5,6 @@ Incorporating: Power Ratings + Injuries + Weather + Situational + Emotional Fact
 November 9, 2025
 """
 
-
 print("=" * 120)
 print("NFL WEEK 10 COMPLETE ANALYSIS - BILLY WALTERS METHODOLOGY")
 print("Date: November 9, 2025")
