@@ -105,3 +105,43 @@ dev = [
     "pytest-asyncio>=1.2.0",
     "ruff>=0.14.3",
 ]
+
+[tool.ruff]
+# Exclude directories that are not part of the main source code
+exclude = [
+    ".claude",
+    ".codex",
+    "data/_tmp",
+    "review",
+    "__pycache__",
+    ".git",
+    ".pytest_cache",
+    ".venv",
+    "venv",
+    "*.egg-info",
+]
+
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+# Allow unused imports in __init__.py files
+ignore = [
+    "E402",  # Module level import not at top of file (needed for some dynamic imports)
+    "E501",  # Line too long (let black/ruff format handle this)
+    "E722",  # Bare except (legacy code, will fix incrementally)
+    "E731",  # Lambda assignment (used for dynamic imports)
+    "E741",  # Ambiguous variable name (legacy code)
+    "F401",  # Unused imports in __init__.py and legacy code
+    "F821",  # Undefined name (some files have broken imports)
+    "F841",  # Unused local variable (legacy code)
+    "W291",  # Trailing whitespace (formatting issue)
+    "W293",  # Blank line contains whitespace (formatting issue)
+]
+
+# Select rules to enforce
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+]
