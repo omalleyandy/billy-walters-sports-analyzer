@@ -145,3 +145,44 @@ select = [
     "W",   # pycodestyle warnings
     "F",   # pyflakes
 ]
+
+[tool.pyright]
+# Type checking configuration
+include = ["src", "scrapers", "scripts", "tests", "examples"]
+exclude = [
+    ".claude",
+    ".codex",
+    "data/_tmp",
+    "review",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    ".git",
+    ".venv",
+    "venv",
+]
+
+# Be lenient with type checking for legacy code
+reportMissingImports = false
+reportMissingTypeStubs = false
+reportUnknownVariableType = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
+reportUnknownParameterType = false
+reportGeneralTypeIssues = false
+reportOptionalMemberAccess = false
+reportOptionalCall = false
+reportOptionalOperand = false
+reportOptionalSubscript = false
+reportPrivateImportUsage = false
+reportArgumentType = false
+reportAssignmentType = false
+reportAttributeAccessIssue = false
+reportOperatorIssue = false
+reportReturnType = false
+reportPossiblyUnboundVariable = false
+reportCallIssue = false
+reportUnsupportedDunderAll = "warning"
+
+# Only report critical issues
+typeCheckingMode = "basic"
+pythonVersion = "3.11"
