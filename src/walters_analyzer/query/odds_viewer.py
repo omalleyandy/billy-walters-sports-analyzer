@@ -23,7 +23,19 @@ class OddsViewer:
 
     def load_latest(self, sport: Optional[str] = None) -> int:
         """Load the most recent scraped data file"""
-        jsonl_files = sorted(self.data_dir.glob("overtime-live-*.jsonl"), reverse=True)
+        # Try multiple file patterns (Chrome DevTools and Playwright scrapers use different naming)
+        patterns = [
+            "overtime-live-*.jsonl",
+            "nfl-odds-*.jsonl",
+            "ncaaf-odds-*.jsonl",
+            "*-odds-*.jsonl",
+        ]
+        jsonl_files = []
+
+        for pattern in patterns:
+            jsonl_files.extend(self.data_dir.glob(pattern))
+
+        jsonl_files = sorted(set(jsonl_files), reverse=True)
 
         if not jsonl_files:
             print(f"No scraped data found in {self.data_dir}", file=sys.stderr)
@@ -119,13 +131,13 @@ class OddsViewer:
 
         # Header
         print("=" * 80)
-        print(f"🏈 {away} @ {home}")
+        print(f"[GAME] {away} @ {home}")
         if rotation:
             print(f"   Rotation: {rotation}")
         if event_date and event_time:
-            print(f"   📅 {event_date} at {event_time}")
+            print(f"   Date: {event_date} at {event_time}")
         elif event_date:
-            print(f"   📅 {event_date}")
+            print(f"   Date: {event_date}")
 
         if not show_details:
             print()
@@ -139,7 +151,7 @@ class OddsViewer:
         spread_home = spread.get("home")
 
         if spread_away or spread_home:
-            print("\n   📊 SPREAD:")
+            print("\n   [SPREAD]")
             if spread_away:
                 line = spread_away.get("line")
                 price = spread_away.get("price")
@@ -157,7 +169,7 @@ class OddsViewer:
         total_under = total.get("under")
 
         if total_over or total_under:
-            print("\n   🎯 TOTAL:")
+            print("\n   [TOTAL]")
             if total_over:
                 line = total_over.get("line")
                 price = total_over.get("price")
@@ -173,7 +185,7 @@ class OddsViewer:
         ml_home = moneyline.get("home")
 
         if ml_away or ml_home:
-            print("\n   💰 MONEYLINE:")
+            print("\n   [MONEYLINE]")
             if ml_away:
                 price = ml_away.get("price")
                 print(f"      {away:30s}  ({price:+4d})")
@@ -206,7 +218,7 @@ class OddsViewer:
             sport = game.get("sport", "unknown")
             by_sport[sport].append(game)
 
-        print("\n📊 LOADED GAMES SUMMARY:")
+        print("\n[SUMMARY] LOADED GAMES:")
         print("=" * 80)
         print(f"Total Games: {len(self.games)}")
         print()

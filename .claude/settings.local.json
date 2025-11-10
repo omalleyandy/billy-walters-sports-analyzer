@@ -24,7 +24,8 @@
       "Bash(del nul)",
       "Bash(rm:*)",
       "Bash(uv sync:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "SlashCommand(/document-lesson)"
     ],
     "deny": [],
     "ask": []

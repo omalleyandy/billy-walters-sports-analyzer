@@ -22,14 +22,20 @@ data/**/*.xml
 data/**/*.zip
 !data/**/README.md
 
-# Temporary files
-test_*.py
+# Temporary files (but not in tests/ directory)
+/test_*.py
 diagnose_*.py
 fix_*.py
 skip_*.py
 replace_*.py
 *.html
 new_extract_function.txt
+NUL
+
+# Backup directories and logs
+*.bak/
+**/logs/
+src/logs/
 
 # Claude Code - Personal preferences
 CLAUDE.local.md

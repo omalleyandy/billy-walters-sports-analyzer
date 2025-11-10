@@ -1,12 +1,14 @@
 """
 Core Billy Walters Valuation System
-Combines player valuations, injury impacts, and market analysis
+Combines player valuations, injury impacts, market analysis, and power ratings
 """
 
 from typing import Dict, List, Optional, Tuple
+from pathlib import Path
 from .player_values import PlayerValuation
 from .injury_impacts import InjuryImpactCalculator
 from .market_analysis import MarketAnalyzer
+from .power_ratings import PowerRatingSystem, GameResult
 
 
 class BillyWaltersValuation:
@@ -17,13 +19,21 @@ class BillyWaltersValuation:
         >>> bw = BillyWaltersValuation()
         >>> value = bw.calculate_player_value(position='QB', tier='elite')
         >>> impact = bw.apply_injury_multiplier(value, 'Questionable', 'Ankle')
+        >>> spread = bw.calculate_predicted_spread('Kansas City', 'Buffalo')
     """
 
-    def __init__(self, sport: str = "NFL"):
+    def __init__(self, sport: str = "NFL", ratings_file: Optional[Path] = None):
         self.sport = sport
         self.player_valuation = PlayerValuation(sport)
         self.injury_calculator = InjuryImpactCalculator()
         self.market_analyzer = MarketAnalyzer()
+
+        # Initialize Power Rating System
+        if ratings_file is None:
+            # Default to data directory
+            ratings_file = Path("data") / f"power_ratings_{sport.lower()}_2025.json"
+
+        self.power_ratings = PowerRatingSystem(ratings_file=ratings_file)
 
     def calculate_player_value(
         self, position: str, tier: Optional[str] = None
@@ -298,3 +308,91 @@ class BillyWaltersValuation:
         lines.append(f"{edge['historical_context']}")
 
         return "\n".join(lines)
+
+    def calculate_predicted_spread(
+        self,
+        home_team: str,
+        away_team: str,
+        home_injuries: Optional[List[Dict]] = None,
+        away_injuries: Optional[List[Dict]] = None,
+    ) -> Optional[float]:
+        """
+        Calculate predicted spread incorporating power ratings and injuries
+
+        Predicted Spread = Power Rating Spread + Injury Adjustments
+
+        Args:
+            home_team: Home team name
+            away_team: Away team name
+            home_injuries: Optional list of home team injuries
+            away_injuries: Optional list of away team injuries
+
+        Returns:
+            Predicted spread from home team perspective (positive = home favored)
+            Returns None if teams not found in power ratings
+        """
+        # Get base spread from power ratings
+        base_spread = self.power_ratings.calculate_matchup_spread(
+            home_team, away_team, include_hfa=True
+        )
+
+        if base_spread is None:
+            return None
+
+        # Adjust for injuries if provided
+        if home_injuries or away_injuries:
+            home_inj_impact = 0.0
+            away_inj_impact = 0.0
+
+            if home_injuries:
+                home_analysis = self.calculate_team_impact(home_injuries, home_team)
+                home_inj_impact = home_analysis["total_impact"]
+
+            if away_injuries:
+                away_analysis = self.calculate_team_impact(away_injuries, away_team)
+                away_inj_impact = away_analysis["total_impact"]
+
+            # Injury adjustment favors less injured team
+            injury_adjustment = away_inj_impact - home_inj_impact
+
+            return round(base_spread + injury_adjustment, 1)
+
+        return base_spread
+
+    def update_power_ratings_from_game(
+        self, game_result: GameResult
+    ) -> Tuple[float, float]:
+        """
+        Update power ratings after a game completes
+
+        Args:
+            game_result: Completed game with scores and context
+
+        Returns:
+            Tuple of (home_new_rating, away_new_rating)
+        """
+        return self.power_ratings.update_ratings_from_game(game_result)
+
+    def get_power_rating(self, team: str) -> Optional[float]:
+        """
+        Get a team's current power rating
+
+        Args:
+            team: Team name
+
+        Returns:
+            Current power rating or None if not found
+        """
+        return self.power_ratings.get_rating(team)
+
+    def get_top_teams(self, n: int = 10) -> List[Tuple[str, float]]:
+        """
+        Get top N teams by power rating
+
+        Args:
+            n: Number of teams to return
+
+        Returns:
+            List of (team_name, rating) tuples
+        """
+        return self.power_ratings.get_top_teams(n)
