@@ -33,7 +33,15 @@
       "Bash(git mv:*)",
       "Bash(mv:*)",
       "Bash(git restore:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run list:*)",
+      "Bash(uv add:*)",
+      "Bash(uv run pyright:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(gh run:*)"
     ],
     "deny": [],
     "ask": []
