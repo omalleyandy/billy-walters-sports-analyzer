@@ -38,6 +38,17 @@ data/**/*.xml
 data/**/*.zip
 !data/**/README.md
 
+# Overtime.ag scraper outputs (organized structure)
+output/overtime/nfl/pregame/*.json
+output/overtime/nfl/live/*.json
+output/overtime/ncaaf/pregame/*.json
+output/overtime/ncaaf/live/*.json
+# Keep directory structure
+!output/overtime/nfl/pregame/.gitkeep
+!output/overtime/nfl/live/.gitkeep
+!output/overtime/ncaaf/pregame/.gitkeep
+!output/overtime/ncaaf/live/.gitkeep
+
 # Databases with real data (NEVER commit)
 data/**/*.db
 *.sqlite

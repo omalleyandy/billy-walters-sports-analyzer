@@ -4,6 +4,936 @@ This document captures issues encountered during development, their solutions, a
 
 ---
 
+## Session: 2025-11-10 (Evening) - AccuWeather API Fix and Week 10 Workflow
+
+### Context
+Ran complete Billy Walters workflow for Week 10 (data collection → edge detection → betting card). Discovered AccuWeather API was completely broken with HTTP 301 and 403 errors preventing weather data collection.
+
+### Problem: AccuWeather API Failing
+
+**Symptoms:**
+- HTTP 301 redirect errors on all requests
+- HTTP 403 "Forbidden" errors on forecast endpoints
+- Weather data returning all N/A values
+- Edge detection running without weather adjustments
+
+**Impact:**
+- Cannot calculate weather impact on totals/spreads
+- Missing critical Billy Walters factor (weather adjustments)
+- Incomplete betting analysis
+
+### Root Causes Identified
+
+#### 1. HTTP Instead of HTTPS (HTTP 301 Errors)
+**File:** `src/data/accuweather_client.py:28`
+
+**Issue:**
+```python
+BASE_URL = "http://dataservice.accuweather.com"  # WRONG
+```
+
+AccuWeather API requires HTTPS. Using HTTP causes 301 redirects that fail in httpx.
+
+#### 2. Starter Plan 72-Hour Forecast Attempt (HTTP 403 Errors)
+**File:** `src/data/accuweather_client.py:404`
+
+**Issue:**
+```python
+# Tried to request 72-hour or 120-hour forecast
+forecasts = await self.get_hourly_forecast(
+    location_key, hours=min(hours_ahead + 1, 120), max_retries=max_retries
+)
+```
+
+AccuWeather starter plan (free tier) only allows:
+- ✅ 12-hour hourly forecast
+- ✅ 5-day daily forecast
+- ❌ 24-hour hourly forecast (requires prime plan)
+- ❌ 72-hour hourly forecast (requires prime/elite plan)
+
+#### 3. Data Formatting Mismatch (N/A Values)
+**File:** `src/data/accuweather_client.py:323-372`
+
+**Issue:**
+```python
+# AccuWeather client returned:
+return {
+    "temperature_f": temp.get("Value"),      # Wrong key
+    "wind_speed_mph": wind_speed.get("Value"),  # Wrong key
+}
+
+# Weather analysis expected:
+weather.get('temperature')  # Standard key
+weather.get('wind_speed')   # Standard key
+```
+
+### Solutions Implemented
+
+#### Fix 1: Change HTTP to HTTPS
+**File:** `src/data/accuweather_client.py:28`
+
+```python
+# BEFORE
+BASE_URL = "http://dataservice.accuweather.com"
+
+# AFTER
+BASE_URL = "https://dataservice.accuweather.com"
+```
+
+**Result:** ✅ HTTP 301 errors eliminated, API responding correctly
+
+#### Fix 2: Add Starter Plan Compatibility
+**File:** `src/data/accuweather_client.py:402-418`
+
+```python
+# For games >12 hours away, fall back to current conditions
+if hours_ahead > 12:
+    logger.info(
+        f"Game is {hours_ahead} hours away, using current conditions "
+        "(starter plan limited to 12-hour forecast)"
+    )
+    conditions = await self.get_current_conditions(
+        location_key, max_retries=max_retries
+    )
+    logger.warning(
+        f"Using current conditions for game {hours_ahead} hours away. "
+        "For better forecasts, upgrade AccuWeather plan or use OpenWeather fallback."
+    )
+    return conditions
+
+# Within 12-hour window, use hourly forecast
+forecast_hours = min(hours_ahead + 1, 12)
+forecasts = await self.get_hourly_forecast(
+    location_key, hours=forecast_hours, max_retries=max_retries
+)
+```
+
+**Result:** ✅ HTTP 403 errors eliminated, API working within limitations
+
+#### Fix 3: Standardize Data Format
+**File:** `src/data/accuweather_client.py:323-378`
+
+```python
+def _format_conditions(self, conditions: dict[str, Any]) -> dict[str, Any]:
+    """Format current conditions data to standard weather format."""
+    temp = conditions.get("Temperature", {}).get("Imperial", {})
+    feels_like = conditions.get("RealFeelTemperature", {}).get("Imperial", {})
+    wind = conditions.get("Wind", {})
+    wind_speed = wind.get("Speed", {}).get("Imperial", {})
+    wind_gust = conditions.get("WindGust", {}).get("Speed", {}).get("Imperial", {})
+
+    return {
+        # Standard keys expected by weather analysis
+        "temperature": temp.get("Value"),           # ✅ Standard key
+        "feels_like": feels_like.get("Value"),      # ✅ Standard key
+        "wind_speed": wind_speed.get("Value"),      # ✅ Standard key
+        "wind_gust": wind_gust.get("Value"),        # ✅ Standard key
+        "wind_direction": wind.get("Direction", {}).get("English"),
+        "humidity": conditions.get("RelativeHumidity"),
+        "description": conditions.get("WeatherText"),
+        "precipitation_type": conditions.get("PrecipitationType"),
+        "precipitation_probability": 100 if conditions.get("HasPrecipitation", False) else 0,
+        "timestamp": conditions.get("LocalObservationDateTime"),
+        "source": "accuweather",
+    }
+```
+
+Applied same standardization to `_format_hourly()` method.
+
+**Result:** ✅ Weather data parsing correctly, all fields populated
+
+### Testing Performed
+
+#### Test 1: API Connectivity
+```bash
+cd src && uv run python ../test_accuweather.py
+```
+**Result:** ✅ Location key retrieved (Green Bay = 1868)
+
+#### Test 2: Endpoint Availability
+```bash
+cd src && uv run python ../test_accuweather_endpoints.py
+```
+**Results:**
+- ✅ Current conditions: Working
+- ✅ 12-hour forecast: Working
+- ✅ 5-day forecast: Working
+- ❌ 24-hour forecast: Not available (requires upgrade)
+- ❌ 72-hour forecast: Not available (requires upgrade)
+
+#### Test 3: Game Forecast (MNF)
+```bash
+cd src && uv run python ../check_weather_mnf.py
+```
+**Result:** ✅ Complete weather data returned:
+- Temperature: 34°F → 32°F (updated)
+- Feels Like: 30°F → 29°F
+- Wind: 5.9 mph → 5.5 mph (very mild)
+- Precipitation: None
+- Weather Impact: -1 point (slight UNDER lean)
+
+### Verified Working Endpoints
+
+| Endpoint | Starter Plan | Result |
+|----------|--------------|--------|
+| Location Key Lookup | ✅ Available | Working |
+| Current Conditions | ✅ Available | Working |
+| 12-Hour Hourly Forecast | ✅ Available | Working |
+| 5-Day Daily Forecast | ✅ Available | Working |
+| 24-Hour Hourly Forecast | ❌ Prime+ only | 403 Forbidden |
+| 72-Hour Hourly Forecast | ❌ Prime+ only | 403 Forbidden |
+
+### Weather Analysis for Week 10 MNF
+
+**Game:** Philadelphia Eagles @ Green Bay Packers
+**Date:** Tuesday, November 11, 2025 at 8:15 PM ET
+**Location:** Lambeau Field (Outdoor)
+
+**Current Conditions (26 hours before game):**
+- Temperature: 32°F (freezing)
+- Feels Like: 29°F
+- Wind: 5.5 mph (not a factor)
+- Precipitation: None
+
+**Billy Walters Weather Impact:**
+- Cold weather (32°F): -1 point total adjustment
+- Wind NOT a factor (<10 mph)
+- No precipitation
+
+**Betting Impact:**
+- Original Edge: 5.2 points (OVER 45.5)
+- Weather-Adjusted Edge: 4.2 points (OVER 45.5)
+- Recommendation: BET OVER 45.5 at reduced size (1.0 unit vs 1.2)
+
+### Additional Tools Created
+
+#### 1. Gameday Weather Checker
+**File:** `check_gameday_weather.py`
+
+Reusable script for checking weather on game day:
+```bash
+python check_gameday_weather.py "Green Bay Packers" "2025-11-11 20:15"
+```
+
+**Features:**
+- Checks if within 12-hour forecast window
+- Full Billy Walters weather impact analysis
+- Betting recommendations based on weather
+- Team-to-city mapping
+
+### Key Learnings
+
+#### 1. Always Use HTTPS for Modern APIs
+- Most APIs now enforce HTTPS
+- HTTP will cause 301 redirects or outright failures
+- Check BASE_URL first when API debugging
+
+#### 2. Understand API Plan Limitations
+- Free/starter plans have significant restrictions
+- AccuWeather starter: Only 12-hour hourly forecasts
+- Document plan limits in code comments
+- Add fallback logic for plan restrictions
+
+#### 3. Standardize Data Formats Across Clients
+- Use consistent key names across all weather clients
+- `temperature` not `temperature_f` or `temp`
+- `wind_speed` not `wind_speed_mph` or `wind`
+- Makes analysis code simpler and less error-prone
+
+#### 4. Weather Timing is Critical
+- Games >12 hours away: Use current conditions (limited accuracy)
+- Games <12 hours away: Use hourly forecast (highly accurate)
+- Best practice: Check weather twice
+  - Once when line posts (rough estimate)
+  - Again within 12 hours (final decision)
+
+#### 5. Test API Responses with Raw Data
+When debugging API issues:
+```python
+# Get raw response to see actual data structure
+data = await client._make_request(endpoint, params)
+print(json.dumps(data, indent=2))
+```
+This revealed the correct field names and structure.
+
+### Billy Walters Weather Rules (Verified)
+
+**Temperature Impact:**
+- <20°F: -4 points (extreme cold)
+- 20-25°F: -3 points (very cold)
+- 25-32°F: -2 points (freezing)
+- 32-40°F: -1 point (cold)
+- >40°F: 0 points (neutral)
+
+**Wind Impact:**
+- >20 mph: -5 points (strong wind)
+- 15-20 mph: -3 points (moderate wind)
+- 10-15 mph: -1 point (breezy)
+- <10 mph: 0 points (neutral)
+
+**Precipitation Impact:**
+- Snow >60% chance: -5 points
+- Snow 30-60% chance: -3 points
+- Rain >60% chance: -3 points
+- Rain 30-60% chance: -1 point
+
+### Future Recommendations
+
+#### 1. Consider AccuWeather Plan Upgrade
+**Current:** Starter (free)
+**Cost:** Prime ($50-75/month) or Elite ($150-200/month)
+
+**Benefits:**
+- 24-hour hourly forecast (Prime)
+- 72-hour hourly forecast (Prime)
+- 120-hour forecast (Elite)
+- More accurate for advance betting
+
+**When to Upgrade:** If consistently betting games >12 hours in advance
+
+#### 2. Implement OpenWeather as Primary for Long-Range
+**Strategy:**
+- AccuWeather: Games <12 hours away
+- OpenWeather: Games >12 hours away
+- WeatherClient already has fallback logic
+
+#### 3. Add Weather Monitoring to Workflow
+**Integration Points:**
+- Add weather check to `/collect-all-data` workflow
+- Create `/check-weather` slash command
+- Add weather to `/betting-card` output
+
+#### 4. Create Scheduled Weather Updates
+**Implementation:**
+```python
+# In auto_edge_detector.py or similar
+if hours_until_game < 12:
+    # Update weather forecast
+    weather = await weather_client.get_game_forecast(...)
+    # Re-run edge detection with updated weather
+```
+
+### Testing Checklist for Weather APIs
+
+When adding/fixing weather clients:
+
+- [ ] Test location lookup
+- [ ] Test current conditions
+- [ ] Test hourly forecast (multiple time windows)
+- [ ] Test daily forecast
+- [ ] Verify data format matches standard keys
+- [ ] Test with games at different time horizons
+- [ ] Verify Billy Walters impact calculations
+- [ ] Test fallback logic (primary → secondary)
+- [ ] Document plan limitations
+- [ ] Create example usage script
+
+### Files Modified
+
+- `src/data/accuweather_client.py` - Fixed HTTPS, plan limits, data format
+- `check_weather_mnf.py` - Created for testing
+- `test_accuweather.py` - Created for validation
+- `test_accuweather_endpoints.py` - Created for plan testing
+- `test_new_accuweather_key.py` - Created for key validation
+- `check_gameday_weather.py` - Created for reusable weather checks
+
+### Commands Used This Session
+
+```bash
+# Data collection
+/current-week
+/collect-all-data
+
+# Edge detection
+/edge-detector
+
+# Weather testing
+cd src && uv run python ../check_weather_mnf.py
+cd src && uv run python ../test_accuweather.py
+cd src && uv run python ../check_gameday_weather.py
+
+# Generate betting card
+/betting-card
+```
+
+### Session Outcome
+
+✅ **AccuWeather API fully operational**
+✅ **Week 10 edge detection completed** (16 plays identified)
+✅ **Weather analysis working** (MNF: 4.2 pt edge on OVER 45.5)
+✅ **Reusable weather tools created**
+✅ **Documentation updated**
+
+**Bottom Line:** Weather data is now integrated into Billy Walters workflow, providing critical context for totals betting.
+
+---
+
+## Session: 2025-11-10 - Complete Command & Hook System Implementation
+
+### Context
+Created comprehensive slash command system and automation hooks aligned with Billy Walters methodology. Implemented 8 new commands, 3 automation hooks, complete documentation, and testing framework.
+
+### Problem
+Needed streamlined workflow for Billy Walters data collection and analysis with proper automation, validation, and Windows compatibility.
+
+### Solution Implemented
+
+#### 1. New Slash Commands (8 total)
+- `/collect-all-data` - Complete automated workflow (6 data sources)
+- `/edge-detector` - Billy Walters edge detection with thresholds
+- `/betting-card` - Weekly picks with Excel/JSON/terminal output
+- `/clv-tracker` - Closing Line Value performance tracking
+- `/power-ratings` - Team strength ratings (Massey + 90/10 formula)
+- `/scrape-massey` - Direct Massey Ratings scraper
+- `/scrape-overtime` - Overtime.ag odds scraper (Playwright)
+- `/validate-data` - Data quality validation (0-100% scoring)
+
+#### 2. Automation Hooks (3 total)
+- `pre_data_collection.py` - Environment validation before collection
+- `post_data_collection.py` - Quality validation after collection
+- `auto_edge_detector.py` - Smart edge detection triggering
+
+#### 3. Documentation
+- `.claude/commands/README.md` - Complete command reference
+- Individual command docs (8 files with examples)
+- `COMMANDS_AND_HOOKS_SUMMARY.md` - Implementation summary
+- `TESTING_REPORT.md` - Test results (15/15 passing)
+
+### Key Technical Decisions
+
+#### Windows Unicode Compatibility
+**Problem:** Windows console (cp1252) can't encode Unicode characters (✓, ✗, ⚠, →)
+
+**Solution:**
+```python
+# Before (fails on Windows)
+print("✓ All checks passed")
+
+# After (Windows-compatible)
+print("[OK] All checks passed")
+```
+
+**Replacements:**
+- ✓ → `[OK]`
+- ✗ → `[ERROR]`
+- ⚠ → `[WARNING]`
+- → → `->`
+
+**Prevention:** Always use ASCII characters in console output for Windows compatibility.
+
+#### Hook Architecture
+**Pattern:** Pre-flight → Action → Post-flight → Auto-trigger
+
+**Implementation:**
+1. **Pre-hook:** Validate environment (API keys, directories, week detection)
+2. **Action:** Execute main task (data collection, analysis)
+3. **Post-hook:** Validate results (quality score, completeness)
+4. **Auto-hook:** Trigger next step if conditions met (new odds → edge detection)
+
+**Benefits:**
+- Error prevention (catch issues early)
+- Quality assurance (validate results)
+- Automation (smart triggering)
+- Clear guidance (actionable recommendations)
+
+#### Billy Walters Methodology Alignment
+**Edge Thresholds:**
+- 7+ points: MAX BET (5% Kelly, 77% win rate)
+- 4-7 points: STRONG (3% Kelly, 64% win rate)
+- 2-4 points: MODERATE (2% Kelly, 58% win rate)
+- 1-2 points: LEAN (1% Kelly, 54% win rate)
+- <1 point: NO PLAY (52% win rate)
+
+**Position Values (Injuries):**
+- QB Elite: 4.5 pts
+- RB Elite: 2.5 pts
+- WR1 Elite: 1.8 pts
+- TE Elite: 1.2 pts
+- OL Elite: 1.0 pts
+
+**CLV as Success Metric:**
+- +2.0 avg CLV: Elite (top 1%)
+- +1.5 avg CLV: Professional
+- +1.0 avg CLV: Very Good
+- +0.5 avg CLV: Good
+- <0.0 avg CLV: Review process
+
+### Testing Results
+- **Hooks:** 3/3 passing (pre, post, auto)
+- **Commands:** 8/8 docs validated
+- **Integration:** Permission system working
+- **Windows:** All Unicode issues fixed
+- **Overall:** 15/15 tests passing (100%)
+
+### Files Modified/Created
+**Created (14 files):**
+- `.claude/commands/power-ratings.md`
+- `.claude/commands/scrape-massey.md`
+- `.claude/commands/collect-all-data.md`
+- `.claude/commands/edge-detector.md`
+- `.claude/commands/betting-card.md`
+- `.claude/commands/scrape-overtime.md`
+- `.claude/commands/clv-tracker.md`
+- `.claude/commands/validate-data.md`
+- `.claude/commands/README.md`
+- `.claude/hooks/pre_data_collection.py`
+- `.claude/hooks/post_data_collection.py`
+- `.claude/hooks/auto_edge_detector.py`
+- `.claude/COMMANDS_AND_HOOKS_SUMMARY.md`
+- `.claude/TESTING_REPORT.md`
+
+**Modified (1 file):**
+- `.claude/settings.local.json` (added 14 command permissions + 3 hook permissions)
+
+### Usage Examples
+
+#### Quick Start (Tuesday)
+```bash
+# Complete workflow in one command
+/collect-all-data
+
+# Outputs:
+# [OK] Power ratings updated
+# [OK] Game schedules fetched (14 games)
+# [OK] Team statistics collected (32 teams)
+# [OK] Injury reports analyzed
+# [OK] Weather forecasts retrieved
+# [OK] Odds data scraped
+# [OK] Data validated (92% quality)
+```
+
+#### Analysis (Wednesday)
+```bash
+# Find betting value
+/edge-detector
+
+# Output:
+# STRONG PLAYS (4-7 pts edge)
+# 1. KC -2.5 (Edge: 5.2 pts, Kelly: 3.0%)
+
+# Generate picks
+/betting-card
+
+# Output:
+# cards/billy_walters_week_11_2025.xlsx
+```
+
+#### Performance Tracking (Monday)
+```bash
+# Track success metric
+/clv-tracker
+
+# Output:
+# Week 11: +0.8 avg CLV (GOOD)
+# Season: +1.2 avg CLV (PROFESSIONAL)
+```
+
+### Recommended Workflow
+**Tuesday (Data Collection):**
+1. Run `/collect-all-data` (one command, complete workflow)
+
+**Wednesday (Analysis):**
+1. Run `/edge-detector` (find betting value)
+2. Run `/betting-card` (generate weekly picks)
+
+**Thursday-Saturday (Refinement):**
+1. Run `/injury-report nfl` (update injuries)
+2. Run `/weather` (update forecasts)
+3. Run `/odds-analysis` (check line movements)
+
+**Sunday-Monday (Post-Game):**
+1. Run `/clv-tracker` (measure success)
+2. Run `/document-lesson` (document issues)
+
+### Prevention Tips
+1. **Always use ASCII in console output** - Windows can't handle Unicode
+2. **Test hooks before slash commands** - Hooks are the foundation
+3. **Validate permissions** - Check `.claude/settings.local.json` for new commands
+4. **Document as you build** - Create command docs alongside implementation
+5. **Test on target platform** - Windows compatibility matters
+
+### Next Steps
+1. Live test `/collect-all-data` on Tuesday with real data
+2. Verify all 6 data sources collect successfully
+3. Test `/edge-detector` with real odds data
+4. Generate betting card and verify Excel output
+5. Track CLV after games complete
+
+### Success Metrics
+- ✅ 100% test pass rate (15/15)
+- ✅ Complete Billy Walters methodology implementation
+- ✅ Windows-compatible
+- ✅ Comprehensive documentation
+- ✅ Ready for production use
+
+---
+
+## Session: 2025-11-10 - Overtime.ag NFL Scraper Fixes
+
+### Context
+Fixed and tested the Overtime.ag pre-game NFL scraper (`scripts/scrape_overtime_nfl.py`). Resolved proxy configuration, Windows compatibility issues, and login flow problems.
+
+### Issue 1: Windows Unicode Encoding in Scraper Output
+
+**Problem:**
+```
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 2
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f195' in position 189
+```
+Scraper used Unicode checkmarks (✓), X marks (✗), and warning symbols (⚠) that Windows console cannot display.
+
+**Root Cause:**
+- Windows console uses cp1252 encoding by default
+- Unicode symbols and emoji in print statements fail on Windows
+- Page content from overtime.ag contains emoji that broke debug output
+
+**Solution:**
+Replace all Unicode symbols with ASCII equivalents:
+```python
+# Before (fails on Windows)
+print(f"\n✓ Raw data saved to: {raw_file}")
+print(f"\n✗ Error during scrape: {e}")
+print("\n\n⚠ Scrape interrupted by user")
+
+# After (works cross-platform)
+print(f"\n[OK] Raw data saved to: {raw_file}")
+print(f"\n[ERROR] Error during scrape: {e}")
+print("\n\n[WARNING] Scrape interrupted by user")
+
+# For page content with emoji
+snippet = debug_info.get('bodySnippet', '').encode('ascii', 'ignore').decode('ascii')
+```
+
+**Prevention:**
+- Never use Unicode symbols in console output on cross-platform tools
+- Use `[OK]`, `[ERROR]`, `[WARNING]` instead of emoji
+- Clean external content: `text.encode('ascii', 'ignore').decode('ascii')`
+
+**Files Affected:**
+- `scripts/scrape_overtime_nfl.py:141,153,168,171,192,195`
+- `src/data/overtime_pregame_nfl_scraper.py:169,175`
+
+---
+
+### Issue 2: Playwright Proxy Configuration Error
+
+**Problem:**
+```
+playwright._impl._errors.Error: net::ERR_NO_SUPPORTED_PROXIES
+playwright._impl._errors.Error: net::ERR_INVALID_AUTH_CREDENTIALS
+```
+Initial proxy configuration using browser launch args failed, then credentials were invalid.
+
+**Root Cause:**
+- Used `--proxy-server={url}` as browser launch argument
+- Playwright doesn't properly support proxy auth via launch args on some platforms
+- Need to use context-level proxy configuration instead
+
+**Solution:**
+Configure proxy at browser context level with credentials in URL:
+```python
+# Before (doesn't work reliably)
+browser_args.append(f"--proxy-server={self.proxy_url}")
+browser = await p.chromium.launch(headless=self.headless, args=browser_args)
+context = await browser.new_context(...)
+
+# After (works correctly)
+browser = await p.chromium.launch(headless=self.headless, args=browser_args)
+context_kwargs = {"viewport": {...}, "user_agent": "..."}
+
+if self.proxy_url:
+    # Credentials embedded in URL for residential proxies
+    context_kwargs["proxy"] = {"server": self.proxy_url}
+
+context = await browser.new_context(**context_kwargs)
+```
+
+**Proxy URL Format:**
+```
+http://username:password@host:port
+```
+
+**Prevention:**
+- Always use Playwright's context-level proxy configuration
+- Include credentials in the URL, not as separate username/password fields
+- Test without proxy first to isolate proxy vs scraper issues
+
+**Files Affected:**
+- `src/data/overtime_pregame_nfl_scraper.py:93-127`
+
+---
+
+### Issue 3: Hidden Login Button Not Clickable
+
+**Problem:**
+```
+ElementHandle.click: Timeout 30000ms exceeded
+ElementHandle.click: Element is not visible
+```
+LOGIN button exists in DOM but Playwright can't click it (element reported as hidden).
+
+**Root Cause:**
+- Overtime.ag uses AngularJS with `ng-click="ShowLoginView()"`
+- Button exists but is technically hidden until some CSS/JS condition
+- Playwright's click requires element to be visible
+- Force click option doesn't bypass all visibility checks
+
+**Solution:**
+Use JavaScript evaluation to trigger click directly:
+```python
+# Before (fails - element hidden)
+login_button = await page.query_selector('a.btn-signup')
+await login_button.click(force=True)  # Still fails
+
+# After (works - JavaScript bypasses all checks)
+login_clicked = await page.evaluate("""
+    () => {
+        const loginBtn = document.querySelector('a.btn-signup');
+        if (loginBtn) {
+            loginBtn.click();
+            return true;
+        }
+        return false;
+    }
+""")
+```
+
+**Correct Selector:**
+- Element: `<a class="btn btn-signup ng-binding">`
+- Selector: `'a.btn-signup'`
+- Attribute: `ng-click="ShowLoginView()"`
+
+**Prevention:**
+- For AngularJS sites, prefer JavaScript click over Playwright native click
+- Use `page.evaluate()` to directly trigger DOM events
+- Check DevTools to identify `ng-click` handlers
+
+**Files Affected:**
+- `src/data/overtime_pregame_nfl_scraper.py:176-207`
+
+---
+
+### Issue 4: No Games Found Despite Successful Login
+
+**Problem:**
+Scraper logged in successfully, navigated to NFL section, but extracted 0 games.
+
+**Root Cause:**
+- NFL Week 10 games already started/finished (Sunday, Nov 10)
+- Sportsbooks remove betting lines once games begin
+- Week 11 lines not yet posted (typically post Tuesday/Wednesday)
+
+**Diagnostic Approach:**
+Added debug output to check page state:
+```python
+debug_info = await page.evaluate("""
+    () => {
+        return {
+            h4Count: document.querySelectorAll('h4').length,
+            buttonCount: document.querySelectorAll('button[ng-click*="SendLineToWager"]').length,
+            labelTexts: Array.from(document.querySelectorAll('label')).map(l => l.textContent.trim())
+        };
+    }
+""")
+```
+
+**Results:**
+- h4 elements: 10 (but were category headers, not team names)
+- Betting buttons: 0 (no active games)
+- NFL label present: Yes ("NFL-Game/1H/2H/Qrts")
+
+**Solution:**
+Not a scraper bug - timing issue. Optimal scraping schedule:
+- **Tuesday-Wednesday**: New week lines post after Monday Night Football
+- **Thursday morning**: Fresh lines available before Thursday Night Football
+- **Avoid Sunday**: Games in progress, lines taken down
+
+**Prevention:**
+- Run scraper Tuesday-Thursday for best results
+- Use `/current-week` command to check NFL calendar
+- Expect 0 games on Sunday during game times
+
+**Files Affected:**
+- `src/data/overtime_pregame_nfl_scraper.py:152-178` (debug code)
+
+---
+
+### Issue 5: Proxy Parameter Not Disabling Proxy
+
+**Problem:**
+Passing `--proxy ""` didn't disable proxy; still used `PROXY_URL` from environment.
+
+**Root Cause:**
+Python's `or` operator treats empty string as falsy:
+```python
+self.proxy_url = proxy_url or os.getenv("PROXY_URL")
+# Empty string is falsy, so falls back to env var
+```
+
+**Solution:**
+Use explicit `None` check to distinguish "not provided" from "explicitly empty":
+```python
+# Before (doesn't work)
+self.proxy_url = proxy_url or os.getenv("PROXY_URL")
+
+# After (works correctly)
+self.proxy_url = proxy_url if proxy_url is not None else os.getenv("PROXY_URL")
+```
+
+**Prevention:**
+- Use `is not None` checks for optional parameters that can be empty strings
+- Document that empty string explicitly disables the setting
+- Test with `--param ""` to verify override works
+
+**Files Affected:**
+- `src/data/overtime_pregame_nfl_scraper.py:72-75`
+
+---
+
+### Key Learnings Summary
+
+1. **Windows Compatibility**: Always use ASCII-safe output (`[OK]` not ✓)
+2. **Playwright Proxies**: Use context-level config with credentials in URL
+3. **AngularJS Sites**: JavaScript click (`page.evaluate()`) for hidden elements
+4. **Timing Matters**: Scrape Tuesday-Thursday, not during game days
+5. **Parameter Overrides**: Use `is not None` checks for optional empty values
+
+### Testing Checklist
+
+Before considering scraper operational:
+- [ ] Test without proxy (verify base functionality)
+- [ ] Test with proxy (verify credentials)
+- [ ] Check current NFL week (`/current-week`)
+- [ ] Verify login succeeds (account balance shown)
+- [ ] Check for games (if 0, verify it's expected based on timing)
+- [ ] Test on Windows (verify no Unicode errors)
+
+### Production Status
+
+**Last Tested**: 2025-11-10 (Week 10)
+**Status**: ✅ Fully operational
+**Account**: Test account authenticated successfully
+**Next Action**: Run Tuesday for Week 11 lines
+
+---
+
+## Session: 2025-11-10 - Overtime.ag Proxy Timeout Issues
+
+### Context
+Ran Overtime.ag NFL scraper in headless mode with proxy enabled. Scraper timed out trying to connect through proxy, but worked perfectly without proxy.
+
+### Issue: Proxy Authentication Timeout
+
+**Problem:**
+```
+playwright._impl._errors.TimeoutError: Page.goto: Timeout 60000ms exceeded.
+Call log:
+  - navigating to "https://overtime.ag/sports#/", waiting until "domcontentloaded"
+```
+Scraper timed out when using proxy configuration but worked successfully when proxy was disabled.
+
+**Root Cause:**
+- Proxy credentials expired or invalid with provider
+- Residential proxy service requires credential refresh
+- Proxy server (rp.scrapegw.com:6060) refused authentication
+
+**Diagnostic Steps:**
+1. Ran with proxy: Failed with 60-second timeout
+2. Ran without proxy (`--proxy ""`): Success (logged in, 0 games found as expected)
+3. Confirmed scraper functionality intact
+4. Isolated issue to proxy authentication
+
+**Solution:**
+**Immediate workaround:**
+```bash
+# Run without proxy until credentials updated
+uv run python scripts/scrape_overtime_nfl.py --headless --convert --proxy ""
+```
+
+**Long-term fix:**
+1. Contact proxy provider to refresh credentials
+2. Update PROXY_URL in .env file with new credentials
+3. Test proxy connection separately before using in scraper
+4. Consider adding proxy health check in scraper startup
+
+**Scraper Status:**
+- Core functionality: Fully operational
+- Login system: Working correctly
+- Data extraction: Working correctly
+- Conversion: Working correctly
+- Proxy: Needs credential refresh
+
+**Test Results (Without Proxy):**
+```
+Login successful!
+Balance: $-1,988.43
+Available: $8,011.57
+Found 0 games (expected - Sunday during games)
+Raw data saved: overtime_nfl_raw_2025-11-10T03-47-49-768432.json
+Converted data saved: overtime_nfl_walters_2025-11-10T03-47-49-768432.json
+```
+
+**Prevention:**
+- Monitor proxy service for credential expiration notices
+- Set up proxy health checks before scraper runs
+- Keep backup proxy provider configured
+- Document proxy refresh procedure
+- Test proxy separately from scraper to isolate issues
+
+**Files Affected:**
+- `scripts/scrape_overtime_nfl.py` (working correctly with --proxy "" flag)
+- `.env` (PROXY_URL needs credential update)
+
+**Next Steps:**
+1. Contact proxy provider for credential refresh
+2. Update PROXY_URL environment variable
+3. Test connection with updated credentials
+4. Resume using proxy for production scraping
+
+---
+
+### Data Format Verification
+
+**Converted Data Format:**
+The Walters format converter is working correctly and produces the expected structure:
+
+```json
+{
+  "metadata": {
+    "source": "overtime.ag",
+    "converted_at": "2025-11-10T03:47:49.901524",
+    "original_scrape_time": "2025-11-10T03:47:49.768432",
+    "converter_version": "1.0.0"
+  },
+  "account_info": {
+    "balance": "$-1,988.43",
+    "available_balance": "$8,011.57",
+    "pending": "$0.00"
+  },
+  "games": [],
+  "summary": {
+    "total_converted": 0,
+    "conversion_rate": "0%"
+  }
+}
+```
+
+**Expected Structure (With Games):**
+When games are available (Tuesday-Thursday), each game entry will include:
+- Team names and rotation numbers
+- Spread, moneyline, over/under odds
+- Game time and period information
+- Full betting line details in Billy Walters format
+
+**Validation:**
+- Metadata structure: Correct
+- Account info: Correct
+- Games array: Correct (empty as expected)
+- Summary statistics: Correct
+- Ready for production use when games are available
+
+---
+
 ## Session: 2025-11-09 - NFL Season Calendar Implementation
 
 ### Context

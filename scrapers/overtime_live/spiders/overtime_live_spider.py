@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
+from pathlib import Path
 from typing import Any, Dict, Optional, List
 
 import scrapy
@@ -10,15 +12,24 @@ from scrapy.http import Response
 from scrapy_playwright.page import PageMethod
 from playwright.async_api import Page, Frame, ElementHandle
 
+# Add src to path for proxy_manager import
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
+
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
 try:
     from dotenv import load_dotenv  # type: ignore
-
     load_dotenv()
 except Exception:
     pass
+
+# Import ProxyManager for smart proxy handling
+try:
+    from data.proxy_manager import get_proxy_manager
+except ImportError:
+    # Fallback if import fails
+    get_proxy_manager = None
 
 
 def to_float(s: Optional[str]) -> Optional[float]:
@@ -133,13 +144,21 @@ class OvertimeLiveSpider(scrapy.Spider):
         # Always start with main page, login will happen in parse_board callback
         target_url = start
 
-        # Per-request proxy (fixes 407 when you set OVERTIME_PROXY / PROXY_URL)
-        # Try keeping credentials in URL for residential proxies that don't support HTTP auth
-        proxy_url = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
+        # Smart proxy handling with automatic fallback
         context_kwargs = None
-        if proxy_url:
-            # Some residential proxies require credentials in URL, not as separate fields
-            context_kwargs = {"proxy": {"server": proxy_url}}
+        if get_proxy_manager:
+            proxy_manager = get_proxy_manager()
+            proxy_url = proxy_manager.get_proxy(test_first=True)
+            if proxy_url:
+                context_kwargs = {"proxy": {"server": proxy_url}}
+                self.logger.info(f"Using proxy: {proxy_url[:40]}...")
+            else:
+                self.logger.info("No proxy available - using direct connection")
+        else:
+            # Fallback to old behavior if ProxyManager not available
+            proxy_url = os.getenv("OVERTIME_PROXY") or os.getenv("PROXY_URL")
+            if proxy_url:
+                context_kwargs = {"proxy": {"server": proxy_url}}
 
         # Hash routes rarely fire "load" → use domcontentloaded; fail faster on blocks
         goto_kwargs = {
@@ -796,6 +815,24 @@ class OvertimeLiveSpider(scrapy.Spider):
                     pass
 
         self.logger.info("Emitted %d college football rows", emitted)
+
+        # Enhanced reporting for data validation
+        if emitted == 0:
+            self.logger.warning("=" * 70)
+            self.logger.warning("NO GAMES FOUND - Possible Reasons:")
+            self.logger.warning("  1. Games are currently in progress (lines removed)")
+            self.logger.warning("  2. Outside betting window (pre-game lines not posted yet)")
+            self.logger.warning("  3. Sport filter not applied correctly")
+            self.logger.warning("  4. Site structure changed")
+            self.logger.warning("")
+            self.logger.warning("OPTIMAL SCRAPING TIMES:")
+            self.logger.warning("  - Tuesday-Thursday: 12PM-6PM ET (new week lines)")
+            self.logger.warning("  - Avoid: Sunday/Monday evenings (games in progress)")
+            self.logger.warning("=" * 70)
+        else:
+            self.logger.info("=" * 70)
+            self.logger.info("SUCCESS: Scraped %d live games with real data", emitted)
+            self.logger.info("=" * 70)
 
         try:
             await page.close()

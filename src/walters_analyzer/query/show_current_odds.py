@@ -7,18 +7,6 @@ import asyncio
 import sys
 from collections import defaultdict
 
-# Fix Windows console encoding
-if sys.platform == "win32":
-    import io
-
-    try:
-        if hasattr(sys.stdout, "buffer"):
-            sys.stdout = io.TextIOWrapper(
-                sys.stdout.buffer, encoding="utf-8", errors="replace"
-            )
-    except (AttributeError, ValueError):
-        pass  # Already wrapped or not applicable
-
 from walters_analyzer.feeds.market_data_client import OddsAPIClient
 from walters_analyzer.config import get_settings
 
@@ -29,7 +17,11 @@ async def show_current_odds():
     client = OddsAPIClient()
 
     print("Fetching current NFL odds...")
-    odds = await client.get_odds("americanfootball_nfl")
+    try:
+        odds = await client.get_odds("americanfootball_nfl")
+    finally:
+        # Properly close the httpx client
+        await client.client.aclose()
 
     if not odds:
         print("No odds data available")

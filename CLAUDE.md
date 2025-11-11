@@ -288,9 +288,58 @@ The walters_autonomous_agent.py provides automated analysis capabilities:
 ## API Integration Guidelines
 
 ### Weather APIs
-- AccuWeather: 5-day forecasts, detailed conditions
-- OpenWeather: Alternative forecast source, historical data
-- Use both for redundancy and cross-validation
+
+**AccuWeather** (`src/data/accuweather_client.py`)
+- **Plan**: Starter (free tier) - ✅ VERIFIED WORKING
+- **Base URL**: `https://dataservice.accuweather.com` (MUST use HTTPS)
+- **Available Endpoints**:
+  - ✅ Location key lookup
+  - ✅ Current conditions
+  - ✅ 12-hour hourly forecast
+  - ✅ 5-day daily forecast
+  - ❌ 24-hour hourly (requires Prime plan $50-75/month)
+  - ❌ 72-hour hourly (requires Prime/Elite plan)
+
+**Key Implementation Details**:
+```python
+# CORRECT: Use HTTPS (HTTP causes 301 redirects)
+BASE_URL = "https://dataservice.accuweather.com"
+
+# Handle starter plan 12-hour limit
+if hours_ahead > 12:
+    # Fall back to current conditions for games >12 hours away
+    return await self.get_current_conditions(location_key)
+else:
+    # Use accurate hourly forecast within 12-hour window
+    return await self.get_hourly_forecast(location_key, hours=min(hours_ahead, 12))
+```
+
+**Data Format (Standardized)**:
+- Returns: `temperature`, `feels_like`, `wind_speed`, `wind_gust`, `humidity`, `description`
+- NOT: `temperature_f`, `wind_speed_mph` (old format)
+
+**OpenWeather** (`src/data/openweather_client.py`)
+- Alternative forecast source for redundancy
+- Use as fallback when AccuWeather unavailable
+- Better for long-range forecasts (>12 hours)
+
+**Weather Workflow**:
+```bash
+# For games >12 hours away (rough estimate)
+python check_weather_mnf.py  # Uses current conditions
+
+# For games <12 hours away (accurate forecast)
+python check_gameday_weather.py "Green Bay Packers" "2025-11-11 20:15"
+
+# Best practice: Check twice
+# 1. When line posts (estimate)
+# 2. Within 12 hours of game (final decision)
+```
+
+**Billy Walters Weather Impact Rules**:
+- **Temperature**: <20°F = -4pts, 20-25°F = -3pts, 25-32°F = -2pts, 32-40°F = -1pt
+- **Wind**: >20mph = -5pts, 15-20mph = -3pts, 10-15mph = -1pt
+- **Precipitation**: Snow >60% = -5pts, Rain >60% = -3pts
 
 ### AI Services
 - Anthropic Claude: Matchup analysis, narrative generation
@@ -299,6 +348,102 @@ The walters_autonomous_agent.py provides automated analysis capabilities:
 ### Sports Data
 - Overtime API: Game data, scores, schedules
 - Action Network: Betting lines, sharp action, odds movements
+
+### Overtime.ag Scraper
+**Implementation**: `src/data/overtime_pregame_nfl_scraper.py`
+**Script**: `scripts/scrape_overtime_nfl.py`
+
+**Technical Architecture**:
+- Platform: Playwright browser automation (Chromium)
+- Framework: AngularJS (vanilla JavaScript, not React/Vue)
+- Real-time: WebSocket server at `wss://ws.ticosports.com/signalr`
+- Security: CloudFlare DDoS protection
+
+**Authentication**:
+```python
+# Credentials from environment (.env file)
+OV_CUSTOMER_ID=your_customer_id
+OV_PASSWORD=your_password
+
+# Login element requires JavaScript click (hidden in DOM)
+# Selector: 'a.btn-signup' with ng-click="ShowLoginView()"
+```
+
+**Critical Selectors**:
+- Login button: `a.btn-signup` (use JavaScript click, element is hidden)
+- NFL section: `label` containing text "NFL-Game/1H/2H/Qrts"
+- Team names: `h4` elements with pattern `{rotation_number} {team_name}`
+- Betting buttons: `button[ng-click*="SendLineToWager"]`
+- Account info: `[href*="dailyFigures"]`, `[href*="openBets"]`
+
+**Proxy Configuration**:
+```python
+# Use Playwright native proxy format (NOT browser args)
+context_kwargs["proxy"] = {"server": proxy_url}  # Include credentials in URL
+# Format: http://username:password@host:port
+```
+
+**Common Issues & Solutions**:
+1. **Login Button Not Visible**
+   - Issue: Element exists but hidden in DOM
+   - Solution: Use JavaScript click via `page.evaluate()`
+
+2. **Windows Unicode Errors**
+   - Issue: Console can't print special chars (✓, ✗, ⚠)
+   - Solution: Use `[OK]`, `[ERROR]`, `[WARNING]` instead
+   - Clean emoji output: `text.encode('ascii', 'ignore').decode('ascii')`
+
+3. **Proxy Authentication Fails**
+   - Issue: `ERR_INVALID_AUTH_CREDENTIALS`
+   - Solution: Update credentials with provider, use context-level proxy config
+
+4. **No Games Found**
+   - Issue: 0 betting buttons on page
+   - Reason: Games started/finished, lines taken down
+   - Solution: Run Tuesday-Thursday for next week's lines
+
+**Optimal Scraping Schedule**:
+- **Tuesday-Wednesday**: New week lines post after Monday Night Football
+- **Thursday morning**: Fresh lines before Thursday Night Football
+- **Avoid**: Sunday during games (lines are down)
+
+**Usage Examples**:
+```bash
+# Without proxy (current working state)
+uv run python scripts/scrape_overtime_nfl.py --proxy ""
+
+# With proxy (once credentials updated)
+uv run python scripts/scrape_overtime_nfl.py
+
+# Production mode
+uv run python scripts/scrape_overtime_nfl.py --headless --convert --save-db
+
+# Custom output directory
+uv run python scripts/scrape_overtime_nfl.py --output data/odds --proxy ""
+```
+
+**Data Format**:
+- Raw: `overtime_nfl_raw_{timestamp}.json` (Overtime.ag format)
+- Converted: `overtime_nfl_walters_{timestamp}.json` (Billy Walters format)
+- Database: Optionally saved via `--save-db` flag
+
+**Testing & Debugging**:
+```bash
+# Check current NFL week
+/current-week
+
+# Test connection without scraping
+uv run python -c "from playwright.sync_api import sync_playwright; p = sync_playwright().start(); print('OK')"
+
+# Verify Playwright installed
+uv run playwright install chromium
+```
+
+**Session State**:
+- Last tested: 2025-11-10 (Week 10)
+- Status: Fully operational
+- Authentication: Working with valid credentials
+- 0 games found (expected - games in progress during testing)
 
 ### Proxy Management
 - Use PROXY_URL, PROXY_USER, PROXY_PASS for scraping
@@ -607,6 +752,55 @@ uv run python -m walters_analyzer.query.check_game --game-id "123"
 uv run python -m walters_analyzer.query.watch_alerts
 ```
 
+**Billy Walters Weekly Workflow:**
+```bash
+# TUESDAY/WEDNESDAY - Optimal data collection timing
+
+# 1. Pre-flight validation
+python .claude/hooks/pre_data_collection.py
+
+# 2. Complete data collection (6 automated steps)
+/collect-all-data
+# This runs: power ratings → schedules → stats → injuries → weather → odds
+
+# 3. Validate data quality
+/validate-data
+
+# 4. Run edge detection (or wait for auto-trigger)
+/edge-detector
+
+# 5. Generate betting card
+/betting-card
+
+# 6. Review picks and track CLV
+/clv-tracker
+
+# THURSDAY - Refresh odds before TNF
+/scrape-overtime
+/edge-detector
+
+# SUNDAY - Monitor and track
+/clv-tracker
+
+# Individual game analysis
+/weather "Team Name" "2025-11-10 13:00"
+/injury-report "Team Name" "NFL"
+/team-stats "Team Name" "NFL"
+/analyze-matchup
+```
+
+**Running Automation Hooks:**
+```bash
+# Pre-flight check (validates environment)
+python .claude/hooks/pre_data_collection.py
+
+# Post-flight check (validates data quality)
+python .claude/hooks/post_data_collection.py 10
+
+# Auto edge detector (monitors for new odds)
+python .claude/hooks/auto_edge_detector.py
+```
+
 **Debugging CI Failures:**
 ```bash
 # View latest CI run
@@ -654,8 +848,11 @@ uv run python -m walters_analyzer.season_calendar
 **Claude Code:**
 - `.claude/walters_mcp_server.py` - MCP server
 - `.claude/walters_autonomous_agent.py` - Autonomous agent
-- `.claude/hooks/` - Git hooks and validators
-- `.claude/commands/` - Custom slash commands
+- `.claude/hooks/pre_data_collection.py` - Pre-flight environment validation
+- `.claude/hooks/post_data_collection.py` - Post-flight data quality validation
+- `.claude/hooks/auto_edge_detector.py` - Auto-trigger edge detection on new odds
+- `.claude/commands/` - 14 custom slash commands (see "Billy Walters Workflow Commands & Hooks")
+- `.claude/commands/README.md` - Complete command reference
 
 ### Troubleshooting
 
@@ -685,6 +882,147 @@ uv pip install -e .
 - Check Python version (CI uses 3.11 and 3.12)
 - Ensure all dependencies installed: `uv sync --all-extras --dev`
 - Check for OS-specific issues (CI tests Ubuntu and Windows)
+
+**Hooks failing with Unicode errors (Windows):**
+- Windows console uses cp1252 encoding
+- Always use ASCII characters: `[OK]`, `[ERROR]`, `[WARNING]`, `->`
+- NEVER use Unicode: ✓, ✗, ⚠, →
+- See LESSONS_LEARNED.md "Windows Unicode Compatibility" section
+
+**Data collection hooks failing:**
+```bash
+# Check environment variables are set
+python .claude/hooks/pre_data_collection.py
+
+# Verify all required API keys present:
+# - OV_CUSTOMER_ID, OV_PASSWORD (required)
+# - ACCUWEATHER_API_KEY or OPENWEATHER_API_KEY (at least one)
+# - ACTION_USERNAME, ACTION_PASSWORD (optional but recommended)
+
+# Check data directory structure
+ls -la data/current
+ls -la output
+ls -la data/reports
+```
+
+**AccuWeather API failing:**
+```bash
+# Common symptoms:
+# - HTTP 301 redirect errors
+# - HTTP 403 "Forbidden" errors
+# - Weather data showing N/A values
+
+# Fix 1: Verify HTTPS (not HTTP)
+# Check src/data/accuweather_client.py:28
+# Should be: BASE_URL = "https://dataservice.accuweather.com"
+
+# Fix 2: Test API connectivity
+cd src && uv run python -c "
+from data.accuweather_client import AccuWeatherClient
+import asyncio, os
+
+async def test():
+    client = AccuWeatherClient(api_key=os.getenv('ACCUWEATHER_API_KEY'))
+    await client.connect()
+    key = await client.get_location_key('Green Bay', 'WI')
+    print(f'✅ AccuWeather working, location key: {key}')
+    await client.close()
+
+asyncio.run(test())
+"
+
+# Fix 3: Check plan limitations
+# Starter plan: Only 12-hour hourly forecast
+# Games >12 hours away will use current conditions (less accurate)
+# Check within 12 hours of game for accurate forecast
+
+# Fix 4: Verify data format
+# Should return: temperature, wind_speed (NOT temperature_f, wind_speed_mph)
+```
+
+**Weather data incomplete or inaccurate:**
+```bash
+# Check timing: Games >12 hours away use current conditions
+python check_gameday_weather.py "Team Name" "YYYY-MM-DD HH:MM"
+
+# For games <12 hours away, use hourly forecast (more accurate)
+# Re-run weather check within 12 hours of game time
+
+# Manual check recommended:
+# - Weather.com: https://weather.com/weather/hourbyhour/l/CITY+STATE
+# - Weather.gov: https://forecast.weather.gov/
+```
+
+**Slash commands not found:**
+- Check `.claude/commands/` directory has command `.md` files
+- Verify permissions in `.claude/settings.local.json`
+- Command name must match filename (e.g., `/power-ratings` → `power-ratings.md`)
+
+**Edge detection not auto-triggering:**
+- Check odds freshness: `ls -lt output/overtime_nfl_walters_*.json | head -1`
+- Odds must be <5 minutes old to trigger
+- Run manually: `python .claude/hooks/auto_edge_detector.py`
+- Optimal timing: Tuesday-Wednesday after new lines post
+
+**Billy Walters workflow commands:**
+
+**/edge-detector** - Detect betting edges
+```bash
+# Run from project root (not src/)
+uv run python -m walters_analyzer.valuation.billy_walters_edge_detector
+
+# Requires:
+# - Power ratings in data/current/
+# - Odds data in output/overtime/nfl/pregame/
+# - Optional: weather and injury data
+
+# Output:
+# - output/edge_detection/nfl_edges_detected.jsonl (spread edges)
+# - output/edge_detection/nfl_totals_detected.jsonl (total edges)
+# - output/edge_detection/edge_report.txt (formatted report)
+```
+
+**/betting-card** - Display current odds
+```bash
+uv run python -m walters_analyzer.query.show_current_odds
+
+# Requires:
+# - ODDS_API_KEY in .env file
+# - The Odds API account (free tier: 500 requests/month)
+
+# Known issue (FIXED):
+# - I/O operation error due to Windows encoding wrapper
+# - Solution: Removed problematic sys.stdout wrapper
+# - File: src/walters_analyzer/query/show_current_odds.py:6-24
+```
+
+**/clv-tracker** - Track performance
+```bash
+# Summary view
+uv run python -m walters_analyzer.bet_tracker --summary
+
+# List active bets
+uv run python -m walters_analyzer.bet_tracker --list
+
+# Update closing line
+uv run python -m walters_analyzer.bet_tracker --bet-id BET123 --update-closing-line -3.0
+
+# Update final score
+uv run python -m walters_analyzer.bet_tracker --bet-id BET123 --update-score 24 21
+
+# Requires:
+# - Manual bet entry (no auto-import yet)
+# - Manual closing line and score updates
+# - Data stored in data/bets/active_bets.json
+```
+
+**Overtime.ag scraper output organization:**
+- Pre-game NFL: `output/overtime/nfl/pregame/`
+- Live NFL: `output/overtime/nfl/live/`
+- Pre-game NCAAF: `output/overtime/ncaaf/pregame/`
+- Live NCAAF: `output/overtime/ncaaf/live/`
+- File naming: `overtime_{sport}_{type}_{timestamp}.json`
+- See: `docs/OVERTIME_DIRECTORY_STRUCTURE.md`
 
 ### Getting Help
 
@@ -857,17 +1195,165 @@ This project has legacy code that doesn't meet current standards. Our approach:
 - Remove ignores as code improves
 - Celebrate when strictness can be increased
 
-### Using Custom Commands
+### Billy Walters Workflow Commands & Hooks
 
-**Available Slash Commands:**
+This project provides a complete command-line workflow for Billy Walters sports betting analysis, from data collection through edge detection to betting card generation.
+
+#### Complete Billy Walters Workflow
+
+**Weekly Workflow (Run Tuesday-Wednesday for optimal results):**
+
+```bash
+# 1. Pre-flight validation
+python .claude/hooks/pre_data_collection.py
+
+# 2. Collect all data (automated 6-step process)
+/collect-all-data
+
+# 3. Post-flight validation (automatic after data collection)
+# 4. Edge detection (automatic when new odds detected)
+# 5. Generate betting card
+/betting-card
+
+# 6. Track performance
+/clv-tracker
+```
+
+#### Available Slash Commands
+
+**Billy Walters Core Workflow:**
+- `/power-ratings` - Calculate power ratings using Massey composite (90/10 update formula)
+- `/scrape-massey` - Scrape Massey Ratings for 100+ ranking systems
+- `/scrape-overtime` - Collect odds from Overtime.ag (optimal: Tuesday-Wednesday)
+- `/collect-all-data` - **COMPLETE AUTOMATED WORKFLOW** (all 6 steps in order)
+- `/edge-detector` - Detect betting edges using Billy Walters methodology
+- `/betting-card` - Generate weekly betting recommendations (ranked by edge)
+- `/clv-tracker` - Track Closing Line Value (key success metric)
+- `/validate-data` - Check data quality and completeness
+
+**Contextual Analysis:**
+- `/weather [team_name] [game_time]` - Weather impact analysis (total/spread adjustments)
+- `/team-stats [team_name] [league]` - Team statistics and power rating components
+- `/injury-report [team_name] [league]` - Injury impact with position-specific point values
+- `/current-week` - Show current NFL week and schedule status
+- `/odds-analysis` - Analyze current odds and identify value opportunities
+- `/analyze-matchup` - Deep dive analysis of specific matchup
+
+**Data Management:**
+- `/update-data` - Update all data sources (odds, injuries, weather, schedules)
+
+**Documentation:**
 - `/document-lesson` - Add entry to LESSONS_LEARNED.md
-- `/current-week` - Show current NFL week and schedule
+- `/lessons` - View lessons learned from previous sessions
+
+#### Automation Hooks
+
+Three Python hooks automate validation and triggering:
+
+**Pre-Data Collection Hook** (`.claude/hooks/pre_data_collection.py`)
+- Validates environment variables (API keys)
+- Checks output directories exist
+- Detects current NFL week
+- Checks when data was last collected
+- Prevents collection with missing credentials
+
+**Post-Data Collection Hook** (`.claude/hooks/post_data_collection.py`)
+- Validates collected data completeness (5 required files)
+- Scores data quality: EXCELLENT/GOOD/FAIR/POOR
+- Checks Overtime odds freshness
+- Generates actionable next steps
+- Fails if data quality is poor (prevents bad analysis)
+
+**Auto Edge Detector Hook** (`.claude/hooks/auto_edge_detector.py`)
+- Monitors for new odds data (<5 minutes old)
+- Checks if edge detection already ran
+- Auto-triggers edge detection when conditions met
+- Prevents redundant processing
+- Can be scheduled via cron/Task Scheduler
+
+**Hook Execution Pattern:**
+```
+1. Pre-hook validates environment → Exit 0 (proceed) or Exit 1 (stop)
+2. Main action runs (data collection, scraping, etc.)
+3. Post-hook validates results → Exit 0 (success) or Exit 1 (failure)
+4. Auto-hook monitors and triggers → Runs edge detector when new data arrives
+```
+
+**Running Hooks Manually:**
+```bash
+# Pre-flight check before collection
+python .claude/hooks/pre_data_collection.py
+
+# Post-flight check after collection (requires week number)
+python .claude/hooks/post_data_collection.py 10
+
+# Check for new odds and auto-trigger edge detection
+python .claude/hooks/auto_edge_detector.py
+```
+
+#### Billy Walters Edge Detection Methodology
+
+**Edge Thresholds:**
+- **7+ points**: MAX BET (5% Kelly, 77% win rate)
+- **4-7 points**: STRONG (3% Kelly, 64% win rate)
+- **2-4 points**: MODERATE (2% Kelly, 58% win rate)
+- **1-2 points**: LEAN (1% Kelly, 54% win rate)
+- **<1 point**: NO PLAY
+
+**Position-Specific Injury Values:**
+- QB Elite: 4.5 points
+- RB Elite: 2.5 points
+- WR1 Elite: 1.8 points
+- LT/RT Elite: 1.5 points
+- CB Elite: 1.2 points
+
+**Success Metric:**
+- **CLV (Closing Line Value)**: Not win/loss percentage
+- Professional target: +1.5 CLV average
+- Elite target: +2.0 CLV average
+
+#### Command Usage Examples
+
+**Complete Weekly Analysis:**
+```bash
+# Tuesday: Collect all data
+/collect-all-data
+
+# Review results
+/validate-data
+
+# Generate picks
+/betting-card
+
+# Thursday: Refresh odds before TNF
+/scrape-overtime
+/edge-detector
+
+# Sunday: Track performance
+/clv-tracker
+```
+
+**Individual Game Analysis:**
+```bash
+# Check weather impact
+/weather "Buffalo Bills" "2025-11-10 13:00"
+
+# Check injuries
+/injury-report "Buffalo Bills" "NFL"
+
+# Get team stats
+/team-stats "Buffalo Bills" "NFL"
+
+# Analyze matchup
+/analyze-matchup
+```
 
 **Creating New Commands:**
 1. Create `.claude/commands/your-command.md`
 2. Add description and prompt
 3. Test with `/your-command`
-4. Document in this section
+4. Update permissions in `.claude/settings.local.json`
+5. Document in this section
 
 ## Resources
 

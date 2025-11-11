@@ -1,16 +1,34 @@
-﻿Check weather conditions for a specific game.
+﻿Check weather conditions for NFL/NCAAF games and calculate Billy Walters weather impact.
 
-Usage: /weather [game_id or location]
+Usage: /weather [team_name] [game_time]
+
+Examples:
+- /weather "Green Bay" "2025-11-17 13:00"
+- /weather "Kansas City"
+- /weather
 
 This command will:
-1. Fetch current weather forecast
-2. Check both AccuWeather and OpenWeather
-3. Calculate weather impact on game scoring
-4. Provide recommendations for betting adjustments
+1. Fetch weather forecast using unified weather client (AccuWeather + OpenWeather fallback)
+2. Determine if stadium is indoor or outdoor
+3. Calculate Billy Walters weather impact on total and spread
+4. Provide detailed betting recommendations
+
+Billy Walters Weather Impact Principles:
+- Wind >15 MPH: Reduce total by 3-5 points, favor defense
+- Temperature <32°F: Reduce total by 2-3 points, favor rushing teams
+- Rain/Snow: Reduce total by 2-4 points, favor ground game
+- Indoor stadiums: No weather adjustments
 
 Weather factors analyzed:
-- Temperature and feels-like temperature
+- Temperature (actual and feels-like)
 - Wind speed and direction
-- Precipitation probability
-- Humidity
-- Indoor vs outdoor stadium
+- Precipitation type and probability
+- Humidity levels
+- Indoor vs outdoor venue
+
+Output includes:
+- Current/forecast weather conditions
+- Total adjustment (points)
+- Spread adjustment (points)
+- Betting recommendation with confidence level
+- Source (AccuWeather or OpenWeather)
