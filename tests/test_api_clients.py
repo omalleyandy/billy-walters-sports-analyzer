@@ -7,8 +7,13 @@ Run with: uv run pytest test_api_clients.py -v
 
 import asyncio
 import logging
+import sys
 from datetime import datetime
+from pathlib import Path
 import pytest
+
+# Add src to path for standalone execution
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # Set up logging
 logging.basicConfig(
@@ -25,13 +30,13 @@ async def test_action_network_client():
     print("=" * 70)
 
     try:
-        from src.data.action_network_client import ActionNetworkClient
+        from data.action_network_client import ActionNetworkClient
 
         async with ActionNetworkClient(headless=True) as client:
             logger.info("Testing NFL odds fetch...")
             nfl_odds = await client.fetch_nfl_odds()
 
-            print(f"\n✅ Fetched {len(nfl_odds)} NFL games")
+            print(f"\n[OK] Fetched {len(nfl_odds)} NFL games")
 
             if nfl_odds:
                 game = nfl_odds[0]
@@ -42,11 +47,11 @@ async def test_action_network_client():
                 print(f"  ML: {game['moneyline_away']} / {game['moneyline_home']}")
                 print(f"  Sportsbook: {game['sportsbook']}")
 
-        print("\n✅ Action Network client test PASSED")
+        print("\n[OK] Action Network client test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Action Network client test FAILED: {e}")
+        print(f"\n[ERROR] Action Network client test FAILED: {e}")
         logger.error("Action Network test failed", exc_info=True)
         return False
 
@@ -59,7 +64,7 @@ async def test_validated_action_network():
     print("=" * 70)
 
     try:
-        from src.data.validated_action_network import ValidatedActionNetworkClient
+        from data.validated_action_network import ValidatedActionNetworkClient
 
         async with ValidatedActionNetworkClient(headless=True) as client:
             logger.info("Testing validated NFL odds fetch...")
@@ -67,23 +72,23 @@ async def test_validated_action_network():
             # Test strict mode
             try:
                 nfl_response = await client.fetch_nfl_odds(strict=True)
-                print("\n✅ Strict validation passed")
+                print("\n[OK] Strict validation passed")
                 print(f"  Valid games: {nfl_response.total_games}")
                 print(f"  Fetch time: {nfl_response.fetch_time}")
 
             except ValueError as e:
-                print(f"\n⚠️ Strict validation failed (expected): {e}")
+                print(f"\n[WARNING] Strict validation failed (expected): {e}")
 
                 # Try non-strict mode
                 nfl_response = await client.fetch_nfl_odds(strict=False)
-                print("\n✅ Non-strict validation passed")
+                print("\n[OK] Non-strict validation passed")
                 print(f"  Games with warnings: {nfl_response.total_games}")
 
-        print("\n✅ Validated Action Network test PASSED")
+        print("\n[OK] Validated Action Network test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Validated Action Network test FAILED: {e}")
+        print(f"\n[ERROR] Validated Action Network test FAILED: {e}")
         logger.error("Validated Action Network test failed", exc_info=True)
         return False
 
@@ -96,13 +101,13 @@ async def test_overtime_client():
     print("=" * 70)
 
     try:
-        from src.data.overtime_client import OvertimeAPIClient
+        from data.overtime_client import OvertimeAPIClient
 
         async with OvertimeAPIClient() as client:
             logger.info("Testing NFL games fetch...")
             nfl_games = await client.fetch_nfl_games()
 
-            print(f"\n✅ Fetched {len(nfl_games)} NFL games")
+            print(f"\n[OK] Fetched {len(nfl_games)} NFL games")
 
             if nfl_games:
                 game = nfl_games[0]
@@ -119,15 +124,15 @@ async def test_overtime_client():
                 if game_id:
                     logger.info(f"Testing game details fetch for {game_id}...")
                     details = await client.fetch_game_details(game_id)
-                    print("\n✅ Fetched game details")
+                    print("\n[OK] Fetched game details")
                     print(f"  Home score: {details.get('home_score')}")
                     print(f"  Away score: {details.get('away_score')}")
 
-        print("\n✅ Overtime client test PASSED")
+        print("\n[OK] Overtime client test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Overtime client test FAILED: {e}")
+        print(f"\n[ERROR] Overtime client test FAILED: {e}")
         logger.error("Overtime test failed", exc_info=True)
         return False
 
@@ -140,7 +145,7 @@ async def test_validated_overtime():
     print("=" * 70)
 
     try:
-        from src.data.validated_overtime import ValidatedOvertimeClient
+        from data.validated_overtime import ValidatedOvertimeClient
 
         async with ValidatedOvertimeClient() as client:
             logger.info("Testing validated NFL games fetch...")
@@ -148,22 +153,22 @@ async def test_validated_overtime():
             # Test strict mode
             try:
                 nfl_games = await client.fetch_nfl_games(strict=True)
-                print("\n✅ Strict validation passed")
+                print("\n[OK] Strict validation passed")
                 print(f"  Valid games: {len(nfl_games)}")
 
             except ValueError as e:
-                print(f"\n⚠️ Strict validation failed: {e}")
+                print(f"\n[WARNING] Strict validation failed: {e}")
 
                 # Try non-strict mode
                 nfl_games = await client.fetch_nfl_games(strict=False)
-                print("\n✅ Non-strict validation passed")
+                print("\n[OK] Non-strict validation passed")
                 print(f"  Games with warnings: {len(nfl_games)}")
 
-        print("\n✅ Validated Overtime test PASSED")
+        print("\n[OK] Validated Overtime test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Validated Overtime test FAILED: {e}")
+        print(f"\n[ERROR] Validated Overtime test FAILED: {e}")
         logger.error("Validated Overtime test failed", exc_info=True)
         return False
 
@@ -176,14 +181,14 @@ async def test_accuweather_client():
     print("=" * 70)
 
     try:
-        from src.data.accuweather_client import AccuWeatherClient
+        from data.accuweather_client import AccuWeatherClient
 
         async with AccuWeatherClient() as client:
             logger.info("Testing AccuWeather location and forecast...")
 
             # Get location key
             location_key = await client.get_location_key("Kansas City", "MO")
-            print(f"\n✅ Location key: {location_key}")
+            print(f"\n[OK] Location key: {location_key}")
 
             # Get current conditions
             conditions = await client.get_current_conditions(location_key)
@@ -203,11 +208,11 @@ async def test_accuweather_client():
             print(f"  Weather: {forecast['weather_text']}")
             print(f"  Precipitation: {forecast.get('precipitation_probability', 0)}%")
 
-        print("\n✅ AccuWeather client test PASSED")
+        print("\n[OK] AccuWeather client test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ AccuWeather client test FAILED: {e}")
+        print(f"\n[ERROR] AccuWeather client test FAILED: {e}")
         logger.error("AccuWeather test failed", exc_info=True)
         return False
 
@@ -220,7 +225,7 @@ async def test_openweather_client():
     print("=" * 70)
 
     try:
-        from src.data.openweather_client import OpenWeatherClient
+        from data.openweather_client import OpenWeatherClient
 
         async with OpenWeatherClient() as client:
             logger.info("Testing OpenWeather current and forecast...")
@@ -246,11 +251,11 @@ async def test_openweather_client():
             wind_dir = client.wind_direction_text(forecast.get("wind_direction_deg"))
             print(f"  Wind direction: {wind_dir}")
 
-        print("\n✅ OpenWeather client test PASSED")
+        print("\n[OK] OpenWeather client test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ OpenWeather client test FAILED: {e}")
+        print(f"\n[ERROR] OpenWeather client test FAILED: {e}")
         logger.error("OpenWeather test failed", exc_info=True)
         return False
 
@@ -263,7 +268,7 @@ async def test_unified_weather_client():
     print("=" * 70)
 
     try:
-        from src.data.weather_client import WeatherClient
+        from data.weather_client import WeatherClient
 
         async with WeatherClient(prefer_accuweather=True) as client:
             logger.info("Testing unified weather with fallback...")
@@ -274,7 +279,7 @@ async def test_unified_weather_client():
             # Normalize data
             normalized = client.normalize_weather_data(forecast)
 
-            print("\n✅ Unified weather fetch successful")
+            print("\n[OK] Unified weather fetch successful")
             print(f"  Source: {normalized['source']}")
             print(f"  Temperature: {normalized['temperature_f']}°F")
             print(f"  Weather: {normalized['weather_text']}")
@@ -284,11 +289,11 @@ async def test_unified_weather_client():
             print(f"  Humidity: {normalized['humidity']}%")
             print(f"  Precipitation: {normalized.get('precipitation_chance', 0)}%")
 
-        print("\n✅ Unified weather client test PASSED")
+        print("\n[OK] Unified weather client test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Unified weather client test FAILED: {e}")
+        print(f"\n[ERROR] Unified weather client test FAILED: {e}")
         logger.error("Unified weather test failed", exc_info=True)
         return False
 
@@ -301,7 +306,7 @@ async def test_validated_weather():
     print("=" * 70)
 
     try:
-        from src.data.validated_weather import ValidatedWeatherClient
+        from data.validated_weather import ValidatedWeatherClient
 
         async with ValidatedWeatherClient() as client:
             logger.info("Testing validated weather fetch...")
@@ -312,25 +317,25 @@ async def test_validated_weather():
                 forecast = await client.get_and_validate_game_forecast(
                     "Kansas City", "MO", game_time, strict=True
                 )
-                print("\n✅ Weather validation passed")
+                print("\n[OK] Weather validation passed")
                 print(f"  Source: {forecast['source']}")
                 print(f"  Temperature: {forecast['temperature_f']}°F")
                 print(f"  Weather: {forecast['weather_text']}")
 
             except ValueError as e:
-                print(f"\n⚠️ Strict validation failed: {e}")
+                print(f"\n[WARNING] Strict validation failed: {e}")
 
                 # Try non-strict
                 forecast = await client.get_and_validate_game_forecast(
                     "Kansas City", "MO", game_time, strict=False
                 )
-                print("\n✅ Non-strict validation passed")
+                print("\n[OK] Non-strict validation passed")
 
-        print("\n✅ Validated weather test PASSED")
+        print("\n[OK] Validated weather test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Validated weather test FAILED: {e}")
+        print(f"\n[ERROR] Validated weather test FAILED: {e}")
         logger.error("Validated weather test failed", exc_info=True)
         return False
 
@@ -343,9 +348,9 @@ async def test_full_integration():
     print("=" * 70)
 
     try:
-        from src.data.validated_action_network import ValidatedActionNetworkClient
-        from src.data.validated_overtime import ValidatedOvertimeClient
-        from src.data.validated_weather import ValidatedWeatherClient
+        from data.validated_action_network import ValidatedActionNetworkClient
+        from data.validated_overtime import ValidatedOvertimeClient
+        from data.validated_weather import ValidatedWeatherClient
 
         async with (
             ValidatedActionNetworkClient(headless=True) as odds_client,
@@ -366,14 +371,14 @@ async def test_full_integration():
 
             # Check results
             if isinstance(odds_response, Exception):
-                print(f"⚠️ Odds fetch failed: {odds_response}")
+                print(f"[WARNING] Odds fetch failed: {odds_response}")
             else:
-                print(f"✅ Odds: {odds_response.total_games} games")
+                print(f"[OK] Odds: {odds_response.total_games} games")
 
             if isinstance(games, Exception):
-                print(f"⚠️ Games fetch failed: {games}")
+                print(f"[WARNING] Games fetch failed: {games}")
             else:
-                print(f"✅ Games: {len(games)} games")
+                print(f"[OK] Games: {len(games)} games")
 
             # Fetch weather for one game
             if not isinstance(odds_response, Exception) and odds_response.games:
@@ -386,20 +391,20 @@ async def test_full_integration():
                     city, state, game_time, strict=False
                 )
                 print(
-                    f"✅ Weather: {weather['temperature_f']}°F, {weather['weather_text']}"
+                    f"[OK] Weather: {weather['temperature_f']}°F, {weather['weather_text']}"
                 )
 
-                print("\n✅ Complete game data:")
+                print("\n[OK] Complete game data:")
                 print(f"  Matchup: {game['away_team']} @ {game['home_team']}")
                 print(f"  Spread: {game['spread']}")
                 print(f"  O/U: {game['over_under']}")
                 print(f"  Weather: {weather['temperature_f']}°F")
 
-        print("\n✅ Full integration test PASSED")
+        print("\n[OK] Full integration test PASSED")
         return True
 
     except Exception as e:
-        print(f"\n❌ Full integration test FAILED: {e}")
+        print(f"\n[ERROR] Full integration test FAILED: {e}")
         logger.error("Full integration test failed", exc_info=True)
         return False
 
@@ -441,15 +446,15 @@ async def run_all_tests():
     total = len(results)
 
     for test_name, result in results.items():
-        status = "✅ PASSED" if result else "❌ FAILED"
+        status = "[OK] PASSED" if result else "[ERROR] FAILED"
         print(f"{test_name:30} {status}")
 
     print(f"\n{passed}/{total} tests passed ({passed / total * 100:.1f}%)")
 
     if passed == total:
-        print("\n🎉 All tests passed! API integration is working correctly.")
+        print("\n[SUCCESS] All tests passed! API integration is working correctly.")
     else:
-        print(f"\n⚠️ {total - passed} test(s) failed. Check logs above for details.")
+        print(f"\n[WARNING] {total - passed} test(s) failed. Check logs above for details.")
 
     return passed == total
 

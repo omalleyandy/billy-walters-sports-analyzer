@@ -23,8 +23,10 @@ from enum import Enum
 import logging
 
 from src.data.accuweather_client import AccuWeatherClient
+from src.data.openweather_client import OpenWeatherClient
 
-# Import injury and player valuation modules
+# Import weather alert mapper and injury/player valuation modules
+from src.walters_analyzer.valuation.weather_alert_mapper import WeatherAlertMapper
 from src.walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
 from src.walters_analyzer.valuation.player_values import PlayerValuation
 
@@ -83,6 +85,16 @@ class WeatherImpact:
     indoor: bool = False
     total_adjustment: float = 0.0  # Points to subtract from total
     spread_adjustment: float = 0.0  # Favors defense/rushing teams
+
+    # Weather Alert Fields (NWS via OpenWeather One Call API 3.0)
+    alerts: Optional[List] = None  # List of WeatherAlert objects from alert mapper
+    alert_severity: str = "NONE"  # CRITICAL/MAJOR/MODERATE/MINOR/NONE
+    alert_total_adjustment: float = 0.0  # Alert-specific total adjustment
+    alert_spread_adjustment: float = 0.0  # Alert-specific spread adjustment
+
+    # Combined Impact (uses maximum principle: max(conditions, alerts))
+    # final_total_adjustment uses most severe of condition or alert impact
+    # final_spread_adjustment uses most severe of condition or alert impact
 
 
 @dataclass
@@ -484,6 +496,7 @@ class BillyWaltersEdgeDetector:
         wind_speed: Optional[float],
         precipitation: Optional[str],
         indoor: bool = False,
+        alerts: Optional[List] = None,
     ) -> WeatherImpact:
         """
         Calculate weather impact on game
@@ -493,6 +506,17 @@ class BillyWaltersEdgeDetector:
         - Temp <32°F: Reduce total by 2-3 points, favor rushing
         - Rain/Snow: Reduce total by 2-4 points
         - Indoor: No adjustments
+        - Weather Alerts: Use maximum impact principle (not additive)
+
+        Args:
+            temperature: Temperature in Fahrenheit
+            wind_speed: Wind speed in MPH
+            precipitation: Precipitation type ("rain", "snow", "none")
+            indoor: Indoor stadium flag
+            alerts: List of WeatherAlert objects from NWS
+
+        Returns:
+            WeatherImpact with combined condition + alert analysis
         """
         impact = WeatherImpact(
             temperature=temperature,
@@ -504,20 +528,68 @@ class BillyWaltersEdgeDetector:
         if indoor:
             return impact
 
-        # Wind impact (most important for passing)
-        if wind_speed and wind_speed > 15:
-            impact.total_adjustment -= min((wind_speed - 15) * 0.3, 5.0)
-            impact.spread_adjustment -= 1.0  # Favors defense
+        # Calculate condition-based adjustments (Billy Walters W-Factors)
+        condition_total_adj = 0.0
+        condition_spread_adj = 0.0
 
-        # Temperature impact
-        if temperature and temperature < 32:
-            impact.total_adjustment -= 2.5
-            impact.spread_adjustment -= 0.5  # Favors rushing teams
+        # Wind impact (Billy Walters: -0.20 for 15mph, -0.40 for 20mph)
+        if wind_speed:
+            if wind_speed >= 20:
+                condition_total_adj -= 0.40  # wind_20mph (Billy Walters)
+                condition_spread_adj -= 0.15
+            elif wind_speed >= 15:
+                condition_total_adj -= 0.20  # wind_15mph (Billy Walters)
+                condition_spread_adj -= 0.10
 
-        # Precipitation
-        if precipitation and precipitation.lower() in ["rain", "snow"]:
-            impact.total_adjustment -= 3.0
-            impact.spread_adjustment -= 1.0
+        # Temperature impact (Billy Walters: -0.20 for extreme)
+        if temperature:
+            if temperature < 20:
+                condition_total_adj -= 0.20  # extreme_cold (Billy Walters)
+                condition_spread_adj -= 0.10
+            elif temperature > 90:
+                condition_total_adj -= 0.20  # extreme_heat (Billy Walters)
+                condition_spread_adj -= 0.10
+
+        # Precipitation (Billy Walters: -0.20 light, -0.60 heavy)
+        if precipitation:
+            precip_lower = precipitation.lower()
+            if precip_lower == "snow":
+                # Assume moderate-heavy snow without additional data
+                condition_total_adj -= 0.40  # snow_moderate-heavy (Billy Walters)
+                condition_spread_adj -= 0.15
+            elif precip_lower == "rain":
+                # Assume moderate rain
+                condition_total_adj -= 0.30  # rain_moderate (Billy Walters)
+                condition_spread_adj -= 0.12
+
+        # Process weather alerts if available
+        alert_total_adj = 0.0
+        alert_spread_adj = 0.0
+        alert_severity = "NONE"
+
+        if alerts:
+            mapper = WeatherAlertMapper()
+            max_total, max_spread = mapper.get_max_alert_impact(alerts)
+            alert_total_adj = max_total
+            alert_spread_adj = max_spread
+
+            # Determine most severe alert
+            if alerts:
+                most_severe = min(alerts, key=lambda a: a.total_adjustment)
+                alert_severity = most_severe.severity
+
+        # Billy Walters Maximum Principle:
+        # Use most severe impact (conditions OR alerts, not both)
+        # Alerts already account for underlying conditions
+        final_total = min(condition_total_adj, alert_total_adj)
+        final_spread = min(condition_spread_adj, alert_spread_adj)
+
+        impact.total_adjustment = final_total
+        impact.spread_adjustment = final_spread
+        impact.alerts = alerts
+        impact.alert_severity = alert_severity
+        impact.alert_total_adjustment = alert_total_adj
+        impact.alert_spread_adjustment = alert_spread_adj
 
         return impact
 
@@ -976,7 +1048,9 @@ def main():
         )
 
     # Initialize totals detector
-    from billy_walters_totals_detector import BillyWaltersTotalsDetector
+    from walters_analyzer.valuation.billy_walters_totals_detector import (
+        BillyWaltersTotalsDetector,
+    )
 
     totals_detector = BillyWaltersTotalsDetector()
     totals_detector.load_power_ratings(massey_ratings_for_totals)
@@ -1048,26 +1122,72 @@ def main():
                     weather_data = weather_client.get_game_weather(home_team, game_time)
 
                     if weather_data:
-                        # Calculate weather impact
-                        total_adj, spread_adj = weather_client.calculate_weather_impact(
-                            weather_data
-                        )
+                        # Fetch weather alerts from OpenWeather (if available)
+                        weather_alerts = []
+                        try:
+                            # Check if we have OpenWeather client (needs OPENWEATHER_API_KEY)
+                            if os.getenv("OPENWEATHER_API_KEY"):
+                                import asyncio
 
-                        # Create WeatherImpact object
-                        weather_impact = WeatherImpact(
+                                # Get stadium coordinates from weather data
+                                lat = weather_data.get("latitude")
+                                lon = weather_data.get("longitude")
+
+                                if lat and lon:
+
+                                    # Define async helper to fetch alerts
+                                    async def fetch_alerts():
+                                        openweather = OpenWeatherClient()
+                                        await openweather.connect()
+                                        try:
+                                            alert_data = await openweather.get_weather_alerts(
+                                                lat=lat, lon=lon, game_time=game_time
+                                            )
+                                            return alert_data
+                                        finally:
+                                            await openweather.close()
+
+                                    # Run async function in sync context
+                                    alert_data = asyncio.run(fetch_alerts())
+
+                                    # Map alerts to Billy Walters adjustments
+                                    mapper = WeatherAlertMapper()
+                                    for alert in alert_data:
+                                        weather_alerts.append(mapper.map_alert(alert))
+
+                                    if weather_alerts:
+                                        logger.info(
+                                            f"Found {len(weather_alerts)} active weather alerts for {home_team}"
+                                        )
+                        except Exception as alert_error:
+                            logger.debug(
+                                f"Weather alerts unavailable: {alert_error}"
+                            )
+
+                        # Calculate combined weather impact (conditions + alerts)
+                        weather_impact = detector.calculate_weather_impact(
                             temperature=weather_data.get("temperature"),
                             wind_speed=weather_data.get("wind_speed"),
                             precipitation=weather_data.get("precipitation"),
                             indoor=weather_data.get("indoor", False),
-                            total_adjustment=total_adj,
-                            spread_adjustment=spread_adj,
+                            alerts=weather_alerts if weather_alerts else None,
                         )
+
+                        # Log weather impact details
+                        alert_info = ""
+                        if weather_impact.alert_severity != "NONE":
+                            alert_info = (
+                                f" [ALERT: {weather_impact.alert_severity} "
+                                f"({weather_impact.alert_total_adjustment:.1f} pts)]"
+                            )
 
                         logger.info(
                             f"Weather for {home_team}: "
                             f"{weather_data.get('temperature')}°F, "
                             f"{weather_data.get('wind_speed')} MPH wind, "
-                            f"Total adj: {total_adj:.1f}, Spread adj: {spread_adj:.1f}"
+                            f"Total adj: {weather_impact.total_adjustment:.1f}, "
+                            f"Spread adj: {weather_impact.spread_adjustment:.1f}"
+                            f"{alert_info}"
                         )
                 except Exception as e:
                     logger.warning(f"Could not fetch weather for {home_team}: {e}")

@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 class AccuWeatherClient:
     """Client for fetching weather data from AccuWeather API."""
 
-    BASE_URL = "http://dataservice.accuweather.com"
+    BASE_URL = "https://dataservice.accuweather.com"
 
     # NFL Stadium locations (city for location key lookup)
     NFL_STADIUM_LOCATIONS = {
@@ -321,21 +321,30 @@ class AccuWeatherClient:
         return forecasts[:hours]  # Return only requested hours
 
     def _format_conditions(self, conditions: dict[str, Any]) -> dict[str, Any]:
-        """Format current conditions data."""
+        """Format current conditions data to standard weather format."""
         temp = conditions.get("Temperature", {}).get("Imperial", {})
+        feels_like = conditions.get("RealFeelTemperature", {}).get("Imperial", {})
         wind = conditions.get("Wind", {})
         wind_speed = wind.get("Speed", {}).get("Imperial", {})
+        wind_gust = conditions.get("WindGust", {}).get("Speed", {}).get("Imperial", {})
 
         return {
-            "temperature_f": temp.get("Value"),
-            "weather_text": conditions.get("WeatherText"),
-            "has_precipitation": conditions.get("HasPrecipitation", False),
-            "precipitation_type": conditions.get("PrecipitationType"),
-            "wind_speed_mph": wind_speed.get("Value"),
+            # Standard keys expected by weather analysis
+            "temperature": temp.get("Value"),
+            "feels_like": feels_like.get("Value"),
+            "wind_speed": wind_speed.get("Value"),
+            "wind_gust": wind_gust.get("Value"),
             "wind_direction": wind.get("Direction", {}).get("English"),
             "humidity": conditions.get("RelativeHumidity"),
+            "description": conditions.get("WeatherText"),
+            "precipitation_type": conditions.get("PrecipitationType"),
+            "precipitation_probability": 100
+            if conditions.get("HasPrecipitation", False)
+            else 0,
+            # Additional data
+            "has_precipitation": conditions.get("HasPrecipitation", False),
             "uv_index": conditions.get("UVIndex"),
-            "visibility_mi": conditions.get("Visibility", {})
+            "visibility": conditions.get("Visibility", {})
             .get("Imperial", {})
             .get("Value"),
             "timestamp": conditions.get("LocalObservationDateTime"),
@@ -343,21 +352,27 @@ class AccuWeatherClient:
         }
 
     def _format_hourly(self, hourly: dict[str, Any]) -> dict[str, Any]:
-        """Format hourly forecast data."""
+        """Format hourly forecast data to standard weather format."""
         temp = hourly.get("Temperature", {})
+        feels_like = hourly.get("RealFeelTemperature", {})
         wind = hourly.get("Wind", {})
         wind_speed = wind.get("Speed", {})
+        wind_gust = hourly.get("WindGust", {}).get("Speed", {}) if "WindGust" in hourly else {}
 
         return {
             "forecast_time": hourly.get("DateTime"),
-            "temperature_f": temp.get("Value"),
-            "weather_text": hourly.get("IconPhrase"),
-            "has_precipitation": hourly.get("HasPrecipitation", False),
-            "precipitation_type": hourly.get("PrecipitationType"),
-            "precipitation_probability": hourly.get("PrecipitationProbability"),
-            "wind_speed_mph": wind_speed.get("Value"),
+            # Standard keys expected by weather analysis
+            "temperature": temp.get("Value"),
+            "feels_like": feels_like.get("Value") if feels_like else temp.get("Value"),
+            "wind_speed": wind_speed.get("Value"),
+            "wind_gust": wind_gust.get("Value") if wind_gust else wind_speed.get("Value"),
             "wind_direction": wind.get("Direction", {}).get("English"),
             "humidity": hourly.get("RelativeHumidity"),
+            "description": hourly.get("IconPhrase"),
+            "precipitation_type": hourly.get("PrecipitationType"),
+            "precipitation_probability": hourly.get("PrecipitationProbability", 0),
+            # Additional data
+            "has_precipitation": hourly.get("HasPrecipitation", False),
             "uv_index": hourly.get("UVIndex"),
             "source": "accuweather",
         }
@@ -399,9 +414,28 @@ class AccuWeatherClient:
                 location_key, max_retries=max_retries
             )
 
-        # Get hourly forecast
+        # Starter plan only has 12-hour hourly forecast access
+        # For games >12 hours away, fall back to less granular but available data
+        if hours_ahead > 12:
+            logger.info(
+                f"Game is {hours_ahead} hours away, using current conditions "
+                "(starter plan limited to 12-hour forecast)"
+            )
+            # Return current conditions as best available forecast
+            # Note: This is a limitation of the starter plan
+            conditions = await self.get_current_conditions(
+                location_key, max_retries=max_retries
+            )
+            logger.warning(
+                f"Using current conditions for game {hours_ahead} hours away. "
+                "For better forecasts, upgrade AccuWeather plan or use OpenWeather fallback."
+            )
+            return conditions
+
+        # Get hourly forecast (within 12-hour window)
+        forecast_hours = min(hours_ahead + 1, 12)
         forecasts = await self.get_hourly_forecast(
-            location_key, hours=min(hours_ahead + 1, 120), max_retries=max_retries
+            location_key, hours=forecast_hours, max_retries=max_retries
         )
 
         # Find closest forecast to game time

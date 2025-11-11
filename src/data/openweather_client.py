@@ -1,14 +1,19 @@
 """
 OpenWeather API Client
 
-Fetches weather forecasts for game locations using OpenWeatherMap API.
+Fetches weather forecasts and alerts for game locations using OpenWeatherMap API.
 Implements rate limiting, retry logic, and error handling.
+
+Supports:
+- Current weather (2.5 API)
+- 5-day forecast (2.5 API)
+- Weather alerts (3.0 One Call API - includes National Weather Service alerts)
 """
 
 import asyncio
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
@@ -20,6 +25,7 @@ class OpenWeatherClient:
     """Client for fetching weather data from OpenWeatherMap API."""
 
     BASE_URL = "https://api.openweathermap.org/data/2.5"
+    ONE_CALL_URL = "https://api.openweathermap.org/data/3.0/onecall"
 
     def __init__(
         self,
@@ -364,6 +370,142 @@ class OpenWeatherClient:
         ]
         index = int((degrees + 11.25) / 22.5) % 16
         return directions[index]
+
+    async def get_weather_alerts(
+        self,
+        lat: float,
+        lon: float,
+        game_time: datetime | None = None,
+        max_retries: int = 3,
+    ) -> list[dict[str, Any]]:
+        """
+        Get active weather alerts for a location using One Call API 3.0.
+
+        This fetches National Weather Service (NWS) alerts which include:
+        - Winter Storm Warnings, Blizzard Warnings, Ice Storm Warnings
+        - High Wind Warnings, Wind Advisories
+        - Heavy Rain Warnings, Flood Watches
+        - Severe Thunderstorm Warnings
+        - And more...
+
+        Args:
+            lat: Latitude of stadium location
+            lon: Longitude of stadium location
+            game_time: Optional game time to filter alerts (only active during game)
+            max_retries: Maximum retry attempts
+
+        Returns:
+            List of active weather alert dictionaries with fields:
+            - sender_name: Alert issuer (e.g., "NWS Green Bay")
+            - event: Alert type (e.g., "Winter Storm Warning")
+            - start: Alert start time (Unix timestamp)
+            - end: Alert end time (Unix timestamp)
+            - description: Full alert text
+            - tags: Alert categories/tags
+
+        Raises:
+            RuntimeError: If request fails
+
+        Note:
+            One Call API 3.0 is FREE up to 1,000 calls/day.
+            Requires same API key as other OpenWeather endpoints.
+        """
+        logger.info(f"Getting weather alerts for lat={lat}, lon={lon}")
+
+        if not self._client:
+            raise RuntimeError("Client not initialized. Call connect() first.")
+
+        await self._rate_limit()
+
+        # Build One Call API URL (not using base_url)
+        params = {
+            "lat": lat,
+            "lon": lon,
+            "appid": self.api_key,
+            "exclude": "minutely,daily",  # We only need alerts
+            "units": "imperial",
+        }
+
+        try:
+            logger.debug(f"GET {self.ONE_CALL_URL} (lat={lat}, lon={lon})")
+
+            response = await self._client.get(self.ONE_CALL_URL, params=params)
+            response.raise_for_status()
+
+            data = response.json()
+            alerts = data.get("alerts", [])
+
+            logger.info(f"Found {len(alerts)} active weather alerts")
+
+            # Filter alerts by game time if provided
+            if game_time and alerts:
+                filtered_alerts = [
+                    alert
+                    for alert in alerts
+                    if self._is_alert_active_during_game(alert, game_time)
+                ]
+                logger.info(
+                    f"Filtered to {len(filtered_alerts)} alerts active during game time"
+                )
+                return filtered_alerts
+
+            return alerts
+
+        except httpx.HTTPStatusError as e:
+            logger.warning(f"HTTP error {e.response.status_code}: {e.response.text}")
+
+            # Handle specific error codes
+            if e.response.status_code == 401:
+                raise RuntimeError(
+                    "Invalid API key for One Call API 3.0. "
+                    "Verify OPENWEATHER_API_KEY is correct."
+                ) from e
+            elif e.response.status_code == 429:
+                raise RuntimeError(
+                    "Rate limit exceeded for One Call API 3.0 (1,000 calls/day free tier)"
+                ) from e
+
+            raise RuntimeError(f"Failed to fetch weather alerts: {e}") from e
+
+        except httpx.RequestError as e:
+            logger.warning(f"Request error: {e}")
+            raise RuntimeError(f"Failed to fetch weather alerts: {e}") from e
+
+    def _is_alert_active_during_game(
+        self, alert: dict[str, Any], game_time: datetime
+    ) -> bool:
+        """
+        Check if weather alert is active during game time.
+
+        Args:
+            alert: Alert dictionary with 'start' and 'end' Unix timestamps
+            game_time: Game start time
+
+        Returns:
+            True if alert overlaps with game window (game time + 3 hours)
+        """
+        try:
+            alert_start = datetime.fromtimestamp(alert["start"])
+            alert_end = datetime.fromtimestamp(alert["end"])
+
+            # Game duration approximately 3 hours
+            game_end = game_time + timedelta(hours=3)
+
+            # Alert is active if it overlaps the game window
+            is_active = not (alert_end < game_time or alert_start > game_end)
+
+            if not is_active:
+                logger.debug(
+                    f"Alert '{alert.get('event')}' not active during game "
+                    f"(alert: {alert_start} to {alert_end}, game: {game_time} to {game_end})"
+                )
+
+            return is_active
+
+        except (KeyError, ValueError) as e:
+            logger.warning(f"Error checking alert timing: {e}")
+            # If we can't determine timing, include the alert
+            return True
 
 
 # Example usage
