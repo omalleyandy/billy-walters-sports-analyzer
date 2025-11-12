@@ -1136,7 +1136,7 @@ def main():
                         return await weather_client.get_game_weather(
                             home_team, game_time
                         )
-                    
+
                     weather_data = asyncio.run(fetch_weather())
 
                     if weather_data:
