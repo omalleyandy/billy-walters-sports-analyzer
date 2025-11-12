@@ -157,6 +157,120 @@ class ESPNAPIClient:
         r = self.session.get(url, params=params, timeout=30)
         return r.json()
 
+    # Team Statistics
+
+    def get_team_statistics(
+        self, team_id: str, league: str = "college-football"
+    ) -> Dict:
+        """
+        Get comprehensive team statistics including offensive, defensive, and special teams
+
+        Args:
+            team_id: ESPN team ID
+            league: 'nfl' or 'college-football'
+
+        Returns:
+            Complete statistics including team stats and opponent stats
+        """
+        url = f"{self.base_url}/{league}/teams/{team_id}/statistics"
+        r = self.session.get(url, timeout=30)
+        return r.json()
+
+    def extract_power_rating_metrics(
+        self, team_id: str, league: str = "college-football"
+    ) -> Dict:
+        """
+        Extract key metrics for Billy Walters power rating calculations
+
+        Args:
+            team_id: ESPN team ID
+            league: 'nfl' or 'college-football'
+
+        Returns:
+            Dictionary with offensive/defensive efficiency metrics
+        """
+        data = self.get_team_statistics(team_id, league)
+
+        # Helper function to extract stat value
+        def get_stat_value(stats_list, stat_name):
+            stat = next((s for s in stats_list if s["name"] == stat_name), None)
+            return stat["value"] if stat else None
+
+        # Extract team offensive stats
+        team_stats = data["results"]["stats"]["categories"]
+        scoring = next(c for c in team_stats if c["name"] == "scoring")
+        misc = next(c for c in team_stats if c["name"] == "miscellaneous")
+        passing = next(c for c in team_stats if c["name"] == "passing")
+        rushing = next(c for c in team_stats if c["name"] == "rushing")
+
+        # Extract opponent (defensive) stats
+        opponent = data["results"]["opponent"]
+        opp_scoring = next(c for c in opponent if c["name"] == "scoring")
+        opp_passing = next(c for c in opponent if c["name"] == "passing")
+        opp_rushing = next(c for c in opponent if c["name"] == "rushing")
+
+        # Build metrics dictionary
+        metrics = {
+            # Team info
+            "team_id": team_id,
+            "team_name": data.get("team", {}).get("displayName"),
+            "games_played": get_stat_value(misc["stats"], "gamesPlayed"),
+            # Offensive metrics
+            "points_per_game": get_stat_value(scoring["stats"], "totalPointsPerGame"),
+            "total_points": get_stat_value(scoring["stats"], "totalPoints"),
+            "passing_yards_per_game": get_stat_value(
+                passing["stats"], "netPassingYardsPerGame"
+            ),
+            "rushing_yards_per_game": get_stat_value(
+                rushing["stats"], "rushingYardsPerGame"
+            ),
+            # Defensive metrics (opponent stats)
+            "points_allowed_per_game": get_stat_value(
+                opp_scoring["stats"], "totalPointsPerGame"
+            ),
+            "passing_yards_allowed_per_game": get_stat_value(
+                opp_passing["stats"], "passingYardsPerGame"
+            ),
+            "rushing_yards_allowed_per_game": get_stat_value(
+                opp_rushing["stats"], "rushingYardsPerGame"
+            ),
+            # Advanced metrics
+            "turnover_margin": get_stat_value(misc["stats"], "turnOverDifferential"),
+            "third_down_pct": get_stat_value(misc["stats"], "thirdDownConvPct"),
+            "takeaways": get_stat_value(misc["stats"], "totalTakeaways"),
+            "giveaways": get_stat_value(misc["stats"], "totalGiveaways"),
+        }
+
+        # Calculate total yards per game (offensive)
+        if metrics["passing_yards_per_game"] and metrics["rushing_yards_per_game"]:
+            metrics["total_yards_per_game"] = (
+                metrics["passing_yards_per_game"] + metrics["rushing_yards_per_game"]
+            )
+
+        # Calculate total yards allowed per game (defensive)
+        if (
+            metrics["passing_yards_allowed_per_game"]
+            and metrics["rushing_yards_allowed_per_game"]
+        ):
+            metrics["total_yards_allowed_per_game"] = (
+                metrics["passing_yards_allowed_per_game"]
+                + metrics["rushing_yards_allowed_per_game"]
+            )
+
+        return metrics
+
+    def get_all_fbs_teams(self) -> Dict:
+        """
+        Get all FBS (Division I-A) college football teams
+
+        Returns:
+            Dictionary with team list and metadata
+        """
+        url = f"{self.base_url}/college-football/teams"
+        params = {"groups": "80"}  # Group 80 = FBS
+        r = self.session.get(url, params=params, timeout=30)
+        return r.json()
+
     # Helper Methods
 
     def save_to_json(self, data: Dict, filename: str):

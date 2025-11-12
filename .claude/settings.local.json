@@ -1,28 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)",
-      "WebFetch(domain:overtime.ag)",
       "Bash(uv run python:*)",
-      "Bash(uv pip list:*)",
-      "WebFetch the following website domains: https://overtime.ag/sports#/, https://overtime.ag/sports#/integrations/liveBetting, https://www.espn.com/, https://www.accuweather.com/, https://www.nfl.com/, https://masseyratings.com/, https://www.covers.com/, https://www.vegasinsider.com/, https://www.actionnetwork.com/, https://highlightly.net/",
-      "Bash(git rm:*)",
-      "Bash(mv:*)",
-      "Bash(mkdir:*)",
-      "Bash(rm:*)",
-      "Bash(uv run ruff:*)",
-      "Bash(uv run pytest:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
+      "Bash(Select-Object -First 50)",
       "Bash(git pull:*)",
-      "Bash(gh pr list:*)",
-      "Bash(git remote:*)",
-      "Bash(git fetch:*)",
-      "Bash(git branch:*)",
-      "Bash(gh run list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh run:*)"
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
