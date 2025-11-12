@@ -207,7 +207,7 @@ class OvertimeHybridScraper:
         """Phase 2: Connect to SignalR for real-time updates"""
 
         print("1. Connecting to SignalR WebSocket...")
-        print(f"   Server: wss://ws.ticosports.com/signalr")
+        print("   Server: wss://ws.ticosports.com/signalr")
         print(f"   Duration: {self.signalr_duration} seconds")
 
         # Build SignalR connection
@@ -264,7 +264,7 @@ class OvertimeHybridScraper:
                         f"   [{elapsed}s] Live updates received: {len(self.live_updates)}"
                     )
 
-            print(f"5. SignalR listening complete")
+            print("5. SignalR listening complete")
             print(f"   Total live updates: {len(self.live_updates)}")
 
         except KeyboardInterrupt:

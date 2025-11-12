@@ -91,7 +91,7 @@ async def test_new_key():
     game_time = datetime(2025, 11, 11, 20, 15)
     try:
         forecast = await client.get_game_forecast("Green Bay", "WI", game_time)
-        print(f"[OK] Got game forecast")
+        print("[OK] Got game forecast")
         print()
         print("MNF Weather Conditions:")
         print(f"  Temperature: {forecast.get('temperature', 'N/A')}°F")

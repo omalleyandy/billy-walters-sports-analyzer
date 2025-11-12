@@ -22,7 +22,7 @@ from src.walters_analyzer.valuation.billy_walters_edge_detector import (
 )
 
 
-async def test_openweather_alerts():
+async def check_openweather_alerts():
     """Test OpenWeather One Call API 3.0 alerts fetching"""
     print("=" * 70)
     print("Test 1: OpenWeather Alerts API")
@@ -63,7 +63,7 @@ async def test_openweather_alerts():
         return None
 
 
-def test_weather_alert_mapper(raw_alerts):
+def check_weather_alert_mapper(raw_alerts):
     """Test WeatherAlertMapper with real alert data"""
     print("\n" + "=" * 70)
     print("Test 2: Weather Alert Mapper")
@@ -89,12 +89,12 @@ def test_weather_alert_mapper(raw_alerts):
     mapped_alerts = [mapper.map_alert(a) for a in raw_alerts]
     max_total, max_spread = mapper.get_max_alert_impact(mapped_alerts)
 
-    print(f"\n[OK] Maximum Impact (Billy Walters Principle):")
+    print("\n[OK] Maximum Impact (Billy Walters Principle):")
     print(f"  Total: {max_total:.1f} points")
     print(f"  Spread: {max_spread:.1f} points")
 
 
-def test_edge_detector_integration():
+def check_edge_detector_integration():
     """Test edge detector's weather impact calculation with alerts"""
     print("\n" + "=" * 70)
     print("Test 3: Edge Detector Integration")
@@ -167,7 +167,7 @@ def test_edge_detector_integration():
         alerts=[blizzard_alert],
     )
 
-    print(f"  Condition impact: -1.0 pts (cold -0.20 + wind -0.40 + snow -0.40)")
+    print("  Condition impact: -1.0 pts (cold -0.20 + wind -0.40 + snow -0.40)")
     print(
         f"  Alert impact: {impact_combined.alert_total_adjustment:.2f} pts (Blizzard)"
     )
@@ -200,13 +200,13 @@ async def main():
     print("=" * 70)
 
     # Test 1: OpenWeather API
-    raw_alerts = await test_openweather_alerts()
+    raw_alerts = await check_openweather_alerts()
 
     # Test 2: Alert Mapper
-    test_weather_alert_mapper(raw_alerts)
+    check_weather_alert_mapper(raw_alerts)
 
     # Test 3: Edge Detector Integration
-    test_edge_detector_integration()
+    check_edge_detector_integration()
 
     print("\n" + "=" * 70)
     print("Test Suite Complete")

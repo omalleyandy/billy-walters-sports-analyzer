@@ -303,11 +303,11 @@ def example_usage():
     print(f"  Total Impact: {alert.total_adjustment} points")
     print(f"  Spread Impact: {alert.spread_adjustment} points")
     print(f"  Confidence: {alert.confidence}")
-    print(f"\n  Interpretation:")
+    print("\n  Interpretation:")
     print(f"  - Game total likely {abs(alert.total_adjustment):.1f} points LOWER")
-    print(f"  - Favors defense and rushing teams")
-    print(f"  - Fade pass-heavy offenses")
-    print(f"  - Consider betting UNDER")
+    print("  - Favors defense and rushing teams")
+    print("  - Fade pass-heavy offenses")
+    print("  - Consider betting UNDER")
 
 
 if __name__ == "__main__":

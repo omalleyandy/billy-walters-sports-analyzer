@@ -89,7 +89,7 @@ async def main():
         # Show sample game
         if nfl_data["games"]:
             sample = nfl_data["games"][0]
-            print(f"\n[SAMPLE GAME]")
+            print("\n[SAMPLE GAME]")
             print(f"  {sample['away_team']} @ {sample['home_team']}")
             print(
                 f"  Spread: {sample['spread']['away']:+.1f} ({sample['spread']['away_odds']:+d}) / {sample['spread']['home']:+.1f} ({sample['spread']['home_odds']:+d})"
@@ -125,7 +125,7 @@ async def main():
         # Show sample game
         if ncaaf_data["games"]:
             sample = ncaaf_data["games"][0]
-            print(f"\n[SAMPLE GAME]")
+            print("\n[SAMPLE GAME]")
             print(f"  {sample['away_team']} @ {sample['home_team']}")
             print(
                 f"  Spread: {sample['spread']['away']:+.1f} ({sample['spread']['away_odds']:+d}) / {sample['spread']['home']:+.1f} ({sample['spread']['home_odds']:+d})"

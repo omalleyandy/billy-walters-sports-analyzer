@@ -188,7 +188,7 @@ async def scrape_sport(
                 # TODO: Add database save if --save-db flag is set
                 if save_db:
                     print(
-                        f"     [WARNING] Database save not yet implemented for unified scraper"
+                        "     [WARNING] Database save not yet implemented for unified scraper"
                     )
 
             return result

@@ -55,7 +55,7 @@ async def check_gameday_weather(team_name: str, game_time_str: str):
     city, state = team_cities.get(team_name, (team_name, ""))
     if not state:
         print(f"[ERROR] Unknown team: {team_name}")
-        print(f"Please add to team_cities mapping")
+        print("Please add to team_cities mapping")
         return
 
     api_key = os.getenv("ACCUWEATHER_API_KEY")

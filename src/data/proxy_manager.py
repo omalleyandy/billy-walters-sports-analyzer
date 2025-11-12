@@ -76,7 +76,7 @@ class ProxyManager:
 
             if response.status_code == 200:
                 data = response.json()
-                print(f"[OK] Proxy working!")
+                print("[OK] Proxy working!")
                 print(f"  IP: {data.get('ip')}")
                 print(f"  Location: {data.get('city')}, {data.get('country')}")
 

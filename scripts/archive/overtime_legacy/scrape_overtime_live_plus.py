@@ -163,7 +163,7 @@ def scrape_live_plus_odds(headless: bool = True, output_dir: str = "output") -> 
             ).all()
 
             if team_names:
-                print(f"   Found teams in live betting")
+                print("   Found teams in live betting")
 
                 # Get all visible odds buttons
                 odds_buttons = page.locator(

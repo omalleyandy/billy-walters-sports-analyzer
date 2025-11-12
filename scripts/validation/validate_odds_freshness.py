@@ -183,7 +183,7 @@ def validate_odds_freshness():
 
         except Exception as e:
             print(f"{i}. {away} @ {home}")
-            print(f"   Status: ERROR - Could not parse game time")
+            print("   Status: ERROR - Could not parse game time")
             print(f"   Raw time: {game_time_str}")
             print(f"   Error: {e}")
             print()

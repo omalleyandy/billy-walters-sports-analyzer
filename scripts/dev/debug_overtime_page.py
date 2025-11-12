@@ -87,7 +87,7 @@ async def debug_overtime():
             print("\n4. Analyzing page structure...")
             print("=" * 70)
 
-            debug_info = await page.evaluate("""
+            debug_info = await page.evaluate(r"""
                 () => {
                     // Check various button selectors
                     const results = {

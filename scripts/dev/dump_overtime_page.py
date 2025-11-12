@@ -74,7 +74,7 @@ async def dump_page():
             print("PAGE ANALYSIS")
             print("=" * 70)
 
-            info = await page.evaluate("""
+            info = await page.evaluate(r"""
                 () => {
                     // Get all buttons and their attributes
                     const buttons = Array.from(document.querySelectorAll('button'));

@@ -41,7 +41,7 @@ def test_overtime_api(sport_type: str = "Football", sport_sub_type: str = "NFL")
         "Content-Type": "application/json",
     }
 
-    print(f"\n[TEST] Overtime.ag API Endpoint")
+    print("\n[TEST] Overtime.ag API Endpoint")
     print(f"Sport: {sport_type} - {sport_sub_type}")
     print(f"URL: {url}")
     print(f"Payload: {json.dumps(payload, indent=2)}\n")
@@ -53,19 +53,19 @@ def test_overtime_api(sport_type: str = "Football", sport_sub_type: str = "NFL")
         data = resp.json()
 
         # Check response structure
-        print(f"[OK] Response received")
+        print("[OK] Response received")
         print(f"Status: {resp.status_code}")
 
         if "d" in data:
-            print(f"\n[STRUCTURE]")
-            print(f"  'd' key present: Yes")
+            print("\n[STRUCTURE]")
+            print("  'd' key present: Yes")
 
             if "Data" in data["d"]:
-                print(f"  'Data' key present: Yes")
+                print("  'Data' key present: Yes")
 
                 if "GameLines" in data["d"]["Data"]:
                     games = data["d"]["Data"]["GameLines"]
-                    print(f"  'GameLines' key present: Yes")
+                    print("  'GameLines' key present: Yes")
                     print(f"  Games found: {len(games)}")
 
                     # Save full response
@@ -84,24 +84,24 @@ def test_overtime_api(sport_type: str = "Football", sport_sub_type: str = "NFL")
 
                     # Show sample game
                     if games:
-                        print(f"\n[SAMPLE GAME]")
+                        print("\n[SAMPLE GAME]")
                         sample = games[0]
                         print(json.dumps(sample, indent=2)[:500] + "...")
 
                         # Show available keys
-                        print(f"\n[AVAILABLE KEYS]")
+                        print("\n[AVAILABLE KEYS]")
                         for key in sample.keys():
                             print(f"  - {key}")
 
                     return games
                 else:
-                    print(f"  'GameLines' key present: No")
+                    print("  'GameLines' key present: No")
                     print(f"  Available keys: {list(data['d']['Data'].keys())}")
             else:
-                print(f"  'Data' key present: No")
+                print("  'Data' key present: No")
                 print(f"  Available keys: {list(data['d'].keys())}")
         else:
-            print(f"\n[ERROR] Unexpected response structure")
+            print("\n[ERROR] Unexpected response structure")
             print(f"Available keys: {list(data.keys())}")
 
         return None
@@ -131,12 +131,12 @@ def compare_with_current_scraper():
             print(f"Games found: {len(playwright_data)}")
 
             if playwright_data:
-                print(f"\n[SAMPLE GAME - Playwright]")
+                print("\n[SAMPLE GAME - Playwright]")
                 print(json.dumps(playwright_data[0], indent=2)[:500] + "...")
         else:
-            print(f"\n[WARNING] No Playwright scraper output found")
+            print("\n[WARNING] No Playwright scraper output found")
     else:
-        print(f"\n[WARNING] Playoff directory does not exist")
+        print("\n[WARNING] Playoff directory does not exist")
 
 
 if __name__ == "__main__":

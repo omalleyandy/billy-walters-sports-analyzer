@@ -139,7 +139,7 @@ async def debug_overtime():
                 }
             """)
 
-            print(f"\nButton Analysis:")
+            print("\nButton Analysis:")
             print(
                 f"  Original selector (SendLineToWager): {debug_info['sendLineToWager']} buttons"
             )

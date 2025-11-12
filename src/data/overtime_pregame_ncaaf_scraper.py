@@ -258,7 +258,7 @@ class OvertimeNCAAFScraper:
 
                 # Display validation results
                 validation = output["scrape_metadata"]["data_validation"]
-                print(f"\n7. Data Validation Results:")
+                print("\n7. Data Validation Results:")
                 print(
                     f"   Status: {'[OK] VALID' if validation['is_valid'] else '[WARNING] INVALID'}"
                 )
@@ -267,16 +267,16 @@ class OvertimeNCAAFScraper:
                 print(f"   Has betting lines: {validation['has_odds']}")
 
                 if validation["warnings"]:
-                    print(f"\n   Warnings:")
+                    print("\n   Warnings:")
                     for warning in validation["warnings"]:
                         print(f"   -> {warning}")
 
                 if len(self.games) > 0:
                     print(f"\n[OK] Successfully scraped {len(self.games)} game entries")
                 else:
-                    print(f"\n[WARNING] Scrape completed but found 0 games")
+                    print("\n[WARNING] Scrape completed but found 0 games")
                     print(
-                        f"   This is expected during games or outside betting windows"
+                        "   This is expected during games or outside betting windows"
                     )
 
                 return output
