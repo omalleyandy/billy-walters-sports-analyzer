@@ -16,6 +16,7 @@ Based on Billy Walters' Advanced Masterclass Principles:
 
 import os
 import json
+import asyncio
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
@@ -1118,8 +1119,12 @@ def main():
                         game_time_str.replace("Z", "+00:00")
                     )
 
-                    # Get weather for home team's location
-                    weather_data = weather_client.get_game_weather(home_team, game_time)
+                    # Get weather for home team's location (async call - run synchronously)
+                    async def fetch_weather():
+                        await weather_client.connect()
+                        return await weather_client.get_game_weather(home_team, game_time)
+                    
+                    weather_data = asyncio.run(fetch_weather())
 
                     if weather_data:
                         # Fetch weather alerts from OpenWeather (if available)
@@ -1127,8 +1132,6 @@ def main():
                         try:
                             # Check if we have OpenWeather client (needs OPENWEATHER_API_KEY)
                             if os.getenv("OPENWEATHER_API_KEY"):
-                                import asyncio
-
                                 # Get stadium coordinates from weather data
                                 lat = weather_data.get("latitude")
                                 lon = weather_data.get("longitude")

@@ -32,3 +32,25 @@ Output includes:
 - Spread adjustment (points)
 - Betting recommendation with confidence level
 - Source (AccuWeather or OpenWeather)
+
+Technical Implementation (FIXED 2025-11-12):
+- Uses AccuWeather API with your ACCUWEATHER_API_KEY from .env
+- Properly handles async API calls with asyncio
+- Maps home team → stadium city → location key → forecast
+- Only calls API for outdoor stadiums (saves API quota)
+- Indoor stadiums (Atlanta, Detroit, Minnesota, etc.) return None
+- API Usage: ~2 calls per weather check (location + forecast)
+- Respects starter plan limits (50 calls/day)
+
+Example Output:
+```
+Weather for Buffalo: 38°F, 10.5 MPH wind
+Total adjustment: 0.0 points
+Spread adjustment: 0.0 points
+Recommendation: No significant weather impact
+
+Weather for Cleveland: 40°F, 19.6 MPH wind
+Total adjustment: -0.2 points (wind factor)
+Spread adjustment: -0.1 points
+Recommendation: Slight favor to defense, reduce total by 0.2
+```

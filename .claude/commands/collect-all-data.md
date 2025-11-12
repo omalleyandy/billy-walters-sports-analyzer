@@ -30,19 +30,27 @@ Step 4: Injury Reports (CRITICAL Billy Walters Factor)
 - Position-specific impact calculations
 - Recovery timeline tracking
 
-Step 5: Weather Forecasts (Game Context)
-- AccuWeather API (primary)
+Step 5: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
+- AccuWeather API (primary) - Now working correctly with async/await
 - OpenWeather API (fallback)
-- Game-time forecasts
-- Indoor vs outdoor stadium
+- Game-time forecasts (real temperature, wind speed, conditions)
+- Indoor vs outdoor stadium (indoor returns None, saves API calls)
+- Uses your ACCUWEATHER_API_KEY from .env
+- ~8-10 API calls per run (only outdoor stadiums)
 
-Step 6: Odds Data (Market Lines) - **UPDATED 2025-11-11: Now using API method**
-- Overtime.ag API (primary) - NEW: Direct API access, no browser required
-- Action Network scraper (sharp action)
-- Opening lines
-- Current lines
-- Line movement tracking
-- Fast (< 5 seconds vs 30+ seconds with browser)
+Step 6: Odds Data (Market Lines) - **UPDATED 2025-11-12: API Client Validated**
+- Overtime.ag API (primary) - Direct API access, no browser required
+  - Method: scrape_overtime_api.py
+  - Speed: ~5 seconds for NFL + NCAAF
+  - No authentication required
+  - No CloudFlare/proxy issues
+  - 100% data quality verified
+  - Recommended: docs/overtime_devtools_analysis_results.md
+- Action Network scraper (sharp action monitoring)
+- Hybrid scraper (optional, for live games only)
+  - Method: scrape_overtime_hybrid.py
+  - Use case: Sunday live monitoring
+  - Not needed for pre-game workflow
 
 Step 7: Billy Walters Analysis
 - Edge detection (spreads)

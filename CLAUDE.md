@@ -42,8 +42,9 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
 - **Security**: Automated vulnerability scanning and secret detection
 - **Documentation**: Complete development guidelines and lessons learned
 - **Legacy Code**: Pragmatic configuration allows CI while incrementally improving code quality
-- **NEW: Hybrid Scraper**: Overtime.ag Playwright + SignalR WebSocket integration (production-ready)
-- **Last Data Collection**: 2025-11-11 - NFL Week 11 (32 teams, 15 games, 0 odds - Monday pre-lines)
+- **NEW: API Scraper**: Overtime.ag direct API access (primary - validated 2025-11-12)
+- **Hybrid Scraper**: Optional for live game monitoring (SignalR WebSocket)
+- **Last Data Collection**: 2025-11-12 - NFL Week 12 (13 games), NCAAF (56 games) via API
 
 ## How to Use This Document
 
@@ -353,31 +354,61 @@ python check_gameday_weather.py "Green Bay Packers" "2025-11-11 20:15"
 
 ### Overtime.ag Scrapers
 
-#### Hybrid Scraper (Recommended - NEW)
+#### API Client (PRIMARY - RECOMMENDED) ✅
+**Implementation**: `src/data/overtime_api_client.py`
+**Script**: `scripts/scrapers/scrape_overtime_api.py`
+**Documentation**: [docs/overtime_devtools_analysis_results.md](docs/overtime_devtools_analysis_results.md)
+
+**What It Does**: Direct API access to Overtime.ag odds endpoint - no browser required.
+
+**Quick Start**:
+```bash
+# Scrape NFL and NCAAF (< 5 seconds total)
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
+
+# Just NFL
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+```
+
+**Key Features**:
+- ⚡ 10x faster than browser automation (5 seconds vs 30+)
+- ✅ No browser/Playwright dependencies
+- ✅ No authentication required
+- ✅ No CloudFlare/proxy issues
+- ✅ 100% data quality (verified 2025-11-12)
+- ✅ Perfect for Billy Walters pre-game workflow
+- ✅ Simple HTTP POST request
+
+**Test Results** (2025-11-12):
+- NFL: 13 games scraped successfully
+- NCAAF: 56 games scraped successfully
+- All spreads, totals, moneylines present
+- Billy Walters format: 100% compliant
+
+**Recommendation**: Use for all pre-game odds collection (Tuesday-Wednesday workflow).
+
+#### Hybrid Scraper (OPTIONAL - For Live Games)
 **Implementation**: `src/data/overtime_hybrid_scraper.py`, `src/data/overtime_signalr_parser.py`
 **Script**: `scripts/scrapers/scrape_overtime_hybrid.py`
 **Documentation**: [docs/OVERTIME_HYBRID_SCRAPER.md](docs/OVERTIME_HYBRID_SCRAPER.md)
 
-**What It Does**: Combines Playwright (pre-game) with SignalR WebSocket (live updates) for complete coverage.
+**What It Does**: Combines Playwright (authentication/pre-game) with SignalR WebSocket (live updates).
 
 **Quick Start**:
 ```bash
-# Pre-game lines only (Tuesday-Wednesday)
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --no-signalr
-
 # Live monitoring during games (Sunday, 3 hours)
 uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800 --headless
 ```
 
 **Key Features**:
-- Two-phase scraping: Playwright then SignalR
 - Real-time odds updates during games
-- Billy Walters standardized output format
 - Line movement tracking
-- Keep-alive pings every 10 seconds
-- Automatic reconnection on disconnect
+- SignalR WebSocket connection
+- Account balance information
 
-**See**: [OVERTIME_HYBRID_SCRAPER_COMPLETE.md](OVERTIME_HYBRID_SCRAPER_COMPLETE.md) for complete implementation details.
+**Use Case**: Only use for live game monitoring on Sundays. For pre-game odds collection, use API client instead.
+
+**Note**: Browser automation adds complexity and is slower - only justified for live updates feature.
 
 #### Pre-Game Only Scraper (Legacy)
 **Implementation**: `src/data/overtime_pregame_nfl_scraper.py`
@@ -850,13 +881,15 @@ python .claude/hooks/pre_data_collection.py
 # Step 3: Team Statistics (ESPN API)
 # Step 4: Injury Reports (ESPN + NFL)
 # Step 5: Weather Forecasts (game-time only)
-# Step 6: Odds Data (NEW: Overtime.ag Hybrid Scraper - Playwright + SignalR)
+# Step 6: Odds Data (UPDATED: Overtime.ag API Client - Direct HTTP)
 # Step 7: Billy Walters Analysis (Edge Detection)
 
-# What's New: Step 6 now uses the hybrid scraper that combines:
-# - Playwright: Pre-game static odds scraping
-# - SignalR: Real-time live odds via WebSocket
+# What's New: Step 6 now uses the API client that provides:
+# - Direct API access: No browser automation required
+# - 10x faster: ~5 seconds vs 30+ seconds
+# - No authentication: Public API endpoint
 # - Billy Walters format: Standardized JSON output
+# - Validated: 2025-11-12 (13 NFL + 56 NCAAF games)
 
 # 3. Validate data quality
 /validate-data
@@ -870,15 +903,16 @@ python .claude/hooks/pre_data_collection.py
 # 6. Review picks and track CLV
 /clv-tracker
 
-# THURSDAY - Refresh odds before TNF (uses hybrid scraper)
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --no-signalr
+# THURSDAY - Refresh odds before TNF (uses API client - FAST!)
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
 /edge-detector
 
-# SUNDAY - Live monitoring with SignalR (NEW capability)
-# Option 1: Pre-game only (traditional)
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --no-signalr
+# SUNDAY - Two options for game day
+# Option 1: Quick pre-game check (RECOMMENDED - fast & simple)
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+/edge-detector
 
-# Option 2: Live monitoring during games (NEW - real-time updates)
+# Option 2: Live monitoring during games (OPTIONAL - for line movements)
 uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800 --headless &
 /clv-tracker
 
@@ -1053,6 +1087,37 @@ python check_gameday_weather.py "Team Name" "YYYY-MM-DD HH:MM"
 # - Weather.gov: https://forecast.weather.gov/
 ```
 
+**Weather API async/await error (FIXED 2025-11-12):**
+```bash
+# Symptom: RuntimeWarning: coroutine 'AccuWeatherClient.get_game_weather' was never awaited
+# Symptom: Could not fetch weather: 'coroutine' object has no attribute 'get'
+
+# Root Cause: Edge detector was calling async function from sync context
+
+# Fix Applied: Updated billy_walters_edge_detector.py (line 1122-1127)
+# - Added import asyncio at top level
+# - Wrapped weather API call with async helper function
+# - Now properly awaits weather client connection and data fetch
+
+# Verify Fix Working:
+uv run python -m walters_analyzer.valuation.billy_walters_edge_detector 2>&1 | Select-String "Weather for"
+
+# Expected Output (real data):
+# Weather for Denver: 43°F, 2.9 MPH wind, Total adj: 0.0, Spread adj: 0.0
+# Weather for Buffalo: 38°F, 10.5 MPH wind, Total adj: 0.0, Spread adj: 0.0
+# Weather for Cleveland: 40°F, 19.6 MPH wind, Total adj: -0.2, Spread adj: -0.1
+
+# Indoor stadiums correctly show None:
+# Weather for Atlanta: None°F, None MPH wind → Indoor stadium (no adjustment)
+# Weather for Detroit: None°F, None MPH wind → Indoor stadium (no adjustment)
+
+# API Usage: ~16-20 calls per run (only outdoor stadiums)
+# Uses your ACCUWEATHER_API_KEY from .env file
+# Respects starter plan limits (50 calls/day)
+
+# Documentation: docs/weather_and_injury_analysis_fix.md
+```
+
 **Slash commands not found:**
 - Check `.claude/commands/` directory has command `.md` files
 - Verify permissions in `.claude/settings.local.json`
@@ -1117,12 +1182,14 @@ uv run python -m walters_analyzer.bet_tracker --bet-id BET123 --update-score 24 
 ```
 
 **Overtime.ag scraper output organization:**
-- Pre-game NFL: `output/overtime/nfl/pregame/`
-- Live NFL: `output/overtime/nfl/live/`
-- Pre-game NCAAF: `output/overtime/ncaaf/pregame/`
-- Live NCAAF: `output/overtime/ncaaf/live/`
-- File naming: `overtime_{sport}_{type}_{timestamp}.json`
-- See: `docs/OVERTIME_DIRECTORY_STRUCTURE.md`
+- API scraper (primary):
+  - NFL: `output/overtime/nfl/pregame/api_walters_{timestamp}.json`
+  - NCAAF: `output/overtime/ncaaf/pregame/api_walters_{timestamp}.json`
+- Hybrid scraper (optional, live games):
+  - Live NFL: `output/overtime/nfl/live/overtime_hybrid_{timestamp}.json`
+  - Live NCAAF: `output/overtime/ncaaf/live/overtime_hybrid_{timestamp}.json`
+- File format: Billy Walters standardized JSON
+- See: `docs/overtime_devtools_analysis_results.md`
 
 ### Getting Help
 
@@ -1324,7 +1391,7 @@ python .claude/hooks/pre_data_collection.py
 **Billy Walters Core Workflow:**
 - `/power-ratings` - Calculate power ratings using Massey composite (90/10 update formula)
 - `/scrape-massey` - Scrape Massey Ratings for 100+ ranking systems
-- `/scrape-overtime` - Collect odds from Overtime.ag (optimal: Tuesday-Wednesday)
+- `/scrape-overtime` - Collect odds from Overtime.ag API (fast: ~5 seconds, optimal: Tuesday-Wednesday)
 - `/collect-all-data` - **COMPLETE AUTOMATED WORKFLOW** (all 6 steps in order)
 - `/edge-detector` - Detect betting edges using Billy Walters methodology
 - `/betting-card` - Generate weekly betting recommendations (ranked by edge)
@@ -1455,46 +1522,81 @@ python .claude/hooks/auto_edge_detector.py
 4. Update permissions in `.claude/settings.local.json`
 5. Document in this section
 
-## Recent Updates (2025-11-11)
+## Recent Updates (2025-11-12)
 
-### Overtime.ag Hybrid Scraper - PRODUCTION READY
+### Weather API Fixed - Real-Time Data Now Working ✅
 
 **What Changed:**
-- Built complete hybrid scraper combining Playwright (authentication/pre-game) with SignalR WebSocket (real-time live updates)
-- Tested and validated against live Overtime.ag site
-- Successfully executed complete data collection workflow for NFL Week 11
+- Fixed async/await issue in edge detector weather integration
+- Weather API now properly fetches real-time game-day conditions
+- Updated: `src/walters_analyzer/valuation/billy_walters_edge_detector.py`
+- All outdoor stadiums getting actual temperature and wind data
+- Indoor stadiums correctly returning None (no weather impact)
 
-**New Files:**
-- `src/data/overtime_hybrid_scraper.py` (574 lines) - Main hybrid scraper
-- `src/data/overtime_signalr_parser.py` (369 lines) - SignalR message parser for Billy Walters format
-- `scripts/scrapers/scrape_overtime_hybrid.py` (181 lines) - CLI interface
-- `docs/OVERTIME_HYBRID_SCRAPER.md` (737 lines) - Complete documentation
+**Technical Fix**:
+- Added `import asyncio` to handle async weather API calls
+- Wrapped weather fetch in async helper function with proper connection
+- Now properly awaits AccuWeather client initialization
+
+**Results**:
+```
+✅ Real weather data: Denver 43°F, Buffalo 38°F, Cleveland 40°F (19.6 MPH wind)
+✅ Wind adjustments: Cleveland showing -0.2 total, -0.1 spread
+✅ Indoor detection: Atlanta, Detroit, Minnesota correctly showing None
+✅ API efficiency: Only calls API for outdoor stadiums (~16-20 calls per run)
+✅ Uses your ACCUWEATHER_API_KEY from .env
+```
+
+**Documentation**: `docs/weather_and_injury_analysis_fix.md`
+
+---
+
+### Overtime.ag API Client - PRIMARY SCRAPER ✅
+
+**What Changed:**
+- Validated Overtime.ag API endpoint for direct HTTP access
+- Tested and confirmed 100% data quality
+- 10x faster than browser automation (5 seconds vs 30+)
+- No authentication, browser, or proxy required
+- Now the primary/recommended scraper for Billy Walters workflow
+
+**Chrome DevTools Analysis:**
+- Reverse-engineered API endpoint: `https://overtime.ag/sports/Api/Offering.asmx/GetSportOffering`
+- Confirmed public API with no authentication required
+- Validated request/response structure
+- Comprehensive comparison: API vs Hybrid scraper
+- Full documentation: `docs/overtime_devtools_analysis_results.md`
+
+**Test Results (2025-11-12 00:08):**
+- ✅ NFL: 13 games scraped successfully
+- ✅ NCAAF: 56 games scraped successfully
+- ✅ Total: 69 games in ~5 seconds
+- ✅ All spreads, totals, moneylines present
+- ✅ Billy Walters format: 100% compliant
+- ✅ No errors, no authentication issues
+
+**Updated Files:**
+- `.claude/commands/collect-all-data.md` - Now uses API client in Step 6
+- `CLAUDE.md` - API client as primary, hybrid as optional
+- `docs/overtime_devtools_investigation_guide.md` - Manual analysis guide (NEW)
+- `docs/overtime_devtools_analysis_results.md` - Complete analysis report (NEW)
 
 **Usage:**
 ```bash
-# Pre-game scraping (Tuesday-Wednesday)
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --no-signalr
+# Primary method (pre-game odds)
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
 
-# Live monitoring (Sunday during games)
+# Optional (live game monitoring only)
 uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800 --headless
 ```
 
-**Status:** Production-ready, successfully tested, integrated into `/collect-all-data` workflow
+**Recommendation:** Use API client for all pre-game odds collection. Reserve hybrid scraper for live game monitoring only.
 
-**Test Results (2025-11-11):**
-- ✓ Authentication working
-- ✓ Navigation working (fixed JavaScript click issue)
-- ✓ Game extraction working (tested with 0 games - expected on Monday)
-- ✓ Billy Walters output format correct
-- ✓ Ready for Tuesday odds collection
-
-**Data Collection Status:**
-- Power Ratings: 32 NFL teams collected
-- Game Schedules: 15 NFL Week 11 games
-- Team Statistics: 32 NFL teams
-- Injury Reports: 0 injuries (early week)
-- Odds: 0 games (lines post Tuesday-Wednesday)
-- Overall: READY FOR TUESDAY ODDS COLLECTION
+**Previous Update (2025-11-11): Hybrid Scraper**
+- Built for live game monitoring (SignalR WebSocket)
+- Still available and production-ready
+- Now secondary/optional tool for live updates
+- See: `docs/OVERTIME_HYBRID_SCRAPER.md`
 
 ## Resources
 

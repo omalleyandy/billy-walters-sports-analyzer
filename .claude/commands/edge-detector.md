@@ -26,8 +26,11 @@ Step 1: Calculate Your Line
 - Your line: KC -4.5
 
 Step 2: Apply Contextual Adjustments
-- Injuries: Position-specific point values
-- Weather: Wind/temp/precip impact
+- Injuries: Position-specific point values (0.0 for Questionable, full value for OUT)
+- Weather: Wind/temp/precip impact (FIXED 2025-11-12 - now fetching real data)
+  - Uses AccuWeather API for outdoor stadiums
+  - Indoor stadiums correctly return None (no adjustment)
+  - Example: Cleveland 19.6 MPH wind → -0.2 total, -0.1 spread
 - Rest advantage: Bye week, Thursday night
 - Divisional game: +0.5 intensity factor
 - Revenge game: Motivational edge
@@ -103,7 +106,8 @@ Expected Value: +5.8%
 Historical Win Rate: 58%
 Key Factors:
   - Injury advantage: KC +1.5 pts (BUF missing CB1, WR1)
-  - Weather neutral: Indoor stadium
+  - Weather neutral: Indoor stadium (Arrowhead is outdoor, but conditions good)
+  - Weather data: Real-time from AccuWeather API (temp, wind, precip)
   - Sharp action: 45% public, 62% money (sharp on KC)
   - Line movement: Opened KC -3.0, moved to -2.5 (fade public)
 Confidence: HIGH (85%)
