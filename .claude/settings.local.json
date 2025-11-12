@@ -72,6 +72,30 @@
     "defaultMode": "default"
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/session_start.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/session_end.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "matcher": "/collect-all-data",
@@ -114,6 +138,28 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "SlashCommand(/edge-detector)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_edge_detection.py",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "SlashCommand(/betting-card)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_edge_detection.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "SlashCommand(/collect-all-data)",
@@ -132,6 +178,8 @@
     "command": "uv run python .claude/status_line.py"
   },
   "model": "sonnet",
+  "alwaysThinkingEnabled": true,
+  "enableAllProjectMcpServers": true,
   "includeCoAuthoredBy": true,
   "env": {
     "PYTHONPATH": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\src",
