@@ -194,5 +194,148 @@ week_number = (days_since_start // 7) + 1
 
 ---
 
+## Going Forward - Git Workflow
+
+### For New Features (Recommended - PR Workflow)
+```bash
+# 1. Create feature branch
+git checkout -b feat/your-feature
+
+# 2. Work and commit
+git add .
+git commit -m "feat: add feature"
+
+# 3. Push and create PR
+git push -u origin feat/your-feature
+gh pr create --web
+
+# 4. Squash and merge on GitHub (after CI passes)
+
+# 5. Cleanup
+git checkout main && git pull origin main
+git branch -d feat/your-feature
+```
+
+**Benefits**:
+- ✅ Clean, linear commit history
+- ✅ CI validation before merge
+- ✅ Easy rollback via PR revert
+- ✅ Auto-delete branches after merge
+
+### For Quick Fixes/Docs (Direct to Main)
+```bash
+# Direct to main (still works!)
+git add . && git commit -m "docs: update"
+git push origin main
+```
+
+**Use For**:
+- Documentation updates
+- Typo fixes
+- Configuration changes
+- Quick bug fixes
+
+---
+
+## Complete Documentation Index
+
+### New Files Created Today
+- `.github/PR_WORKFLOW.md` - Complete PR workflow guide with examples
+- `SESSION_SUMMARY_2025-11-12.md` - This file (session documentation)
+- `.claude/settings.json` - StatusLine configuration with dynamic week
+
+### Updated Files
+- `CLAUDE.md` - Added PR workflow reference and dynamic week detection
+- `.claude/hooks/pre_data_collection.py` - Dynamic week detection
+- `.claude/hooks/auto_edge_detector.py` - Dynamic week detection
+- `.claude/hooks/post_data_collection.py` - Optional week parameter
+
+### Reference Documentation
+- `.github/GIT_WORKFLOW_GUIDE.md` - Git basics and daily workflow
+- `.github/CI_CD.md` - CI/CD pipeline documentation
+- `.github/BRANCH_PROTECTION_SETUP.md` - Branch protection settings
+- `LESSONS_LEARNED.md` - Troubleshooting guide
+- `README.md` - Project overview
+
+### Code Documentation
+- `src/walters_analyzer/season_calendar.py` - NFL season calendar logic
+- `docs/overtime_devtools_analysis_results.md` - Overtime.ag API analysis
+- `docs/OVERTIME_HYBRID_SCRAPER.md` - Hybrid scraper documentation
+
+---
+
+## Detailed Next Steps
+
+### Immediate (Tomorrow - Thursday, Nov 13, 2025)
+1. **Verify Week Transition**
+   ```bash
+   /current-week  # Should show Week 11
+   python .claude/hooks/pre_data_collection.py  # Should detect Week 11
+   ```
+   - StatusLine should show: `🏈 NFL 2025 Regular Season - Week 11 (Nov 13-19, 2025)`
+   - All hooks should auto-detect Week 11
+   - No manual updates needed
+
+2. **Week 11 Data Collection** (Use PR workflow!)
+   ```bash
+   git checkout -b feat/week-11-data-collection
+   /collect-all-data  # Run complete data collection
+   git add . && git commit -m "feat(data): collect Week 11 NFL data"
+   git push -u origin feat/week-11-data-collection
+   gh pr create --title "feat: Week 11 Data Collection"
+   ```
+
+3. **MACtion Results Validation**
+   - Check tonight's 3 games (NIU @ UMass, Buffalo @ CMU, Toledo @ Miami OH)
+   - Verify weather impact predictions (all 3 unders recommended)
+   - Document results for future weather analysis validation
+
+### This Week (Nov 13-19)
+4. **Branch Cleanup Review**
+   - Review 18 remaining legacy branches
+   - Delete branches that are no longer needed
+   - Document any branches worth keeping
+
+5. **NCAAF Week Detection**
+   - Implement dynamic week detection for NCAAF
+   - Similar to NFL but different season structure
+   - Add to `season_calendar.py`
+
+6. **Team City Mapping**
+   - Add NCAAF teams to `check_gameday_weather.py`
+   - Missing: Northern Illinois, Central Michigan, UMass, Miami (OH), Toledo
+   - Required for accurate weather checks
+
+### Next Sprint (Nov 20-27)
+7. **Phase 3: Injury Intelligence**
+   - Real-time injury report scraping
+   - Position-specific impact values (QB, RB, WR, etc.)
+   - Integration with edge detection
+
+8. **Phase 4: Sharp Money Detection**
+   - Line movement tracking
+   - Reverse line movement detection
+   - Steam move identification
+
+9. **Backtesting Framework**
+   - Historical edge detection validation
+   - CLV tracking improvements
+   - Performance analytics dashboard
+
+### GitHub Configuration
+10. **Enable Auto-Delete Branches**
+    - Go to repo Settings → General
+    - Enable "Automatically delete head branches"
+    - Branches auto-delete after PR merge
+
+11. **Review Remaining Branches**
+    - 18 unmerged branches need manual review
+    - Check if any contain useful work
+    - Delete obsolete branches
+
+---
+
 **Status**: ✅ All objectives completed
-**Next Action**: Update CLAUDE.md → Commit → Push to GitHub
+**Branch Cleanup**: ✅ 15 merged branches deleted, 18 remaining for review
+**PR Workflow**: ✅ Documented and ready to use
+**Next Action**: Test PR workflow with Week 11 data collection tomorrow

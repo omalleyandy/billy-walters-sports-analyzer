@@ -818,9 +818,10 @@ Always gamble responsibly and within legal jurisdictions.
 
 ### Common Development Workflows
 
-**Starting a New Feature:**
+**Starting a New Feature (PR Workflow - Recommended):**
 ```bash
-# 1. Create feature branch
+# 1. Sync with main and create feature branch
+git checkout main && git pull origin main --rebase
 git checkout -b feat/your-feature
 
 # 2. Install/update dependencies
@@ -838,9 +839,25 @@ uv run pytest tests/ -v --cov=.
 # 5. Commit and push
 git add .
 git commit -m "feat(scope): description"
-git push origin feat/your-feature
+git push -u origin feat/your-feature
 
-# 6. Open PR on GitHub
+# 6. Create PR (opens browser)
+gh pr create --web
+
+# 7. After CI passes: Squash and merge on GitHub
+
+# 8. Cleanup
+git checkout main && git pull origin main
+git branch -d feat/your-feature
+```
+
+**Quick Fix/Docs Update (Direct to Main):**
+```bash
+# For small changes only (docs, typos, config)
+git checkout main && git pull origin main --rebase
+# Make changes...
+git add . && git commit -m "docs: update README"
+git push origin main
 ```
 
 **Adding a New Dependency:**
@@ -994,6 +1011,75 @@ uv run python -m walters_analyzer.season_calendar
 - `.claude/hooks/auto_edge_detector.py` - Auto-trigger edge detection on new odds
 - `.claude/commands/` - 14 custom slash commands (see "Billy Walters Workflow Commands & Hooks")
 - `.claude/commands/README.md` - Complete command reference
+
+### Next Steps & Priorities
+
+**Immediate (This Week)**:
+1. ✅ **Verify Week Transition** (Thursday, Nov 13)
+   - Check `/current-week` shows Week 11
+   - StatusLine updates to Week 11 automatically
+   - All hooks detect Week 11 without manual changes
+
+2. 📋 **Week 11 Data Collection** (Use PR workflow!)
+   - Create branch: `feat/week-11-data-collection`
+   - Run `/collect-all-data`
+   - Create PR, squash and merge
+
+3. 🧹 **Branch Cleanup**
+   - Review 18 remaining legacy branches
+   - Delete obsolete branches
+   - Enable GitHub auto-delete branches setting
+
+**Short-term (Next 1-2 Weeks)**:
+4. 🏈 **NCAAF Week Detection**
+   - Implement similar dynamic week detection for NCAAF
+   - Add to `season_calendar.py`
+
+5. 🌤️ **Team City Mapping**
+   - Add NCAAF teams to weather check script
+   - Missing: Northern Illinois, UMass, Central Michigan, Toledo, Miami (OH)
+
+**Medium-term (Next Month)**:
+6. 🏥 **Phase 3: Injury Intelligence**
+   - Real-time injury scraping
+   - Position-specific impact values
+   - Edge detection integration
+
+7. 📈 **Phase 4: Sharp Money Detection**
+   - Line movement tracking
+   - Steam move identification
+   - Reverse line movement detection
+
+8. 📊 **Backtesting Enhancements**
+   - Historical validation
+   - CLV tracking dashboard
+   - Performance analytics
+
+### Complete Documentation Index
+
+**Getting Started**:
+- `README.md` - Project overview and installation
+- `CLAUDE.md` - This file (comprehensive development guide)
+- `.github/PR_WORKFLOW.md` - Pull request workflow (NEW)
+- `.github/GIT_WORKFLOW_GUIDE.md` - Git basics and daily workflow
+
+**Development Process**:
+- `.github/CI_CD.md` - CI/CD pipeline documentation
+- `.github/BRANCH_PROTECTION_SETUP.md` - Branch protection settings
+- `LESSONS_LEARNED.md` - Troubleshooting and institutional knowledge
+- `SESSION_SUMMARY_2025-11-12.md` - Latest session summary (NEW)
+
+**Technical Documentation**:
+- `src/walters_analyzer/season_calendar.py` - NFL season calendar (dynamic week detection)
+- `docs/overtime_devtools_analysis_results.md` - Overtime.ag API reverse engineering
+- `docs/OVERTIME_HYBRID_SCRAPER.md` - Hybrid scraper (browser + WebSocket)
+- `docs/weather_and_injury_analysis_fix.md` - Weather API async/await fix
+
+**Configuration**:
+- `.env.example` - Required environment variables
+- `pyproject.toml` - Package config, ruff/pyright settings
+- `.claude/settings.json` - StatusLine with dynamic week (user-level)
+- `CLAUDE_CONFIG.md` - Project-specific configuration
 
 ### Troubleshooting
 
