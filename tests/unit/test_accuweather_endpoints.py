@@ -5,7 +5,7 @@ import os
 from data.accuweather_client import AccuWeatherClient
 
 
-async def test_endpoints():
+async def check_endpoints():
     print("=" * 70)
     print("TESTING ACCUWEATHER ENDPOINT AVAILABILITY")
     print("=" * 70)
@@ -86,4 +86,4 @@ async def test_endpoints():
 
 
 if __name__ == "__main__":
-    asyncio.run(test_endpoints())
+    asyncio.run(check_endpoints())

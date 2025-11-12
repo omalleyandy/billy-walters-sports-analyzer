@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv(".env", override=True)
 
 
-async def test_new_key():
+async def check_new_key():
     from data.accuweather_client import AccuWeatherClient
 
     print("=" * 70)
@@ -114,4 +114,4 @@ async def test_new_key():
 
 
 if __name__ == "__main__":
-    asyncio.run(test_new_key())
+    asyncio.run(check_new_key())

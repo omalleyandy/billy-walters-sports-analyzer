@@ -275,9 +275,7 @@ class OvertimeNCAAFScraper:
                     print(f"\n[OK] Successfully scraped {len(self.games)} game entries")
                 else:
                     print("\n[WARNING] Scrape completed but found 0 games")
-                    print(
-                        "   This is expected during games or outside betting windows"
-                    )
+                    print("   This is expected during games or outside betting windows")
 
                 return output
 
