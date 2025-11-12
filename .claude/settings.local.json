@@ -1,16 +1,140 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(uv run python:*)",
-      "Bash(Select-Object -First 50)",
+      "Bash(git push:*)",
       "Bash(git pull:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)",
+      "Bash(git show:*)",
+      "Bash(git remote:*)",
+      "Bash(git tag:*)",
+      "Bash(uv run python:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(uv run pyright:*)",
+      "Bash(uv add:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv remove:*)",
+      "Bash(uv lock:*)",
+      "Bash(uv pip:*)",
+      "Bash(python:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh release:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh label:*)",
+      "Bash(gh project:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(tail:*)",
+      "Bash(head:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
+      "Bash(pwd:*)",
+      "Bash(which:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(diff:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)"
     ],
-    "deny": [],
-    "ask": []
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean -fd:*)"
+    ],
+    "ask": [],
+    "defaultMode": "default"
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "/collect-all-data",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/scrape-overtime",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/power-ratings",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/update-data",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "SlashCommand(/collect-all-data)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/post_data_collection.py",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
   },
   "statusLine": {
     "type": "command",
     "command": "uv run python .claude/status_line.py"
+  },
+  "model": "sonnet",
+  "includeCoAuthoredBy": true,
+  "env": {
+    "PYTHONPATH": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\src",
+    "PROJECT_ROOT": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer"
   }
 }
