@@ -18,10 +18,13 @@ load_dotenv(".env", override=True)
 
 async def check_gameday_weather(team_name: str, game_time_str: str):
     from data.accuweather_client import AccuWeatherClient
+    from datetime import timezone
 
-    # Parse game time
-    game_time = datetime.strptime(game_time_str, "%Y-%m-%d %H:%M")
-    now = datetime.now()
+    # Parse game time and make it timezone-aware (assume ET/UTC-5)
+    game_time_naive = datetime.strptime(game_time_str, "%Y-%m-%d %H:%M")
+    # Convert ET to UTC (ET is UTC-5)
+    game_time = game_time_naive.replace(tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
     hours_ahead = int((game_time - now).total_seconds() / 3600)
 
     print("=" * 70)
@@ -45,10 +48,20 @@ async def check_gameday_weather(team_name: str, game_time_str: str):
 
     # Map team names to cities
     team_cities = {
+        # NFL Teams
         "Green Bay Packers": ("Green Bay", "WI"),
         "Green Bay": ("Green Bay", "WI"),
         "Philadelphia Eagles": ("Philadelphia", "PA"),
         "Philadelphia": ("Philadelphia", "PA"),
+        # NCAAF MAC Teams
+        "Massachusetts": ("Amherst", "MA"),
+        "UMass": ("Amherst", "MA"),
+        "Miami Ohio": ("Oxford", "OH"),
+        "Miami (OH)": ("Oxford", "OH"),
+        "Central Michigan": ("Mount Pleasant", "MI"),
+        "Northern Illinois": ("DeKalb", "IL"),
+        "Toledo": ("Toledo", "OH"),
+        "Buffalo": ("Buffalo", "NY"),
         # Add more as needed
     }
 

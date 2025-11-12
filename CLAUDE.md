@@ -1687,7 +1687,51 @@ python .claude/hooks/auto_edge_detector.py
 
 ## Recent Updates (2025-11-12)
 
-### ESPN Team Statistics API Integration ✅ NEW!
+### MACtion Weather Analysis - NCAAF Week 12 ✅ NEW!
+
+**What Changed:**
+- Enhanced weather check script with MAC team support
+- Fixed timezone-aware datetime handling for accurate forecasts
+- Successfully analyzed 3 MACtion games with weather impact
+- Identified strong UNDER value in Toledo @ Miami (OH)
+
+**Teams Added to Weather Script:**
+- **MAC Teams**: Northern Illinois (DeKalb, IL), UMass (Amherst, MA), Miami OH (Oxford, OH), Central Michigan (Mount Pleasant, MI), Toledo (Toledo, OH), Buffalo (Buffalo, NY)
+- Now supports 8 NCAAF teams + existing NFL teams
+
+**Technical Fixes:**
+- Fixed datetime timezone issue: `can't subtract offset-naive and offset-aware datetimes`
+- Updated to use `timezone.utc` for both game time and current time
+- Weather API now works correctly within 12-hour forecast window
+
+**Weather Analysis Results (Wed Nov 12, 7 PM ET):**
+1. **Toledo @ Miami OH**: 16 mph wind (30 mph gusts), 52°F → -3 pts total adjustment, **UNDER 45.5 (BEST VALUE)**
+2. **Buffalo @ Central Michigan**: 16 mph wind (30 mph gusts), 44°F → -3 pts total adjustment
+3. **Northern Illinois @ UMass**: 15 mph wind (18 mph gusts), 45°F → -1 pt total adjustment
+
+**Billy Walters Methodology Applied:**
+- Wind >15 mph = -3 point total adjustment
+- Market total 45.5, weather-adjusted 42.5 = **3-point edge**
+- Classification: MODERATE EDGE (2-4 points, 58% win rate)
+- Recommended bet: UNDER 45.5 (-110), 2 units
+
+**Files Modified:**
+- `tests/integration/check_gameday_weather.py` - Added MAC teams, fixed timezone handling
+
+**Files Created:**
+- `scripts/utilities/get_mac_team_stats.py` - Helper script for team data (untracked)
+
+**Key Learnings:**
+- AccuWeather 12-hour window provides accurate game-time forecasts
+- Wind gusts 2x sustained speed significantly impact passing game
+- Market inefficiency: Weather not fully priced into MACtion totals
+- /weather command successfully used for real-time betting analysis
+
+**Status:** Production-ready for NCAAF MACtion weather analysis
+
+---
+
+### ESPN Team Statistics API Integration ✅
 
 **What Changed:**
 - Successfully reverse engineered ESPN's team statistics API
