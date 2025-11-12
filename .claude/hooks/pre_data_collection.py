@@ -172,6 +172,12 @@ def main():
     print("3. Detecting current NFL week...")
     current_week, detection_method = check_current_week()
     print(f"   Current week: {current_week} ({detection_method})")
+    
+    # Validate week detection (offseason/playoffs check)
+    if current_week is None:
+        print("   [ERROR] Could not determine current week (offseason/playoffs?)")
+        all_checks_passed = False
+    
     print()
 
     # Check 4: Last collection
