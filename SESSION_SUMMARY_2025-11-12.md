@@ -1,341 +1,82 @@
-# Session Summary - November 12, 2025
+# Session Summary: November 12, 2025
 
-**Date**: Tuesday, November 12, 2025
-**Duration**: ~1 hour
-**Focus**: Dynamic week detection + NCAAF weather analysis
-
----
-
-## Key Accomplishments
-
-### 1. Dynamic NFL Week Detection ✅
-**Problem**: Hard-coded week numbers (week 10) throughout hooks and scripts
-**Solution**: Implemented automatic week detection using `season_calendar.py`
-
-**Files Updated**:
-- `.claude/hooks/pre_data_collection.py` - Fixed import to use `get_nfl_week()`
-- `.claude/hooks/auto_edge_detector.py` - Replaced hardcoded week=10 with dynamic detection
-- `.claude/hooks/post_data_collection.py` - Made week parameter optional with auto-detection
-
-**Benefits**:
-- Automatically advances each Thursday based on NFL 2025 schedule (Week 1 starts Sept 4)
-- No manual updates needed throughout season
-- Gracefully handles offseason/playoffs (returns None)
-- Can still manually override if needed
-
-**Current Status**: All hooks correctly detect Week 10 (Nov 06-12, 2025)
+**Session Focus:** Critical Bug Fix + Wednesday MACtion Analysis
+**Duration:** ~1.5 hours
+**Status:** ✅ Complete - All Critical Issues Resolved
 
 ---
 
-### 2. NCAAF MACtion Weather Analysis ✅
-**Task**: Analyze weather for Wednesday night college football games
+## 🔴 CRITICAL BUG FIXED
 
-**Games Analyzed** (7:00 PM ET):
-1. Buffalo @ Central Michigan (Mount Pleasant, MI)
-2. Northern Illinois @ Massachusetts (Amherst, MA)
-3. Toledo @ Miami (OH) (Oxford, OH)
+### Home/Away Team Misidentification in Overtime API Scraper
 
-**Key Findings**:
-- **Coldest**: NIU @ UMass (39°F, feels like 28°F) → -4.0 total adjustment
-- **Windiest**: Buffalo @ CMU & NIU @ UMass (16 MPH, gusts 30 MPH) → -3.0 total adjustment
-- **Mildest**: Toledo @ Miami (46°F, 15 MPH wind) → -1.0 total adjustment
+**Severity:** CRITICAL - Would have invalidated all edge detection
+**Impact:** 2 out of 3 games had reversed home/away teams
+**Root Cause:** Used `FavoredTeamID` to determine home/away (completely wrong!)
 
-**Best Bets**:
-1. ⭐⭐⭐⭐ NIU @ UMass UNDER 44.0 (-110) - Strongest play (cold + wind)
-2. ⭐⭐⭐ Buffalo @ CMU UNDER 44.0 (-105) - Best value (better price)
-3. ⭐ Toledo @ Miami - PASS (minimal weather impact)
-
-**API Usage**: 9 AccuWeather API calls (41 remaining today out of 50 daily limit)
-
----
-
-### 3. Data Quality Improvements ✅
-**Corrections Made**:
-- Fixed home/away team designations using ESPN schedule verification
-- Validated weather data against actual stadium locations
-- Confirmed all three games are outdoor stadiums (no domes)
-
----
-
-## Technical Details
-
-### Code Changes
-**Commit**: `d2170e2 feat(hooks): implement dynamic NFL week detection across all hooks`
-
-**Key Changes**:
+**The Fix:**
 ```python
-# Before (hard-coded)
-week = 10  # Default to week 10
-
-# After (dynamic)
-from walters_analyzer.season_calendar import get_nfl_week
-week = get_nfl_week()  # Returns 10 for Nov 12, 2025
-if week is None:
-    print("[ERROR] Could not determine current week (offseason/playoffs?)")
+# BEFORE (WRONG): Used FavoredTeamID logic (40+ lines)
+# AFTER (CORRECT): Team1=away, Team2=home (16 lines)
+away_team = game.get("Team1ID", "")  # ALWAYS away
+home_team = game.get("Team2ID", "")  # ALWAYS home
 ```
 
-### Season Calendar Logic
-```python
-# NFL 2025 Season Configuration
-NFL_2025_WEEK_1_START = date(2025, 9, 4)  # Thursday, Sept 4
-NFL_2025_REGULAR_SEASON_WEEKS = 18
-NFL_2025_PLAYOFF_START = date(2026, 1, 10)  # Wild Card Weekend
-NFL_2025_SUPER_BOWL = date(2026, 2, 8)  # Super Bowl LX
-
-# Auto-calculates week based on current date
-week_number = (days_since_start // 7) + 1
-```
+**Git Commit:** `3412fbb` - fix(scraper): correct critical home/away team misidentification bug
 
 ---
 
-## GitHub Sync Status
+## 📊 ANALYSIS RESULTS
 
-**Current Status**: ✅ Fully synced
-**Last Commit**: d2170e2 (dynamic week detection)
-**Branch**: main
-**Uncommitted Files**: Output data only (correct - should not be committed)
+### NFL Week 10 Edge Detection
+- **7 Spread Edges:** 3 MAX BET, 3 STRONG, 1 MEDIUM
+- **9 Totals Edges:** ALL OVERS (3 VERY STRONG)
+- Top plays: Seattle -7, New Orleans -5.5, Detroit -8
 
-**Files Not Committed** (expected):
-- `output/edge_detection/*` - Generated analysis reports
-- `output/overtime/nfl/overtime_hybrid_*.json` - Scraped odds data
-- `CLAUDE_CONFIG.md` - Project configuration (to be evaluated)
+### Wednesday MACtion Analysis (Nov 12, 7:00 PM ET)
 
----
+**BEST BET: Miami (OH) +3.5 (-105)** ⭐⭐
+- Edge: 2.5 points | Kelly: 2% | Confidence: 65/100
+- Power ratings nearly identical (#87 vs #88)
+- Toledo overvalued on road
 
-## What's Next
+**VALUE PLAY: Central Michigan -1 (-115)** ⭐
+- Edge: 1.5 points | Kelly: 1% | Confidence: 55/100
+- Dead-even teams, CMU gets full HFA
 
-### Immediate (This Week)
-1. **Thursday NFL Week 11 Data Collection** (Nov 13)
-   - Wait for Thursday after new lines post
-   - Run `/collect-all-data` to get Week 11 odds
-   - Dynamic week detection will automatically use Week 11
-
-2. **Verify Dynamic Week Transition**
-   - Confirm hooks show Week 11 on Thursday, Nov 13
-   - Test all three hooks: pre/post/auto_edge_detector
-
-3. **NCAAF Game Results**
-   - Track tonight's MACtion games (3 unders recommended)
-   - Document results for future weather analysis validation
-
-### Short-term (Next 1-2 Weeks)
-4. **NCAAF Week Detection**
-   - Implement similar dynamic week detection for NCAAF
-   - NCAAF has different season structure than NFL
-
-5. **Weather Analysis Enhancement**
-   - Add precipitation probability to weather checks
-   - Implement weather alerts for extreme conditions
-   - Create historical weather impact database
-
-6. **Team City Mapping**
-   - Add NCAAF teams to `check_gameday_weather.py`
-   - Currently missing: Northern Illinois, Central Michigan, UMass, Miami (OH), Toledo
-
-### Medium-term (Next Month)
-7. **Injury Intelligence (Phase 3)**
-   - Real-time injury report scraping
-   - Position-specific impact values (QB, RB, WR, etc.)
-   - Integration with edge detection
-
-8. **Sharp Money Detection (Phase 4)**
-   - Line movement tracking
-   - Reverse line movement detection
-   - Steam move identification
-
-9. **Backtesting Framework**
-   - Historical edge detection validation
-   - CLV tracking improvements
-   - Performance analytics
+**PASS: Northern Illinois -11**
+- Edge: 0.5 points (too small)
 
 ---
 
-## Resources & Documentation
+## 🔧 FILES MODIFIED
 
-**Updated Files**:
-- `.claude/hooks/pre_data_collection.py` - Dynamic week detection
-- `.claude/hooks/auto_edge_detector.py` - Dynamic week detection
-- `.claude/hooks/post_data_collection.py` - Optional week parameter
+### Code
+- `src/data/overtime_api_client.py` - Critical fix (40→16 lines)
+
+### Documentation
+- `LESSONS_LEARNED.md` - Comprehensive bug analysis
 - `SESSION_SUMMARY_2025-11-12.md` - This file
-- `CLAUDE.md` - To be updated with dynamic week info
 
-**Reference Documentation**:
-- `src/walters_analyzer/season_calendar.py` - NFL season calendar logic
-- `CLAUDE.md` - Development guidelines (comprehensive)
-- `LESSONS_LEARNED.md` - Troubleshooting guide
-- `.github/CI_CD.md` - CI/CD documentation
-
-**API Documentation**:
-- AccuWeather API: Starter plan (50 calls/day)
-- ESPN API: Schedules and scores
-- Overtime.ag API: Betting odds (primary scraper)
+### Data
+- Archived 19 buggy files to `archive_buggy/`
+- Generated fresh NFL (13 games) and NCAAF (56 games) odds
+- Re-ran edge detection with corrected home/away
 
 ---
 
-## Notes for Next Session
+## 🎯 NEXT STEPS
 
-1. **Week Transition Testing**: On Thursday, Nov 13, verify all hooks automatically detect Week 11
-2. **NCAAF Results**: Check if tonight's weather analysis was accurate (all 3 unders)
-3. **API Quota**: 41 AccuWeather calls remaining today
-4. **CLAUDE.md Update**: Add dynamic week detection to Quick Reference section
-5. **NCAAF Season Calendar**: Implement similar logic for college football weeks
+1. **Thursday (Nov 13):** Verify Week 11 transition
+2. **Wednesday games:** Re-check weather within 12 hours
+3. **Historical validation:** Check previous weeks for bug impact
 
 ---
 
-## Session Statistics
-
-- **Files Modified**: 3 hook files
-- **Commits**: 1 (d2170e2)
-- **Lines Changed**: +40, -15
-- **Tests Run**: All hooks tested successfully
-- **API Calls**: 9 AccuWeather (weather forecasts)
-- **Games Analyzed**: 3 NCAAF MACtion games
-- **Betting Recommendations**: 2 strong, 1 pass
+**Status:** All systems operational with corrected data
+**GitHub:** Synced (commit `3412fbb`)
+**Ready for:** Week 11 analysis
 
 ---
 
-## Going Forward - Git Workflow
-
-### For New Features (Recommended - PR Workflow)
-```bash
-# 1. Create feature branch
-git checkout -b feat/your-feature
-
-# 2. Work and commit
-git add .
-git commit -m "feat: add feature"
-
-# 3. Push and create PR
-git push -u origin feat/your-feature
-gh pr create --web
-
-# 4. Squash and merge on GitHub (after CI passes)
-
-# 5. Cleanup
-git checkout main && git pull origin main
-git branch -d feat/your-feature
-```
-
-**Benefits**:
-- ✅ Clean, linear commit history
-- ✅ CI validation before merge
-- ✅ Easy rollback via PR revert
-- ✅ Auto-delete branches after merge
-
-### For Quick Fixes/Docs (Direct to Main)
-```bash
-# Direct to main (still works!)
-git add . && git commit -m "docs: update"
-git push origin main
-```
-
-**Use For**:
-- Documentation updates
-- Typo fixes
-- Configuration changes
-- Quick bug fixes
-
----
-
-## Complete Documentation Index
-
-### New Files Created Today
-- `.github/PR_WORKFLOW.md` - Complete PR workflow guide with examples
-- `SESSION_SUMMARY_2025-11-12.md` - This file (session documentation)
-- `.claude/settings.json` - StatusLine configuration with dynamic week
-
-### Updated Files
-- `CLAUDE.md` - Added PR workflow reference and dynamic week detection
-- `.claude/hooks/pre_data_collection.py` - Dynamic week detection
-- `.claude/hooks/auto_edge_detector.py` - Dynamic week detection
-- `.claude/hooks/post_data_collection.py` - Optional week parameter
-
-### Reference Documentation
-- `.github/GIT_WORKFLOW_GUIDE.md` - Git basics and daily workflow
-- `.github/CI_CD.md` - CI/CD pipeline documentation
-- `.github/BRANCH_PROTECTION_SETUP.md` - Branch protection settings
-- `LESSONS_LEARNED.md` - Troubleshooting guide
-- `README.md` - Project overview
-
-### Code Documentation
-- `src/walters_analyzer/season_calendar.py` - NFL season calendar logic
-- `docs/overtime_devtools_analysis_results.md` - Overtime.ag API analysis
-- `docs/OVERTIME_HYBRID_SCRAPER.md` - Hybrid scraper documentation
-
----
-
-## Detailed Next Steps
-
-### Immediate (Tomorrow - Thursday, Nov 13, 2025)
-1. **Verify Week Transition**
-   ```bash
-   /current-week  # Should show Week 11
-   python .claude/hooks/pre_data_collection.py  # Should detect Week 11
-   ```
-   - StatusLine should show: `🏈 NFL 2025 Regular Season - Week 11 (Nov 13-19, 2025)`
-   - All hooks should auto-detect Week 11
-   - No manual updates needed
-
-2. **Week 11 Data Collection** (Use PR workflow!)
-   ```bash
-   git checkout -b feat/week-11-data-collection
-   /collect-all-data  # Run complete data collection
-   git add . && git commit -m "feat(data): collect Week 11 NFL data"
-   git push -u origin feat/week-11-data-collection
-   gh pr create --title "feat: Week 11 Data Collection"
-   ```
-
-3. **MACtion Results Validation**
-   - Check tonight's 3 games (NIU @ UMass, Buffalo @ CMU, Toledo @ Miami OH)
-   - Verify weather impact predictions (all 3 unders recommended)
-   - Document results for future weather analysis validation
-
-### This Week (Nov 13-19)
-4. **Branch Cleanup Review**
-   - Review 18 remaining legacy branches
-   - Delete branches that are no longer needed
-   - Document any branches worth keeping
-
-5. **NCAAF Week Detection**
-   - Implement dynamic week detection for NCAAF
-   - Similar to NFL but different season structure
-   - Add to `season_calendar.py`
-
-6. **Team City Mapping**
-   - Add NCAAF teams to `check_gameday_weather.py`
-   - Missing: Northern Illinois, Central Michigan, UMass, Miami (OH), Toledo
-   - Required for accurate weather checks
-
-### Next Sprint (Nov 20-27)
-7. **Phase 3: Injury Intelligence**
-   - Real-time injury report scraping
-   - Position-specific impact values (QB, RB, WR, etc.)
-   - Integration with edge detection
-
-8. **Phase 4: Sharp Money Detection**
-   - Line movement tracking
-   - Reverse line movement detection
-   - Steam move identification
-
-9. **Backtesting Framework**
-   - Historical edge detection validation
-   - CLV tracking improvements
-   - Performance analytics dashboard
-
-### GitHub Configuration
-10. **Enable Auto-Delete Branches**
-    - Go to repo Settings → General
-    - Enable "Automatically delete head branches"
-    - Branches auto-delete after PR merge
-
-11. **Review Remaining Branches**
-    - 18 unmerged branches need manual review
-    - Check if any contain useful work
-    - Delete obsolete branches
-
----
-
-**Status**: ✅ All objectives completed
-**Branch Cleanup**: ✅ 15 merged branches deleted, 18 remaining for review
-**PR Workflow**: ✅ Documented and ready to use
-**Next Action**: Test PR workflow with Week 11 data collection tomorrow
+Generated: 2025-11-12 03:35 UTC
