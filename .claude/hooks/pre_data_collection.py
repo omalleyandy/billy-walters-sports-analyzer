@@ -80,13 +80,15 @@ def check_current_week() -> tuple[int, str]:
     try:
         # Try to import season calendar
         sys.path.insert(0, "src")
-        from walters_analyzer.season_calendar import get_current_week_info
+        from walters_analyzer.season_calendar import get_nfl_week
 
-        week_info = get_current_week_info()
-        return (week_info["week"], "auto-detected")
+        week = get_nfl_week()
+        if week is None:
+            return (None, "offseason or playoffs")
+        return (week, "auto-detected")
     except Exception as e:
-        # Default to week 10 if detection fails
-        return (10, f"defaulted (detection failed: {e})")
+        # If import fails, return None to indicate error
+        return (None, f"detection failed: {e}")
 
 
 def check_last_collection() -> dict:
@@ -199,7 +201,9 @@ def main():
 
         print()
         print("Recommended command:")
-        print(f"  uv run python scripts/utilities/update_all_data.py --week {current_week}")
+        print(
+            f"  uv run python scripts/utilities/update_all_data.py --week {current_week}"
+        )
 
         sys.exit(0)
     else:

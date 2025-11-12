@@ -10,6 +10,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Add src to path for season calendar import
+sys.path.insert(0, "src")
+from walters_analyzer.season_calendar import get_nfl_week
+
 
 def check_for_new_odds() -> tuple[bool, dict]:
     """Check if new odds data is available."""
@@ -135,7 +139,7 @@ def main():
     has_new_odds, odds_info = check_for_new_odds()
 
     if not has_new_odds:
-        message = odds_info.get('message', 'No new odds available')
+        message = odds_info.get("message", "No new odds available")
         print(f"   No new odds data: {message}")
         print()
         print("   Recommendation: Run /scrape-overtime to collect odds")
@@ -164,13 +168,21 @@ def main():
     print("   Edge detection needed")
     print()
 
-    # Determine week from odds data
+    # Determine week from odds data or season calendar
+    week = None
     try:
         with open(Path("output") / odds_info["file"], "r") as f:
             data = json.load(f)
-            week = data.get("week", 10)  # Default to week 10
+            week = data.get("week")
     except:
-        week = 10
+        pass
+
+    # Fall back to current week from season calendar
+    if week is None:
+        week = get_nfl_week()
+        if week is None:
+            print("[ERROR] Could not determine current week (offseason/playoffs?)")
+            sys.exit(1)
 
     # Run edge detector
     print(f"3. Running edge detector for week {week}...")

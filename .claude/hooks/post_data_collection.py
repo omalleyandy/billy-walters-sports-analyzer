@@ -9,6 +9,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Add src to path for season calendar import
+sys.path.insert(0, "src")
+from walters_analyzer.season_calendar import get_nfl_week
+
 
 def load_collection_report(week: int) -> dict:
     """Load the data collection report."""
@@ -179,11 +183,16 @@ def generate_next_steps(validation_results: dict, overtime_results: dict) -> lis
 
 def main():
     """Run post-collection validation."""
-    if len(sys.argv) < 2:
-        print("Usage: python post_data_collection.py <week>")
-        sys.exit(1)
-
-    week = int(sys.argv[1])
+    # Week parameter is now optional - auto-detect if not provided
+    if len(sys.argv) >= 2:
+        week = int(sys.argv[1])
+    else:
+        week = get_nfl_week()
+        if week is None:
+            print("[ERROR] Could not determine current week (offseason/playoffs?)")
+            print("Usage: python post_data_collection.py [week]")
+            sys.exit(1)
+        print(f"Auto-detected current week: {week}")
 
     print("=" * 70)
     print("POST-DATA COLLECTION VALIDATION")
