@@ -587,9 +587,15 @@ See `.github/CI_CD.md` for comprehensive CI/CD documentation including:
 
 ## Git Workflow
 
-**📖 Comprehensive Guide:** See [.github/GIT_WORKFLOW_GUIDE.md](.github/GIT_WORKFLOW_GUIDE.md) for complete documentation.
+**📖 Comprehensive Guides:**
+- [.github/GIT_WORKFLOW_GUIDE.md](.github/GIT_WORKFLOW_GUIDE.md) - Complete git workflow documentation
+- [.github/PR_WORKFLOW.md](.github/PR_WORKFLOW.md) - **NEW**: Pull Request workflow (recommended for features)
 
-### Quick Daily Workflow (Solo Developer)
+**Workflow Options**:
+1. **Feature Branches + PRs** (Recommended for new features) - Clean history with squash and merge
+2. **Direct to Main** (Quick fixes/docs) - Faster for small changes
+
+### Quick Daily Workflow (Solo Developer - Direct to Main)
 
 **🌅 Start of Every Session:**
 ```bash
