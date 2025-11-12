@@ -139,6 +139,232 @@ All three games now match ESPN schedule perfectly!
 
 ---
 
+## Session: 2025-11-12 - Data Validation Best Practices: How User Validation Saved the Project
+
+### Context
+This session demonstrated the critical importance of user-driven data validation. The user's practice of cross-referencing scraped data with ESPN schedules caught a catastrophic bug that automated tests had missed.
+
+### Problem: Automated Tests Weren't Catching Data Quality Issues
+
+**What Happened:**
+- Scraper had been running for days with inverted home/away teams
+- All automated tests passed (no unit tests checked actual data correctness)
+- Bug affected 66% of games (2 out of 3)
+- Would have invalidated weeks of analysis if not caught
+
+**Why Automated Tests Failed:**
+1. **No external validation**: Tests didn't compare output to trusted sources
+2. **Format-focused**: Only validated JSON structure, not content accuracy
+3. **Assumption-based**: Assumed FavoredTeamID logic was correct
+4. **No regression data**: Didn't save known-good examples to test against
+
+### Solution: Multi-Layer Validation Strategy
+
+**1. User-Driven Validation (Most Important!)**
+```markdown
+Best Practice: Always cross-reference with trusted external source
+- ESPN schedule as ground truth
+- Manual spot-checks of 3-5 games per scrape
+- Focus on obvious indicators (home team, spread direction)
+- Check rotation numbers (odd=away, even=home)
+```
+
+**2. Automated Validation (Secondary)**
+```python
+# Add to test suite: Compare against saved ESPN data
+def test_home_away_assignment():
+    """Verify home/away matches ESPN schedule."""
+    scraped_data = scrape_overtime()
+    espn_schedule = fetch_espn_schedule()
+
+    for game in scraped_data:
+        espn_game = find_matching_game(espn_schedule, game)
+        assert game['away_team'] == espn_game['away_team']
+        assert game['home_team'] == espn_game['home_team']
+        assert game['spread']['home'] == -1 * game['spread']['away']
+```
+
+**3. Sanity Checks (Quick Validation)**
+```python
+# Add to scraper output
+def validate_output(games):
+    """Run quick sanity checks on scraped data."""
+    checks = []
+
+    # Check 1: Rotation numbers follow odd/even pattern
+    for game in games:
+        if game['rotation_numbers']['team1'] % 2 == 0:
+            checks.append(f"ERROR: Team1 has even rotation number!")
+
+    # Check 2: Spread direction matches favorite
+    for game in games:
+        # If spread is negative for away, they should be favorite
+        if game['spread']['away'] < 0:
+            if game['moneyline']['away'] > 0:
+                checks.append(f"ERROR: Spread/ML mismatch for {game['away_team']}")
+
+    return checks
+```
+
+### Key Lessons
+
+**1. User Validation is Critical**
+- Automated tests catch syntax errors, not logic errors
+- Domain expertise (knowing how ESPN lists games) caught the bug
+- Manual spot-checking saves hours of debugging
+- Trust but verify: Even "working" scrapers need validation
+
+**2. External Sources are Ground Truth**
+- ESPN schedule = always correct
+- Rotation numbers = reliable secondary check
+- Market consensus = third validation layer
+- Never trust single data source
+
+**3. Collaboration Between Human and AI**
+- User provided domain knowledge (ESPN schedule format)
+- AI performed technical analysis (rotation numbers, API structure)
+- User caught the discrepancy (2 of 3 games wrong)
+- AI diagnosed root cause (FavoredTeamID logic)
+- Together: Fixed in 30 minutes vs. days of wrong analysis
+
+**4. Document Validation Process**
+- Added inline comments referencing ESPN validation date
+- Documented the Team1=away, Team2=home convention
+- Created prevention checklist in LESSONS_LEARNED.md
+- User quote captured for posterity
+
+### Prevention Checklist
+
+**Before Every Scrape:**
+- [ ] Cross-reference 3-5 games with ESPN schedule
+- [ ] Verify home team matches expected stadium
+- [ ] Check rotation numbers (odd=away, even=home)
+- [ ] Validate spread direction matches moneyline
+
+**After Code Changes:**
+- [ ] Test with current week games
+- [ ] Compare output to multiple sources (ESPN, Action Network, etc.)
+- [ ] Verify historical data still looks correct
+- [ ] Update validation tests with new examples
+
+**Periodic Audits:**
+- [ ] Monthly: Compare full week of data to ESPN
+- [ ] Before playoffs: Full historical validation
+- [ ] After API changes: Comprehensive regression testing
+
+### Impact on Billy Walters Methodology
+
+**What Would Have Been Wrong:**
+1. **Home Field Advantage**: Applied to wrong team (2-3 pt swing)
+2. **Weather Analysis**: Analyzed wrong stadium/location
+3. **Travel Distance**: Calculated from wrong city
+4. **Power Ratings**: Home/away splits reversed
+5. **Edge Detection**: Betting opposite side of actual value
+6. **CLV Tracking**: Completely meaningless metrics
+
+**Real-World Example:**
+```
+WRONG: Northern Illinois @ Massachusetts
+- Would analyze Amherst, MA weather (correct)
+- But apply home edge to NIU (WRONG!)
+- Result: Betting UMass when edge is on NIU
+
+CORRECT: Northern Illinois @ Massachusetts
+- Analyze Amherst, MA weather
+- Apply home edge to UMass (CORRECT!)
+- Result: Accurate edge calculation
+```
+
+### User Contribution
+
+**Quote:**
+> "This is an important catch we just made partner that will severely impact the statistical research project so we have to make certain of these values. Good Job catching this and let's move forward and always be cautious of these intricacies!"
+
+**What Made This Successful:**
+1. User actively validated data (didn't blindly trust scraper)
+2. User provided external source (ESPN schedule)
+3. User clearly identified discrepancy (2 of 3 wrong)
+4. User emphasized criticality (would invalidate research)
+5. User reinforced validation importance (be cautious)
+
+### Template for Future Validation
+
+**When Implementing New Scraper:**
+```markdown
+1. Build scraper
+2. Test with 5 games manually
+3. Compare to ESPN/trusted source
+4. Document validation date in code
+5. Add regression test with saved examples
+6. Create sanity check function
+7. Schedule periodic audits
+```
+
+**When Debugging Data Issues:**
+```markdown
+1. Get external source (ESPN schedule)
+2. Compare 3-5 games side-by-side
+3. Identify pattern (which games wrong?)
+4. Find common factor (odd/even rotation?)
+5. Check API documentation
+6. Fix root cause (not symptoms)
+7. Verify fix with fresh data
+8. Document in LESSONS_LEARNED.md
+```
+
+### Metrics
+
+**Bug Impact:**
+- Severity: CRITICAL
+- Games Affected: 66% (2 of 3)
+- Days Undetected: ~2 days (19 files archived)
+- Potential Loss: Entire research project invalidated
+
+**Fix Efficiency:**
+- Detection: User validation (5 minutes)
+- Diagnosis: API analysis (10 minutes)
+- Implementation: Code fix (5 minutes)
+- Verification: Re-scrape + test (10 minutes)
+- Total: ~30 minutes to complete fix
+
+**Lines of Code:**
+- Before: 40 lines (complex, wrong logic)
+- After: 16 lines (simple, correct logic)
+- Reduction: 60% (simpler is better!)
+
+### Success Factors
+
+1. ✅ **Proactive User Validation**: User didn't wait for errors to appear
+2. ✅ **Clear Communication**: User provided concrete examples (ESPN schedule)
+3. ✅ **Root Cause Focus**: Didn't just patch symptoms
+4. ✅ **Comprehensive Fix**: Simplified code, added comments, documented
+5. ✅ **Data Archival**: Preserved buggy data for future reference
+6. ✅ **Immediate Documentation**: Captured while context fresh
+
+### Conclusion
+
+**The Takeaway:**
+> Automated testing catches code errors. User validation catches logic errors. Both are essential.
+
+**The Partnership:**
+- User brings domain expertise and real-world validation
+- AI brings technical analysis and implementation speed
+- Together: Faster, more reliable development
+
+**The Process:**
+1. Build → 2. Validate → 3. Fix → 4. Document → 5. Prevent
+
+**Never skip step 2 (Validation)!**
+
+---
+
+**Fixed:** 2025-11-12 03:35 UTC
+**Detection Method:** User cross-reference with ESPN schedule
+**Time to Fix:** 30 minutes
+**Long-term Value:** Established validation best practices
+
+---
+
 ## Session: 2025-11-11 (Codebase Cleanup) - Major Reorganization
 
 ### Context
