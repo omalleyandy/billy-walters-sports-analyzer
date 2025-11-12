@@ -106,46 +106,30 @@ class OvertimeApiClient:
         converted_games = []
 
         for game in games:
-            # Extract team names
-            team1 = game.get("Team1ID", "")
-            team2 = game.get("Team2ID", "")
-            favored_team = game.get("FavoredTeamID", "")
+            # CRITICAL: Team1 is ALWAYS away, Team2 is ALWAYS home
+            # This is confirmed by rotation numbers (Team1=odd, Team2=even)
+            # and ESPN schedule cross-reference (2025-11-12)
+            # DO NOT use FavoredTeamID - it's irrelevant to home/away!
+            away_team = game.get("Team1ID", "")
+            home_team = game.get("Team2ID", "")
 
-            # Determine away/home based on favored team
-            if favored_team == team2:
-                away_team = team1
-                home_team = team2
-                away_spread = float(game.get("Spread1", 0) or 0)
-                home_spread = float(game.get("Spread2", 0) or 0)
-                away_ml = (
-                    int(game.get("MoneyLine1") or 0)
-                    if game.get("MoneyLine1") is not None
-                    else None
-                )
-                home_ml = (
-                    int(game.get("MoneyLine2") or 0)
-                    if game.get("MoneyLine2") is not None
-                    else None
-                )
-                away_spread_odds = int(game.get("SpreadAdj1", -110))
-                home_spread_odds = int(game.get("SpreadAdj2", -110))
-            else:
-                away_team = team2
-                home_team = team1
-                away_spread = float(game.get("Spread2", 0) or 0)
-                home_spread = float(game.get("Spread1", 0) or 0)
-                away_ml = (
-                    int(game.get("MoneyLine2") or 0)
-                    if game.get("MoneyLine2") is not None
-                    else None
-                )
-                home_ml = (
-                    int(game.get("MoneyLine1") or 0)
-                    if game.get("MoneyLine1") is not None
-                    else None
-                )
-                away_spread_odds = int(game.get("SpreadAdj2", -110))
-                home_spread_odds = int(game.get("SpreadAdj1", -110))
+            # Team1 = Away team data
+            away_spread = float(game.get("Spread1", 0) or 0)
+            away_ml = (
+                int(game.get("MoneyLine1") or 0)
+                if game.get("MoneyLine1") is not None
+                else None
+            )
+            away_spread_odds = int(game.get("SpreadAdj1", -110))
+
+            # Team2 = Home team data
+            home_spread = float(game.get("Spread2", 0) or 0)
+            home_ml = (
+                int(game.get("MoneyLine2") or 0)
+                if game.get("MoneyLine2") is not None
+                else None
+            )
+            home_spread_odds = int(game.get("SpreadAdj2", -110))
 
             # Extract totals
             total = float(game.get("TotalPoints", 0))

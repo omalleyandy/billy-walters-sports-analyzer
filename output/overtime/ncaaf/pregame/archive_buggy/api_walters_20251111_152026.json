@@ -1,0 +1,1639 @@
+{
+  "metadata": {
+    "source": "overtime.ag",
+    "method": "api",
+    "league": "NCAAF",
+    "converted_at": "2025-11-11T15:20:26.263489",
+    "converter_version": "2.0.0"
+  },
+  "games": [
+    {
+      "game_id": "114535958",
+      "league": "NCAAF",
+      "away_team": "Ohio",
+      "home_team": "Western Michigan",
+      "game_time": "11/11/2025 20:00",
+      "spread": {
+        "away": 1.0,
+        "home": -1.0,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": -108,
+        "home": -112
+      },
+      "total": {
+        "points": 47.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 301,
+        "team2": 302
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535959",
+      "league": "NCAAF",
+      "away_team": "Kent State",
+      "home_team": "Akron",
+      "game_time": "11/11/2025 19:30",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 230,
+        "home": -280
+      },
+      "total": {
+        "points": 49.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 303,
+        "team2": 304
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535960",
+      "league": "NCAAF",
+      "away_team": "Massachusetts",
+      "home_team": "Northern Illinois",
+      "game_time": "11/12/2025 19:00",
+      "spread": {
+        "away": 11.0,
+        "home": -11.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 310,
+        "home": -420
+      },
+      "total": {
+        "points": 44.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 305,
+        "team2": 306
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535961",
+      "league": "NCAAF",
+      "away_team": "Miami Ohio",
+      "home_team": "Toledo",
+      "game_time": "11/12/2025 19:00",
+      "spread": {
+        "away": 3.5,
+        "home": -3.5,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 160,
+        "home": -180
+      },
+      "total": {
+        "points": 45.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 307,
+        "team2": 308
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535962",
+      "league": "NCAAF",
+      "away_team": "Buffalo",
+      "home_team": "Central Michigan",
+      "game_time": "11/12/2025 19:00",
+      "spread": {
+        "away": 1.0,
+        "home": -1.0,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": -101,
+        "home": -119
+      },
+      "total": {
+        "points": 43.0,
+        "over_odds": -125,
+        "under_odds": 105
+      },
+      "rotation_numbers": {
+        "team1": 309,
+        "team2": 310
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535963",
+      "league": "NCAAF",
+      "away_team": "Troy",
+      "home_team": "Old Dominion",
+      "game_time": "11/13/2025 19:30",
+      "spread": {
+        "away": 11.0,
+        "home": -11.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 305,
+        "home": -415
+      },
+      "total": {
+        "points": 52.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 313,
+        "team2": 314
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535964",
+      "league": "NCAAF",
+      "away_team": "Clemson",
+      "home_team": "Louisville",
+      "game_time": "11/14/2025 19:30",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 122,
+        "home": -142
+      },
+      "total": {
+        "points": 50.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 315,
+        "team2": 316
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535965",
+      "league": "NCAAF",
+      "away_team": "Minnesota",
+      "home_team": "Oregon",
+      "game_time": "11/14/2025 21:00",
+      "spread": {
+        "away": 25.0,
+        "home": -25.0,
+        "away_odds": 102,
+        "home_odds": -122
+      },
+      "moneyline": {
+        "away": 1700,
+        "home": -3000
+      },
+      "total": {
+        "points": 44.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 317,
+        "team2": 318
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535966",
+      "league": "NCAAF",
+      "away_team": "Coastal Carolina",
+      "home_team": "Georgia Southern",
+      "game_time": "11/15/2025 18:00",
+      "spread": {
+        "away": 2.5,
+        "home": -2.5,
+        "away_odds": -104,
+        "home_odds": -116
+      },
+      "moneyline": {
+        "away": 115,
+        "home": -135
+      },
+      "total": {
+        "points": 61.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 319,
+        "team2": 320
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535967",
+      "league": "NCAAF",
+      "away_team": "Air Force",
+      "home_team": "Connecticut",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": -108,
+        "home_odds": -112
+      },
+      "moneyline": {
+        "away": 230,
+        "home": -280
+      },
+      "total": {
+        "points": 63.0,
+        "over_odds": -115,
+        "under_odds": -105
+      },
+      "rotation_numbers": {
+        "team1": 321,
+        "team2": 322
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535968",
+      "league": "NCAAF",
+      "away_team": "Charlotte",
+      "home_team": "UTSA",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 18.5,
+        "home": -18.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 750,
+        "home": -1100
+      },
+      "total": {
+        "points": 59.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 323,
+        "team2": 324
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535969",
+      "league": "NCAAF",
+      "away_team": "Texas",
+      "home_team": "Georgia",
+      "game_time": "11/15/2025 19:30",
+      "spread": {
+        "away": 6.0,
+        "home": -6.0,
+        "away_odds": -107,
+        "home_odds": -113
+      },
+      "moneyline": {
+        "away": 175,
+        "home": -215
+      },
+      "total": {
+        "points": 49.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 325,
+        "team2": 326
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535970",
+      "league": "NCAAF",
+      "away_team": "Appalachian State",
+      "home_team": "James Madison",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 21.0,
+        "home": -21.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 950,
+        "home": -1500
+      },
+      "total": {
+        "points": 53.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 327,
+        "team2": 328
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535971",
+      "league": "NCAAF",
+      "away_team": "Arizona",
+      "home_team": "Cincinnati",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 6.5,
+        "home": -6.5,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 180,
+        "home": -220
+      },
+      "total": {
+        "points": 56.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 329,
+        "team2": 330
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535972",
+      "league": "NCAAF",
+      "away_team": "Memphis",
+      "home_team": "East Carolina",
+      "game_time": "11/15/2025 16:00",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -112,
+        "home_odds": -108
+      },
+      "moneyline": {
+        "away": 125,
+        "home": -145
+      },
+      "total": {
+        "points": 59.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 331,
+        "team2": 332
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535973",
+      "league": "NCAAF",
+      "away_team": "Georgia State",
+      "home_team": "Marshall",
+      "game_time": "11/15/2025 14:00",
+      "spread": {
+        "away": 7.5,
+        "home": -7.5,
+        "away_odds": -113,
+        "home_odds": -107
+      },
+      "moneyline": {
+        "away": 230,
+        "home": -300
+      },
+      "total": {
+        "points": 63.5,
+        "over_odds": -112,
+        "under_odds": -108
+      },
+      "rotation_numbers": {
+        "team1": 333,
+        "team2": 334
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535974",
+      "league": "NCAAF",
+      "away_team": "Navy",
+      "home_team": "South Florida",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 10.5,
+        "home": -10.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 290,
+        "home": -385
+      },
+      "total": {
+        "points": 64.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 335,
+        "team2": 336
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535975",
+      "league": "NCAAF",
+      "away_team": "Boston College",
+      "home_team": "Georgia Tech",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 16.5,
+        "home": -16.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 550,
+        "home": -825
+      },
+      "total": {
+        "points": 59.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 337,
+        "team2": 338
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535976",
+      "league": "NCAAF",
+      "away_team": "Virginia",
+      "home_team": "Duke",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 6.0,
+        "home": -6.0,
+        "away_odds": -103,
+        "home_odds": -117
+      },
+      "moneyline": {
+        "away": 190,
+        "home": -230
+      },
+      "total": {
+        "points": 57.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 339,
+        "team2": 340
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535977",
+      "league": "NCAAF",
+      "away_team": "Virginia Tech",
+      "home_team": "Florida State",
+      "game_time": "11/15/2025 19:30",
+      "spread": {
+        "away": 13.5,
+        "home": -13.5,
+        "away_odds": 100,
+        "home_odds": -120
+      },
+      "moneyline": {
+        "away": 420,
+        "home": -565
+      },
+      "total": {
+        "points": 55.0,
+        "over_odds": 100,
+        "under_odds": -120
+      },
+      "rotation_numbers": {
+        "team1": 341,
+        "team2": 342
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535978",
+      "league": "NCAAF",
+      "away_team": "Wisconsin",
+      "home_team": "Indiana",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 29.5,
+        "home": -29.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": null,
+        "home": null
+      },
+      "total": {
+        "points": 44.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 343,
+        "team2": 344
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535979",
+      "league": "NCAAF",
+      "away_team": "NC State",
+      "home_team": "Miami Florida",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 14.5,
+        "home": -14.5,
+        "away_odds": -104,
+        "home_odds": -116
+      },
+      "moneyline": {
+        "away": 445,
+        "home": -625
+      },
+      "total": {
+        "points": 55.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 345,
+        "team2": 346
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535980",
+      "league": "NCAAF",
+      "away_team": "Michigan State",
+      "home_team": "Penn State",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": 105,
+        "home_odds": -125
+      },
+      "moneyline": {
+        "away": 235,
+        "home": -290
+      },
+      "total": {
+        "points": 50.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 347,
+        "team2": 348
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535981",
+      "league": "NCAAF",
+      "away_team": "UCLA",
+      "home_team": "Ohio State",
+      "game_time": "11/15/2025 19:30",
+      "spread": {
+        "away": 31.5,
+        "home": -31.5,
+        "away_odds": 100,
+        "home_odds": -120
+      },
+      "moneyline": {
+        "away": null,
+        "home": null
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 349,
+        "team2": 350
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535982",
+      "league": "NCAAF",
+      "away_team": "Pittsburgh",
+      "home_team": "Notre Dame",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 11.5,
+        "home": -11.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 325,
+        "home": -435
+      },
+      "total": {
+        "points": 56.0,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 351,
+        "team2": 352
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535983",
+      "league": "NCAAF",
+      "away_team": "North Carolina",
+      "home_team": "Wake Forest",
+      "game_time": "11/15/2025 16:30",
+      "spread": {
+        "away": 6.0,
+        "home": -6.0,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 185,
+        "home": -225
+      },
+      "total": {
+        "points": 38.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 353,
+        "team2": 354
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535984",
+      "league": "NCAAF",
+      "away_team": "Ball State",
+      "home_team": "Eastern Michigan",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 2.5,
+        "home": -2.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 110,
+        "home": -130
+      },
+      "total": {
+        "points": 50.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 355,
+        "team2": 356
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535985",
+      "league": "NCAAF",
+      "away_team": "Oklahoma",
+      "home_team": "Alabama",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 6.0,
+        "home": -6.0,
+        "away_odds": -112,
+        "home_odds": -108
+      },
+      "moneyline": {
+        "away": 175,
+        "home": -205
+      },
+      "total": {
+        "points": 46.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 357,
+        "team2": 358
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535986",
+      "league": "NCAAF",
+      "away_team": "Sam Houston St",
+      "home_team": "Delaware",
+      "game_time": "11/15/2025 19:00",
+      "spread": {
+        "away": 9.5,
+        "home": -9.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 300,
+        "home": -360
+      },
+      "total": {
+        "points": 56.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 359,
+        "team2": 360
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535987",
+      "league": "NCAAF",
+      "away_team": "Tulsa",
+      "home_team": "Oregon State",
+      "game_time": "11/15/2025 13:00",
+      "spread": {
+        "away": 2.5,
+        "home": -2.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 115,
+        "home": -135
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 361,
+        "team2": 362
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535988",
+      "league": "NCAAF",
+      "away_team": "Texas State",
+      "home_team": "Southern Miss",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 5.0,
+        "home": -5.0,
+        "away_odds": -118,
+        "home_odds": -102
+      },
+      "moneyline": {
+        "away": 155,
+        "home": -175
+      },
+      "total": {
+        "points": 66.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 363,
+        "team2": 364
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535989",
+      "league": "NCAAF",
+      "away_team": "Central Florida",
+      "home_team": "Texas Tech",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 23.5,
+        "home": -23.5,
+        "away_odds": 100,
+        "home_odds": -120
+      },
+      "moneyline": {
+        "away": 1450,
+        "home": -2500
+      },
+      "total": {
+        "points": 48.0,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 365,
+        "team2": 366
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535990",
+      "league": "NCAAF",
+      "away_team": "Oklahoma State",
+      "home_team": "Kansas State",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 20.0,
+        "home": -20.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 850,
+        "home": -1300
+      },
+      "total": {
+        "points": 52.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 367,
+        "team2": 368
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535991",
+      "league": "NCAAF",
+      "away_team": "Baylor",
+      "home_team": "Utah",
+      "game_time": "11/15/2025 19:00",
+      "spread": {
+        "away": 8.0,
+        "home": -8.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 230,
+        "home": -300
+      },
+      "total": {
+        "points": 60.5,
+        "over_odds": -108,
+        "under_odds": -112
+      },
+      "rotation_numbers": {
+        "team1": 369,
+        "team2": 370
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535992",
+      "league": "NCAAF",
+      "away_team": "Florida",
+      "home_team": "Mississippi",
+      "game_time": "11/15/2025 19:00",
+      "spread": {
+        "away": 16.5,
+        "home": -16.5,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 485,
+        "home": -700
+      },
+      "total": {
+        "points": 54.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 371,
+        "team2": 372
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535993",
+      "league": "NCAAF",
+      "away_team": "Mississippi State",
+      "home_team": "Missouri",
+      "game_time": "11/15/2025 19:45",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 222,
+        "home": -270
+      },
+      "total": {
+        "points": 51.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 373,
+        "team2": 374
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535994",
+      "league": "NCAAF",
+      "away_team": "Florida Atlantic",
+      "home_team": "Tulane",
+      "game_time": "11/15/2025 16:00",
+      "spread": {
+        "away": 17.5,
+        "home": -17.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 600,
+        "home": -900
+      },
+      "total": {
+        "points": 63.0,
+        "over_odds": -115,
+        "under_odds": -105
+      },
+      "rotation_numbers": {
+        "team1": 375,
+        "team2": 376
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535995",
+      "league": "NCAAF",
+      "away_team": "South Carolina",
+      "home_team": "Texas A&M",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 19.0,
+        "home": -19.0,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 800,
+        "home": -1200
+      },
+      "total": {
+        "points": 48.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 377,
+        "team2": 378
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535996",
+      "league": "NCAAF",
+      "away_team": "Arkansas",
+      "home_team": "LSU",
+      "game_time": "11/15/2025 12:45",
+      "spread": {
+        "away": 5.5,
+        "home": -5.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 170,
+        "home": -200
+      },
+      "total": {
+        "points": 56.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 379,
+        "team2": 380
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535997",
+      "league": "NCAAF",
+      "away_team": "UL Monroe",
+      "home_team": "South Alabama",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 4.0,
+        "home": -4.0,
+        "away_odds": -102,
+        "home_odds": -118
+      },
+      "moneyline": {
+        "away": 165,
+        "home": -195
+      },
+      "total": {
+        "points": 51.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 381,
+        "team2": 382
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535998",
+      "league": "NCAAF",
+      "away_team": "UAB",
+      "home_team": "North Texas",
+      "game_time": "11/15/2025 14:00",
+      "spread": {
+        "away": 18.5,
+        "home": -18.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 750,
+        "home": -1050
+      },
+      "total": {
+        "points": 69.5,
+        "over_odds": -108,
+        "under_odds": -112
+      },
+      "rotation_numbers": {
+        "team1": 383,
+        "team2": 384
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114535999",
+      "league": "NCAAF",
+      "away_team": "Maryland",
+      "home_team": "Illinois",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 14.5,
+        "home": -14.5,
+        "away_odds": 100,
+        "home_odds": -120
+      },
+      "moneyline": {
+        "away": 485,
+        "home": -700
+      },
+      "total": {
+        "points": 53.5,
+        "over_odds": 100,
+        "under_odds": -120
+      },
+      "rotation_numbers": {
+        "team1": 385,
+        "team2": 386
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536000",
+      "league": "NCAAF",
+      "away_team": "Northwestern",
+      "home_team": "Michigan",
+      "game_time": "11/15/2025 12:00",
+      "spread": {
+        "away": 11.5,
+        "home": -11.5,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 365,
+        "home": -500
+      },
+      "total": {
+        "points": 41.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 387,
+        "team2": 388
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536001",
+      "league": "NCAAF",
+      "away_team": "Jacksonville State",
+      "home_team": "Kennesaw State",
+      "game_time": "11/15/2025 20:00",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -102,
+        "home_odds": -118
+      },
+      "moneyline": {
+        "away": 140,
+        "home": -160
+      },
+      "total": {
+        "points": 55.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 389,
+        "team2": 390
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536002",
+      "league": "NCAAF",
+      "away_team": "Colorado State",
+      "home_team": "New Mexico",
+      "game_time": "11/15/2025 15:00",
+      "spread": {
+        "away": 14.5,
+        "home": -14.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 455,
+        "home": -650
+      },
+      "total": {
+        "points": 53.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 391,
+        "team2": 392
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536003",
+      "league": "NCAAF",
+      "away_team": "TCU",
+      "home_team": "BYU",
+      "game_time": "11/15/2025 22:15",
+      "spread": {
+        "away": 4.5,
+        "home": -4.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 160,
+        "home": -180
+      },
+      "total": {
+        "points": 52.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 393,
+        "team2": 394
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536004",
+      "league": "NCAAF",
+      "away_team": "West Virginia",
+      "home_team": "Arizona State",
+      "game_time": "11/15/2025 13:00",
+      "spread": {
+        "away": 11.5,
+        "home": -11.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 340,
+        "home": -450
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 395,
+        "team2": 396
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536005",
+      "league": "NCAAF",
+      "away_team": "UTEP",
+      "home_team": "Missouri St",
+      "game_time": "11/15/2025 15:00",
+      "spread": {
+        "away": 4.5,
+        "home": -4.5,
+        "away_odds": -113,
+        "home_odds": -107
+      },
+      "moneyline": {
+        "away": 160,
+        "home": -190
+      },
+      "total": {
+        "points": 48.0,
+        "over_odds": -115,
+        "under_odds": -105
+      },
+      "rotation_numbers": {
+        "team1": 397,
+        "team2": 398
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536006",
+      "league": "NCAAF",
+      "away_team": "Wyoming",
+      "home_team": "Fresno State",
+      "game_time": "11/15/2025 22:30",
+      "spread": {
+        "away": 3.5,
+        "home": -3.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 155,
+        "home": -175
+      },
+      "total": {
+        "points": 40.0,
+        "over_odds": -112,
+        "under_odds": -108
+      },
+      "rotation_numbers": {
+        "team1": 399,
+        "team2": 400
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536007",
+      "league": "NCAAF",
+      "away_team": "Iowa",
+      "home_team": "USC",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 6.5,
+        "home": -6.5,
+        "away_odds": -103,
+        "home_odds": -117
+      },
+      "moneyline": {
+        "away": 205,
+        "home": -245
+      },
+      "total": {
+        "points": 49.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 401,
+        "team2": 402
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536008",
+      "league": "NCAAF",
+      "away_team": "Purdue",
+      "home_team": "Washington",
+      "game_time": "11/15/2025 19:00",
+      "spread": {
+        "away": 17.0,
+        "home": -17.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 600,
+        "home": -900
+      },
+      "total": {
+        "points": 53.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 403,
+        "team2": 404
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536009",
+      "league": "NCAAF",
+      "away_team": "Middle Tennessee State",
+      "home_team": "Western Kentucky",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 13.5,
+        "home": -13.5,
+        "away_odds": -104,
+        "home_odds": -116
+      },
+      "moneyline": {
+        "away": 405,
+        "home": -550
+      },
+      "total": {
+        "points": 56.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 405,
+        "team2": 406
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536010",
+      "league": "NCAAF",
+      "away_team": "Nevada",
+      "home_team": "San Jose State",
+      "game_time": "11/15/2025 15:30",
+      "spread": {
+        "away": 9.0,
+        "home": -9.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 275,
+        "home": -335
+      },
+      "total": {
+        "points": 52.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 407,
+        "team2": 408
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536011",
+      "league": "NCAAF",
+      "away_team": "New Mexico State",
+      "home_team": "Tennessee",
+      "game_time": "11/15/2025 16:15",
+      "spread": {
+        "away": 39.5,
+        "home": -39.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": null,
+        "home": null
+      },
+      "total": {
+        "points": 62.0,
+        "over_odds": -115,
+        "under_odds": -105
+      },
+      "rotation_numbers": {
+        "team1": 409,
+        "team2": 410
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536012",
+      "league": "NCAAF",
+      "away_team": "Florida International",
+      "home_team": "Liberty",
+      "game_time": "11/15/2025 17:00",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 125,
+        "home": -145
+      },
+      "total": {
+        "points": 51.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 411,
+        "team2": 412
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536013",
+      "league": "NCAAF",
+      "away_team": "Utah State",
+      "home_team": "UNLV",
+      "game_time": "11/15/2025 19:00",
+      "spread": {
+        "away": 6.0,
+        "home": -6.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 195,
+        "home": -235
+      },
+      "total": {
+        "points": 71.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 413,
+        "team2": 414
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536014",
+      "league": "NCAAF",
+      "away_team": "Louisiana Tech",
+      "home_team": "Washington State",
+      "game_time": "11/15/2025 22:00",
+      "spread": {
+        "away": 7.5,
+        "home": -7.5,
+        "away_odds": -105,
+        "home_odds": -115
+      },
+      "moneyline": {
+        "away": 245,
+        "home": -315
+      },
+      "total": {
+        "points": 45.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 415,
+        "team2": 416
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114536015",
+      "league": "NCAAF",
+      "away_team": "Boise State",
+      "home_team": "San Diego State",
+      "game_time": "11/15/2025 22:30",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 120,
+        "home": -140
+      },
+      "total": {
+        "points": 41.0,
+        "over_odds": -112,
+        "under_odds": -108
+      },
+      "rotation_numbers": {
+        "team1": 417,
+        "team2": 418
+      },
+      "status": "O",
+      "period": "Game"
+    }
+  ],
+  "summary": {
+    "total_games": 58,
+    "conversion_rate": "100%"
+  }
+}

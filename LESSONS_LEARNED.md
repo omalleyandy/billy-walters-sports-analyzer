@@ -4,6 +4,141 @@ This document captures issues encountered during development, their solutions, a
 
 ---
 
+## Session: 2025-11-12 - CRITICAL BUG: Home/Away Team Misidentification
+
+### Context
+During data validation, user discovered that NCAAF games had **home and away teams reversed** in 2 out of 3 games. This is a **critical bug** that would completely invalidate edge detection, power ratings, and weather analysis.
+
+### Problem: Incorrect Home/Away Team Assignment Logic
+
+**Symptoms:**
+```
+ESPN Schedule (CORRECT):
+1. Buffalo @ Central Michigan - CMU is HOME (CMU -1.5)
+2. Northern Illinois @ Massachusetts - UMass is HOME (NIU -10.5)
+3. Toledo @ Miami (OH) - Miami (OH) is HOME (TOL -3.5)
+
+Overtime Scraper Output (WRONG):
+1. ✅ Buffalo @ Central Michigan - CORRECT
+2. ❌ Massachusetts @ Northern Illinois - BACKWARDS!
+3. ❌ Miami Ohio @ Toledo - BACKWARDS!
+```
+
+**Root Cause:**
+The `convert_to_billy_walters_format()` method in `src/data/overtime_api_client.py` (lines 108-148) was using `FavoredTeamID` to determine home vs away teams:
+
+```python
+# WRONG APPROACH - DO NOT USE!
+if favored_team == team2:
+    away_team = team1
+    home_team = team2
+else:
+    away_team = team2
+    home_team = team1
+```
+
+**Why This is Wrong:**
+- The **favored team can be either home OR away**
+- Home teams can be underdogs (e.g., UMass +10.5 vs NIU)
+- Away teams can be favorites (e.g., NIU -10.5 @ UMass)
+- `FavoredTeamID` has **zero correlation** to home/away status
+
+**Impact on Billy Walters Methodology:**
+1. **Home field advantage** - Applied to wrong team (typically 2-3 points)
+2. **Weather analysis** - Wrong stadium, wrong weather impact
+3. **Power ratings** - Home/away adjustments reversed
+4. **Spread direction** - Betting the wrong side entirely
+5. **Historical validation** - All backtesting data invalidated
+
+### Solution: Use Team1/Team2 Convention
+
+**Analysis of Raw Overtime.ag API Response:**
+```json
+{
+  "Team1ID": "Northern Illinois",    ← Always AWAY (odd rotation)
+  "Team2ID": "Massachusetts",        ← Always HOME (even rotation)
+  "Team1RotNum": 305,               ← Odd number = away
+  "Team2RotNum": 306,               ← Even number = home
+  "FavoredTeamID": "Northern Illinois", ← IRRELEVANT!
+  "Spread1": -11,                   ← Team1/Away spread
+  "Spread2": 11                     ← Team2/Home spread
+}
+```
+
+**The Pattern:**
+- ✅ **Team1ID = ALWAYS the away team**
+- ✅ **Team2ID = ALWAYS the home team**
+- ✅ **Team1RotNum = Odd numbers (305, 307, 309...)**
+- ✅ **Team2RotNum = Even numbers (306, 308, 310...)**
+- ❌ **FavoredTeamID = Ignore completely!**
+
+**Fixed Code (src/data/overtime_api_client.py:108-132):**
+```python
+# CRITICAL: Team1 is ALWAYS away, Team2 is ALWAYS home
+# This is confirmed by rotation numbers (Team1=odd, Team2=even)
+# and ESPN schedule cross-reference (2025-11-12)
+# DO NOT use FavoredTeamID - it's irrelevant to home/away!
+away_team = game.get("Team1ID", "")
+home_team = game.get("Team2ID", "")
+
+# Team1 = Away team data
+away_spread = float(game.get("Spread1", 0) or 0)
+away_ml = int(game.get("MoneyLine1") or 0) if game.get("MoneyLine1") is not None else None
+away_spread_odds = int(game.get("SpreadAdj1", -110))
+
+# Team2 = Home team data
+home_spread = float(game.get("Spread2", 0) or 0)
+home_ml = int(game.get("MoneyLine2") or 0) if game.get("MoneyLine2") is not None else None
+home_spread_odds = int(game.get("SpreadAdj2", -110))
+```
+
+**Verification (Post-Fix):**
+```
+✅ Northern Illinois @ Massachusetts (NIU -11, Total 44)
+✅ Toledo @ Miami (OH) (TOL -3.5, Total 45.5)
+✅ Buffalo @ Central Michigan (CMU -1, Total 44)
+```
+
+All three games now match ESPN schedule perfectly!
+
+### Prevention
+
+**Code Review Checklist:**
+- [ ] Always validate home/away assignment against ESPN or another trusted source
+- [ ] Never use "favored team" logic for home/away determination
+- [ ] Use rotation numbers as secondary validation (odd=away, even=home)
+- [ ] Add explicit comments warning against common mistakes
+- [ ] Cross-reference with multiple games before assuming pattern
+
+**Testing Protocol:**
+1. Scrape 3-5 games from current week
+2. Cross-reference with ESPN schedule
+3. Verify home/away teams match exactly
+4. Check rotation numbers (odd/even pattern)
+5. Validate spread direction matches expectations
+
+**Documentation:**
+- Added inline comments explaining Team1=away, Team2=home convention
+- Added warning about FavoredTeamID irrelevance
+- Referenced ESPN cross-validation date (2025-11-12)
+
+### Key Takeaways
+
+1. **Never assume** - Always validate against trusted external source
+2. **Betting terminology is tricky** - "Favored" ≠ "Home"
+3. **This bug would have been catastrophic** - All analysis would be wrong
+4. **Simple is better** - Team1/Team2 convention is cleaner than complex logic
+5. **Rotation numbers are reliable** - Odd=away, even=home (always)
+
+**User Quote:**
+> "This is an important catch we just made partner that will severely impact the statistical research project so we have to make certain of these values. Good Job catching this and let's move forward and always be cautious of these intricacies!"
+
+**Impact:** CRITICAL - Would have invalidated all edge detection, power ratings, and betting analysis.
+
+**Fixed:** 2025-11-12 03:10 UTC
+
+---
+
 ## Session: 2025-11-11 (Codebase Cleanup) - Major Reorganization
 
 ### Context
