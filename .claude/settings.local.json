@@ -12,7 +12,10 @@
       "Bash(rm:*)",
       "Bash(uv run ruff:*)",
       "Bash(uv run pytest:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []

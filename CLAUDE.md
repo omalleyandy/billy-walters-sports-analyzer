@@ -555,7 +555,62 @@ See `.github/CI_CD.md` for comprehensive CI/CD documentation including:
 
 ## Git Workflow
 
-### Development Process
+**📖 Comprehensive Guide:** See [.github/GIT_WORKFLOW_GUIDE.md](.github/GIT_WORKFLOW_GUIDE.md) for complete documentation.
+
+### Quick Daily Workflow (Solo Developer)
+
+**🌅 Start of Every Session:**
+```bash
+git pull origin main --rebase  # Sync with GitHub first!
+```
+
+**💻 During Development:**
+```bash
+# After making changes (every 30-60 min)
+git add .
+git commit -m "type(scope): brief description"
+git push origin main
+```
+
+**🌙 End of Session:**
+Just tell Claude: **"Commit and push my changes"**
+
+Claude will automatically:
+1. Review what changed (`git status`, `git diff`)
+2. Write a comprehensive conventional commit message
+3. Stage and commit all changes
+4. Pull latest (avoid conflicts)
+5. Push to GitHub
+6. Report results
+
+### Conventional Commit Format
+
+```bash
+type(scope): brief description (50 chars max)
+
+Detailed explanation if needed.
+
+- Key change 1
+- Key change 2
+
+Generated with Claude Code
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+**Types:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `style`
+
+**Examples:**
+```bash
+git commit -m "feat(scraper): add retry logic to Overtime API"
+git commit -m "fix(weather): correct AccuWeather HTTPS endpoint"
+git commit -m "docs: update installation instructions"
+git commit -m "refactor(tests): move tests to proper directories"
+```
+
+### Advanced Workflow (Team/Branch-Based)
+
+For larger features or when collaborating:
 
 1. **Create Feature Branch**
    ```bash
@@ -572,8 +627,6 @@ See `.github/CI_CD.md` for comprehensive CI/CD documentation including:
    git commit -m "feat(scope): brief description"
    ```
 
-   Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
 4. **Push and Create Pull Request**
    ```bash
    git push origin feat/your-feature-name
@@ -585,7 +638,7 @@ See `.github/CI_CD.md` for comprehensive CI/CD documentation including:
 
 5. **Merge to Main**
    - All CI checks must be green
-   - At least one approval required
+   - At least one approval required (if working with team)
    - Use "Squash and merge" for clean history
 
 ### Commit Message Format
