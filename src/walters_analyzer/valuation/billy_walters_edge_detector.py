@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Billy Walters Edge Detection System
-Integrates power ratings, odds, weather, and situational factors to identify betting edges
+Integrates power ratings, odds, weather, and situational factors to identify
+betting edges
 
 Based on Billy Walters' Advanced Masterclass Principles:
 - Power Ratings (70-100 scale with 90/10 update formula)
@@ -393,7 +394,8 @@ class BillyWaltersEdgeDetector:
             f"Loaded {len(self.power_ratings)} proprietary ratings ({week_info})"
         )
         logger.info(
-            f"System: 90/10 formula, {data.get('games_processed_total', 'N/A')} games processed"
+            f"System: 90/10 formula, "
+            f"{data.get('games_processed_total', 'N/A')} games processed"
         )
 
     def load_action_network_odds(self, filepath: str):
@@ -645,7 +647,8 @@ class BillyWaltersEdgeDetector:
                 injuries_by_team[team].append(injury)
 
             logger.info(
-                f"Loaded {len(injuries_list)} injuries across {len(injuries_by_team)} teams"
+                f"Loaded {len(injuries_list)} injuries across "
+                f"{len(injuries_by_team)} teams"
             )
             self.injury_data = injuries_by_team
             return injuries_by_team
@@ -821,13 +824,16 @@ class BillyWaltersEdgeDetector:
         injury_adj = away_injury_impact.total_impact - home_injury_impact.total_impact
 
         logger.info(
-            f"{away_team} injuries: {away_injury_impact.total_impact:.1f} pts ({away_injury_impact.severity})"
+            f"{away_team} injuries: {away_injury_impact.total_impact:.1f} pts "
+            f"({away_injury_impact.severity})"
         )
         logger.info(
-            f"{home_team} injuries: {home_injury_impact.total_impact:.1f} pts ({home_injury_impact.severity})"
+            f"{home_team} injuries: {home_injury_impact.total_impact:.1f} pts "
+            f"({home_injury_impact.severity})"
         )
         logger.info(
-            f"Net injury adjustment: {injury_adj:+.1f} pts (favors {'home' if injury_adj > 0 else 'away'})"
+            f"Net injury adjustment: {injury_adj:+.1f} pts "
+            f"(favors {'home' if injury_adj > 0 else 'away'})"
         )
 
         # Calculate other adjustments
@@ -974,7 +980,8 @@ class BillyWaltersEdgeDetector:
             report.append(f"{i}. {edge.matchup} (Week {edge.week})")
             report.append(f"   Time: {edge.game_time}")
             report.append(
-                f"   Power Ratings: {edge.away_team} {edge.away_rating:.1f} @ {edge.home_team} {edge.home_rating:.1f}"
+                f"   Power Ratings: {edge.away_team} {edge.away_rating:.1f} @ "
+                f"{edge.home_team} {edge.home_rating:.1f}"
             )
             report.append(f"   Predicted Spread: {edge.predicted_spread:+.1f}")
             report.append(f"   Market Spread: {edge.market_spread:+.1f}")
@@ -982,7 +989,8 @@ class BillyWaltersEdgeDetector:
                 f"   EDGE: {edge.edge_points:.1f} points ({edge.edge_strength.upper()})"
             )
             report.append(
-                f"   Recommendation: BET {edge.recommended_bet.upper() if edge.recommended_bet else 'NONE'}"
+                f"   Recommendation: BET "
+                f"{edge.recommended_bet.upper() if edge.recommended_bet else 'NONE'}"
             )
             report.append(
                 f"   Kelly Sizing: {edge.kelly_fraction * 100:.1f}% of bankroll"
@@ -1003,7 +1011,8 @@ class BillyWaltersEdgeDetector:
         report.append("=" * 80)
         report.append(f"Total Edges Found: {len(edges)}")
         report.append(
-            f"Strong/Very Strong: {sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}"
+            f"Strong/Very Strong: "
+            f"{sum(1 for e in edges if e.edge_strength in ['strong', 'very_strong'])}"
         )
         report.append("=" * 80)
 
@@ -1045,7 +1054,8 @@ def main():
         detector.power_ratings = spread_ratings
 
         logger.info(
-            f"Loaded {len(massey_ratings_for_totals)} Massey ratings with Off/Def for totals"
+            f"Loaded {len(massey_ratings_for_totals)} Massey ratings with "
+            f"Off/Def for totals"
         )
 
     # Initialize totals detector
@@ -1119,10 +1129,13 @@ def main():
                         game_time_str.replace("Z", "+00:00")
                     )
 
-                    # Get weather for home team's location (async call - run synchronously)
+                    # Get weather for home team's location
+                    # (async call - run synchronously)
                     async def fetch_weather():
                         await weather_client.connect()
-                        return await weather_client.get_game_weather(home_team, game_time)
+                        return await weather_client.get_game_weather(
+                            home_team, game_time
+                        )
                     
                     weather_data = asyncio.run(fetch_weather())
 
@@ -1130,7 +1143,8 @@ def main():
                         # Fetch weather alerts from OpenWeather (if available)
                         weather_alerts = []
                         try:
-                            # Check if we have OpenWeather client (needs OPENWEATHER_API_KEY)
+                            # Check if we have OpenWeather client
+                            # (needs OPENWEATHER_API_KEY)
                             if os.getenv("OPENWEATHER_API_KEY"):
                                 # Get stadium coordinates from weather data
                                 lat = weather_data.get("latitude")
@@ -1163,7 +1177,8 @@ def main():
 
                                     if weather_alerts:
                                         logger.info(
-                                            f"Found {len(weather_alerts)} active weather alerts for {home_team}"
+                                            f"Found {len(weather_alerts)} active "
+                                            f"weather alerts for {home_team}"
                                         )
                         except Exception as alert_error:
                             logger.debug(f"Weather alerts unavailable: {alert_error}")
