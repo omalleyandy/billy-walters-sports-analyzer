@@ -44,7 +44,8 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
 - **Legacy Code**: Pragmatic configuration allows CI while incrementally improving code quality
 - **NEW: API Scraper**: Overtime.ag direct API access (primary - validated 2025-11-12)
 - **Hybrid Scraper**: Optional for live game monitoring (SignalR WebSocket)
-- **Last Data Collection**: 2025-11-12 - NFL Week 12 (13 games), NCAAF (56 games) via API
+- **Last Data Collection**: 2025-11-12 - NFL Week 10 (13 games), NCAAF (56 games) via API
+- **Last Session**: 2025-11-12 - Dynamic week detection + NCAAF MACtion weather analysis
 
 ## How to Use This Document
 
@@ -1548,6 +1549,57 @@ python .claude/hooks/auto_edge_detector.py
 ```
 
 **Documentation**: `docs/weather_and_injury_analysis_fix.md`
+
+---
+
+### Dynamic NFL Week Detection - No More Hard-Coded Weeks ✅
+
+**What Changed:**
+- Eliminated all hard-coded week numbers (week 10) from hooks and scripts
+- Implemented automatic week detection based on NFL 2025 schedule
+- All hooks now dynamically calculate current week from system date
+
+**Files Updated:**
+- `.claude/hooks/pre_data_collection.py` - Fixed import to use `get_nfl_week()`
+- `.claude/hooks/auto_edge_detector.py` - Replaced hardcoded week=10 with dynamic detection
+- `.claude/hooks/post_data_collection.py` - Made week parameter optional with auto-detection
+
+**Technical Implementation:**
+```python
+# Season calendar configuration (src/walters_analyzer/season_calendar.py)
+NFL_2025_WEEK_1_START = date(2025, 9, 4)  # Thursday, Sept 4
+NFL_2025_REGULAR_SEASON_WEEKS = 18
+NFL_2025_PLAYOFF_START = date(2026, 1, 10)
+
+# Auto-calculates week based on current date
+week = get_nfl_week()  # Returns 10 for Nov 12, 2025
+# Returns None during offseason/playoffs
+```
+
+**Benefits:**
+- ✅ Automatically advances each Thursday (Week 11 starts Nov 13, 2025)
+- ✅ No manual updates needed throughout season
+- ✅ Gracefully handles offseason/playoffs (returns None)
+- ✅ Can still manually override: `post_data_collection.py 11`
+- ✅ Tested across all three hooks (pre/post/auto)
+
+**Current Status:** All hooks correctly detect Week 10 (Nov 06-12, 2025)
+
+**Usage Examples:**
+```bash
+# Hooks auto-detect week (no parameter needed)
+python .claude/hooks/pre_data_collection.py        # Week 10
+python .claude/hooks/post_data_collection.py       # Week 10
+python .claude/hooks/auto_edge_detector.py         # Week 10
+
+# Can still override if needed
+python .claude/hooks/post_data_collection.py 11    # Force Week 11
+
+# Check current week anytime
+/current-week  # Shows: NFL 2025 Regular Season - Week 10
+```
+
+**Commit**: `d2170e2 feat(hooks): implement dynamic NFL week detection across all hooks`
 
 ---
 
