@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "source": "overtime.ag",
+    "converted_at": "2025-11-10T17:42:39.786709",
+    "original_scrape_time": "2025-11-10T17:42:39.644824",
+    "converter_version": "1.0.0"
+  },
+  "account_info": {
+    "balance": "$-1,988.43",
+    "available_balance": "$7,611.57",
+    "pending": "$400.00"
+  },
+  "games": [],
+  "summary": {
+    "total_converted": 0,
+    "conversion_rate": "0%"
+  }
+}

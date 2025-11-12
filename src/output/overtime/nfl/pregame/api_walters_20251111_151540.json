@@ -1,0 +1,379 @@
+{
+  "metadata": {
+    "source": "overtime.ag",
+    "method": "api",
+    "league": "NFL",
+    "converted_at": "2025-11-11T15:15:40.800983",
+    "converter_version": "2.0.0"
+  },
+  "games": [
+    {
+      "game_id": "114515179",
+      "league": "NFL",
+      "away_team": "New York Jets",
+      "home_team": "New England Patriots",
+      "game_time": "11/13/2025 20:15",
+      "spread": {
+        "away": 13.0,
+        "home": -13.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 555,
+        "home": -850
+      },
+      "total": {
+        "points": 43.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 311,
+        "team2": 312
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515180",
+      "league": "NFL",
+      "away_team": "Washington Commanders",
+      "home_team": "Miami Dolphins",
+      "game_time": "11/16/2025 09:30",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 135,
+        "home": -155
+      },
+      "total": {
+        "points": 47.5,
+        "over_odds": -112,
+        "under_odds": -108
+      },
+      "rotation_numbers": {
+        "team1": 451,
+        "team2": 452
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515181",
+      "league": "NFL",
+      "away_team": "New York Giants",
+      "home_team": "Green Bay Packers",
+      "game_time": "11/16/2025 13:00",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 260,
+        "home": -320
+      },
+      "total": {
+        "points": 43.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 453,
+        "team2": 454
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515182",
+      "league": "NFL",
+      "away_team": "Tampa Bay Buccaneers",
+      "home_team": "Buffalo Bills",
+      "game_time": "11/16/2025 13:00",
+      "spread": {
+        "away": 5.5,
+        "home": -5.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 215,
+        "home": -260
+      },
+      "total": {
+        "points": 48.0,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 455,
+        "team2": 456
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515184",
+      "league": "NFL",
+      "away_team": "Tennessee Titans",
+      "home_team": "Houston Texans",
+      "game_time": "11/16/2025 13:00",
+      "spread": {
+        "away": 7.0,
+        "home": -7.0,
+        "away_odds": -118,
+        "home_odds": -102
+      },
+      "moneyline": {
+        "away": 290,
+        "home": -350
+      },
+      "total": {
+        "points": 38.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 459,
+        "team2": 460
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515185",
+      "league": "NFL",
+      "away_team": "Chicago Bears",
+      "home_team": "Minnesota Vikings",
+      "game_time": "11/16/2025 13:00",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 142,
+        "home": -162
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 461,
+        "team2": 462
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515186",
+      "league": "NFL",
+      "away_team": "Carolina Panthers",
+      "home_team": "Atlanta Falcons",
+      "game_time": "11/16/2025 13:00",
+      "spread": {
+        "away": 3.5,
+        "home": -3.5,
+        "away_odds": -113,
+        "home_odds": -107
+      },
+      "moneyline": {
+        "away": 160,
+        "home": -190
+      },
+      "total": {
+        "points": 42.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 463,
+        "team2": 464
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515188",
+      "league": "NFL",
+      "away_team": "Seattle Seahawks",
+      "home_team": "Los Angeles Rams",
+      "game_time": "11/16/2025 16:05",
+      "spread": {
+        "away": 3.0,
+        "home": -3.0,
+        "away_odds": -106,
+        "home_odds": -114
+      },
+      "moneyline": {
+        "away": 148,
+        "home": -168
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -108,
+        "under_odds": -112
+      },
+      "rotation_numbers": {
+        "team1": 467,
+        "team2": 468
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515189",
+      "league": "NFL",
+      "away_team": "Arizona Cardinals",
+      "home_team": "San Francisco 49ers",
+      "game_time": "11/16/2025 16:05",
+      "spread": {
+        "away": 2.5,
+        "home": -2.5,
+        "away_odds": -110,
+        "home_odds": -110
+      },
+      "moneyline": {
+        "away": 120,
+        "home": -140
+      },
+      "total": {
+        "points": 48.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 469,
+        "team2": 470
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515190",
+      "league": "NFL",
+      "away_team": "Cleveland Browns",
+      "home_team": "Baltimore Ravens",
+      "game_time": "11/16/2025 16:25",
+      "spread": {
+        "away": 8.5,
+        "home": -8.5,
+        "away_odds": -115,
+        "home_odds": -105
+      },
+      "moneyline": {
+        "away": 315,
+        "home": -425
+      },
+      "total": {
+        "points": 39.0,
+        "over_odds": -115,
+        "under_odds": -105
+      },
+      "rotation_numbers": {
+        "team1": 471,
+        "team2": 472
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515191",
+      "league": "NFL",
+      "away_team": "Denver Broncos",
+      "home_team": "Kansas City Chiefs",
+      "game_time": "11/16/2025 16:25",
+      "spread": {
+        "away": 4.0,
+        "home": -4.0,
+        "away_odds": -113,
+        "home_odds": -107
+      },
+      "moneyline": {
+        "away": 168,
+        "home": -198
+      },
+      "total": {
+        "points": 44.5,
+        "over_odds": -105,
+        "under_odds": -115
+      },
+      "rotation_numbers": {
+        "team1": 473,
+        "team2": 474
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515192",
+      "league": "NFL",
+      "away_team": "Detroit Lions",
+      "home_team": "Philadelphia Eagles",
+      "game_time": "11/16/2025 20:20",
+      "spread": {
+        "away": 2.5,
+        "home": -2.5,
+        "away_odds": -102,
+        "home_odds": -118
+      },
+      "moneyline": {
+        "away": 131,
+        "home": -151
+      },
+      "total": {
+        "points": 46.5,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 475,
+        "team2": 476
+      },
+      "status": "O",
+      "period": "Game"
+    },
+    {
+      "game_id": "114515193",
+      "league": "NFL",
+      "away_team": "Las Vegas Raiders",
+      "home_team": "Dallas Cowboys",
+      "game_time": "11/17/2025 20:15",
+      "spread": {
+        "away": 3.5,
+        "home": -3.5,
+        "away_odds": -125,
+        "home_odds": 105
+      },
+      "moneyline": {
+        "away": 150,
+        "home": -170
+      },
+      "total": {
+        "points": 50.0,
+        "over_odds": -110,
+        "under_odds": -110
+      },
+      "rotation_numbers": {
+        "team1": 477,
+        "team2": 478
+      },
+      "status": "O",
+      "period": "Game"
+    }
+  ],
+  "summary": {
+    "total_games": 13,
+    "conversion_rate": "100%"
+  }
+}

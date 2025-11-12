@@ -1,115 +1,127 @@
-Scrape live odds from Overtime.ag for NFL games.
+Scrape pregame odds from Overtime.ag for NFL and NCAAF games.
+
+**NEW METHOD (2025-11-11): Direct API Access - No Browser Required!**
+
+This scraper uses a reverse-engineered API endpoint discovered via Chrome DevTools
+ServiceCaller inspection (data/overtime_libs.js line 4278).
+
+**Advantages:**
+- No browser automation (Playwright) required
+- No CloudFlare bypass needed
+- No proxy configuration required
+- No authentication required
+- Fast (< 5 seconds vs 30+ seconds with Playwright)
+- Works on all platforms
+- Simple HTTP POST request
 
 Usage: /scrape-overtime [options]
 
 Examples:
-- /scrape-overtime (default: headless, with conversion)
-- /scrape-overtime --visible (show browser)
-- /scrape-overtime --no-proxy (skip proxy, current working config)
+- /scrape-overtime (scrape both NFL and NCAAF)
+- /scrape-overtime --nfl (scrape NFL only)
+- /scrape-overtime --ncaaf (scrape NCAAF only)
 
 This command will:
-1. Launch Playwright browser (Chromium)
-2. Authenticate with Overtime.ag credentials
-3. Navigate to NFL betting section
-4. Extract all available game lines
-5. Convert to Billy Walters format
-6. Optionally save to database
+1. Send HTTP POST to Overtime.ag API
+2. Receive JSON response with all game lines
+3. Convert to Billy Walters format
+4. Save to organized output directories
 
-Overtime.ag Technical Details:
-- Platform: AngularJS (vanilla JavaScript)
-- Real-time: WebSocket (wss://ws.ticosports.com/signalr)
-- Security: CloudFlare DDoS protection
-- Authentication: OV_CUSTOMER_ID + OV_PASSWORD
+**When to Run:**
+You can run this ANYTIME! Results vary by timing:
 
-Critical Selectors (for maintenance):
-- Login button: 'a.btn-signup' (use JavaScript click, element hidden)
-- NFL section: 'label' containing "NFL-Game/1H/2H/Qrts"
-- Team names: 'h4' with pattern '{rotation_number} {team_name}'
-- Betting buttons: 'button[ng-click*="SendLineToWager"]'
-- Account info: '[href*="dailyFigures"]'
+- **Tuesday-Wednesday**: 14+ NFL games, 50+ NCAAF games (OPTIMAL - most lines available)
+- **Thursday-Saturday**: Varies by week (some games available)
+- **Sunday-Monday**: Few/no pregame lines (games in progress, use live scraper instead)
 
-Data Extracted:
+The scraper returns whatever lines are currently posted - 0 games is normal on Sunday/Monday.
+
+**Command to Run (NEW - RECOMMENDED):**
+```bash
+# Both NFL and NCAAF
+uv run python scripts/scrapers/scrape_overtime_api.py
+
+# NFL only
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+
+# NCAAF only
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+```
+
+**Legacy Command (Browser-Based - DEPRECATED):**
+```bash
+uv run python scripts/archive/overtime_legacy/scrape_overtime_all.py --headless --convert --proxy ""
+```
+
+**Additional Options:**
+- `--nfl` - Scrape NFL only
+- `--ncaaf` - Scrape NCAAF only
+- `--output PATH` - Custom output directory (default: output/overtime)
+- `--no-save` - Don't save files (testing only)
+
+**Output Files (NEW FORMAT):**
+- **NFL**:
+  - Raw: `output/overtime/nfl/pregame/api_raw_TIMESTAMP.json`
+  - Walters: `output/overtime/nfl/pregame/api_walters_TIMESTAMP.json`
+- **NCAAF**:
+  - Raw: `output/overtime/ncaaf/pregame/api_raw_TIMESTAMP.json`
+  - Walters: `output/overtime/ncaaf/pregame/api_walters_TIMESTAMP.json`
+
+**Legacy Files (Browser-Based - DEPRECATED):**
+- NFL: `output/overtime/nfl/pregame/overtime_nfl_*.json`
+- NCAAF: `output/overtime/ncaaf/pregame/overtime_ncaaf_*.json`
+
+**Data Extracted:**
 - Current spread (home/away)
 - Current total (over/under)
 - Moneyline odds (home/away)
-- Game time
-- Rotation numbers
-- Multiple sportsbooks (if available)
+- Game time and rotation numbers
+- Multiple periods (full game, halves, quarters)
 
-Billy Walters Format Conversion:
+**Billy Walters Format Conversion:**
 - Converts rotation numbers to team names
 - Standardizes odds format (American to decimal)
 - Calculates implied probabilities
 - Extracts opening lines (if available)
 - Tracks line movements
 
-Optimal Scraping Schedule:
-- Tuesday-Wednesday: New week lines post after MNF
-- Thursday morning: Fresh lines before TNF
-- AVOID Sunday: Games in progress, lines down
+**Troubleshooting:**
+- **HTTP errors**: Check internet connection, API may be temporarily down
+- **0 games found**: NORMAL on Sunday/Monday (games in progress, pregame lines pulled)
+  - Try again Tuesday-Wednesday for optimal results
+  - Or use live scraper for in-game odds during games
+- **JSON decode errors**: Verify API response format hasn't changed
 
-Output Files:
-1. Raw format: output/overtime_nfl_raw_TIMESTAMP.json
-2. Billy Walters format: output/overtime_nfl_walters_TIMESTAMP.json
-3. Database: odds table (if --save-db flag)
+**Sports Covered:**
+- NFL (National Football League)
+- NCAAF (NCAA College Football)
 
-Example Output (Billy Walters Format):
+**Technical Details (NEW API METHOD):**
+- Endpoint: POST https://overtime.ag/sports/Api/Offering.asmx/GetSportOffering
+- Authentication: None required (public API)
+- Format: JSON request/response
+- Timeout: 30 seconds
+- No browser, no CloudFlare bypass, no proxy needed
+
+**API Payload Example:**
 ```json
 {
-  "scraped_at": "2025-11-13T14:30:00",
-  "week": 11,
-  "sport": "NFL",
-  "games": [
-    {
-      "game_id": "BUF_KC_2025_W11",
-      "home_team": "Kansas City Chiefs",
-      "away_team": "Buffalo Bills",
-      "game_time": "2025-11-17T13:00:00",
-      "spread": {
-        "home": -2.5,
-        "away": 2.5,
-        "juice": -110
-      },
-      "total": {
-        "over": 47.5,
-        "under": 47.5,
-        "juice": -110
-      },
-      "moneyline": {
-        "home": -135,
-        "away": 115
-      },
-      "opening_lines": {
-        "spread": -3.5,
-        "total": 48.5
-      },
-      "line_movement": {
-        "spread_change": 1.0,
-        "total_change": -1.0
-      }
-    }
-  ]
+  "sportType": "Football",
+  "sportSubType": "NFL",
+  "wagerType": "Straight Bet",
+  "hoursAdjustment": 0,
+  "periodNumber": 0,
+  "gameNum": null,
+  "parentGameNum": null,
+  "teaserName": "",
+  "requestMode": "G"
 }
 ```
 
-Troubleshooting:
-- Login fails: Update credentials in .env (OV_CUSTOMER_ID, OV_PASSWORD)
-- 0 games found: Run Tuesday-Thursday (lines down during games)
-- Proxy errors: Use --no-proxy flag (current working state)
-- Windows Unicode errors: Output cleaned automatically
+**Required Environment Variables:**
+- None (API is public)
 
-Command Options:
---headless: Run browser in background (default: True)
---convert: Convert to Billy Walters format (default: True)
---save-db: Save to database (default: False)
---proxy "": Skip proxy (recommended, default)
---output DIR: Custom output directory
-
-Required Environment Variables:
-- OV_CUSTOMER_ID (from .env)
-- OV_PASSWORD (from .env)
-
-Integration:
+**Integration:**
 - Step 6 in Billy Walters data collection workflow
 - Runs after injuries and weather
 - Feeds into edge detection analysis

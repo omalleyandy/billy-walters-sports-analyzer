@@ -1134,14 +1134,17 @@ def main():
                                 lon = weather_data.get("longitude")
 
                                 if lat and lon:
-
                                     # Define async helper to fetch alerts
                                     async def fetch_alerts():
                                         openweather = OpenWeatherClient()
                                         await openweather.connect()
                                         try:
-                                            alert_data = await openweather.get_weather_alerts(
-                                                lat=lat, lon=lon, game_time=game_time
+                                            alert_data = (
+                                                await openweather.get_weather_alerts(
+                                                    lat=lat,
+                                                    lon=lon,
+                                                    game_time=game_time,
+                                                )
                                             )
                                             return alert_data
                                         finally:
@@ -1160,9 +1163,7 @@ def main():
                                             f"Found {len(weather_alerts)} active weather alerts for {home_team}"
                                         )
                         except Exception as alert_error:
-                            logger.debug(
-                                f"Weather alerts unavailable: {alert_error}"
-                            )
+                            logger.debug(f"Weather alerts unavailable: {alert_error}")
 
                         # Calculate combined weather impact (conditions + alerts)
                         weather_impact = detector.calculate_weather_impact(

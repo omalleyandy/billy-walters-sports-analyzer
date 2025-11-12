@@ -1,0 +1,828 @@
+{
+  "metadata": {
+    "league": "NCAAF",
+    "generated_at": "2025-11-11T16:37:36.893777",
+    "hfa": 3.5,
+    "min_edge": 1.5,
+    "edges_found": 43
+  },
+  "edges": [
+    {
+      "game_id": "114535980",
+      "away_team": "Michigan State",
+      "home_team": "Penn State",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -20.4,
+      "market_line": -7.0,
+      "edge": -13.4,
+      "edge_abs": 13.4,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Penn State -7.0",
+      "rotation_numbers": {
+        "team1": 347,
+        "team2": 348
+      },
+      "total": 50.0
+    },
+    {
+      "game_id": "114535997",
+      "away_team": "UL Monroe",
+      "home_team": "South Alabama",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -14.6,
+      "market_line": -4.0,
+      "edge": -10.6,
+      "edge_abs": 10.6,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take South Alabama -4.0",
+      "rotation_numbers": {
+        "team1": 381,
+        "team2": 382
+      },
+      "total": 51.0
+    },
+    {
+      "game_id": "114535987",
+      "away_team": "Tulsa",
+      "home_team": "Oregon State",
+      "game_time": "11/15/2025 13:00",
+      "predicted_line": -12.9,
+      "market_line": -2.5,
+      "edge": -10.4,
+      "edge_abs": 10.4,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Oregon State -2.5",
+      "rotation_numbers": {
+        "team1": 361,
+        "team2": 362
+      },
+      "total": 48.5
+    },
+    {
+      "game_id": "114535973",
+      "away_team": "Georgia State",
+      "home_team": "Marshall",
+      "game_time": "11/15/2025 14:00",
+      "predicted_line": -15.7,
+      "market_line": -7.5,
+      "edge": -8.2,
+      "edge_abs": 8.2,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Marshall -7.5",
+      "rotation_numbers": {
+        "team1": 333,
+        "team2": 334
+      },
+      "total": 63.5
+    },
+    {
+      "game_id": "114536015",
+      "away_team": "Boise State",
+      "home_team": "San Diego State",
+      "game_time": "11/15/2025 22:30",
+      "predicted_line": 5.2,
+      "market_line": -3.0,
+      "edge": 8.2,
+      "edge_abs": 8.2,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Boise State +3.0",
+      "rotation_numbers": {
+        "team1": 417,
+        "team2": 418
+      },
+      "total": 41.0
+    },
+    {
+      "game_id": "114535989",
+      "away_team": "Central Florida",
+      "home_team": "Texas Tech",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -15.5,
+      "market_line": -23.5,
+      "edge": 8.0,
+      "edge_abs": 8.0,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Central Florida +23.5",
+      "rotation_numbers": {
+        "team1": 365,
+        "team2": 366
+      },
+      "total": 48.0
+    },
+    {
+      "game_id": "114535982",
+      "away_team": "Pittsburgh",
+      "home_team": "Notre Dame",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -19.0,
+      "market_line": -11.5,
+      "edge": -7.5,
+      "edge_abs": 7.5,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Notre Dame -11.5",
+      "rotation_numbers": {
+        "team1": 351,
+        "team2": 352
+      },
+      "total": 56.0
+    },
+    {
+      "game_id": "114536012",
+      "away_team": "Florida International",
+      "home_team": "Liberty",
+      "game_time": "11/15/2025 17:00",
+      "predicted_line": -10.3,
+      "market_line": -3.0,
+      "edge": -7.3,
+      "edge_abs": 7.3,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take Liberty -3.0",
+      "rotation_numbers": {
+        "team1": 411,
+        "team2": 412
+      },
+      "total": 51.5
+    },
+    {
+      "game_id": "114535960",
+      "away_team": "Massachusetts",
+      "home_team": "Northern Illinois",
+      "game_time": "11/12/2025 19:00",
+      "predicted_line": -18.0,
+      "market_line": -11.0,
+      "edge": -7.0,
+      "edge_abs": 7.0,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Northern Illinois -11.0",
+      "rotation_numbers": {
+        "team1": 305,
+        "team2": 306
+      },
+      "total": 44.0
+    },
+    {
+      "game_id": "114535995",
+      "away_team": "South Carolina",
+      "home_team": "Texas A&M",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -12.0,
+      "market_line": -19.0,
+      "edge": 7.0,
+      "edge_abs": 7.0,
+      "classification": "MAX BET",
+      "kelly_pct": 5.0,
+      "win_rate": "77%",
+      "recommendation": "Take South Carolina +19.0",
+      "rotation_numbers": {
+        "team1": 377,
+        "team2": 378
+      },
+      "total": 48.0
+    },
+    {
+      "game_id": "114535978",
+      "away_team": "Wisconsin",
+      "home_team": "Indiana",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -22.7,
+      "market_line": -29.5,
+      "edge": 6.8,
+      "edge_abs": 6.8,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Wisconsin +29.5",
+      "rotation_numbers": {
+        "team1": 343,
+        "team2": 344
+      },
+      "total": 44.0
+    },
+    {
+      "game_id": "114536001",
+      "away_team": "Jacksonville State",
+      "home_team": "Kennesaw State",
+      "game_time": "11/15/2025 20:00",
+      "predicted_line": 3.8,
+      "market_line": -3.0,
+      "edge": 6.8,
+      "edge_abs": 6.8,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Jacksonville State +3.0",
+      "rotation_numbers": {
+        "team1": 389,
+        "team2": 390
+      },
+      "total": 55.0
+    },
+    {
+      "game_id": "114536000",
+      "away_team": "Northwestern",
+      "home_team": "Michigan",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -18.0,
+      "market_line": -11.5,
+      "edge": -6.5,
+      "edge_abs": 6.5,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Michigan -11.5",
+      "rotation_numbers": {
+        "team1": 387,
+        "team2": 388
+      },
+      "total": 41.0
+    },
+    {
+      "game_id": "114535991",
+      "away_team": "Baylor",
+      "home_team": "Utah",
+      "game_time": "11/15/2025 19:00",
+      "predicted_line": -14.3,
+      "market_line": -8.0,
+      "edge": -6.3,
+      "edge_abs": 6.3,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Utah -8.0",
+      "rotation_numbers": {
+        "team1": 369,
+        "team2": 370
+      },
+      "total": 60.5
+    },
+    {
+      "game_id": "114535988",
+      "away_team": "Texas State",
+      "home_team": "Southern Miss",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": 0.8,
+      "market_line": -5.0,
+      "edge": 5.8,
+      "edge_abs": 5.8,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Texas State +5.0",
+      "rotation_numbers": {
+        "team1": 363,
+        "team2": 364
+      },
+      "total": 66.0
+    },
+    {
+      "game_id": "114535985",
+      "away_team": "Oklahoma",
+      "home_team": "Alabama",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -11.5,
+      "market_line": -6.0,
+      "edge": -5.5,
+      "edge_abs": 5.5,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Alabama -6.0",
+      "rotation_numbers": {
+        "team1": 357,
+        "team2": 358
+      },
+      "total": 46.0
+    },
+    {
+      "game_id": "114536014",
+      "away_team": "Louisiana Tech",
+      "home_team": "Washington State",
+      "game_time": "11/15/2025 22:00",
+      "predicted_line": -12.9,
+      "market_line": -7.5,
+      "edge": -5.4,
+      "edge_abs": 5.4,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Washington State -7.5",
+      "rotation_numbers": {
+        "team1": 415,
+        "team2": 416
+      },
+      "total": 45.0
+    },
+    {
+      "game_id": "114535986",
+      "away_team": "Sam Houston St",
+      "home_team": "Delaware",
+      "game_time": "11/15/2025 19:00",
+      "predicted_line": -4.4,
+      "market_line": -9.5,
+      "edge": 5.1,
+      "edge_abs": 5.1,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Sam Houston St +9.5",
+      "rotation_numbers": {
+        "team1": 359,
+        "team2": 360
+      },
+      "total": 56.5
+    },
+    {
+      "game_id": "114535963",
+      "away_team": "Troy",
+      "home_team": "Old Dominion",
+      "game_time": "11/13/2025 19:30",
+      "predicted_line": -6.3,
+      "market_line": -11.0,
+      "edge": 4.7,
+      "edge_abs": 4.7,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Troy +11.0",
+      "rotation_numbers": {
+        "team1": 313,
+        "team2": 314
+      },
+      "total": 52.5
+    },
+    {
+      "game_id": "114535970",
+      "away_team": "Appalachian State",
+      "home_team": "James Madison",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -16.6,
+      "market_line": -21.0,
+      "edge": 4.4,
+      "edge_abs": 4.4,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Appalachian State +21.0",
+      "rotation_numbers": {
+        "team1": 327,
+        "team2": 328
+      },
+      "total": 53.5
+    },
+    {
+      "game_id": "114535999",
+      "away_team": "Maryland",
+      "home_team": "Illinois",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -10.4,
+      "market_line": -14.5,
+      "edge": 4.1,
+      "edge_abs": 4.1,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Maryland +14.5",
+      "rotation_numbers": {
+        "team1": 385,
+        "team2": 386
+      },
+      "total": 53.5
+    },
+    {
+      "game_id": "114536002",
+      "away_team": "Colorado State",
+      "home_team": "New Mexico",
+      "game_time": "11/15/2025 15:00",
+      "predicted_line": -10.4,
+      "market_line": -14.5,
+      "edge": 4.1,
+      "edge_abs": 4.1,
+      "classification": "STRONG",
+      "kelly_pct": 3.0,
+      "win_rate": "64%",
+      "recommendation": "Take Colorado State +14.5",
+      "rotation_numbers": {
+        "team1": 391,
+        "team2": 392
+      },
+      "total": 53.5
+    },
+    {
+      "game_id": "114535961",
+      "away_team": "Miami Ohio",
+      "home_team": "Toledo",
+      "game_time": "11/12/2025 19:00",
+      "predicted_line": -7.3,
+      "market_line": -3.5,
+      "edge": -3.8,
+      "edge_abs": 3.8,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Toledo -3.5",
+      "rotation_numbers": {
+        "team1": 307,
+        "team2": 308
+      },
+      "total": 45.0
+    },
+    {
+      "game_id": "114535996",
+      "away_team": "Arkansas",
+      "home_team": "LSU",
+      "game_time": "11/15/2025 12:45",
+      "predicted_line": -9.1,
+      "market_line": -5.5,
+      "edge": -3.6,
+      "edge_abs": 3.6,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take LSU -5.5",
+      "rotation_numbers": {
+        "team1": 379,
+        "team2": 380
+      },
+      "total": 56.0
+    },
+    {
+      "game_id": "114535977",
+      "away_team": "Virginia Tech",
+      "home_team": "Florida State",
+      "game_time": "11/15/2025 19:30",
+      "predicted_line": -10.0,
+      "market_line": -13.5,
+      "edge": 3.5,
+      "edge_abs": 3.5,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Virginia Tech +13.5",
+      "rotation_numbers": {
+        "team1": 341,
+        "team2": 342
+      },
+      "total": 55.0
+    },
+    {
+      "game_id": "114535958",
+      "away_team": "Ohio",
+      "home_team": "Western Michigan",
+      "game_time": "11/11/2025 20:00",
+      "predicted_line": 2.3,
+      "market_line": -1.0,
+      "edge": 3.3,
+      "edge_abs": 3.3,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Ohio +1.0",
+      "rotation_numbers": {
+        "team1": 301,
+        "team2": 302
+      },
+      "total": 47.0
+    },
+    {
+      "game_id": "114535968",
+      "away_team": "Charlotte",
+      "home_team": "UTSA",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -21.7,
+      "market_line": -18.5,
+      "edge": -3.2,
+      "edge_abs": 3.2,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take UTSA -18.5",
+      "rotation_numbers": {
+        "team1": 323,
+        "team2": 324
+      },
+      "total": 59.5
+    },
+    {
+      "game_id": "114535967",
+      "away_team": "Air Force",
+      "home_team": "Connecticut",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -3.9,
+      "market_line": -7.0,
+      "edge": 3.1,
+      "edge_abs": 3.1,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Air Force +7.0",
+      "rotation_numbers": {
+        "team1": 321,
+        "team2": 322
+      },
+      "total": 63.0
+    },
+    {
+      "game_id": "114535972",
+      "away_team": "Memphis",
+      "home_team": "East Carolina",
+      "game_time": "11/15/2025 16:00",
+      "predicted_line": -0.2,
+      "market_line": -3.0,
+      "edge": 2.8,
+      "edge_abs": 2.8,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Memphis +3.0",
+      "rotation_numbers": {
+        "team1": 331,
+        "team2": 332
+      },
+      "total": 59.0
+    },
+    {
+      "game_id": "114535959",
+      "away_team": "Kent State",
+      "home_team": "Akron",
+      "game_time": "11/11/2025 19:30",
+      "predicted_line": -9.7,
+      "market_line": -7.0,
+      "edge": -2.7,
+      "edge_abs": 2.7,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Akron -7.0",
+      "rotation_numbers": {
+        "team1": 303,
+        "team2": 304
+      },
+      "total": 49.0
+    },
+    {
+      "game_id": "114536005",
+      "away_team": "UTEP",
+      "home_team": "Missouri St",
+      "game_time": "11/15/2025 15:00",
+      "predicted_line": -7.2,
+      "market_line": -4.5,
+      "edge": -2.7,
+      "edge_abs": 2.7,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Missouri St -4.5",
+      "rotation_numbers": {
+        "team1": 397,
+        "team2": 398
+      },
+      "total": 48.0
+    },
+    {
+      "game_id": "114536010",
+      "away_team": "Nevada",
+      "home_team": "San Jose State",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -11.7,
+      "market_line": -9.0,
+      "edge": -2.7,
+      "edge_abs": 2.7,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take San Jose State -9.0",
+      "rotation_numbers": {
+        "team1": 407,
+        "team2": 408
+      },
+      "total": 52.5
+    },
+    {
+      "game_id": "114536013",
+      "away_team": "Utah State",
+      "home_team": "UNLV",
+      "game_time": "11/15/2025 19:00",
+      "predicted_line": -8.7,
+      "market_line": -6.0,
+      "edge": -2.7,
+      "edge_abs": 2.7,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take UNLV -6.0",
+      "rotation_numbers": {
+        "team1": 413,
+        "team2": 414
+      },
+      "total": 71.0
+    },
+    {
+      "game_id": "114535984",
+      "away_team": "Ball State",
+      "home_team": "Eastern Michigan",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -5.1,
+      "market_line": -2.5,
+      "edge": -2.6,
+      "edge_abs": 2.6,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Eastern Michigan -2.5",
+      "rotation_numbers": {
+        "team1": 355,
+        "team2": 356
+      },
+      "total": 50.5
+    },
+    {
+      "game_id": "114535992",
+      "away_team": "Florida",
+      "home_team": "Mississippi",
+      "game_time": "11/15/2025 19:00",
+      "predicted_line": -13.9,
+      "market_line": -16.5,
+      "edge": 2.6,
+      "edge_abs": 2.6,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Florida +16.5",
+      "rotation_numbers": {
+        "team1": 371,
+        "team2": 372
+      },
+      "total": 54.0
+    },
+    {
+      "game_id": "114535993",
+      "away_team": "Mississippi State",
+      "home_team": "Missouri",
+      "game_time": "11/15/2025 19:45",
+      "predicted_line": -9.6,
+      "market_line": -7.0,
+      "edge": -2.6,
+      "edge_abs": 2.6,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Missouri -7.0",
+      "rotation_numbers": {
+        "team1": 373,
+        "team2": 374
+      },
+      "total": 51.5
+    },
+    {
+      "game_id": "114535962",
+      "away_team": "Buffalo",
+      "home_team": "Central Michigan",
+      "game_time": "11/12/2025 19:00",
+      "predicted_line": -3.4,
+      "market_line": -1.0,
+      "edge": -2.4,
+      "edge_abs": 2.4,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Central Michigan -1.0",
+      "rotation_numbers": {
+        "team1": 309,
+        "team2": 310
+      },
+      "total": 43.0
+    },
+    {
+      "game_id": "114535965",
+      "away_team": "Minnesota",
+      "home_team": "Oregon",
+      "game_time": "11/14/2025 21:00",
+      "predicted_line": -22.6,
+      "market_line": -25.0,
+      "edge": 2.4,
+      "edge_abs": 2.4,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Minnesota +25.0",
+      "rotation_numbers": {
+        "team1": 317,
+        "team2": 318
+      },
+      "total": 44.0
+    },
+    {
+      "game_id": "114536009",
+      "away_team": "Middle Tennessee State",
+      "home_team": "Western Kentucky",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -15.9,
+      "market_line": -13.5,
+      "edge": -2.4,
+      "edge_abs": 2.4,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Western Kentucky -13.5",
+      "rotation_numbers": {
+        "team1": 405,
+        "team2": 406
+      },
+      "total": 56.5
+    },
+    {
+      "game_id": "114535976",
+      "away_team": "Virginia",
+      "home_team": "Duke",
+      "game_time": "11/15/2025 15:30",
+      "predicted_line": -3.8,
+      "market_line": -6.0,
+      "edge": 2.2,
+      "edge_abs": 2.2,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Virginia +6.0",
+      "rotation_numbers": {
+        "team1": 339,
+        "team2": 340
+      },
+      "total": 57.5
+    },
+    {
+      "game_id": "114536006",
+      "away_team": "Wyoming",
+      "home_team": "Fresno State",
+      "game_time": "11/15/2025 22:30",
+      "predicted_line": -5.7,
+      "market_line": -3.5,
+      "edge": -2.2,
+      "edge_abs": 2.2,
+      "classification": "MODERATE",
+      "kelly_pct": 2.0,
+      "win_rate": "58%",
+      "recommendation": "Take Fresno State -3.5",
+      "rotation_numbers": {
+        "team1": 399,
+        "team2": 400
+      },
+      "total": 40.0
+    },
+    {
+      "game_id": "114535971",
+      "away_team": "Arizona",
+      "home_team": "Cincinnati",
+      "game_time": "11/15/2025 12:00",
+      "predicted_line": -4.7,
+      "market_line": -6.5,
+      "edge": 1.8,
+      "edge_abs": 1.8,
+      "classification": "LEAN",
+      "kelly_pct": 1.0,
+      "win_rate": "54%",
+      "recommendation": "Take Arizona +6.5",
+      "rotation_numbers": {
+        "team1": 329,
+        "team2": 330
+      },
+      "total": 56.0
+    },
+    {
+      "game_id": "114535983",
+      "away_team": "North Carolina",
+      "home_team": "Wake Forest",
+      "game_time": "11/15/2025 16:30",
+      "predicted_line": -4.5,
+      "market_line": -6.0,
+      "edge": 1.5,
+      "edge_abs": 1.5,
+      "classification": "LEAN",
+      "kelly_pct": 1.0,
+      "win_rate": "54%",
+      "recommendation": "Take North Carolina +6.0",
+      "rotation_numbers": {
+        "team1": 353,
+        "team2": 354
+      },
+      "total": 38.5
+    }
+  ]
+}

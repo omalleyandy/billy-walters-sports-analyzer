@@ -1,0 +1,501 @@
+================================================================================
+BILLY WALTERS NCAAF EDGE DETECTION REPORT
+Generated: 2025-11-11 16:37:36
+================================================================================
+
+=== MAX BET (9 games) ===
+
+Game: Michigan State @ Penn State
+Time: 11/15/2025 15:30
+Rotation: 347/348
+Predicted Line: Penn State -20.4
+Market Line: Penn State -7.0
+Edge: -13.4 points
+Recommendation: Take Penn State -7.0
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 50.0
+
+Game: UL Monroe @ South Alabama
+Time: 11/15/2025 15:30
+Rotation: 381/382
+Predicted Line: South Alabama -14.6
+Market Line: South Alabama -4.0
+Edge: -10.6 points
+Recommendation: Take South Alabama -4.0
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 51.0
+
+Game: Tulsa @ Oregon State
+Time: 11/15/2025 13:00
+Rotation: 361/362
+Predicted Line: Oregon State -12.9
+Market Line: Oregon State -2.5
+Edge: -10.4 points
+Recommendation: Take Oregon State -2.5
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 48.5
+
+Game: Georgia State @ Marshall
+Time: 11/15/2025 14:00
+Rotation: 333/334
+Predicted Line: Marshall -15.7
+Market Line: Marshall -7.5
+Edge: -8.2 points
+Recommendation: Take Marshall -7.5
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 63.5
+
+Game: Boise State @ San Diego State
+Time: 11/15/2025 22:30
+Rotation: 417/418
+Predicted Line: San Diego State 5.2
+Market Line: San Diego State -3.0
+Edge: 8.2 points
+Recommendation: Take Boise State +3.0
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 41.0
+
+Game: Central Florida @ Texas Tech
+Time: 11/15/2025 15:30
+Rotation: 365/366
+Predicted Line: Texas Tech -15.5
+Market Line: Texas Tech -23.5
+Edge: 8.0 points
+Recommendation: Take Central Florida +23.5
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 48.0
+
+Game: Pittsburgh @ Notre Dame
+Time: 11/15/2025 12:00
+Rotation: 351/352
+Predicted Line: Notre Dame -19.0
+Market Line: Notre Dame -11.5
+Edge: -7.5 points
+Recommendation: Take Notre Dame -11.5
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 56.0
+
+Game: Florida International @ Liberty
+Time: 11/15/2025 17:00
+Rotation: 411/412
+Predicted Line: Liberty -10.3
+Market Line: Liberty -3.0
+Edge: -7.3 points
+Recommendation: Take Liberty -3.0
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 51.5
+
+Game: South Carolina @ Texas A&M
+Time: 11/15/2025 12:00
+Rotation: 377/378
+Predicted Line: Texas A&M -12.0
+Market Line: Texas A&M -19.0
+Edge: 7.0 points
+Recommendation: Take South Carolina +19.0
+Kelly %: 5.0% of bankroll
+Expected Win Rate: 77%
+Total: 48.0
+
+=== STRONG (13 games) ===
+
+Game: Massachusetts @ Northern Illinois
+Time: 11/12/2025 19:00
+Rotation: 305/306
+Predicted Line: Northern Illinois -18.0
+Market Line: Northern Illinois -11.0
+Edge: -7.0 points
+Recommendation: Take Northern Illinois -11.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 44.0
+
+Game: Wisconsin @ Indiana
+Time: 11/15/2025 12:00
+Rotation: 343/344
+Predicted Line: Indiana -22.7
+Market Line: Indiana -29.5
+Edge: 6.8 points
+Recommendation: Take Wisconsin +29.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 44.0
+
+Game: Jacksonville State @ Kennesaw State
+Time: 11/15/2025 20:00
+Rotation: 389/390
+Predicted Line: Kennesaw State 3.8
+Market Line: Kennesaw State -3.0
+Edge: 6.8 points
+Recommendation: Take Jacksonville State +3.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 55.0
+
+Game: Northwestern @ Michigan
+Time: 11/15/2025 12:00
+Rotation: 387/388
+Predicted Line: Michigan -18.0
+Market Line: Michigan -11.5
+Edge: -6.5 points
+Recommendation: Take Michigan -11.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 41.0
+
+Game: Baylor @ Utah
+Time: 11/15/2025 19:00
+Rotation: 369/370
+Predicted Line: Utah -14.3
+Market Line: Utah -8.0
+Edge: -6.3 points
+Recommendation: Take Utah -8.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 60.5
+
+Game: Texas State @ Southern Miss
+Time: 11/15/2025 15:30
+Rotation: 363/364
+Predicted Line: Southern Miss 0.8
+Market Line: Southern Miss -5.0
+Edge: 5.8 points
+Recommendation: Take Texas State +5.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 66.0
+
+Game: Oklahoma @ Alabama
+Time: 11/15/2025 15:30
+Rotation: 357/358
+Predicted Line: Alabama -11.5
+Market Line: Alabama -6.0
+Edge: -5.5 points
+Recommendation: Take Alabama -6.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 46.0
+
+Game: Louisiana Tech @ Washington State
+Time: 11/15/2025 22:00
+Rotation: 415/416
+Predicted Line: Washington State -12.9
+Market Line: Washington State -7.5
+Edge: -5.4 points
+Recommendation: Take Washington State -7.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 45.0
+
+Game: Sam Houston St @ Delaware
+Time: 11/15/2025 19:00
+Rotation: 359/360
+Predicted Line: Delaware -4.4
+Market Line: Delaware -9.5
+Edge: 5.1 points
+Recommendation: Take Sam Houston St +9.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 56.5
+
+Game: Troy @ Old Dominion
+Time: 11/13/2025 19:30
+Rotation: 313/314
+Predicted Line: Old Dominion -6.3
+Market Line: Old Dominion -11.0
+Edge: 4.7 points
+Recommendation: Take Troy +11.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 52.5
+
+Game: Appalachian State @ James Madison
+Time: 11/15/2025 15:30
+Rotation: 327/328
+Predicted Line: James Madison -16.6
+Market Line: James Madison -21.0
+Edge: 4.4 points
+Recommendation: Take Appalachian State +21.0
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 53.5
+
+Game: Maryland @ Illinois
+Time: 11/15/2025 15:30
+Rotation: 385/386
+Predicted Line: Illinois -10.4
+Market Line: Illinois -14.5
+Edge: 4.1 points
+Recommendation: Take Maryland +14.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 53.5
+
+Game: Colorado State @ New Mexico
+Time: 11/15/2025 15:00
+Rotation: 391/392
+Predicted Line: New Mexico -10.4
+Market Line: New Mexico -14.5
+Edge: 4.1 points
+Recommendation: Take Colorado State +14.5
+Kelly %: 3.0% of bankroll
+Expected Win Rate: 64%
+Total: 53.5
+
+=== MODERATE (19 games) ===
+
+Game: Miami Ohio @ Toledo
+Time: 11/12/2025 19:00
+Rotation: 307/308
+Predicted Line: Toledo -7.3
+Market Line: Toledo -3.5
+Edge: -3.8 points
+Recommendation: Take Toledo -3.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 45.0
+
+Game: Arkansas @ LSU
+Time: 11/15/2025 12:45
+Rotation: 379/380
+Predicted Line: LSU -9.1
+Market Line: LSU -5.5
+Edge: -3.6 points
+Recommendation: Take LSU -5.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 56.0
+
+Game: Virginia Tech @ Florida State
+Time: 11/15/2025 19:30
+Rotation: 341/342
+Predicted Line: Florida State -10.0
+Market Line: Florida State -13.5
+Edge: 3.5 points
+Recommendation: Take Virginia Tech +13.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 55.0
+
+Game: Ohio @ Western Michigan
+Time: 11/11/2025 20:00
+Rotation: 301/302
+Predicted Line: Western Michigan 2.3
+Market Line: Western Michigan -1.0
+Edge: 3.3 points
+Recommendation: Take Ohio +1.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 47.0
+
+Game: Charlotte @ UTSA
+Time: 11/15/2025 12:00
+Rotation: 323/324
+Predicted Line: UTSA -21.7
+Market Line: UTSA -18.5
+Edge: -3.2 points
+Recommendation: Take UTSA -18.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 59.5
+
+Game: Air Force @ Connecticut
+Time: 11/15/2025 12:00
+Rotation: 321/322
+Predicted Line: Connecticut -3.9
+Market Line: Connecticut -7.0
+Edge: 3.1 points
+Recommendation: Take Air Force +7.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 63.0
+
+Game: Memphis @ East Carolina
+Time: 11/15/2025 16:00
+Rotation: 331/332
+Predicted Line: East Carolina -0.2
+Market Line: East Carolina -3.0
+Edge: 2.8 points
+Recommendation: Take Memphis +3.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 59.0
+
+Game: Kent State @ Akron
+Time: 11/11/2025 19:30
+Rotation: 303/304
+Predicted Line: Akron -9.7
+Market Line: Akron -7.0
+Edge: -2.7 points
+Recommendation: Take Akron -7.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 49.0
+
+Game: UTEP @ Missouri St
+Time: 11/15/2025 15:00
+Rotation: 397/398
+Predicted Line: Missouri St -7.2
+Market Line: Missouri St -4.5
+Edge: -2.7 points
+Recommendation: Take Missouri St -4.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 48.0
+
+Game: Nevada @ San Jose State
+Time: 11/15/2025 15:30
+Rotation: 407/408
+Predicted Line: San Jose State -11.7
+Market Line: San Jose State -9.0
+Edge: -2.7 points
+Recommendation: Take San Jose State -9.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 52.5
+
+Game: Utah State @ UNLV
+Time: 11/15/2025 19:00
+Rotation: 413/414
+Predicted Line: UNLV -8.7
+Market Line: UNLV -6.0
+Edge: -2.7 points
+Recommendation: Take UNLV -6.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 71.0
+
+Game: Ball State @ Eastern Michigan
+Time: 11/15/2025 12:00
+Rotation: 355/356
+Predicted Line: Eastern Michigan -5.1
+Market Line: Eastern Michigan -2.5
+Edge: -2.6 points
+Recommendation: Take Eastern Michigan -2.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 50.5
+
+Game: Florida @ Mississippi
+Time: 11/15/2025 19:00
+Rotation: 371/372
+Predicted Line: Mississippi -13.9
+Market Line: Mississippi -16.5
+Edge: 2.6 points
+Recommendation: Take Florida +16.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 54.0
+
+Game: Mississippi State @ Missouri
+Time: 11/15/2025 19:45
+Rotation: 373/374
+Predicted Line: Missouri -9.6
+Market Line: Missouri -7.0
+Edge: -2.6 points
+Recommendation: Take Missouri -7.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 51.5
+
+Game: Buffalo @ Central Michigan
+Time: 11/12/2025 19:00
+Rotation: 309/310
+Predicted Line: Central Michigan -3.4
+Market Line: Central Michigan -1.0
+Edge: -2.4 points
+Recommendation: Take Central Michigan -1.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 43.0
+
+Game: Minnesota @ Oregon
+Time: 11/14/2025 21:00
+Rotation: 317/318
+Predicted Line: Oregon -22.6
+Market Line: Oregon -25.0
+Edge: 2.4 points
+Recommendation: Take Minnesota +25.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 44.0
+
+Game: Middle Tennessee State @ Western Kentucky
+Time: 11/15/2025 15:30
+Rotation: 405/406
+Predicted Line: Western Kentucky -15.9
+Market Line: Western Kentucky -13.5
+Edge: -2.4 points
+Recommendation: Take Western Kentucky -13.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 56.5
+
+Game: Virginia @ Duke
+Time: 11/15/2025 15:30
+Rotation: 339/340
+Predicted Line: Duke -3.8
+Market Line: Duke -6.0
+Edge: 2.2 points
+Recommendation: Take Virginia +6.0
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 57.5
+
+Game: Wyoming @ Fresno State
+Time: 11/15/2025 22:30
+Rotation: 399/400
+Predicted Line: Fresno State -5.7
+Market Line: Fresno State -3.5
+Edge: -2.2 points
+Recommendation: Take Fresno State -3.5
+Kelly %: 2.0% of bankroll
+Expected Win Rate: 58%
+Total: 40.0
+
+=== LEAN (2 games) ===
+
+Game: Arizona @ Cincinnati
+Time: 11/15/2025 12:00
+Rotation: 329/330
+Predicted Line: Cincinnati -4.7
+Market Line: Cincinnati -6.5
+Edge: 1.8 points
+Recommendation: Take Arizona +6.5
+Kelly %: 1.0% of bankroll
+Expected Win Rate: 54%
+Total: 56.0
+
+Game: North Carolina @ Wake Forest
+Time: 11/15/2025 16:30
+Rotation: 353/354
+Predicted Line: Wake Forest -4.5
+Market Line: Wake Forest -6.0
+Edge: 1.5 points
+Recommendation: Take North Carolina +6.0
+Kelly %: 1.0% of bankroll
+Expected Win Rate: 54%
+Total: 38.5
+
+================================================================================
+BILLY WALTERS METHODOLOGY
+================================================================================
+Home Field Advantage: 3.5 points (higher than NFL 2.5)
+Minimum Edge: 1.5 points
+
+Edge Thresholds:
+  MAX BET (7+ pts): 5% Kelly, 77% historical win rate
+  STRONG (4-7 pts): 3% Kelly, 64% historical win rate
+  MODERATE (2-4 pts): 2% Kelly, 58% historical win rate
+  LEAN (1.5-2 pts): 1% Kelly, 54% historical win rate
+
+Success Metric: Closing Line Value (CLV), not win/loss %
+Target CLV: +1.5 points average (professional threshold)
+================================================================================

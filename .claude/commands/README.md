@@ -69,6 +69,87 @@ Fetch current season statistics for teams.
 
 ---
 
+#### `/espn-ncaaf` - ESPN Hub DevTools Capture
+Use Chrome DevTools to copy the JSON feeds that power https://www.espn.com/college-football/.
+```bash
+/espn-ncaaf --week 12 --date 20251116 --group 80
+```
+
+**What it does:**
+- Captures the `scoreboard` payload (events, odds, injuries)
+- Pulls AP/Coaches/CFP rankings via the `rankings` endpoint
+- Copies standings references from `sports.core` `/standings/0`
+- Saves the headline/news feed for narrative context
+
+**Workflow:**
+1. Open DevTools → Network (Preserve log), filter by `college-football`.
+2. Hard-reload and copy each XHR as fetch/curl.
+3. Replace `.pvt` hosts with `.com` before replaying via CLI.
+
+**When to run:** Anytime the hub shuffles modules (Monday morning + Thursday evening recommended).
+
+---
+
+#### `/espn-ncaaf-scoreboard` - Full Scoreboard Harvest
+Mirror all XHRs from https://www.espn.com/college-football/scoreboard.
+```bash
+/espn-ncaaf-scoreboard --week 12 --limit 400 --groups 80
+```
+
+**What it does:**
+- Downloads the master scoreboard feed for any week/date
+- Follows each `event` into `summary`, `plays`, and `probabilities`
+- Archives raw + normalized tables for odds and win percentages
+
+**Workflow:**
+1. Keep DevTools open while switching weeks—each change replays `scoreboard`.
+2. Copy additional calls (summary, win probability) per event ID.
+3. Store JSON under `data/raw/espn/scoreboard/<date>/`.
+
+**When to run:** Daily during the season; refresh every 15 minutes on live game days.
+
+---
+
+#### `/espn-player-stats` - Player Leaderboards
+Reverse engineer the ESPN player stats tab for season/weekly leaders.
+```bash
+/espn-player-stats --season 2025 --type reg --group 80 --category passingYards
+```
+
+**What it does:**
+- Hits `sports.core` `/leaders` endpoint for passing, rushing, defense, etc.
+- Follows `$ref`s to grab athlete bios and full stat splits
+- Builds CSV/parquet for top-N players per category
+
+**Workflow:**
+1. In DevTools, filter by `leaders`, switch categories to trigger new calls.
+2. Copy as fetch, replay outside the browser (swap `.pvt` → `.com`).
+3. Save both the leaders payload and enriched athlete stats.
+
+**When to run:** Tuesday (post-stat update) + Saturday morning before edges finalize.
+
+---
+
+#### `/espn-team-stats` - Team Efficiency Tables
+Capture the team-tab XHR traffic for offense/defense splits.
+```bash
+/espn-team-stats --season 2025 --type reg --group 80
+```
+
+**What it does:**
+- Downloads `teams?groups=80` directory and every `teams/{id}/statistics`
+- Pulls per-team leaders for quick “star player” references
+- Feeds ResearchEngine with ESPN’s per-game values for validation
+
+**Workflow:**
+1. Use DevTools to copy `teams/{id}/statistics?season=YYYY` requests.
+2. Iterate every FBS team (respect ~2 req/sec).
+3. Flatten categories (passing, rushing, defense, efficiency) into parquet.
+
+**When to run:** Tuesday (after stats settle) or whenever power ratings require recalibration.
+
+---
+
 #### `/injury-report` - Billy Walters Injury Analysis
 Analyze injuries with position-specific point values.
 ```bash

@@ -36,12 +36,13 @@ Step 5: Weather Forecasts (Game Context)
 - Game-time forecasts
 - Indoor vs outdoor stadium
 
-Step 6: Odds Data (Market Lines)
-- Overtime.ag scraper (primary)
+Step 6: Odds Data (Market Lines) - **UPDATED 2025-11-11: Now using API method**
+- Overtime.ag API (primary) - NEW: Direct API access, no browser required
 - Action Network scraper (sharp action)
 - Opening lines
 - Current lines
 - Line movement tracking
+- Fast (< 5 seconds vs 30+ seconds with browser)
 
 Step 7: Billy Walters Analysis
 - Edge detection (spreads)
@@ -79,9 +80,10 @@ Saved Data Locations:
 - data/current/nfl_week_N_odds_action.json
 - output/overtime_nfl_walters_TIMESTAMP.json
 
-Automation:
+Recommended Timing (Manual Execution):
 Run this command Tuesday-Wednesday for best results:
 - New week lines post after Monday Night Football
 - Fresh injury reports
 - Weather forecasts available
 - Optimal for weekly analysis
+- NOTE: No scheduled automation - run manually on-demand when ready

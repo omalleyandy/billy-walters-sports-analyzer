@@ -150,6 +150,114 @@ class MonitoringConfig(BaseModel):
     metrics: MetricsConfig = Field(default_factory=MetricsConfig)
 
 
+# ==================== Output Directory Configuration ====================
+
+
+class OutputDirectoryConfig(BaseModel):
+    """
+    Output directory structure for organized data storage.
+
+    All paths can be overridden via environment variables:
+    - OUTPUT_DIR (main output directory)
+    - OVERTIME_NFL_DIR, OVERTIME_NCAA_DIR (source-specific)
+    - OUTPUT_NFL_SCHEDULE, OUTPUT_NCAA_SCHEDULE (analysis outputs)
+    - etc.
+
+    Environment variables take precedence over defaults.
+    """
+
+    # Main output directory
+    output_dir: Path = Field(default_factory=lambda: Path("output"))
+
+    # Source-specific output directories (NFL)
+    overtime_nfl_dir: Path = Field(default_factory=lambda: Path("output/overtime/nfl"))
+    liveplus_nfl_dir: Path = Field(default_factory=lambda: Path("output/liveplus/nfl"))
+    massey_nfl_dir: Path = Field(default_factory=lambda: Path("output/massey/nfl"))
+    espn_nfl_dir: Path = Field(default_factory=lambda: Path("output/espn/nfl"))
+    openodds_nfl_dir: Path = Field(default_factory=lambda: Path("output/openodds/nfl"))
+    highlightly_nfl_dir: Path = Field(
+        default_factory=lambda: Path("output/highlightly/nfl")
+    )
+
+    # Source-specific output directories (NCAAF)
+    overtime_ncaaf_dir: Path = Field(
+        default_factory=lambda: Path("output/overtime/ncaaf")
+    )
+    liveplus_ncaaf_dir: Path = Field(
+        default_factory=lambda: Path("output/liveplus/ncaaf")
+    )
+    massey_ncaaf_dir: Path = Field(default_factory=lambda: Path("output/massey/ncaaf"))
+    espn_ncaaf_dir: Path = Field(default_factory=lambda: Path("output/espn/ncaaf"))
+    openodds_ncaaf_dir: Path = Field(
+        default_factory=lambda: Path("output/openodds/ncaaf")
+    )
+    highlightly_ncaaf_dir: Path = Field(
+        default_factory=lambda: Path("output/highlightly/ncaaf")
+    )
+
+    # Analysis output directories (NFL)
+    output_nfl_schedule: Path = Field(
+        default_factory=lambda: Path("output/schedule/nfl")
+    )
+    output_nfl_injuries: Path = Field(
+        default_factory=lambda: Path("output/injuries/nfl")
+    )
+    output_nfl_odds: Path = Field(default_factory=lambda: Path("output/odds/nfl"))
+    output_nfl_power_ratings: Path = Field(
+        default_factory=lambda: Path("output/power_ratings/nfl")
+    )
+    output_nfl_cards: Path = Field(default_factory=lambda: Path("output/cards/nfl"))
+
+    # Analysis output directories (NCAAF)
+    output_ncaaf_schedule: Path = Field(
+        default_factory=lambda: Path("output/schedule/ncaaf")
+    )
+    output_ncaaf_injuries: Path = Field(
+        default_factory=lambda: Path("output/injuries/ncaaf")
+    )
+    output_ncaaf_odds: Path = Field(default_factory=lambda: Path("output/odds/ncaaf"))
+    output_ncaaf_power_ratings: Path = Field(
+        default_factory=lambda: Path("output/power_ratings/ncaaf")
+    )
+    output_ncaaf_cards: Path = Field(default_factory=lambda: Path("output/cards/ncaaf"))
+
+    def get_source_dir(self, source: str, league: str) -> Path:
+        """
+        Get output directory for a specific source and league.
+
+        Args:
+            source: Data source (overtime, massey, espn, etc.)
+            league: League (nfl, ncaaf)
+
+        Returns:
+            Path to source-specific output directory
+        """
+        attr_name = f"{source.lower()}_{league.lower()}_dir"
+        return getattr(self, attr_name, self.output_dir / source / league)
+
+    def get_analysis_dir(self, analysis_type: str, league: str) -> Path:
+        """
+        Get output directory for a specific analysis type and league.
+
+        Args:
+            analysis_type: Analysis type (schedule, injuries, odds, power_ratings, cards)
+            league: League (nfl, ncaaf)
+
+        Returns:
+            Path to analysis output directory
+        """
+        attr_name = f"output_{league.lower()}_{analysis_type.lower()}"
+        return getattr(
+            self, attr_name, self.output_dir / analysis_type / league.lower()
+        )
+
+    def ensure_directories_exist(self) -> None:
+        """Create all output directories if they don't exist."""
+        for field_name, field_value in self.model_dump().items():
+            if isinstance(field_value, Path):
+                field_value.mkdir(parents=True, exist_ok=True)
+
+
 # ==================== Global Settings ====================
 
 
@@ -198,32 +306,62 @@ class Settings(BaseSettings):
 
     # ==================== Environment Variables ====================
 
-    # Overtime.ag credentials
+    # Overtime.ag credentials (supports both OV_PASSWORD and OV_CUSTOMER_PASSWORD)
     ov_customer_id: Optional[str] = Field(default=None, alias="OV_CUSTOMER_ID")
     ov_customer_password: Optional[str] = Field(
         default=None, alias="OV_CUSTOMER_PASSWORD"
     )
 
-    # Proxy
+    # Proxy configuration (supports both PROXY_URL and OVERTIME_PROXY)
     proxy_url: Optional[str] = Field(default=None, alias="PROXY_URL")
 
-    # API Keys
-    walters_api_key: Optional[str] = Field(default=None, alias="WALTERS_API_KEY")
-    news_api_key: Optional[str] = Field(default=None, alias="NEWS_API_KEY")
-    highlightly_api_key: Optional[str] = Field(
-        default=None, alias="HIGHLIGHTLY_API_KEY"
-    )
+    # Weather API Keys
     accuweather_api_key: Optional[str] = Field(
         default=None, alias="ACCUWEATHER_API_KEY"
     )
+    openweather_api_key: Optional[str] = Field(
+        default=None, alias="OPENWEATHER_API_KEY"
+    )
+
+    # Sports Data Sources
+    action_username: Optional[str] = Field(default=None, alias="ACTION_USERNAME")
+    action_password: Optional[str] = Field(default=None, alias="ACTION_PASSWORD")
 
     # Market Data API Keys
     odds_api_key: Optional[str] = Field(default=None, alias="ODDS_API_KEY")
+    highlightly_api_key: Optional[str] = Field(
+        default=None, alias="HIGHLIGHTLY_API_KEY"
+    )
     pinnacle_api_key: Optional[str] = Field(default=None, alias="PINNACLE_API_KEY")
     draftkings_api_key: Optional[str] = Field(default=None, alias="DRAFTKINGS_API_KEY")
 
-    # Python path
+    # Overtime.ag Configuration
+    overtime_start_url: Optional[str] = Field(
+        default="https://overtime.ag", alias="OVERTIME_START_URL"
+    )
+    overtime_live_url: Optional[str] = Field(default=None, alias="OVERTIME_LIVE_URL")
+    overtime_out_dir: Optional[str] = Field(
+        default="output/overtime", alias="OVERTIME_OUT_DIR"
+    )
+    overtime_sport: Optional[str] = Field(default=None, alias="OVERTIME_SPORT")
+    overtime_comp: Optional[str] = Field(default=None, alias="OVERTIME_COMP")
+
+    # League identifiers
+    sport: str = Field(default="FOOTBALL", alias="SPORT")
+    pro_league: str = Field(default="NFL", alias="PRO_LEAGUE")
+    college_league: str = Field(default="NCAA", alias="COLLEGE_LEAGUE")
+
+    # Project configuration
+    project_root_env: Optional[str] = Field(default=None, alias="PROJ_ROOT")
     pythonpath: Optional[str] = Field(default=None, alias="PYTHONPATH")
+
+    # Development settings from environment
+    debug_mode_env: Optional[bool] = Field(default=None, alias="DEBUG_MODE")
+    log_level_env: Optional[str] = Field(default=None, alias="LOG_LEVEL")
+
+    # Unused/Planned API Keys (registered but not actively used)
+    walters_api_key: Optional[str] = Field(default=None, alias="WALTERS_API_KEY")
+    news_api_key: Optional[str] = Field(default=None, alias="NEWS_API_KEY")
 
     # ==================== Configuration Categories ====================
 
@@ -248,6 +386,9 @@ class Settings(BaseSettings):
 
     # Development settings
     development: DevelopmentConfig = Field(default_factory=DevelopmentConfig)
+
+    # Output directories
+    output_dirs: OutputDirectoryConfig = Field(default_factory=OutputDirectoryConfig)
 
     # ==================== Billy Walters Config Data ====================
     # These will be loaded from billy_walters_config.json

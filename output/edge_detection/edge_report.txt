@@ -1,6 +1,6 @@
 ================================================================================
 BILLY WALTERS EDGE DETECTION REPORT
-Generated: 2025-11-09 08:10:41
+Generated: 2025-11-11 04:18:26
 ================================================================================
 
 1. Arizona @ Seattle (Week 10)
@@ -36,7 +36,18 @@ Generated: 2025-11-09 08:10:41
    Confidence: 100/100
    [KEY] Crosses key number: 10
 
-4. Houston @ Jacksonville (Week 10)
+4. Miami @ Buffalo (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Power Ratings: Miami 4.3 @ Buffalo 19.1
+   Predicted Spread: +16.8
+   Market Spread: +9.5
+   EDGE: 7.3 points (VERY_STRONG)
+   Recommendation: BET HOME
+   Kelly Sizing: 25.0% of bankroll
+   Confidence: 73/100
+   [KEY] Crosses key number: 10
+
+5. Houston @ Jacksonville (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Power Ratings: Houston 13.7 @ Jacksonville 5.8
    Predicted Spread: -5.9
@@ -46,7 +57,7 @@ Generated: 2025-11-09 08:10:41
    Kelly Sizing: 24.7% of bankroll
    Confidence: 69/100
 
-5. New England @ Tampa Bay (Week 10)
+6. New England @ Tampa Bay (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Power Ratings: New England 9.5 @ Tampa Bay 11.0
    Predicted Spread: +3.5
@@ -57,7 +68,7 @@ Generated: 2025-11-09 08:10:41
    Confidence: 68/100
    [KEY] Crosses key number: 3
 
-6. Baltimore @ Minnesota (Week 10)
+7. Baltimore @ Minnesota (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Power Ratings: Baltimore 11.3 @ Minnesota 10.7
    Predicted Spread: +1.4
@@ -67,30 +78,7 @@ Generated: 2025-11-09 08:10:41
    Kelly Sizing: 19.3% of bankroll
    Confidence: 54/100
 
-7. Miami @ Buffalo (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Power Ratings: Miami 4.3 @ Buffalo 19.1
-   Predicted Spread: +14.8
-   Market Spread: +9.5
-   EDGE: 5.3 points (MEDIUM)
-   Recommendation: BET HOME
-   Kelly Sizing: 19.1% of bankroll
-   Confidence: 53/100
-   Weather Adj: -2.0
-   [KEY] Crosses key number: 10
-
-8. LA Chargers @ Pittsburgh (Week 10)
-   Time: 2025-11-10T01:20:00.000Z
-   Power Ratings: LA Chargers 11.9 @ Pittsburgh 9.7
-   Predicted Spread: -1.2
-   Market Spread: +2.5
-   EDGE: 3.7 points (WEAK)
-   Recommendation: BET AWAY
-   Kelly Sizing: 13.1% of bankroll
-   Confidence: 37/100
-   Weather Adj: -1.0
-
 ================================================================================
-Total Edges Found: 8
-Strong/Very Strong: 5
+Total Edges Found: 7
+Strong/Very Strong: 6
 ================================================================================

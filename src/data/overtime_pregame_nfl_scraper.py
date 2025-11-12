@@ -23,7 +23,7 @@ from data.proxy_manager import get_proxy_manager
 
 class OvertimeGame(BaseModel):
     """Structured game data from Overtime.ag"""
-    
+
     league_week_info: Optional[str] = None
     game_date: Optional[str] = None
     game_time: Optional[str] = None
@@ -36,7 +36,7 @@ class OvertimeGame(BaseModel):
 
 class OvertimeAccount(BaseModel):
     """Account information"""
-    
+
     balance: Optional[str] = None
     available_balance: Optional[str] = None
     pending: Optional[str] = None
@@ -45,14 +45,14 @@ class OvertimeAccount(BaseModel):
 class OvertimeNFLScraper:
     """
     Scraper for Overtime.ag NFL pre-game betting lines.
-    
+
     Features:
     - Automatic login with credentials from environment
     - Extracts Game, 1st Half, and 1st Quarter lines
     - Parses spreads, totals, and moneylines
     - Exports to JSON format compatible with Billy Walters system
     """
-    
+
     def __init__(
         self,
         customer_id: Optional[str] = None,
@@ -60,7 +60,7 @@ class OvertimeNFLScraper:
         proxy_url: Optional[str] = None,
         headless: bool = False,
         output_dir: str = "output/overtime/nfl/pregame",
-        use_smart_proxy: bool = True
+        use_smart_proxy: bool = True,
     ):
         """
         Initialize the scraper.
@@ -93,18 +93,18 @@ class OvertimeNFLScraper:
 
         self.account_info: Optional[OvertimeAccount] = None
         self.games: List[OvertimeGame] = []
-        
+
     async def scrape(self) -> Dict[str, Any]:
         """
         Main scraping workflow.
-        
+
         Returns:
             Dictionary with account info, games, and metadata
         """
         print("=" * 70)
         print("Overtime.ag Pre-Game NFL Odds Scraper")
         print("=" * 70)
-        
+
         async with async_playwright() as p:
             # Launch browser
             browser_args = [
@@ -113,10 +113,7 @@ class OvertimeNFLScraper:
                 "--no-sandbox",
             ]
 
-            browser = await p.chromium.launch(
-                headless=self.headless,
-                args=browser_args
-            )
+            browser = await p.chromium.launch(headless=self.headless, args=browser_args)
 
             try:
                 # Configure proxy if provided
@@ -130,18 +127,23 @@ class OvertimeNFLScraper:
                     # Some residential proxies require credentials in URL, not as separate fields
                     context_kwargs["proxy"] = {"server": self.proxy_url}
                     from urllib.parse import urlparse
+
                     parsed = urlparse(self.proxy_url)
                     print(f"Using proxy: {parsed.hostname}:{parsed.port}")
 
                 context = await browser.new_context(**context_kwargs)
-                
+
                 page = await context.new_page()
-                
+
                 # Navigate and login
                 print("\n1. Navigating to Overtime.ag...")
-                await page.goto("https://overtime.ag/sports#/", wait_until="domcontentloaded", timeout=60000)
+                await page.goto(
+                    "https://overtime.ag/sports#/",
+                    wait_until="domcontentloaded",
+                    timeout=60000,
+                )
                 await page.wait_for_timeout(3000)
-                
+
                 # Login
                 if self.customer_id and self.password:
                     print("2. Logging in...")
@@ -149,7 +151,7 @@ class OvertimeNFLScraper:
                     await page.wait_for_timeout(2000)
                 else:
                     print("2. Skipping login (no credentials provided)")
-                
+
                 # Extract account info
                 print("3. Extracting account information...")
                 self.account_info = await self._extract_account_info(page)
@@ -157,7 +159,7 @@ class OvertimeNFLScraper:
                     print(f"   Balance: {self.account_info.balance}")
                     print(f"   Available: {self.account_info.available_balance}")
                     print(f"   Pending: {self.account_info.pending}")
-                
+
                 # Click on NFL-Game/1H/2H/Qrts
                 print("4. Navigating to NFL betting lines...")
                 await self._navigate_to_nfl(page)
@@ -202,24 +204,28 @@ class OvertimeNFLScraper:
 
                 # Clean debug output for Windows console
                 debug_clean = {
-                    'h4Count': debug_info.get('h4Count', 0),
-                    'h4Texts': debug_info.get('h4Texts', []),
-                    'buttonCount': debug_info.get('buttonCount', 0),
-                    'allButtonsCount': debug_info.get('allButtonsCount', 0),
-                    'hasNoGamesMessage': debug_info.get('hasNoGamesMessage', False),
-                    'currentHash': debug_info.get('currentHash', ''),
-                    'nflSectionVisible': debug_info.get('nflSectionVisible', False)
+                    "h4Count": debug_info.get("h4Count", 0),
+                    "h4Texts": debug_info.get("h4Texts", []),
+                    "buttonCount": debug_info.get("buttonCount", 0),
+                    "allButtonsCount": debug_info.get("allButtonsCount", 0),
+                    "hasNoGamesMessage": debug_info.get("hasNoGamesMessage", False),
+                    "currentHash": debug_info.get("currentHash", ""),
+                    "nflSectionVisible": debug_info.get("nflSectionVisible", False),
                 }
                 print(f"   DEBUG - Page elements: {debug_clean}")
 
                 # Print snippet safely (ASCII only)
-                snippet = debug_info.get('bodySnippet', '').encode('ascii', 'ignore').decode('ascii')
+                snippet = (
+                    debug_info.get("bodySnippet", "")
+                    .encode("ascii", "ignore")
+                    .decode("ascii")
+                )
                 print(f"   DEBUG - Page snippet:\n{snippet[:400]}")
 
                 # Provide helpful diagnosis
-                if debug_info.get('buttonCount', 0) == 0:
+                if debug_info.get("buttonCount", 0) == 0:
                     print("\n   [WARNING] No betting buttons found!")
-                    if debug_info.get('hasNoGamesMessage', False):
+                    if debug_info.get("hasNoGamesMessage", False):
                         print("   -> Site indicates no games available")
                     print("   -> This is normal during games (Sunday/Monday evenings)")
                     print("   -> Best scraping times: Tuesday-Thursday 12PM-6PM ET")
@@ -227,7 +233,7 @@ class OvertimeNFLScraper:
 
                 print("   Waiting for games to load...")
                 await page.wait_for_timeout(5000)  # Wait longer for games to load
-                
+
                 # Extract all periods (GAME, 1st Half, 1st Quarter)
                 periods = ["GAME", "1ST HALF", "1ST QUARTER"]
                 for period in periods:
@@ -235,11 +241,14 @@ class OvertimeNFLScraper:
                     games = await self._extract_games(page, period)
                     self.games.extend(games)
                     print(f"   Found {len(games)} games for {period}")
-                
+
                 # Save results
                 print("\n6. Saving results...")
                 output = self._format_output()
-                output_file = self.output_dir / f"overtime_nfl_odds_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                output_file = (
+                    self.output_dir
+                    / f"overtime_nfl_odds_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                )
 
                 with open(output_file, "w", encoding="utf-8") as f:
                     json.dump(output, f, indent=2, default=str)
@@ -249,32 +258,38 @@ class OvertimeNFLScraper:
                 # Display validation results
                 validation = output["scrape_metadata"]["data_validation"]
                 print(f"\n7. Data Validation Results:")
-                print(f"   Status: {'[OK] VALID' if validation['is_valid'] else '[WARNING] INVALID'}")
+                print(
+                    f"   Status: {'[OK] VALID' if validation['is_valid'] else '[WARNING] INVALID'}"
+                )
                 print(f"   Games found: {validation['game_count']}")
                 print(f"   Has team names: {validation['has_team_names']}")
                 print(f"   Has betting lines: {validation['has_odds']}")
 
-                if validation['warnings']:
+                if validation["warnings"]:
                     print(f"\n   Warnings:")
-                    for warning in validation['warnings']:
+                    for warning in validation["warnings"]:
                         print(f"   -> {warning}")
 
                 if len(self.games) > 0:
                     print(f"\n[OK] Successfully scraped {len(self.games)} game entries")
                 else:
                     print(f"\n[WARNING] Scrape completed but found 0 games")
-                    print(f"   This is expected during games or outside betting windows")
+                    print(
+                        f"   This is expected during games or outside betting windows"
+                    )
 
                 return output
-                
+
             finally:
                 await browser.close()
-    
+
     async def _login(self, page: Page) -> bool:
         """Perform login to Overtime.ag"""
         try:
             # Wait for LOGIN button to exist in DOM (don't require visible)
-            await page.wait_for_selector('a.btn-signup', state='attached', timeout=10000)
+            await page.wait_for_selector(
+                "a.btn-signup", state="attached", timeout=10000
+            )
 
             # Click LOGIN button using JavaScript (bypasses visibility checks)
             login_clicked = await page.evaluate("""
@@ -293,17 +308,17 @@ class OvertimeNFLScraper:
             else:
                 print("   LOGIN button not found")
                 return False
-            
+
             # Fill customer ID
             customer_input = await page.query_selector('input[placeholder*="Customer"]')
             if customer_input:
                 await customer_input.fill(self.customer_id)
-            
+
             # Fill password
             password_input = await page.query_selector('input[type="password"]')
             if password_input:
                 await password_input.fill(self.password)
-            
+
             # Click login button
             login_btn = await page.query_selector('button:has-text("LOGIN")')
             if login_btn:
@@ -311,13 +326,13 @@ class OvertimeNFLScraper:
                 await page.wait_for_timeout(5000)  # Wait for security checks
                 print("   Login successful!")
                 return True
-            
+
             return False
-            
+
         except Exception as e:
             print(f"   Login failed: {e}")
             return False
-    
+
     async def _extract_account_info(self, page: Page) -> Optional[OvertimeAccount]:
         """Extract account balance information"""
         try:
@@ -340,15 +355,15 @@ class OvertimeNFLScraper:
                     return info;
                 }
             """)
-            
+
             if account_data:
                 return OvertimeAccount(**account_data)
             return None
-            
+
         except Exception as e:
             print(f"   Could not extract account info: {e}")
             return None
-    
+
     async def _navigate_to_nfl(self, page: Page) -> None:
         """Navigate to NFL betting section"""
         try:
@@ -364,18 +379,18 @@ class OvertimeNFLScraper:
                     return false;
                 }
             """)
-            
+
         except Exception as e:
             print(f"   Could not navigate to NFL section: {e}")
-    
+
     async def _extract_games(self, page: Page, period: str) -> List[OvertimeGame]:
         """
         Extract game data for a specific period.
-        
+
         Args:
             page: Playwright page object
             period: Betting period (GAME, 1ST HALF, 1ST QUARTER)
-        
+
         Returns:
             List of OvertimeGame objects
         """
@@ -384,9 +399,10 @@ class OvertimeNFLScraper:
             if period != "GAME":
                 await self._switch_period(page, period)
                 await page.wait_for_timeout(2000)
-            
+
             # Extract games using JavaScript
-            games_data = await page.evaluate("""
+            games_data = await page.evaluate(
+                """
                 (period) => {
                     const result = {
                         accountInfo: {},
@@ -456,35 +472,32 @@ class OvertimeNFLScraper:
                     
                     return result;
                 }
-            """, period)
-            
+            """,
+                period,
+            )
+
             # Convert to OvertimeGame objects
             games = []
             for game_data in games_data.get("games", []):
-                game = OvertimeGame(
-                    **game_data,
-                    scraped_at=datetime.now()
-                )
+                game = OvertimeGame(**game_data, scraped_at=datetime.now())
                 games.append(game)
-            
+
             return games
-            
+
         except Exception as e:
             print(f"   Error extracting games for {period}: {e}")
             return []
-    
+
     async def _switch_period(self, page: Page, period: str) -> None:
         """Switch to a different betting period"""
         try:
             # Map period names to button text
-            period_map = {
-                "1ST HALF": "1 HLF",
-                "1ST QUARTER": "1 QT"
-            }
-            
+            period_map = {"1ST HALF": "1 HLF", "1ST QUARTER": "1 QT"}
+
             button_text = period_map.get(period, period)
-            
-            await page.evaluate("""
+
+            await page.evaluate(
+                """
                 (buttonText) => {
                     const buttons = Array.from(document.querySelectorAll('button'));
                     const periodBtn = buttons.find(btn => btn.textContent.trim() === buttonText);
@@ -494,11 +507,13 @@ class OvertimeNFLScraper:
                     }
                     return false;
                 }
-            """, button_text)
-            
+            """,
+                button_text,
+            )
+
         except Exception as e:
             print(f"   Could not switch to period {period}: {e}")
-    
+
     def _format_output(self) -> Dict[str, Any]:
         """Format scraped data for output with validation"""
         # Validate data quality
@@ -510,18 +525,22 @@ class OvertimeNFLScraper:
                 "source": "overtime.ag",
                 "sport": "NFL",
                 "scraper_version": "1.0.0",
-                "data_validation": validation_status
+                "data_validation": validation_status,
             },
-            "account_info": self.account_info.model_dump() if self.account_info else None,
+            "account_info": self.account_info.model_dump()
+            if self.account_info
+            else None,
             "games": [game.model_dump() for game in self.games],
             "summary": {
                 "total_games": len(self.games),
                 "periods": list(set(game.period for game in self.games)),
-                "unique_matchups": len(set(
-                    f"{game.visitor['teamName']} @ {game.home['teamName']}"
-                    for game in self.games
-                ))
-            }
+                "unique_matchups": len(
+                    set(
+                        f"{game.visitor['teamName']} @ {game.home['teamName']}"
+                        for game in self.games
+                    )
+                ),
+            },
         }
 
     def _validate_scraped_data(self) -> Dict[str, Any]:
@@ -536,13 +555,15 @@ class OvertimeNFLScraper:
             "warnings": [],
             "game_count": len(self.games),
             "has_odds": False,
-            "has_team_names": False
+            "has_team_names": False,
         }
 
         # Check if we have any games
         if len(self.games) == 0:
             validation["is_valid"] = False
-            validation["warnings"].append("No games found - may be outside betting window")
+            validation["warnings"].append(
+                "No games found - may be outside betting window"
+            )
             return validation
 
         # Validate game data quality
@@ -551,16 +572,16 @@ class OvertimeNFLScraper:
 
         for game in self.games:
             # Check for team names
-            visitor_name = game.visitor.get('teamName', '')
-            home_name = game.home.get('teamName', '')
+            visitor_name = game.visitor.get("teamName", "")
+            home_name = game.home.get("teamName", "")
 
             if visitor_name and home_name:
                 games_with_teams += 1
 
             # Check for betting lines (spread, total, or moneyline)
-            has_spread = game.visitor.get('spread') or game.home.get('spread')
-            has_total = game.visitor.get('total') or game.home.get('total')
-            has_ml = game.visitor.get('moneyLine') or game.home.get('moneyLine')
+            has_spread = game.visitor.get("spread") or game.home.get("spread")
+            has_total = game.visitor.get("total") or game.home.get("total")
+            has_ml = game.visitor.get("moneyLine") or game.home.get("moneyLine")
 
             if has_spread or has_total or has_ml:
                 games_with_odds += 1
@@ -575,7 +596,9 @@ class OvertimeNFLScraper:
 
         if games_with_odds == 0:
             validation["is_valid"] = False
-            validation["warnings"].append("No betting lines found - games may have started")
+            validation["warnings"].append(
+                "No betting lines found - games may have started"
+            )
 
         if games_with_teams < len(self.games):
             validation["warnings"].append(
@@ -594,11 +617,11 @@ async def main():
     """Main entry point for scraper"""
     scraper = OvertimeNFLScraper(
         headless=False,  # Set to True for production
-        output_dir="output/overtime/nfl/pregame"
+        output_dir="output/overtime/nfl/pregame",
     )
-    
+
     result = await scraper.scrape()
-    
+
     # Print summary
     print("\n" + "=" * 70)
     print("SCRAPE SUMMARY")
@@ -606,14 +629,13 @@ async def main():
     print(f"Total game entries: {result['summary']['total_games']}")
     print(f"Unique matchups: {result['summary']['unique_matchups']}")
     print(f"Periods scraped: {', '.join(result['summary']['periods'])}")
-    
-    if result.get('account_info'):
+
+    if result.get("account_info"):
         print(f"\nAccount Balance: {result['account_info']['balance']}")
         print(f"Available: {result['account_info']['available_balance']}")
-    
+
     print("\n" + "=" * 70)
 
 
 if __name__ == "__main__":
     asyncio.run(main())
-

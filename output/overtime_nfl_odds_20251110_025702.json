@@ -1,0 +1,19 @@
+{
+  "scrape_metadata": {
+    "timestamp": "2025-11-10T02:57:02.413653",
+    "source": "overtime.ag",
+    "sport": "NFL",
+    "scraper_version": "1.0.0"
+  },
+  "account_info": {
+    "balance": "$0.00",
+    "available_balance": "$0.00",
+    "pending": "$0.00"
+  },
+  "games": [],
+  "summary": {
+    "total_games": 0,
+    "periods": [],
+    "unique_matchups": 0
+  }
+}

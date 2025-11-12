@@ -357,7 +357,9 @@ class AccuWeatherClient:
         feels_like = hourly.get("RealFeelTemperature", {})
         wind = hourly.get("Wind", {})
         wind_speed = wind.get("Speed", {})
-        wind_gust = hourly.get("WindGust", {}).get("Speed", {}) if "WindGust" in hourly else {}
+        wind_gust = (
+            hourly.get("WindGust", {}).get("Speed", {}) if "WindGust" in hourly else {}
+        )
 
         return {
             "forecast_time": hourly.get("DateTime"),
@@ -365,7 +367,9 @@ class AccuWeatherClient:
             "temperature": temp.get("Value"),
             "feels_like": feels_like.get("Value") if feels_like else temp.get("Value"),
             "wind_speed": wind_speed.get("Value"),
-            "wind_gust": wind_gust.get("Value") if wind_gust else wind_speed.get("Value"),
+            "wind_gust": wind_gust.get("Value")
+            if wind_gust
+            else wind_speed.get("Value"),
             "wind_direction": wind.get("Direction", {}).get("English"),
             "humidity": hourly.get("RelativeHumidity"),
             "description": hourly.get("IconPhrase"),
@@ -405,7 +409,10 @@ class AccuWeatherClient:
         location_key = await self.get_location_key(city, state, max_retries=max_retries)
 
         # Get hourly forecast
-        hours_ahead = int((game_time - datetime.now()).total_seconds() / 3600)
+        from datetime import timezone
+
+        now = datetime.now(timezone.utc)
+        hours_ahead = int((game_time - now).total_seconds() / 3600)
 
         if hours_ahead < 0:
             # Game in the past - get current conditions
@@ -452,6 +459,63 @@ class AccuWeatherClient:
         )
         return closest_forecast
 
+    def _normalize_team_name(self, team: str) -> str:
+        """
+        Normalize ESPN full team names to stadium lookup format.
+
+        Args:
+            team: Full team name (e.g., "New England Patriots")
+
+        Returns:
+            Short team name for stadium lookup (e.g., "New England")
+        """
+        # Map full team names to stadium lookup keys
+        team_mappings = {
+            "Arizona Cardinals": "Arizona",
+            "Atlanta Falcons": "Atlanta",
+            "Baltimore Ravens": "Baltimore",
+            "Buffalo Bills": "Buffalo",
+            "Carolina Panthers": "Carolina",
+            "Chicago Bears": "Chicago",
+            "Cincinnati Bengals": "Cincinnati",
+            "Cleveland Browns": "Cleveland",
+            "Dallas Cowboys": "Dallas",
+            "Denver Broncos": "Denver",
+            "Detroit Lions": "Detroit",
+            "Green Bay Packers": "Green Bay",
+            "Houston Texans": "Houston",
+            "Indianapolis Colts": "Indianapolis",
+            "Jacksonville Jaguars": "Jacksonville",
+            "Kansas City Chiefs": "Kansas City",
+            "Las Vegas Raiders": "Las Vegas",
+            "Los Angeles Chargers": "LA Chargers",
+            "Los Angeles Rams": "LA Rams",
+            "Miami Dolphins": "Miami",
+            "Minnesota Vikings": "Minnesota",
+            "New England Patriots": "New England",
+            "New Orleans Saints": "New Orleans",
+            "New York Giants": "NY Giants",
+            "New York Jets": "NY Jets",
+            "Philadelphia Eagles": "Philadelphia",
+            "Pittsburgh Steelers": "Pittsburgh",
+            "San Francisco 49ers": "San Francisco",
+            "Seattle Seahawks": "Seattle",
+            "Tampa Bay Buccaneers": "Tampa Bay",
+            "Tennessee Titans": "Tennessee",
+            "Washington Commanders": "Washington",
+        }
+
+        # Try exact match first
+        if team in team_mappings:
+            return team_mappings[team]
+
+        # If already short form, return as-is
+        if team in self.NFL_STADIUM_LOCATIONS:
+            return team
+
+        # Fallback: return original (will log warning in get_game_weather)
+        return team
+
     async def get_game_weather(
         self, team: str, game_time: datetime, max_retries: int = 3
     ) -> dict[str, Any] | None:
@@ -459,7 +523,7 @@ class AccuWeatherClient:
         Get weather forecast for a specific NFL game using team name.
 
         Args:
-            team: Home team name (e.g., "Green Bay", "Kansas City")
+            team: Home team name (e.g., "Green Bay Packers" or "Green Bay")
             game_time: Game start time
             max_retries: Maximum retry attempts
 
@@ -469,10 +533,15 @@ class AccuWeatherClient:
         Raises:
             RuntimeError: If request fails
         """
+        # Normalize team name to stadium lookup format
+        normalized_team = self._normalize_team_name(team)
+
         # Get stadium info
-        stadium_info = self.NFL_STADIUM_LOCATIONS.get(team)
+        stadium_info = self.NFL_STADIUM_LOCATIONS.get(normalized_team)
         if not stadium_info:
-            logger.warning(f"No stadium info for team: {team}")
+            logger.warning(
+                f"No stadium info for team: {team} (normalized: {normalized_team})"
+            )
             return None
 
         # Indoor stadium = no weather impact

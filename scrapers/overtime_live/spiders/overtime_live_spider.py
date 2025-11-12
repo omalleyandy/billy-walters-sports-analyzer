@@ -20,6 +20,7 @@ from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
 
 try:
     from dotenv import load_dotenv  # type: ignore
+
     load_dotenv()
 except Exception:
     pass
@@ -821,7 +822,9 @@ class OvertimeLiveSpider(scrapy.Spider):
             self.logger.warning("=" * 70)
             self.logger.warning("NO GAMES FOUND - Possible Reasons:")
             self.logger.warning("  1. Games are currently in progress (lines removed)")
-            self.logger.warning("  2. Outside betting window (pre-game lines not posted yet)")
+            self.logger.warning(
+                "  2. Outside betting window (pre-game lines not posted yet)"
+            )
             self.logger.warning("  3. Sport filter not applied correctly")
             self.logger.warning("  4. Site structure changed")
             self.logger.warning("")

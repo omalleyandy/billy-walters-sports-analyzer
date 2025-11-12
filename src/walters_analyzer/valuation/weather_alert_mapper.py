@@ -29,8 +29,16 @@ ALERT_ADJUSTMENTS = {
     "Wind Chill Warning": (-0.25, -0.10, "MEDIUM"),  # Extreme cold + wind
     "Wind Chill Advisory": (-0.15, -0.06, "LOW"),  # Cold + wind
     # Wind Alerts (Billy Walters: -0.20 to -0.40 pts)
-    "High Wind Warning": (-0.40, -0.15, "HIGH"),  # Severe wind (Billy: -0.40 for 20+ mph)
-    "Wind Advisory": (-0.20, -0.10, "MEDIUM"),  # Moderate wind (Billy: -0.20 for 15+ mph)
+    "High Wind Warning": (
+        -0.40,
+        -0.15,
+        "HIGH",
+    ),  # Severe wind (Billy: -0.40 for 20+ mph)
+    "Wind Advisory": (
+        -0.20,
+        -0.10,
+        "MEDIUM",
+    ),  # Moderate wind (Billy: -0.20 for 15+ mph)
     "Extreme Wind Warning": (-0.50, -0.20, "HIGH"),  # Beyond 20mph threshold
     # Precipitation Alerts (Billy Walters: -0.20 to -0.40 pts)
     "Flash Flood Warning": (-0.50, -0.20, "HIGH"),  # Severe rain + field conditions
@@ -39,7 +47,11 @@ ALERT_ADJUSTMENTS = {
     "Heavy Rain Warning": (-0.35, -0.12, "MEDIUM"),  # Heavy rain (Billy: -0.40)
     "Excessive Rainfall": (-0.30, -0.12, "MEDIUM"),  # Moderate-heavy rain
     # Thunderstorm Alerts (Billy Walters: -0.20 to -0.40 pts + delays)
-    "Severe Thunderstorm Warning": (-0.40, -0.15, "MEDIUM"),  # Heavy rain + wind + delays
+    "Severe Thunderstorm Warning": (
+        -0.40,
+        -0.15,
+        "MEDIUM",
+    ),  # Heavy rain + wind + delays
     "Thunderstorm Watch": (-0.20, -0.08, "LOW"),  # Moderate rain possibility
     "Tornado Warning": (-0.60, -0.25, "HIGH"),  # Game delays/suspension
     "Tornado Watch": (-0.25, -0.10, "MEDIUM"),  # Severe weather possible

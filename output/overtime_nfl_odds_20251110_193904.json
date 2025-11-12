@@ -1,0 +1,28 @@
+{
+  "scrape_metadata": {
+    "timestamp": "2025-11-10T19:39:04.334840",
+    "source": "overtime.ag",
+    "sport": "NFL",
+    "scraper_version": "1.0.0",
+    "data_validation": {
+      "is_valid": false,
+      "warnings": [
+        "No games found - may be outside betting window"
+      ],
+      "game_count": 0,
+      "has_odds": false,
+      "has_team_names": false
+    }
+  },
+  "account_info": {
+    "balance": "$-1,988.43",
+    "available_balance": "$7,611.57",
+    "pending": "$400.00"
+  },
+  "games": [],
+  "summary": {
+    "total_games": 0,
+    "periods": [],
+    "unique_matchups": 0
+  }
+}

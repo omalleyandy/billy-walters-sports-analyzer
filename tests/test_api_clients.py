@@ -454,7 +454,9 @@ async def run_all_tests():
     if passed == total:
         print("\n[SUCCESS] All tests passed! API integration is working correctly.")
     else:
-        print(f"\n[WARNING] {total - passed} test(s) failed. Check logs above for details.")
+        print(
+            f"\n[WARNING] {total - passed} test(s) failed. Check logs above for details."
+        )
 
     return passed == total
 

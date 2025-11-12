@@ -1,9 +1,20 @@
 ================================================================================
 BILLY WALTERS TOTALS EDGE DETECTION REPORT
-Generated: 2025-11-09 08:10:41
+Generated: 2025-11-11 04:18:26
 ================================================================================
 
-1. Houston @ Jacksonville (Week 10)
+1. NY Jets @ Cleveland (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: NY Jets 20.9 | Cleveland 18.1
+   Defensive: NY Jets -1.4 | Cleveland 0.9
+   Predicted Total: 48.1
+   Market Total: 37.5
+   EDGE: 10.6 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 24.1% of bankroll
+   Confidence: 100/100
+   [KEY] Crosses key total: 37
+
+2. Houston @ Jacksonville (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Offensive: Houston 22.0 | Jacksonville 22.4
    Defensive: Houston 4.2 | Jacksonville 0.1
@@ -14,7 +25,7 @@ Generated: 2025-11-09 08:10:41
    Confidence: 100/100
    [KEY] Crosses key total: 37
 
-2. Carolina @ New Orleans (Week 10)
+3. Carolina @ New Orleans (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Offensive: Carolina 20.2 | New Orleans 19.0
    Defensive: Carolina -0.9 | New Orleans -0.4
@@ -24,19 +35,38 @@ Generated: 2025-11-09 08:10:41
    Kelly Sizing: 22.7% of bankroll
    Confidence: 100/100
 
-3. NY Jets @ Cleveland (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: NY Jets 20.9 | Cleveland 18.1
-   Defensive: NY Jets -1.4 | Cleveland 0.9
-   Predicted Total: 47.4
-   Market Total: 37.5
-   EDGE: 9.9 points → BET OVER (VERY_STRONG)
-   Kelly Sizing: 22.5% of bankroll
+4. LA Chargers @ Pittsburgh (Week 10)
+   Time: 2025-11-10T01:20:00.000Z
+   Offensive: LA Chargers 23.7 | Pittsburgh 24.1
+   Defensive: LA Chargers 1.6 | Pittsburgh -0.1
+   Predicted Total: 49.9
+   Market Total: 44.5
+   EDGE: 5.4 points → BET OVER (MEDIUM)
+   Kelly Sizing: 12.4% of bankroll
    Confidence: 100/100
-   Weather Adj: -0.7 pts
-   [KEY] Crosses key total: 37
+   [KEY] Crosses key total: 44
 
-4. Las Vegas @ Denver (Week 10)
+5. Philadelphia @ Green Bay (Week 10)
+   Time: 2025-11-11T01:15:00.000Z
+   Offensive: Philadelphia 27.5 | Green Bay 25.9
+   Defensive: Philadelphia 1.5 | Green Bay 2.4
+   Predicted Total: 50.7
+   Market Total: 45.5
+   EDGE: 5.2 points → BET OVER (MEDIUM)
+   Kelly Sizing: 11.8% of bankroll
+   Confidence: 100/100
+
+6. Chicago @ NY Giants (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: Chicago 23.6 | NY Giants 21.9
+   Defensive: Chicago -1.0 | NY Giants -2.3
+   Predicted Total: 51.2
+   Market Total: 46.5
+   EDGE: 4.7 points → BET OVER (MEDIUM)
+   Kelly Sizing: 10.7% of bankroll
+   Confidence: 100/100
+
+7. Las Vegas @ Denver (Week 10)
    Time: 2025-11-07T01:15:00.000Z
    Offensive: Las Vegas 19.2 | Denver 22.3
    Defensive: Las Vegas 0.1 | Denver 4.2
@@ -47,7 +77,7 @@ Generated: 2025-11-09 08:10:41
    Confidence: 100/100
    [KEY] Crosses key total: 43
 
-5. Arizona @ Seattle (Week 10)
+8. Arizona @ Seattle (Week 10)
    Time: 2025-11-09T21:05:00.000Z
    Offensive: Arizona 23.4 | Seattle 26.5
    Defensive: Arizona 1.6 | Seattle 2.8
@@ -57,7 +87,7 @@ Generated: 2025-11-09 08:10:41
    Kelly Sizing: 8.9% of bankroll
    Confidence: 100/100
 
-6. Washington @ Detroit (Week 10)
+9. Washington @ Detroit (Week 10)
    Time: 2025-11-09T21:25:00.000Z
    Offensive: Washington 24.1 | Detroit 29.0
    Defensive: Washington -2.1 | Detroit 1.0
@@ -68,8 +98,8 @@ Generated: 2025-11-09 08:10:41
    Confidence: 100/100
 
 ================================================================================
-Total Edges Found: 6
+Total Edges Found: 9
 Strong/Very Strong: 3
-Over bets: 6
+Over bets: 9
 Under bets: 0
 ================================================================================

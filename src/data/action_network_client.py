@@ -121,11 +121,25 @@ class ActionNetworkClient:
 
         # Verify login success by checking for user-specific element
         try:
+            # Wait for any of these success indicators
+            # 1. User account menu (logged in state)
+            # 2. Navigation loaded (successful page load)
+            # 3. Absence of login button (successful login)
             await page.wait_for_selector(
-                ".user-component__button", state="visible", timeout=10000
+                'a[href*="/account"], a[href*="/profile"], nav[class*="user"]',
+                state="visible",
+                timeout=15000,
             )
             logger.info("Login successful")
         except Exception as e:
+            # Fallback: check if login form is gone (alternative success indicator)
+            try:
+                login_form = await page.query_selector('input[placeholder="Email"]')
+                if login_form is None:
+                    logger.info("Login successful (form disappeared)")
+                    return
+            except:
+                pass
             raise RuntimeError(f"Login failed: {e}") from e
 
     async def _rate_limit(self) -> None:
