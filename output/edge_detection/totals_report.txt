@@ -1,21 +1,9 @@
 ================================================================================
 BILLY WALTERS TOTALS EDGE DETECTION REPORT
-Generated: 2025-11-12 03:19:47
+Generated: 2025-11-12 15:37:27
 ================================================================================
 
-1. NY Jets @ Cleveland (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: NY Jets 20.9 | Cleveland 18.1
-   Defensive: NY Jets -1.4 | Cleveland 0.9
-   Predicted Total: 47.9
-   Market Total: 37.5
-   EDGE: 10.4 points → BET OVER (VERY_STRONG)
-   Kelly Sizing: 23.6% of bankroll
-   Confidence: 100/100
-   Weather Adj: -0.2 pts
-   [KEY] Crosses key total: 37
-
-2. Houston @ Jacksonville (Week 10)
+1. Houston @ Jacksonville (Week 10)
    Time: 2025-11-09T18:00:00.000Z
    Offensive: Houston 22.0 | Jacksonville 22.4
    Defensive: Houston 4.2 | Jacksonville 0.1
@@ -24,6 +12,18 @@ Generated: 2025-11-12 03:19:47
    EDGE: 10.3 points → BET OVER (VERY_STRONG)
    Kelly Sizing: 23.4% of bankroll
    Confidence: 100/100
+   [KEY] Crosses key total: 37
+
+2. NY Jets @ Cleveland (Week 10)
+   Time: 2025-11-09T18:00:00.000Z
+   Offensive: NY Jets 20.9 | Cleveland 18.1
+   Defensive: NY Jets -1.4 | Cleveland 0.9
+   Predicted Total: 47.7
+   Market Total: 37.5
+   EDGE: 10.2 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 23.2% of bankroll
+   Confidence: 100/100
+   Weather Adj: -0.4 pts
    [KEY] Crosses key total: 37
 
 3. Carolina @ New Orleans (Week 10)

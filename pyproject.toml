@@ -28,6 +28,7 @@ dependencies = [
     "signalrcore>=0.9.5",
     "websocket-client>=1.0.0",
     "tenacity>=8.2.0",
+    "pandas>=2.3.3",
 ]
 
 [project.scripts]

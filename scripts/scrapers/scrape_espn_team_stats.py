@@ -35,9 +35,30 @@ def scrape_all_team_stats(league="college-football", week=None):
 
     # Get all teams
     if league == "college-football":
-        print("\nFetching FBS teams...")
-        teams_data = client.get_all_fbs_teams()
-        teams_list = teams_data["sports"][0]["leagues"][0]["teams"]
+        print("\nFetching FBS teams from scoreboard...")
+
+        # Use scoreboard-based team list (more complete than teams API)
+        fbs_teams_file = Path("data/current/fbs_teams_from_scoreboard.json")
+
+        if fbs_teams_file.exists():
+            # Load from cached scoreboard extract
+            with open(fbs_teams_file) as f:
+                fbs_data = json.load(f)
+                teams_list = [
+                    {"team": {
+                        "id": t["id"],
+                        "displayName": t["name"],
+                        "abbreviation": t["abbreviation"]
+                    }} for t in fbs_data["teams"]
+                ]
+            print(f"Loaded {len(teams_list)} teams from scoreboard cache")
+        else:
+            # Fallback to teams API (less complete, 50 teams)
+            print("[WARNING] Scoreboard cache not found, using teams API (incomplete)")
+            print("[INFO] Run: uv run python extract_fbs_teams_from_scoreboard.py")
+            teams_data = client.get_all_fbs_teams()
+            teams_list = teams_data["sports"][0]["leagues"][0]["teams"]
+
         league_short = "ncaaf"
     else:
         print("\nFetching NFL teams...")

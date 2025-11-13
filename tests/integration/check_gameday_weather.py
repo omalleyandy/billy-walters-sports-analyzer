@@ -53,6 +53,8 @@ async def check_gameday_weather(team_name: str, game_time_str: str):
         "Green Bay": ("Green Bay", "WI"),
         "Philadelphia Eagles": ("Philadelphia", "PA"),
         "Philadelphia": ("Philadelphia", "PA"),
+        "New England Patriots": ("Foxborough", "MA"),
+        "New England": ("Foxborough", "MA"),
         # NCAAF MAC Teams
         "Massachusetts": ("Amherst", "MA"),
         "UMass": ("Amherst", "MA"),
