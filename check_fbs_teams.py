@@ -2,26 +2,32 @@
 """Check how many FBS teams ESPN API returns"""
 
 import sys
-sys.path.insert(0, 'src')
+
+sys.path.insert(0, "src")
 
 from data.espn_api_client import ESPNAPIClient
 
 client = ESPNAPIClient()
 teams = client.get_all_fbs_teams()
-team_list = teams['sports'][0]['leagues'][0]['teams']
+team_list = teams["sports"][0]["leagues"][0]["teams"]
 
 print(f"Total FBS teams from API: {len(team_list)}")
-print(f"\nFirst 10 teams:")
+print("\nFirst 10 teams:")
 for t in team_list[:10]:
     print(f"  - {t['team']['displayName']} (ID: {t['team']['id']})")
 
-print(f"\nLast 10 teams:")
+print("\nLast 10 teams:")
 for t in team_list[-10:]:
     print(f"  - {t['team']['displayName']} (ID: {t['team']['id']})")
 
 # Check if Northern Illinois and UMass are included
-niu = [t for t in team_list if 'Northern Illinois' in t['team']['displayName']]
-umass = [t for t in team_list if 'Massachusetts' in t['team']['displayName'] or 'UMass' in t['team']['displayName']]
+niu = [t for t in team_list if "Northern Illinois" in t["team"]["displayName"]]
+umass = [
+    t
+    for t in team_list
+    if "Massachusetts" in t["team"]["displayName"]
+    or "UMass" in t["team"]["displayName"]
+]
 
 print(f"\nNorthern Illinois found: {len(niu) > 0}")
 if niu:

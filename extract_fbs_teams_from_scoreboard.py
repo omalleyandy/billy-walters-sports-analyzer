@@ -9,7 +9,9 @@ import sys
 from pathlib import Path
 
 # Load scoreboard data
-scoreboard_file = Path("data/raw/espn/scoreboard/20251112/20251112_153224_scoreboard.json")
+scoreboard_file = Path(
+    "data/raw/espn/scoreboard/20251112/20251112_153224_scoreboard.json"
+)
 
 if not scoreboard_file.exists():
     print(f"[ERROR] Scoreboard file not found: {scoreboard_file}")
@@ -48,7 +50,7 @@ print("=" * 70)
 print("FBS TEAMS EXTRACTED FROM SCOREBOARD")
 print("=" * 70)
 print(f"Total teams: {len(teams_list)}")
-print(f"\nAll teams:")
+print("\nAll teams:")
 for i, team in enumerate(teams_list, 1):
     print(f"{i:3d}. {team['name']:<40} ({team['abbreviation']}) - ID: {team['id']}")
 
@@ -57,8 +59,8 @@ print("\n" + "=" * 70)
 print("CHECKING SPECIFIC TEAMS")
 print("=" * 70)
 
-niu = [t for t in teams_list if 'Northern Illinois' in t['name']]
-umass = [t for t in teams_list if 'Massachusetts' in t['name'] or 'UMass' in t['name']]
+niu = [t for t in teams_list if "Northern Illinois" in t["name"]]
+umass = [t for t in teams_list if "Massachusetts" in t["name"] or "UMass" in t["name"]]
 
 print(f"Northern Illinois found: {len(niu) > 0}")
 if niu:
@@ -72,13 +74,17 @@ if umass:
 output_file = Path("data/current/fbs_teams_from_scoreboard.json")
 output_file.parent.mkdir(parents=True, exist_ok=True)
 
-with open(output_file, 'w') as f:
-    json.dump({
-        "source": "ESPN scoreboard",
-        "extracted_date": "2025-11-12",
-        "week": 12,
-        "team_count": len(teams_list),
-        "teams": teams_list
-    }, f, indent=2)
+with open(output_file, "w") as f:
+    json.dump(
+        {
+            "source": "ESPN scoreboard",
+            "extracted_date": "2025-11-12",
+            "week": 12,
+            "team_count": len(teams_list),
+            "teams": teams_list,
+        },
+        f,
+        indent=2,
+    )
 
 print(f"\n[OK] Saved team list to: {output_file}")

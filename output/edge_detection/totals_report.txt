@@ -1,12 +1,22 @@
 ================================================================================
 BILLY WALTERS TOTALS EDGE DETECTION REPORT
-Generated: 2025-11-12 15:37:27
+Generated: 2025-11-12 23:28:42
 ================================================================================
 
-1. Houston @ Jacksonville (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: Houston 22.0 | Jacksonville 22.4
-   Defensive: Houston 4.2 | Jacksonville 0.1
+1. Baltimore @ Cleveland (Week 11)
+   Time: 2025-11-16T16:25:00.000Z
+   Offensive: Baltimore 27.3 | Cleveland 18.1
+   Defensive: Baltimore 0.4 | Cleveland 0.9
+   Predicted Total: 49.3
+   Market Total: 39.0
+   EDGE: 10.3 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 23.4% of bankroll
+   Confidence: 100/100
+
+2. Houston @ Tennessee (Week 11)
+   Time: 2025-11-16T13:00:00.000Z
+   Offensive: Houston 22.0 | Tennessee 18.9
+   Defensive: Houston 4.2 | Tennessee -2.5
    Predicted Total: 47.8
    Market Total: 37.5
    EDGE: 10.3 points → BET OVER (VERY_STRONG)
@@ -14,93 +24,84 @@ Generated: 2025-11-12 15:37:27
    Confidence: 100/100
    [KEY] Crosses key total: 37
 
-2. NY Jets @ Cleveland (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: NY Jets 20.9 | Cleveland 18.1
-   Defensive: NY Jets -1.4 | Cleveland 0.9
-   Predicted Total: 47.7
-   Market Total: 37.5
-   EDGE: 10.2 points → BET OVER (VERY_STRONG)
-   Kelly Sizing: 23.2% of bankroll
-   Confidence: 100/100
-   Weather Adj: -0.4 pts
-   [KEY] Crosses key total: 37
-
-3. Carolina @ New Orleans (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: Carolina 20.2 | New Orleans 19.0
-   Defensive: Carolina -0.9 | New Orleans -0.4
-   Predicted Total: 48.5
-   Market Total: 38.5
-   EDGE: 10.0 points → BET OVER (VERY_STRONG)
-   Kelly Sizing: 22.7% of bankroll
-   Confidence: 100/100
-
-4. LA Chargers @ Pittsburgh (Week 10)
-   Time: 2025-11-10T01:20:00.000Z
-   Offensive: LA Chargers 23.7 | Pittsburgh 24.1
-   Defensive: LA Chargers 1.6 | Pittsburgh -0.1
-   Predicted Total: 49.9
-   Market Total: 44.5
-   EDGE: 5.4 points → BET OVER (MEDIUM)
-   Kelly Sizing: 12.4% of bankroll
-   Confidence: 100/100
-   [KEY] Crosses key total: 44
-
-5. Philadelphia @ Green Bay (Week 10)
-   Time: 2025-11-11T01:15:00.000Z
-   Offensive: Philadelphia 27.5 | Green Bay 25.9
-   Defensive: Philadelphia 1.5 | Green Bay 2.4
-   Predicted Total: 50.7
-   Market Total: 45.5
-   EDGE: 5.2 points → BET OVER (MEDIUM)
-   Kelly Sizing: 11.8% of bankroll
-   Confidence: 100/100
-
-6. Chicago @ NY Giants (Week 10)
-   Time: 2025-11-09T18:00:00.000Z
-   Offensive: Chicago 23.6 | NY Giants 21.9
-   Defensive: Chicago -1.0 | NY Giants -2.3
-   Predicted Total: 51.2
-   Market Total: 46.5
-   EDGE: 4.7 points → BET OVER (MEDIUM)
-   Kelly Sizing: 10.7% of bankroll
-   Confidence: 100/100
-
-7. Las Vegas @ Denver (Week 10)
-   Time: 2025-11-07T01:15:00.000Z
-   Offensive: Las Vegas 19.2 | Denver 22.3
-   Defensive: Las Vegas 0.1 | Denver 4.2
-   Predicted Total: 46.9
-   Market Total: 42.5
-   EDGE: 4.4 points → BET OVER (WEAK)
-   Kelly Sizing: 10.1% of bankroll
+3. Green Bay @ NY Giants (Week 11)
+   Time: 2025-11-16T13:00:00.000Z
+   Offensive: Green Bay 25.9 | NY Giants 21.9
+   Defensive: Green Bay 2.4 | NY Giants -2.3
+   Predicted Total: 50.5
+   Market Total: 43.5
+   EDGE: 7.0 points → BET OVER (VERY_STRONG)
+   Kelly Sizing: 16.0% of bankroll
    Confidence: 100/100
    [KEY] Crosses key total: 43
 
-8. Arizona @ Seattle (Week 10)
-   Time: 2025-11-09T21:05:00.000Z
-   Offensive: Arizona 23.4 | Seattle 26.5
-   Defensive: Arizona 1.6 | Seattle 2.8
-   Predicted Total: 49.4
-   Market Total: 45.5
-   EDGE: 3.9 points → BET OVER (WEAK)
-   Kelly Sizing: 8.9% of bankroll
+4. NY Jets @ New England (Week 11)
+   Time: 2025-11-13T20:15:00.000Z
+   Offensive: NY Jets 20.9 | New England 23.3
+   Defensive: NY Jets -1.4 | New England 0.8
+   Predicted Total: 49.5
+   Market Total: 43.0
+   EDGE: 6.5 points → BET OVER (STRONG)
+   Kelly Sizing: 14.8% of bankroll
+   Confidence: 100/100
+   Weather Adj: -0.2 pts
+   [KEY] Crosses key total: 43
+
+5. Carolina @ Atlanta (Week 11)
+   Time: 2025-11-16T13:00:00.000Z
+   Offensive: Carolina 20.2 | Atlanta 20.6
+   Defensive: Carolina -0.9 | Atlanta 0.3
+   Predicted Total: 48.7
+   Market Total: 42.5
+   EDGE: 6.2 points → BET OVER (STRONG)
+   Kelly Sizing: 14.0% of bankroll
+   Confidence: 100/100
+   [KEY] Crosses key total: 43
+
+6. LA Chargers @ Jacksonville (Week 11)
+   Time: 2025-11-16T13:00:00.000Z
+   Offensive: LA Chargers 23.7 | Jacksonville 22.4
+   Defensive: LA Chargers 1.6 | Jacksonville 0.1
+   Predicted Total: 49.3
+   Market Total: 43.5
+   EDGE: 5.8 points → BET OVER (STRONG)
+   Kelly Sizing: 13.3% of bankroll
+   Confidence: 100/100
+   [KEY] Crosses key total: 43
+
+7. Detroit @ Philadelphia (Week 11)
+   Time: 2025-11-16T20:20:00.000Z
+   Offensive: Detroit 29.0 | Philadelphia 27.5
+   Defensive: Detroit 1.0 | Philadelphia 1.5
+   Predicted Total: 52.2
+   Market Total: 46.5
+   EDGE: 5.7 points → BET OVER (STRONG)
+   Kelly Sizing: 12.9% of bankroll
    Confidence: 100/100
 
-9. Washington @ Detroit (Week 10)
-   Time: 2025-11-09T21:25:00.000Z
-   Offensive: Washington 24.1 | Detroit 29.0
-   Defensive: Washington -2.1 | Detroit 1.0
-   Predicted Total: 52.6
-   Market Total: 49.0
-   EDGE: 3.6 points → BET OVER (WEAK)
-   Kelly Sizing: 8.2% of bankroll
+8. Cincinnati @ Pittsburgh (Week 11)
+   Time: 2025-11-16T13:00:00.000Z
+   Offensive: Cincinnati 25.8 | Pittsburgh 24.1
+   Defensive: Cincinnati -5.2 | Pittsburgh -0.1
+   Predicted Total: 53.3
+   Market Total: 48.5
+   EDGE: 4.8 points → BET OVER (MEDIUM)
+   Kelly Sizing: 10.9% of bankroll
+   Confidence: 100/100
+
+9. Washington @ Miami (Week 11)
+   Time: 2025-11-16T09:30:00.000Z
+   Offensive: Washington 24.1 | Miami 22.3
+   Defensive: Washington -2.1 | Miami -1.5
+   Predicted Total: 51.6
+   Market Total: 47.5
+   EDGE: 4.1 points → BET OVER (WEAK)
+   Kelly Sizing: 9.2% of bankroll
    Confidence: 100/100
 
 ================================================================================
 Total Edges Found: 9
-Strong/Very Strong: 3
+Strong/Very Strong: 7
 Over bets: 9
 Under bets: 0
 ================================================================================

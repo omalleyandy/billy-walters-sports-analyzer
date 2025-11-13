@@ -45,11 +45,14 @@ def scrape_all_team_stats(league="college-football", week=None):
             with open(fbs_teams_file) as f:
                 fbs_data = json.load(f)
                 teams_list = [
-                    {"team": {
-                        "id": t["id"],
-                        "displayName": t["name"],
-                        "abbreviation": t["abbreviation"]
-                    }} for t in fbs_data["teams"]
+                    {
+                        "team": {
+                            "id": t["id"],
+                            "displayName": t["name"],
+                            "abbreviation": t["abbreviation"],
+                        }
+                    }
+                    for t in fbs_data["teams"]
                 ]
             print(f"Loaded {len(teams_list)} teams from scoreboard cache")
         else:
@@ -68,7 +71,7 @@ def scrape_all_team_stats(league="college-football", week=None):
 
     total_teams = len(teams_list)
     print(f"Found {total_teams} teams")
-    print(f"\nCollecting statistics (rate limited: 1 request/second)...")
+    print("\nCollecting statistics (rate limited: 1 request/second)...")
 
     # Collect stats for each team
     all_team_stats = []
@@ -124,7 +127,7 @@ def scrape_all_team_stats(league="college-football", week=None):
             all_team_stats
         )
 
-        print(f"\nLeague Averages:")
+        print("\nLeague Averages:")
         print(f"  Points Per Game: {avg_ppg:.1f}")
         print(f"  Points Allowed Per Game: {avg_papg:.1f}")
 
@@ -187,11 +190,13 @@ def main():
         stats = scrape_all_team_stats(league_map[args.league], args.week)
 
         if stats:
-            print(f"\n[INFO] Ready to integrate into power rating calculations")
-            print(f"[INFO] Use metrics: points_per_game, points_allowed_per_game, turnover_margin")
+            print("\n[INFO] Ready to integrate into power rating calculations")
+            print(
+                "[INFO] Use metrics: points_per_game, points_allowed_per_game, turnover_margin"
+            )
             return 0
         else:
-            print(f"\n[ERROR] No stats collected")
+            print("\n[ERROR] No stats collected")
             return 1
 
     except KeyboardInterrupt:

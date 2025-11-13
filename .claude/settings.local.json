@@ -68,7 +68,12 @@
       "Bash(node:*)",
       "Bash($null)",
       "Bash(Select-Object -First 10)",
-      "WebFetch(domain:www.espn.com)"
+      "WebFetch(domain:www.espn.com)",
+      "SlashCommand(/collect-all-data)",
+      "SlashCommand(/current-week)",
+      "Bash(Select-String -Pattern \"EDGE DETECTION|Total Edges|games from|BET (HOME|AWAY)|EDGE:\")",
+      "Bash(Select-Object -First 30)",
+      "SlashCommand(/analyze-matchup)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

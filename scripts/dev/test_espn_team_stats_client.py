@@ -95,14 +95,14 @@ def test_power_rating_metrics():
             # Display offensive efficiency
             ppg = metrics.get("points_per_game", 0)
             ypg = metrics.get("total_yards_per_game", 0)
-            print(f"\n  Offensive Efficiency:")
+            print("\n  Offensive Efficiency:")
             print(f"    Points/Game: {ppg:.1f}")
             print(f"    Yards/Game: {ypg:.1f}")
 
             # Display defensive efficiency
             papg = metrics.get("points_allowed_per_game", 0)
             yapg = metrics.get("total_yards_allowed_per_game", 0)
-            print(f"\n  Defensive Efficiency:")
+            print("\n  Defensive Efficiency:")
             print(f"    Points Allowed/Game: {papg:.1f}")
             print(f"    Yards Allowed/Game: {yapg:.1f}")
 
@@ -162,7 +162,7 @@ def test_fbs_teams_list():
             team_abbr = team.get("abbreviation")
             print(f"  {i + 1}. {team_name} ({team_abbr}) - ID: {team_id}")
 
-        print(f"\n[SUCCESS] get_all_fbs_teams() working correctly")
+        print("\n[SUCCESS] get_all_fbs_teams() working correctly")
         print(f"[INFO] Can collect stats for all {len(teams_data)} FBS teams\n")
         return True
 
@@ -215,7 +215,7 @@ def calculate_sample_power_rating():
         print(f"  {'=' * 40}")
         print(f"  Enhanced Rating: {enhanced_rating:.2f}")
 
-        print(f"\n[SUCCESS] Power rating calculation complete")
+        print("\n[SUCCESS] Power rating calculation complete")
         print(
             f"[INFO] {team_name} shows elite performance (rating: {enhanced_rating:.1f})\n"
         )

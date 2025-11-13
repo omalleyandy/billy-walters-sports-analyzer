@@ -1072,7 +1072,7 @@ def main():
     totals_detector.injury_data = detector.injury_data  # Share with totals detector
 
     # Load Action Network odds (latest)
-    action_file = "output/action_network/nfl_api_responses_20251109_045916.json"
+    action_file = "output/action_network/nfl_api_responses_week_11.json"
     if os.path.exists(action_file):
         games_data = detector.load_action_network_odds(action_file)
 

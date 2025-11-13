@@ -1,0 +1,870 @@
+[
+  {
+    "url": "https://api.actionnetwork.com/web/v2/scoreboard/nfl",
+    "data": {
+      "league": {
+        "id": 1,
+        "name": "nfl",
+        "display_name": "NFL"
+      },
+      "games": [
+        {
+          "id": 300000,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-13T20:15:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000000,
+              "display_name": "Patriots",
+              "location": "New England",
+              "full_name": "New England Patriots"
+            },
+            {
+              "id": 3000001,
+              "display_name": "Jets",
+              "location": "New York",
+              "full_name": "New York Jets"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -13.0,
+                    "line": -110,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 43.0,
+                    "over_line": -115,
+                    "under_line": -105
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 600,
+                    "home": -900
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300001,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T09:30:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000010,
+              "display_name": "Dolphins",
+              "location": "Miami",
+              "full_name": "Miami Dolphins"
+            },
+            {
+              "id": 3000011,
+              "display_name": "Commanders",
+              "location": "Washington",
+              "full_name": "Washington Commanders"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -3.0,
+                    "line": -104,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 47.5,
+                    "over_line": -112,
+                    "under_line": -108
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 135,
+                    "home": -155
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300002,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000020,
+              "display_name": "Giants",
+              "location": "New York",
+              "full_name": "New York Giants"
+            },
+            {
+              "id": 3000021,
+              "display_name": "Packers",
+              "location": "Green Bay",
+              "full_name": "Green Bay Packers"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 7.0,
+                    "line": -117,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 43.5,
+                    "over_line": -105,
+                    "under_line": -115
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -320,
+                    "home": 260
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300003,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000030,
+              "display_name": "Bills",
+              "location": "Buffalo",
+              "full_name": "Buffalo Bills"
+            },
+            {
+              "id": 3000031,
+              "display_name": "Buccaneers",
+              "location": "Tampa Bay",
+              "full_name": "Tampa Bay Buccaneers"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -5.5,
+                    "line": -115,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 48.0,
+                    "over_line": -105,
+                    "under_line": -115
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 219,
+                    "home": -265
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300004,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000040,
+              "display_name": "Steelers",
+              "location": "Pittsburgh",
+              "full_name": "Pittsburgh Steelers"
+            },
+            {
+              "id": 3000041,
+              "display_name": "Bengals",
+              "location": "Cincinnati",
+              "full_name": "Cincinnati Bengals"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -6.0,
+                    "line": -106,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 48.5,
+                    "over_line": -112,
+                    "under_line": -108
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 210,
+                    "home": -250
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300005,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000050,
+              "display_name": "Titans",
+              "location": "Tennessee",
+              "full_name": "Tennessee Titans"
+            },
+            {
+              "id": 3000051,
+              "display_name": "Texans",
+              "location": "Houston",
+              "full_name": "Houston Texans"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 6.5,
+                    "line": -110,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 37.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -325,
+                    "home": 265
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300006,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000060,
+              "display_name": "Vikings",
+              "location": "Minnesota",
+              "full_name": "Minnesota Vikings"
+            },
+            {
+              "id": 3000061,
+              "display_name": "Bears",
+              "location": "Chicago",
+              "full_name": "Chicago Bears"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -3.0,
+                    "line": -107,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 48.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 142,
+                    "home": -162
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300007,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000070,
+              "display_name": "Falcons",
+              "location": "Atlanta",
+              "full_name": "Atlanta Falcons"
+            },
+            {
+              "id": 3000071,
+              "display_name": "Panthers",
+              "location": "Carolina",
+              "full_name": "Carolina Panthers"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -3.5,
+                    "line": -104,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 42.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 160,
+                    "home": -190
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300008,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T13:00:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000080,
+              "display_name": "Jaguars",
+              "location": "Jacksonville",
+              "full_name": "Jacksonville Jaguars"
+            },
+            {
+              "id": 3000081,
+              "display_name": "Chargers",
+              "location": "Los Angeles",
+              "full_name": "Los Angeles Chargers"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 3.0,
+                    "line": -115,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 43.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -160,
+                    "home": 140
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300009,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T16:05:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000090,
+              "display_name": "Rams",
+              "location": "Los Angeles",
+              "full_name": "Los Angeles Rams"
+            },
+            {
+              "id": 3000091,
+              "display_name": "Seahawks",
+              "location": "Seattle",
+              "full_name": "Seattle Seahawks"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -3.0,
+                    "line": -118,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 48.5,
+                    "over_line": -108,
+                    "under_line": -112
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 144,
+                    "home": -164
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300010,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T16:05:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000100,
+              "display_name": "Cardinals",
+              "location": "Arizona",
+              "full_name": "Arizona Cardinals"
+            },
+            {
+              "id": 3000101,
+              "display_name": "49ers",
+              "location": "San Francisco",
+              "full_name": "San Francisco 49ers"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 2.5,
+                    "line": 105,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 48.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -153,
+                    "home": 133
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300011,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T16:25:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000110,
+              "display_name": "Browns",
+              "location": "Cleveland",
+              "full_name": "Cleveland Browns"
+            },
+            {
+              "id": 3000111,
+              "display_name": "Ravens",
+              "location": "Baltimore",
+              "full_name": "Baltimore Ravens"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 7.5,
+                    "line": -112,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 39.0,
+                    "over_line": -115,
+                    "under_line": -105
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -400,
+                    "home": 290
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300012,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T16:25:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000120,
+              "display_name": "Broncos",
+              "location": "Denver",
+              "full_name": "Denver Broncos"
+            },
+            {
+              "id": 3000121,
+              "display_name": "Chiefs",
+              "location": "Kansas City",
+              "full_name": "Kansas City Chiefs"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 4.0,
+                    "line": -115,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 44.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -202,
+                    "home": 172
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300013,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-16T20:20:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000130,
+              "display_name": "Eagles",
+              "location": "Philadelphia",
+              "full_name": "Philadelphia Eagles"
+            },
+            {
+              "id": 3000131,
+              "display_name": "Lions",
+              "location": "Detroit",
+              "full_name": "Detroit Lions"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": -2.5,
+                    "line": -115,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 46.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": 132,
+                    "home": -152
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": 300014,
+          "league_id": 1,
+          "status": "scheduled",
+          "start_time": "2025-11-17T20:15:00.000Z",
+          "league_name": "nfl",
+          "type": "reg",
+          "season": 2025,
+          "week": 11,
+          "teams": [
+            {
+              "id": 3000140,
+              "display_name": "Raiders",
+              "location": "Las Vegas",
+              "full_name": "Las Vegas Raiders"
+            },
+            {
+              "id": 3000141,
+              "display_name": "Cowboys",
+              "location": "Dallas",
+              "full_name": "Dallas Cowboys"
+            }
+          ],
+          "markets": {
+            "15": {
+              "event": {
+                "spread": [
+                  {
+                    "value": 3.5,
+                    "line": -120,
+                    "bet_info": {
+                      "money": {
+                        "percent": 50
+                      },
+                      "tickets": {
+                        "percent": 50
+                      }
+                    }
+                  }
+                ],
+                "total": [
+                  {
+                    "value": 49.5,
+                    "over_line": -110,
+                    "under_line": -110
+                  }
+                ],
+                "moneyline": [
+                  {
+                    "away": -175,
+                    "home": 155
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "timestamp": "2025-11-12T19:55:42.292321"
+  }
+]

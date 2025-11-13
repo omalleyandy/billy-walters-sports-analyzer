@@ -144,7 +144,9 @@ class ESPNAPIInvestigator:
                     print(f"List with {len(stats_data)} items")
 
         # Save full response for inspection
-        filename = f"output/espn/investigation_{endpoint_name.replace(' ', '_').lower()}.json"
+        filename = (
+            f"output/espn/investigation_{endpoint_name.replace(' ', '_').lower()}.json"
+        )
         try:
             import os
 

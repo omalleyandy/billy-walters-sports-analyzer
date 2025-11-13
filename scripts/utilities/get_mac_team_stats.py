@@ -16,7 +16,9 @@ def get_mac_team_stats():
     try:
         # Get all NCAAF teams
         teams_data = client.get_ncaaf_teams()
-        teams = teams_data.get("sports", [{}])[0].get("leagues", [{}])[0].get("teams", [])
+        teams = (
+            teams_data.get("sports", [{}])[0].get("leagues", [{}])[0].get("teams", [])
+        )
 
         # Find Toledo and Miami OH
         toledo = None
@@ -35,7 +37,7 @@ def get_mac_team_stats():
         print("=" * 70)
 
         if toledo:
-            print(f"\nToledo Rockets:")
+            print("\nToledo Rockets:")
             print(f"  Team ID: {toledo.get('id')}")
             print(f"  Full Name: {toledo.get('displayName')}")
             print(f"  Abbreviation: {toledo.get('abbreviation')}")
@@ -43,7 +45,7 @@ def get_mac_team_stats():
             # Get team statistics
             stats = client.get_team_statistics(toledo.get("id"), "college-football")
             if stats:
-                print(f"\nOffensive Stats:")
+                print("\nOffensive Stats:")
                 print(f"  Points/Game: {stats.get('points_per_game', 0):.1f}")
                 print(f"  Total Yards/Game: {stats.get('total_yards_per_game', 0):.1f}")
                 print(
@@ -52,7 +54,7 @@ def get_mac_team_stats():
                 print(
                     f"  Rushing Yards/Game: {stats.get('rushing_yards_per_game', 0):.1f}"
                 )
-                print(f"\nDefensive Stats:")
+                print("\nDefensive Stats:")
                 print(
                     f"  Points Allowed/Game: "
                     f"{stats.get('points_allowed_per_game', 0):.1f}"
@@ -61,13 +63,13 @@ def get_mac_team_stats():
                     f"  Total Yards Allowed/Game: "
                     f"{stats.get('total_yards_allowed_per_game', 0):.1f}"
                 )
-                print(f"\nTurnover Stats:")
+                print("\nTurnover Stats:")
                 print(f"  Turnover Margin: {stats.get('turnover_margin', 0)}")
                 print(f"  Takeaways: {stats.get('takeaways', 0)}")
                 print(f"  Giveaways: {stats.get('giveaways', 0)}")
 
         if miami_oh:
-            print(f"\n\nMiami (OH) RedHawks:")
+            print("\n\nMiami (OH) RedHawks:")
             print(f"  Team ID: {miami_oh.get('id')}")
             print(f"  Full Name: {miami_oh.get('displayName')}")
             print(f"  Abbreviation: {miami_oh.get('abbreviation')}")
@@ -75,7 +77,7 @@ def get_mac_team_stats():
             # Get team statistics
             stats = client.get_team_statistics(miami_oh.get("id"), "college-football")
             if stats:
-                print(f"\nOffensive Stats:")
+                print("\nOffensive Stats:")
                 print(f"  Points/Game: {stats.get('points_per_game', 0):.1f}")
                 print(f"  Total Yards/Game: {stats.get('total_yards_per_game', 0):.1f}")
                 print(
@@ -84,7 +86,7 @@ def get_mac_team_stats():
                 print(
                     f"  Rushing Yards/Game: {stats.get('rushing_yards_per_game', 0):.1f}"
                 )
-                print(f"\nDefensive Stats:")
+                print("\nDefensive Stats:")
                 print(
                     f"  Points Allowed/Game: "
                     f"{stats.get('points_allowed_per_game', 0):.1f}"
@@ -93,7 +95,7 @@ def get_mac_team_stats():
                     f"  Total Yards Allowed/Game: "
                     f"{stats.get('total_yards_allowed_per_game', 0):.1f}"
                 )
-                print(f"\nTurnover Stats:")
+                print("\nTurnover Stats:")
                 print(f"  Turnover Margin: {stats.get('turnover_margin', 0)}")
                 print(f"  Takeaways: {stats.get('takeaways', 0)}")
                 print(f"  Giveaways: {stats.get('giveaways', 0)}")
