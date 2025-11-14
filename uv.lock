@@ -3669,7 +3669,6 @@ name = "walters-analyzer"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "aiohttp" },
     { name = "beautifulsoup4" },
     { name = "httpx" },
     { name = "orjson" },
@@ -3708,6 +3707,7 @@ ai = [
 dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "requests" },
     { name = "ruff" },
 ]
 dl = [
@@ -3729,7 +3729,6 @@ ml = [
 research = [
     { name = "beautifulsoup4" },
     { name = "lxml" },
-    { name = "requests" },
 ]
 scraping = [
     { name = "beautifulsoup4" },
@@ -3746,7 +3745,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.13.2" },
     { name = "aiohttp", marker = "extra == 'ai'", specifier = ">=3.9" },
     { name = "aiohttp", marker = "extra == 'mcp'", specifier = ">=3.9" },
     { name = "beautifulsoup4", specifier = ">=4.14.2" },
@@ -3776,7 +3774,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "requests", marker = "extra == 'ai'", specifier = ">=2.31" },
-    { name = "requests", marker = "extra == 'research'", specifier = ">=2.31" },
+    { name = "requests", marker = "extra == 'dev'", specifier = ">=2.31" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
     { name = "scikit-learn", specifier = ">=1.7.2" },
     { name = "scikit-learn", marker = "extra == 'ai'", specifier = ">=1.3" },

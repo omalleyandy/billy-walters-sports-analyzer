@@ -12,7 +12,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-import requests
+import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -48,7 +48,7 @@ class LiveOddsMonitor:
         }
 
         try:
-            response = requests.get(url, params=params, timeout=30)
+            response = httpx.get(url, params=params, timeout=30)
             response.raise_for_status()
 
             data = response.json()

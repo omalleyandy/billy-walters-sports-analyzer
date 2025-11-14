@@ -8,7 +8,7 @@ import os
 import json
 from datetime import datetime
 from pathlib import Path
-import requests
+import httpx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -38,7 +38,7 @@ def scrape_odds_api() -> list[dict]:
         "dateFormat": "iso",
     }
 
-    response = requests.get(url, params=params, timeout=30)
+    response = httpx.get(url, params=params, timeout=30)
     response.raise_for_status()
 
     data = response.json()

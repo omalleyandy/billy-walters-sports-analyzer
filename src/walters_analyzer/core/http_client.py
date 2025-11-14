@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-import aiohttp
+import httpx
 
 
 class AsyncHTTPClient:
-    """Small wrapper around aiohttp with sane defaults and logging hooks."""
+    """Small wrapper around httpx with sane defaults and logging hooks."""
 
     def __init__(self, timeout: int = 15) -> None:
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: Optional[httpx.AsyncClient] = None
         self._timeout = timeout
 
     async def __aenter__(self) -> "AsyncHTTPClient":
@@ -23,23 +23,24 @@ class AsyncHTTPClient:
 
     async def _ensure_session(self) -> None:
         if self._session is None:
-            timeout = aiohttp.ClientTimeout(total=self._timeout)
-            connector = aiohttp.TCPConnector(limit=20, ssl=False)
-            self._session = aiohttp.ClientSession(timeout=timeout, connector=connector)
+            limits = httpx.Limits(max_connections=20)
+            self._session = httpx.AsyncClient(
+                timeout=self._timeout, limits=limits, verify=False
+            )
 
     async def get_json(self, url: str, **kwargs: Any) -> Dict[str, Any]:
         await self._ensure_session()
         assert self._session is not None
-        async with self._session.get(url, **kwargs) as resp:
-            resp.raise_for_status()
-            return await resp.json()
+        resp = await self._session.get(url, **kwargs)
+        resp.raise_for_status()
+        return resp.json()
 
     async def get_text(self, url: str, **kwargs: Any) -> str:
         await self._ensure_session()
         assert self._session is not None
-        async with self._session.get(url, **kwargs) as resp:
-            resp.raise_for_status()
-            return await resp.text()
+        resp = await self._session.get(url, **kwargs)
+        resp.raise_for_status()
+        return resp.text
 
     async def close(self) -> None:
         if self._session:

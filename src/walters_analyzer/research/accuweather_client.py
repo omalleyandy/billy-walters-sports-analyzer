@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from typing import Any, Dict, Optional
 
-import aiohttp
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +29,13 @@ class AccuWeatherClient:
             logger.warning(
                 "AccuWeather API key not found. Weather data will be unavailable."
             )
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: Optional[httpx.AsyncClient] = None
 
     @property
-    def session(self) -> aiohttp.ClientSession:
+    def session(self) -> httpx.AsyncClient:
         """Get or create HTTP session."""
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession()
+        if self._session is None or self._session.is_closed:
+            self._session = httpx.AsyncClient()
         return self._session
 
     async def get_location_key(self, city: str, state: str = "") -> Optional[str]:
@@ -57,15 +57,15 @@ class AccuWeatherClient:
         params = {"apikey": self.api_key, "q": query}
 
         try:
-            async with self.session.get(url, params=params) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    if data:
-                        return data[0]["Key"]
-                else:
-                    logger.error(
-                        f"AccuWeather location search failed: {response.status}"
-                    )
+            response = await self.session.get(url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return data[0]["Key"]
+            else:
+                logger.error(
+                    f"AccuWeather location search failed: {response.status_code}"
+                )
         except Exception as e:
             logger.error(f"Error searching for location: {e}", exc_info=True)
 
@@ -91,11 +91,11 @@ class AccuWeatherClient:
         params = {"apikey": self.api_key, "details": "true", "metric": "false"}
 
         try:
-            async with self.session.get(url, params=params) as response:
-                if response.status == 200:
-                    return await response.json()
-                else:
-                    logger.error(f"AccuWeather forecast failed: {response.status}")
+            response = await self.session.get(url, params=params)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error(f"AccuWeather forecast failed: {response.status_code}")
         except Exception as e:
             logger.error(f"Error fetching forecast: {e}", exc_info=True)
 

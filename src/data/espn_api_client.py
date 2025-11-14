@@ -7,7 +7,7 @@ No authentication required!
 
 import os
 import json
-import requests
+import httpx
 from typing import Dict, Optional
 
 
@@ -20,7 +20,7 @@ class ESPNAPIClient:
         self.core_api_url = "https://sports.core.api.espn.com/v2/sports/football"
         self.web_api_url = "https://site.web.api.espn.com/apis/v3/sports/football"
 
-        self.session = requests.Session()
+        self.session = httpx.Client()
         self.session.headers.update(
             {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"

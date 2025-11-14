@@ -6,7 +6,7 @@ Fetches NFL and NCAA FBS injury reports directly from ESPN API
 
 import json
 import os
-import requests
+import httpx
 from datetime import datetime
 from typing import Dict, List
 import logging
@@ -42,7 +42,7 @@ class ESPNInjuryScraper:
         teams_url = f"{self.base_url}/football/nfl/teams"
 
         try:
-            response = requests.get(teams_url, timeout=10)
+            response = httpx.get(teams_url, timeout=10)
             response.raise_for_status()
             teams_data = response.json()
 
@@ -66,7 +66,7 @@ class ESPNInjuryScraper:
                 injury_url = f"{self.base_url}/football/nfl/teams/{team_id}/injuries"
 
                 try:
-                    injury_response = requests.get(injury_url, timeout=10)
+                    injury_response = httpx.get(injury_url, timeout=10)
                     injury_response.raise_for_status()
                     injury_data = injury_response.json()
 
@@ -131,7 +131,7 @@ class ESPNInjuryScraper:
         teams_url = f"{self.base_url}/football/college-football/teams"
 
         try:
-            response = requests.get(teams_url, timeout=10)
+            response = httpx.get(teams_url, timeout=10)
             response.raise_for_status()
             teams_data = response.json()
 
@@ -155,7 +155,7 @@ class ESPNInjuryScraper:
                 injury_url = f"{self.base_url}/football/college-football/teams/{team_id}/injuries"
 
                 try:
-                    injury_response = requests.get(injury_url, timeout=10)
+                    injury_response = httpx.get(injury_url, timeout=10)
                     injury_response.raise_for_status()
                     injury_data = injury_response.json()
 

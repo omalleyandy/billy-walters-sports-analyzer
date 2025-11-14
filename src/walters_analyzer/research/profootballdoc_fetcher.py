@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, List, Optional
 
-import aiohttp
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +17,13 @@ class ProFootballDocFetcher:
 
     def __init__(self) -> None:
         """Initialize ProFootballDoc fetcher."""
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: Optional[httpx.AsyncClient] = None
 
     @property
-    def session(self) -> aiohttp.ClientSession:
+    def session(self) -> httpx.AsyncClient:
         """Get or create HTTP session."""
-        if self._session is None or self._session.closed:
-            self._session = aiohttp.ClientSession(
+        if self._session is None or self._session.is_closed:
+            self._session = httpx.AsyncClient(
                 headers={"User-Agent": "Mozilla/5.0 (Educational Research Bot)"}
             )
         return self._session
