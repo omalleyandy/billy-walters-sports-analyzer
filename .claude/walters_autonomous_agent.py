@@ -513,7 +513,7 @@ class PatternRecognitionEngine:
         }
 
     def _extract_features(self, game_data: Dict) -> np.ndarray:
-        """Extract numerical features from game data"""
+        """Extract numerical features from game data (including injuries)"""
         features = [
             game_data.get("spread", 0),
             game_data.get("total", 45),
@@ -525,6 +525,12 @@ class PatternRecognitionEngine:
             game_data.get("weather_temp", 70) if "weather_temp" in game_data else 70,
             1 if game_data.get("division_game", False) else 0,
             1 if game_data.get("primetime", False) else 0,
+            # Injury features (NEW!)
+            game_data.get("home_injury_impact", 0),
+            game_data.get("away_injury_impact", 0),
+            game_data.get("injury_advantage", 0),  # Positive = home healthier
+            game_data.get("home_critical_injuries", 0),
+            game_data.get("away_critical_injuries", 0),
         ]
         return np.array(features)
 
@@ -912,19 +918,19 @@ async def main():
     }
 
     # Make autonomous decision
-    print("🤖 Autonomous Agent Analysis")
+    print("[AGENT] Autonomous Agent Analysis")
     print("=" * 60)
 
     decision = await agent.make_autonomous_decision(game_data)
 
     # Display reasoning chain
-    print(f"\n📊 Game: {decision.game_id}")
+    print(f"\n[GAME] {decision.game_id}")
     print(f"Recommendation: {decision.recommendation.upper()}")
     print(f"Confidence: {decision.confidence.name}")
     print(f"Stake: {decision.stake_percentage:.1f}% of bankroll")
     print(f"Expected Value: {decision.expected_value:.2f}%")
 
-    print("\n🧠 Reasoning Chain:")
+    print("\n[REASONING] Reasoning Chain:")
     for step in decision.reasoning_chain:
         print(f"\nStep {step.step_number}: {step.description}")
         print(f"  Confidence: {step.confidence:.1%}")
@@ -932,7 +938,7 @@ async def main():
             print(f"  • {evidence}")
         print(f"  Impact: {step.impact_on_decision}")
 
-    print("\n⚠️ Risk Assessment:")
+    print("\n[RISK] Risk Assessment:")
     for key, value in decision.risk_assessment.items():
         print(f"  {key}: {value:.2f}")
 
@@ -942,7 +948,7 @@ async def main():
     # Get strategy recommendations
     strategies = await agent.meta_learner.get_strategy_recommendations()
     if strategies:
-        print("\n📈 Learned Strategy Performance:")
+        print("\n[PERFORMANCE] Learned Strategy Performance:")
         for strategy, performance in strategies.items():
             print(f"  {strategy}: {performance['recommendation']}")
 

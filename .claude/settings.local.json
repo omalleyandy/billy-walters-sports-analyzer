@@ -73,7 +73,11 @@
       "SlashCommand(/current-week)",
       "Bash(Select-String -Pattern \"EDGE DETECTION|Total Edges|games from|BET (HOME|AWAY)|EDGE:\")",
       "Bash(Select-Object -First 30)",
-      "SlashCommand(/analyze-matchup)"
+      "SlashCommand(/analyze-matchup)",
+      "Bash(Select-String -Pattern \"power|rating\")",
+      "SlashCommand(/document-lesson)",
+      "Bash(tee:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [
       "Bash(rm -rf:*)",

@@ -1,0 +1,252 @@
+[
+  {
+    "game": "Houston Texans @ Tennessee Titans",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 105.08387000000002,
+    "spread": 6,
+    "total": 37,
+    "predicted_spread": -16.02
+  },
+  {
+    "game": "Houston Texans @ Tennessee Titans",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 90.76637000000002,
+    "spread": 3,
+    "total": 18.5,
+    "predicted_spread": -16.02
+  },
+  {
+    "game": "Tampa Bay Buccaneers @ Buffalo Bills",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 74.63532000000002,
+    "spread": -5.5,
+    "total": 47,
+    "predicted_spread": 10.14
+  },
+  {
+    "game": "Green Bay Packers @ New York Giants",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 67.90609500000001,
+    "spread": 7,
+    "total": 42.5,
+    "predicted_spread": -7.23
+  },
+  {
+    "game": "Tampa Bay Buccaneers @ Buffalo Bills",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 65.09032,
+    "spread": -3.5,
+    "total": 23.5,
+    "predicted_spread": 10.14
+  },
+  {
+    "game": "Cincinnati Bengals @ Pittsburgh Steelers",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 58.742895000000004,
+    "spread": -5.5,
+    "total": 49,
+    "predicted_spread": 6.8100000000000005
+  },
+  {
+    "game": "Baltimore Ravens @ Cleveland Browns",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 56.16574500000001,
+    "spread": 9,
+    "total": 39,
+    "predicted_spread": -2.7700000000000005
+  },
+  {
+    "game": "Green Bay Packers @ New York Giants",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 51.20234500000003,
+    "spread": 3.5,
+    "total": 21.5,
+    "predicted_spread": -7.23
+  },
+  {
+    "game": "Cincinnati Bengals @ Pittsburgh Steelers",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 49.19789500000002,
+    "spread": -3.5,
+    "total": 24.5,
+    "predicted_spread": 6.8100000000000005
+  },
+  {
+    "game": "Kansas City Chiefs @ Denver Broncos",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 46.143495000000016,
+    "spread": 4,
+    "total": 45,
+    "predicted_spread": -5.670000000000002
+  },
+  {
+    "game": "Carolina Panthers @ Atlanta Falcons",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 42.611845,
+    "spread": -3.5,
+    "total": 42.5,
+    "predicted_spread": 5.43
+  },
+  {
+    "game": "Kansas City Chiefs @ Denver Broncos",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 38.98474500000002,
+    "spread": 2.5,
+    "total": 23,
+    "predicted_spread": -5.670000000000002
+  },
+  {
+    "game": "Carolina Panthers @ Atlanta Falcons",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 37.839345000000016,
+    "spread": -2.5,
+    "total": 21.5,
+    "predicted_spread": 5.43
+  },
+  {
+    "game": "Washington Commanders @ Miami Dolphins",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 37.07574500000001,
+    "spread": -2.5,
+    "total": 47.5,
+    "predicted_spread": 5.27
+  },
+  {
+    "game": "Chicago Bears @ Minnesota Vikings",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 36.312145000000015,
+    "spread": -3,
+    "total": 48.5,
+    "predicted_spread": 4.610000000000001
+  },
+  {
+    "game": "Baltimore Ravens @ Cleveland Browns",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 34.68949500000002,
+    "spread": 4.5,
+    "total": 19.5,
+    "predicted_spread": -2.7700000000000005
+  },
+  {
+    "game": "Los Angeles Chargers @ Jacksonville Jaguars",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 34.02134500000001,
+    "spread": 3,
+    "total": 43.5,
+    "predicted_spread": -4.130000000000001
+  },
+  {
+    "game": "Washington Commanders @ Miami Dolphins",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 29.916995,
+    "spread": -1,
+    "total": 23.5,
+    "predicted_spread": 5.27
+  },
+  {
+    "game": "Dallas Cowboys @ Las Vegas Raiders",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 28.62842000000001,
+    "spread": 3.5,
+    "total": 49.5,
+    "predicted_spread": -2.5
+  },
+  {
+    "game": "Los Angeles Chargers @ Jacksonville Jaguars",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 26.862595000000024,
+    "spread": 1.5,
+    "total": 21.5,
+    "predicted_spread": -4.130000000000001
+  },
+  {
+    "game": "Chicago Bears @ Minnesota Vikings",
+    "recommendation": "bet_home",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 26.767145000000003,
+    "spread": -1,
+    "total": 24,
+    "predicted_spread": 4.610000000000001
+  },
+  {
+    "game": "Dallas Cowboys @ Las Vegas Raiders",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 23.85592000000001,
+    "spread": 2.5,
+    "total": 25.5,
+    "predicted_spread": -2.5
+  },
+  {
+    "game": "Detroit Lions @ Philadelphia Eagles",
+    "recommendation": "bet_away",
+    "confidence": "HIGH",
+    "stake_pct": 1.995,
+    "expected_value": 15.074520000000025,
+    "spread": -0.5,
+    "total": 23.5,
+    "predicted_spread": -3.660000000000002
+  },
+  {
+    "game": "Seattle Seahawks @ Los Angeles Rams",
+    "recommendation": "bet_home",
+    "confidence": "MODERATE",
+    "stake_pct": 1.785,
+    "expected_value": 11.208795000000006,
+    "spread": -3,
+    "total": 48.5,
+    "predicted_spread": -0.6500000000000004
+  },
+  {
+    "game": "Detroit Lions @ Philadelphia Eagles",
+    "recommendation": "bet_away",
+    "confidence": "LOW",
+    "stake_pct": 1.47,
+    "expected_value": 5.52952000000001,
+    "spread": -2.5,
+    "total": 46.5,
+    "predicted_spread": -3.660000000000002
+  }
+]

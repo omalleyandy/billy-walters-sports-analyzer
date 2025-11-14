@@ -1,0 +1,1010 @@
+Billy Walters Autonomous Agent Analysis
+Generated: 2025-11-13 18:25:37.823944
+
+Total Games: 27
+Recommendations: 25
+
+================================================================================
+RECOMMENDATIONS (Sorted by EV)
+================================================================================
+
+================================================================================
+GAME: Houston Texans @ Tennessee Titans
+================================================================================
+
+Market Spread: Tennessee Titans +6.0
+Total: 37
+Predicted Spread: -16.0
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 105.08%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: -4.35
+   - Away rating: 13.67
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 52.67
+
+
+================================================================================
+GAME: Houston Texans @ Tennessee Titans
+================================================================================
+
+Market Spread: Tennessee Titans +3.0
+Total: 18.5
+Predicted Spread: -16.0
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 90.77%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: -4.35
+   - Away rating: 13.67
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 45.50
+
+
+================================================================================
+GAME: Tampa Bay Buccaneers @ Buffalo Bills
+================================================================================
+
+Market Spread: Buffalo Bills -5.5
+Total: 47
+Predicted Spread: +10.1
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 74.64%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 19.1
+   - Away rating: 10.96
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 37.41
+
+
+================================================================================
+GAME: Green Bay Packers @ New York Giants
+================================================================================
+
+Market Spread: New York Giants +7.0
+Total: 42.5
+Predicted Spread: -7.2
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 67.91%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 2.32
+   - Away rating: 11.55
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 34.04
+
+
+================================================================================
+GAME: Tampa Bay Buccaneers @ Buffalo Bills
+================================================================================
+
+Market Spread: Buffalo Bills -3.5
+Total: 23.5
+Predicted Spread: +10.1
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 65.09%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 19.1
+   - Away rating: 10.96
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 32.63
+
+
+================================================================================
+GAME: Cincinnati Bengals @ Pittsburgh Steelers
+================================================================================
+
+Market Spread: Pittsburgh Steelers -5.5
+Total: 49
+Predicted Spread: +6.8
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 58.74%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 9.72
+   - Away rating: 4.91
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 29.45
+
+
+================================================================================
+GAME: Baltimore Ravens @ Cleveland Browns
+================================================================================
+
+Market Spread: Cleveland Browns +9.0
+Total: 39
+Predicted Spread: -2.8
+Game Time: 11/16/2025 16:25
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 56.17%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 6.56
+   - Away rating: 11.33
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 28.15
+
+
+================================================================================
+GAME: Green Bay Packers @ New York Giants
+================================================================================
+
+Market Spread: New York Giants +3.5
+Total: 21.5
+Predicted Spread: -7.2
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 51.20%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 2.32
+   - Away rating: 11.55
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 25.67
+
+
+================================================================================
+GAME: Cincinnati Bengals @ Pittsburgh Steelers
+================================================================================
+
+Market Spread: Pittsburgh Steelers -3.5
+Total: 24.5
+Predicted Spread: +6.8
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 49.20%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 9.72
+   - Away rating: 4.91
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 24.66
+
+
+================================================================================
+GAME: Kansas City Chiefs @ Denver Broncos
+================================================================================
+
+Market Spread: Denver Broncos +4.0
+Total: 45
+Predicted Spread: -5.7
+Game Time: 11/16/2025 16:25
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 46.14%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 10.02
+   - Away rating: 17.69
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 23.13
+
+
+================================================================================
+GAME: Carolina Panthers @ Atlanta Falcons
+================================================================================
+
+Market Spread: Atlanta Falcons -3.5
+Total: 42.5
+Predicted Spread: +5.4
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 42.61%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 4.72
+   - Away rating: 1.29
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 21.36
+
+
+================================================================================
+GAME: Kansas City Chiefs @ Denver Broncos
+================================================================================
+
+Market Spread: Denver Broncos +2.5
+Total: 23
+Predicted Spread: -5.7
+Game Time: 11/16/2025 16:25
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 38.98%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 10.02
+   - Away rating: 17.69
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 19.54
+
+
+================================================================================
+GAME: Carolina Panthers @ Atlanta Falcons
+================================================================================
+
+Market Spread: Atlanta Falcons -2.5
+Total: 21.5
+Predicted Spread: +5.4
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 37.84%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 4.72
+   - Away rating: 1.29
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 18.97
+
+
+================================================================================
+GAME: Washington Commanders @ Miami Dolphins
+================================================================================
+
+Market Spread: Miami Dolphins -2.5
+Total: 47.5
+Predicted Spread: +5.3
+Game Time: 11/16/2025 09:30
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 37.08%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 4.26
+   - Away rating: 0.99
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 18.58
+
+
+================================================================================
+GAME: Chicago Bears @ Minnesota Vikings
+================================================================================
+
+Market Spread: Minnesota Vikings -3.0
+Total: 48.5
+Predicted Spread: +4.6
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 36.31%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 10.73
+   - Away rating: 8.12
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 18.20
+
+
+================================================================================
+GAME: Baltimore Ravens @ Cleveland Browns
+================================================================================
+
+Market Spread: Cleveland Browns +4.5
+Total: 19.5
+Predicted Spread: -2.8
+Game Time: 11/16/2025 16:25
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 34.69%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 6.56
+   - Away rating: 11.33
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 17.39
+
+
+================================================================================
+GAME: Los Angeles Chargers @ Jacksonville Jaguars
+================================================================================
+
+Market Spread: Jacksonville Jaguars +3.0
+Total: 43.5
+Predicted Spread: -4.1
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 34.02%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 5.75
+   - Away rating: 11.88
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 17.05
+
+
+================================================================================
+GAME: Washington Commanders @ Miami Dolphins
+================================================================================
+
+Market Spread: Miami Dolphins -1.0
+Total: 23.5
+Predicted Spread: +5.3
+Game Time: 11/16/2025 09:30
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 29.92%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 4.26
+   - Away rating: 0.99
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 15.00
+
+
+================================================================================
+GAME: Dallas Cowboys @ Las Vegas Raiders
+================================================================================
+
+Market Spread: Las Vegas Raiders +3.5
+Total: 49.5
+Predicted Spread: -2.5
+Game Time: 11/17/2025 20:15
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 28.63%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: -0.52
+   - Away rating: 3.98
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 14.35
+
+
+================================================================================
+GAME: Los Angeles Chargers @ Jacksonville Jaguars
+================================================================================
+
+Market Spread: Jacksonville Jaguars +1.5
+Total: 21.5
+Predicted Spread: -4.1
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 26.86%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 5.75
+   - Away rating: 11.88
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 13.46
+
+
+================================================================================
+GAME: Chicago Bears @ Minnesota Vikings
+================================================================================
+
+Market Spread: Minnesota Vikings -1.0
+Total: 24
+Predicted Spread: +4.6
+Game Time: 11/16/2025 13:00
+
+[RECOMMENDATION] BET_HOME
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 26.77%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 10.73
+   - Away rating: 8.12
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 13.42
+
+
+================================================================================
+GAME: Dallas Cowboys @ Las Vegas Raiders
+================================================================================
+
+Market Spread: Las Vegas Raiders +2.5
+Total: 25.5
+Predicted Spread: -2.5
+Game Time: 11/17/2025 20:15
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 23.86%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: -0.52
+   - Away rating: 3.98
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 11.96
+
+
+================================================================================
+GAME: Detroit Lions @ Philadelphia Eagles
+================================================================================
+
+Market Spread: Philadelphia Eagles -0.5
+Total: 23.5
+Predicted Spread: -3.7
+Game Time: 11/16/2025 20:20
+
+[RECOMMENDATION] BET_AWAY
+Confidence: HIGH (80%)
+Stake: 2.00% of bankroll
+Expected Value: 15.07%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 90%
+   - Home rating: 13.26
+   - Away rating: 18.92
+   Impact: STRONG - Clear value identified
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 66%
+  Max Loss: 2.00%
+  Risk/Reward: 7.56
+
+
+================================================================================
+GAME: Seattle Seahawks @ Los Angeles Rams
+================================================================================
+
+Market Spread: Los Angeles Rams -3.0
+Total: 48.5
+Predicted Spread: -0.7
+Game Time: 11/16/2025 16:05
+
+[RECOMMENDATION] BET_HOME
+Confidence: MODERATE (60%)
+Stake: 1.78% of bankroll
+Expected Value: 11.21%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 70%
+   - Home rating: 12.37
+   - Away rating: 15.02
+   Impact: MODERATE - Decent edge present
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 60%
+  Max Loss: 1.78%
+  Risk/Reward: 6.28
+
+
+================================================================================
+GAME: Detroit Lions @ Philadelphia Eagles
+================================================================================
+
+Market Spread: Philadelphia Eagles -2.5
+Total: 46.5
+Predicted Spread: -3.7
+Game Time: 11/16/2025 20:20
+
+[RECOMMENDATION] BET_AWAY
+Confidence: LOW (40%)
+Stake: 1.47% of bankroll
+Expected Value: 5.53%
+
+[REASONING] Top Factors:
+
+1. Power Rating Analysis
+   Confidence: 40%
+   - Home rating: 13.26
+   - Away rating: 18.92
+   Impact: WEAK - Minimal edge
+
+2. Market Efficiency Check
+   Confidence: 60%
+   - Line movement: 0.0
+   - Public vs sharp: 50% public / 50% money
+   Impact: MODERATE - Normal market
+
+3. Situational Analysis
+   Confidence: 50%
+   - Rest advantage: 0
+   - Travel impact: 0
+   Impact: NEGATIVE - Score: 0.00
+
+[RISK ASSESSMENT]
+  Overall Risk: 49%
+  Max Loss: 1.47%
+  Risk/Reward: 3.76
+
+
