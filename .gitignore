@@ -20,7 +20,7 @@ id_rsa*
 # System files
 .DS_Store
 .overtime_state.json
-snapshots/*.json
+snapshots/
 
 # Windows Zone.Identifier files
 *:Zone.Identifier
