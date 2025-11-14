@@ -333,13 +333,16 @@ class OvertimeHybridScraper:
             .build()
         )
 
-        # Register handlers
+        # Register handlers BEFORE starting
         self._register_signalr_handlers()
 
         # Start connection
         try:
             self.signalr_connection.start()
             print("3. SignalR WebSocket connected successfully")
+
+            # NOW monkey-patch the transport's message handler (created after start())
+            self._install_raw_frame_interceptor()
 
             # Subscribe to sports
             if self.customer_id:
@@ -376,6 +379,65 @@ class OvertimeHybridScraper:
                 self.signalr_connection.stop()
                 print("7. SignalR connection closed")
 
+    def _install_raw_frame_interceptor(self) -> None:
+        """
+        Install a raw WebSocket frame interceptor to capture ALL messages.
+
+        This monkey-patches the transport's _on_message handler to log every
+        frame BEFORE SignalR's event routing. This lets us discover actual
+        event names the server uses during live games.
+        """
+        try:
+            # Access the transport (WebSocket connection)
+            if not hasattr(self.signalr_connection, 'transport'):
+                print("   [WARNING] No transport attribute - cannot intercept frames")
+                return
+
+            transport = self.signalr_connection.transport
+
+            # Different signalr-client-aio versions use different attributes
+            # Try multiple possible message handler names
+            handler_names = ['_on_message', 'on_message', 'handle_message']
+
+            for handler_name in handler_names:
+                if hasattr(transport, handler_name):
+                    original_handler = getattr(transport, handler_name)
+
+                    def make_interceptor(orig_handler):
+                        def intercepted_handler(message):
+                            # Log every raw frame
+                            self._log_raw_message("websocket_frame", message)
+
+                            # Print to console for real-time monitoring
+                            try:
+                                # Try to parse as JSON to pretty-print
+                                import json
+
+                                msg_dict = json.loads(message)
+                                msg_preview = json.dumps(msg_dict)[:300]
+                            except Exception:
+                                # Not JSON, just truncate string
+                                msg_preview = str(message)[:300]
+
+                            print(f"\n   [RAW FRAME] {msg_preview}...")
+
+                            # Call original handler to continue normal processing
+                            return orig_handler(message)
+
+                        return intercepted_handler
+
+                    # Replace the handler with our interceptor
+                    setattr(transport, handler_name, make_interceptor(original_handler))
+                    print(f"   [OK] Raw frame interceptor installed on '{handler_name}'")
+                    return
+
+            print(
+                "   [WARNING] Could not find message handler - raw frames won't be logged"
+            )
+
+        except Exception as e:
+            print(f"   [ERROR] Failed to install frame interceptor: {e}")
+
     def _register_signalr_handlers(self) -> None:
         """Register handlers for SignalR events"""
 
@@ -383,16 +445,6 @@ class OvertimeHybridScraper:
         self.signalr_connection.on_open = self._on_signalr_open
         self.signalr_connection.on_close = self._on_signalr_close
         self.signalr_connection.on_error = self._on_signalr_error
-
-        # Catch-all handler to capture ANY event (for debugging)
-        # This will log all events even if we don't have specific handlers
-        if hasattr(self.signalr_connection, 'on_message'):
-            original_on_message = self.signalr_connection.on_message
-            def enhanced_on_message(message):
-                self._log_raw_message("on_message_callback", message)
-                if original_on_message:
-                    original_on_message(message)
-            self.signalr_connection.on_message = enhanced_on_message
 
         # Data events (guessed based on common patterns - we'll discover actual names)
         # During live games, check console/logs to see which events actually fire
