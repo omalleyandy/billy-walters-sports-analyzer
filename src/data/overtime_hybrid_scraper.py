@@ -15,7 +15,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Callable
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
+import httpx
 
 from playwright.async_api import Page, async_playwright, BrowserContext
 from signalrcore.hub_connection_builder import HubConnectionBuilder
@@ -99,6 +100,7 @@ class OvertimeHybridScraper:
         self.pregame_games: List[OvertimeGame] = []
         self.live_updates: List[Dict[str, Any]] = []
         self.account_info: Optional[Dict[str, str]] = None
+        self.browser_cookies: Optional[str] = None  # Cookie header for SignalR auth
 
         # Logging
         self.logger = logging.getLogger(__name__)
@@ -200,8 +202,74 @@ class OvertimeHybridScraper:
 
                 print(f"   Total pre-game games: {len(self.pregame_games)}")
 
+                # Extract cookies for SignalR authentication
+                if self.enable_signalr:
+                    print("6. Extracting session cookies for SignalR...")
+                    cookies = await context.cookies()
+                    self.browser_cookies = self._format_cookies(cookies)
+                    print(f"   Captured {len(cookies)} cookies")
+
             finally:
                 await browser.close()
+
+    async def _negotiate_signalr(self) -> Optional[str]:
+        """
+        Perform HTTP negotiation with SignalR server to get connection token.
+
+        Returns:
+            Connection token string, or None if negotiation fails
+        """
+        print("   Performing HTTP negotiation...")
+
+        negotiation_url = "https://ws.ticosports.com/signalr/negotiate"
+
+        # Build query parameters
+        params = {
+            "clientProtocol": "1.5",
+            "connectionData": json.dumps([{"name": "gbsHub"}]),
+            "_": str(int(datetime.now().timestamp() * 1000)),  # Timestamp
+        }
+
+        # Build headers with cookies
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "Origin": "https://overtime.ag",
+            "Referer": "https://overtime.ag/",
+            "Accept": "application/json",
+        }
+
+        if self.browser_cookies:
+            headers["Cookie"] = self.browser_cookies
+
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    negotiation_url,
+                    params=params,
+                    headers=headers,
+                    timeout=30.0,
+                )
+
+                if response.status_code == 200:
+                    data = response.json()
+                    connection_token = data.get("ConnectionToken")
+                    connection_id = data.get("ConnectionId")
+
+                    if connection_token:
+                        print(f"   [OK] Negotiation successful")
+                        print(f"   Connection ID: {connection_id[:20]}...")
+                        return connection_token
+                    else:
+                        print(f"   [ERROR] No ConnectionToken in response")
+                        return None
+                else:
+                    print(f"   [ERROR] Negotiation failed: {response.status_code}")
+                    print(f"   Response: {response.text[:200]}")
+                    return None
+
+        except Exception as e:
+            print(f"   [ERROR] Negotiation exception: {e}")
+            return None
 
     async def _signalr_listen(self) -> None:
         """Phase 2: Connect to SignalR for real-time updates"""
@@ -210,16 +278,46 @@ class OvertimeHybridScraper:
         print("   Server: wss://ws.ticosports.com/signalr")
         print(f"   Duration: {self.signalr_duration} seconds")
 
-        # Build SignalR connection
+        # Build headers with authentication cookies from Playwright session
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "Origin": "https://overtime.ag",
+            "Host": "ws.ticosports.com",
+        }
+
+        # Add authentication cookies if available
+        if self.browser_cookies:
+            headers["Cookie"] = self.browser_cookies
+            print("   Using authenticated session cookies")
+        else:
+            print("   [WARNING] No session cookies - authentication may fail")
+
+        # Step 1: HTTP Negotiation to get connection token
+        connection_token = await self._negotiate_signalr()
+
+        if not connection_token:
+            print("   [ERROR] SignalR negotiation failed - cannot connect")
+            return
+
+        # Step 2: Build WebSocket URL with connection token
+        ws_params = {
+            "transport": "webSockets",
+            "clientProtocol": "1.5",
+            "connectionToken": connection_token,
+            "connectionData": json.dumps([{"name": "gbsHub"}]),
+        }
+
+        ws_url = f"wss://ws.ticosports.com/signalr/connect?{urlencode(ws_params)}"
+
+        # Build SignalR connection with negotiated token
+        print("2. Establishing WebSocket connection...")
         self.signalr_connection = (
             HubConnectionBuilder()
             .with_url(
-                "https://ws.ticosports.com/signalr",
+                ws_url,
                 options={
-                    "skip_negotiation": False,
-                    "headers": {
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                    },
+                    "skip_negotiation": True,  # Already negotiated
+                    "headers": headers,
                 },
             )
             .configure_logging(logging.WARNING)  # Reduce noise
@@ -239,16 +337,16 @@ class OvertimeHybridScraper:
         # Start connection
         try:
             self.signalr_connection.start()
-            print("2. SignalR connected successfully")
+            print("3. SignalR WebSocket connected successfully")
 
             # Subscribe to sports
             if self.customer_id:
-                print("3. Subscribing to customer and NFL...")
+                print("4. Subscribing to customer and NFL...")
                 self._subscribe_customer()
                 self._subscribe_sports()
 
             # Listen for updates
-            print(f"4. Listening for {self.signalr_duration} seconds...")
+            print(f"5. Listening for {self.signalr_duration} seconds...")
             print("   Press Ctrl+C to stop early")
 
             start_time = asyncio.get_event_loop().time()
@@ -264,7 +362,7 @@ class OvertimeHybridScraper:
                         f"   [{elapsed}s] Live updates received: {len(self.live_updates)}"
                     )
 
-            print("5. SignalR listening complete")
+            print("6. SignalR listening complete")
             print(f"   Total live updates: {len(self.live_updates)}")
 
         except KeyboardInterrupt:
@@ -274,7 +372,7 @@ class OvertimeHybridScraper:
         finally:
             if self.signalr_connection:
                 self.signalr_connection.stop()
-                print("6. SignalR connection closed")
+                print("7. SignalR connection closed")
 
     def _register_signalr_handlers(self) -> None:
         """Register handlers for SignalR events"""
@@ -364,7 +462,7 @@ class OvertimeHybridScraper:
             "customerId": self.customer_id,
             "password": self.password,
         }
-        self.signalr_connection.send("gbsHub", "SubscribeCustomer", [user_data])
+        self.signalr_connection.send("SubscribeCustomer", [user_data])
 
     def _subscribe_sports(self) -> None:
         """Subscribe to NFL sports on SignalR hub"""
@@ -375,7 +473,7 @@ class OvertimeHybridScraper:
         ]
 
         try:
-            self.signalr_connection.send("gbsHub", "SubscribeSports", [subscriptions])
+            self.signalr_connection.send("SubscribeSports", subscriptions)
         except Exception as e:
             self.logger.error(f"SubscribeSports failed: {e}")
 
@@ -572,6 +670,25 @@ class OvertimeHybridScraper:
 
         except Exception as e:
             print(f"   Could not switch to period {period}: {e}")
+
+    def _format_cookies(self, cookies: List[Dict[str, Any]]) -> str:
+        """
+        Format Playwright cookies into Cookie header string for SignalR.
+
+        Args:
+            cookies: List of cookie dictionaries from Playwright context
+
+        Returns:
+            Cookie header string (e.g., "name1=value1; name2=value2")
+        """
+        cookie_pairs = []
+        for cookie in cookies:
+            name = cookie.get("name", "")
+            value = cookie.get("value", "")
+            if name and value:
+                cookie_pairs.append(f"{name}={value}")
+
+        return "; ".join(cookie_pairs)
 
     def _format_output(self) -> Dict[str, Any]:
         """Format combined output for Billy Walters system"""
