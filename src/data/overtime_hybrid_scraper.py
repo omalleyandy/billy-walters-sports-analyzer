@@ -101,9 +101,11 @@ class OvertimeHybridScraper:
         self.live_updates: List[Dict[str, Any]] = []
         self.account_info: Optional[Dict[str, str]] = None
         self.browser_cookies: Optional[str] = None  # Cookie header for SignalR auth
+        self.raw_messages: List[Dict[str, Any]] = []  # All raw WebSocket messages
 
         # Logging
         self.logger = logging.getLogger(__name__)
+        self.verbose_logging = True  # Enable detailed WebSocket logging
 
     async def scrape(self) -> Dict[str, Any]:
         """
@@ -382,78 +384,152 @@ class OvertimeHybridScraper:
         self.signalr_connection.on_close = self._on_signalr_close
         self.signalr_connection.on_error = self._on_signalr_error
 
-        # Data events (guessed based on common patterns)
+        # Catch-all handler to capture ANY event (for debugging)
+        # This will log all events even if we don't have specific handlers
+        if hasattr(self.signalr_connection, 'on_message'):
+            original_on_message = self.signalr_connection.on_message
+            def enhanced_on_message(message):
+                self._log_raw_message("on_message_callback", message)
+                if original_on_message:
+                    original_on_message(message)
+            self.signalr_connection.on_message = enhanced_on_message
+
+        # Data events (guessed based on common patterns - we'll discover actual names)
+        # During live games, check console/logs to see which events actually fire
         self.signalr_connection.on("gameUpdate", self._on_game_update)
         self.signalr_connection.on("linesUpdate", self._on_lines_update)
         self.signalr_connection.on("oddsUpdate", self._on_odds_update)
         self.signalr_connection.on("scoreUpdate", self._on_score_update)
         self.signalr_connection.on("message", self._on_message)
 
+        # Additional potential event names to try
+        self.signalr_connection.on("updateLines", self._on_universal_event)
+        self.signalr_connection.on("updateOdds", self._on_universal_event)
+        self.signalr_connection.on("updateGame", self._on_universal_event)
+        self.signalr_connection.on("lineChange", self._on_universal_event)
+        self.signalr_connection.on("broadcast", self._on_universal_event)
+
+    def _log_raw_message(self, event_name: str, data: Any) -> None:
+        """Log all raw WebSocket messages for debugging"""
+        timestamp = datetime.utcnow().isoformat()
+        message = {
+            "timestamp": timestamp,
+            "event": event_name,
+            "data": data,
+        }
+        self.raw_messages.append(message)
+
+        if self.verbose_logging:
+            try:
+                data_str = json.dumps(data) if isinstance(data, (dict, list)) else str(data)
+                print(f"   [WebSocket] {timestamp} | {event_name} | {data_str[:200]}...")
+            except Exception as e:
+                print(f"   [WebSocket] {timestamp} | {event_name} | <unparseable: {e}>")
+
+    def _on_universal_event(self, *args, **kwargs) -> None:
+        """Universal handler to catch any events we registered"""
+        import inspect
+        frame = inspect.currentframe()
+        event_name = "unknown_event"
+
+        # Try to get the event name from the call stack
+        if frame and frame.f_back:
+            event_name = frame.f_back.f_locals.get('event', 'unknown')
+
+        self._log_raw_message(event_name, {"args": args, "kwargs": kwargs})
+
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": event_name,
+            "data": {"args": args, "kwargs": kwargs},
+        })
+
+        print(f"   [EVENT DETECTED] {event_name}")
+        if args:
+            print(f"   Args: {args}")
+        if kwargs:
+            print(f"   Kwargs: {kwargs}")
+
     def _on_signalr_open(self) -> None:
         """SignalR connection opened"""
         self.logger.info("SignalR connection established")
+        print("   [CONNECTED] SignalR WebSocket is open and ready")
 
     def _on_signalr_close(self) -> None:
         """SignalR connection closed"""
         self.logger.warning("SignalR connection closed")
+        print("   [DISCONNECTED] SignalR WebSocket closed")
 
     def _on_signalr_error(self, error: Any) -> None:
         """SignalR error"""
         self.logger.error(f"SignalR error: {error}")
+        print(f"   [ERROR] SignalR: {error}")
 
     def _on_game_update(self, data: Any) -> None:
         """Handler for game updates"""
-        self.live_updates.append(
-            {
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": "game_update",
-                "data": data,
-            }
-        )
-        print(f"   [GAME UPDATE] {json.dumps(data)[:100]}...")
+        self._log_raw_message("gameUpdate", data)
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": "game_update",
+            "data": data,
+        })
+        print(f"   [GAME UPDATE] Data received!")
+        try:
+            print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
+        except:
+            print(f"   Preview: {str(data)[:200]}...")
 
     def _on_lines_update(self, data: Any) -> None:
         """Handler for lines updates"""
-        self.live_updates.append(
-            {
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": "lines_update",
-                "data": data,
-            }
-        )
-        print(f"   [LINES UPDATE] {json.dumps(data)[:100]}...")
+        self._log_raw_message("linesUpdate", data)
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": "lines_update",
+            "data": data,
+        })
+        print(f"   [LINES UPDATE] Data received!")
+        try:
+            print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
+        except:
+            print(f"   Preview: {str(data)[:200]}...")
 
     def _on_odds_update(self, data: Any) -> None:
         """Handler for odds updates"""
-        self.live_updates.append(
-            {
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": "odds_update",
-                "data": data,
-            }
-        )
-        print(f"   [ODDS UPDATE] {json.dumps(data)[:100]}...")
+        self._log_raw_message("oddsUpdate", data)
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": "odds_update",
+            "data": data,
+        })
+        print(f"   [ODDS UPDATE] Data received!")
+        try:
+            print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
+        except:
+            print(f"   Preview: {str(data)[:200]}...")
 
     def _on_score_update(self, data: Any) -> None:
         """Handler for score updates"""
-        self.live_updates.append(
-            {
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": "score_update",
-                "data": data,
-            }
-        )
-        print(f"   [SCORE UPDATE] {json.dumps(data)[:100]}...")
+        self._log_raw_message("scoreUpdate", data)
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": "score_update",
+            "data": data,
+        })
+        print(f"   [SCORE UPDATE] Data received!")
+        try:
+            print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
+        except:
+            print(f"   Preview: {str(data)[:200]}...")
 
     def _on_message(self, message: Any) -> None:
         """Generic message handler"""
-        self.live_updates.append(
-            {
-                "timestamp": datetime.utcnow().isoformat(),
-                "type": "message",
-                "data": message,
-            }
-        )
+        self._log_raw_message("message", message)
+        self.live_updates.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "type": "message",
+            "data": message,
+        })
+        print(f"   [MESSAGE] Generic message received!")
         self.logger.info(f"SignalR message: {message}")
 
     def _subscribe_customer(self) -> None:
@@ -713,10 +789,26 @@ class OvertimeHybridScraper:
             },
         }
 
-        # Save to file
+        # Save main output file
         output_file = self.output_dir / f"overtime_hybrid_{timestamp}.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=2, default=str)
+
+        # Save raw WebSocket messages debug log
+        if self.raw_messages:
+            debug_file = self.output_dir / f"overtime_websocket_debug_{timestamp}.json"
+            debug_output = {
+                "metadata": {
+                    "purpose": "WebSocket debugging - raw SignalR messages",
+                    "scraped_at": datetime.now().isoformat(),
+                    "total_messages": len(self.raw_messages),
+                },
+                "messages": self.raw_messages,
+            }
+            with open(debug_file, "w", encoding="utf-8") as f:
+                json.dump(debug_output, f, indent=2, default=str)
+            print(f"Saved WebSocket debug log to: {debug_file}")
+            print(f"  Total raw messages captured: {len(self.raw_messages)}")
 
         print(f"Saved combined output to: {output_file}")
         print()
@@ -725,6 +817,7 @@ class OvertimeHybridScraper:
         print("=" * 70)
         print(f"Pre-game games: {len(self.pregame_games)}")
         print(f"Live updates: {len(self.live_updates)}")
+        print(f"WebSocket messages logged: {len(self.raw_messages)}")
         print(f"Output file: {output_file}")
 
         return output
