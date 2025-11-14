@@ -3424,3 +3424,228 @@ except ImportError:
 - League: Must be "NFL" or "NCAAF"
 
 ---
+
+## Session: 2025-11-13 - Discovering SignalR Event Names
+
+### Challenge: Unknown Event Names
+
+**Problem:**
+We successfully debugged and fixed all SignalR WebSocket connection issues, but we're still guessing at event names:
+```python
+# These are GUESSES - we don't know if they're correct
+self.signalr_connection.on("gameUpdate", handler)
+self.signalr_connection.on("linesUpdate", handler)
+self.signalr_connection.on("oddsChange", handler)
+```
+
+SignalR only delivers events you've subscribed to. If the server uses different event names, we'll never receive updates even though the connection is perfect.
+
+**Root Cause:**
+- SignalR's event routing filters messages by subscription
+- We don't know what events Overtime.ag's server actually emits
+- Standard SignalR events vary by implementation
+- Need to capture raw frames BEFORE event routing
+
+---
+
+### Solution: Raw WebSocket Frame Interceptor
+
+**Approach:**
+Monkey-patch the transport's message handler to log ALL WebSocket frames before SignalR's event routing processes them.
+
+**Implementation:**
+
+1. **New Method:** `_install_raw_frame_interceptor()`
+```python
+def _install_raw_frame_interceptor(self) -> None:
+    """
+    Install raw WebSocket frame interceptor.
+
+    Captures ALL messages before SignalR's event routing,
+    enabling discovery of actual event names.
+    """
+    transport = self.signalr_connection.transport
+
+    # Try multiple possible handler names (library version differences)
+    handler_names = ['_on_message', 'on_message', 'handle_message']
+
+    for handler_name in handler_names:
+        if hasattr(transport, handler_name):
+            original_handler = getattr(transport, handler_name)
+
+            def make_interceptor(orig_handler):
+                def intercepted_handler(message):
+                    # Log every raw frame
+                    self._log_raw_message("websocket_frame", message)
+
+                    # Print to console for real-time monitoring
+                    msg_preview = str(message)[:300]
+                    print(f"\n   [RAW FRAME] {msg_preview}...")
+
+                    # Call original handler
+                    return orig_handler(message)
+
+                return intercepted_handler
+
+            # Replace handler with interceptor
+            setattr(transport, handler_name, make_interceptor(original_handler))
+            print(f"   [OK] Raw frame interceptor installed")
+            return
+```
+
+2. **Installation Timing:**
+```python
+# IMPORTANT: Install AFTER connection.start()
+self.signalr_connection.start()
+print("3. SignalR WebSocket connected successfully")
+
+# NOW install interceptor (transport exists after start)
+self._install_raw_frame_interceptor()
+```
+
+3. **Test Result:**
+```
+3. SignalR WebSocket connected successfully
+   [OK] Raw frame interceptor installed on '_on_message'
+```
+
+**Key Insights:**
+- Must install AFTER `connection.start()` (transport doesn't exist before)
+- Use closure (`make_interceptor`) to capture original handler correctly
+- Try multiple handler names for library version compatibility
+- Print AND log frames for both real-time and historical analysis
+
+---
+
+### Alternative: Browser JavaScript Analysis
+
+**Created:** `scripts/dev/discover_signalr_events.py`
+
+**Approach:** Evaluate SignalR hub directly in browser context:
+```python
+hub_info = await page.evaluate("""() => {
+    const results = {
+        signalr_exists: typeof $.connection !== 'undefined',
+        hub_name: null,
+        events: []
+    };
+
+    if ($.connection && $.connection.gbsHub) {
+        results.hub_name = 'gbsHub';
+        results.events = Object.keys($.connection.gbsHub.client);
+    }
+
+    return results;
+}""")
+```
+
+**Benefits:**
+- Directly extracts registered client methods
+- Shows what events website itself subscribes to
+- Can be run manually for inspection
+
+**Limitation:**
+- Requires login automation (hidden button issue)
+- Only shows what JavaScript has registered
+- Might miss dynamically added events
+
+---
+
+### Usage Guide
+
+**During Live Games (Sunday 1:00 PM ET):**
+
+1. **Run Hybrid Scraper:**
+```bash
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800 --headless
+```
+
+2. **Monitor Console Output:**
+```
+[RAW FRAME] {"H":"gbsHub","M":"UpdateGameScore","A":[{"gameId":...}]}...
+[RAW FRAME] {"H":"gbsHub","M":"LineMovement","A":[{"eventId":...}]}...
+```
+
+3. **Extract Event Names:**
+- Look for `"M":"EventName"` in frames
+- These are the ACTUAL events the server emits
+- Example: `"M":"UpdateGameScore"` → event name is `UpdateGameScore`
+
+4. **Update Event Subscriptions:**
+```python
+# Replace guessed names with discovered names
+self.signalr_connection.on("UpdateGameScore", self._on_game_update)
+self.signalr_connection.on("LineMovement", self._on_line_movement)
+```
+
+5. **Check Debug Logs:**
+```json
+// output/overtime_websocket_debug_*.json
+{
+  "metadata": {
+    "total_messages": 127
+  },
+  "messages": [
+    {
+      "timestamp": "2025-11-17T18:15:23",
+      "event": "websocket_frame",
+      "data": "{\"H\":\"gbsHub\",\"M\":\"UpdateGameScore\",...}"
+    }
+  ]
+}
+```
+
+---
+
+### Files Modified
+
+**src/data/overtime_hybrid_scraper.py:**
+- Added `_install_raw_frame_interceptor()` method (lines 382-439)
+- Updated connection flow to install interceptor after start (line 345)
+- Enhanced logging to capture all raw frames
+
+**scripts/dev/discover_signalr_events.py:** (NEW)
+- Browser-based JavaScript analysis tool
+- Can evaluate SignalR hub in page context
+- Manual inspection capability
+
+---
+
+### Expected Outcomes
+
+**This Sunday (Week 11 Games):**
+- Capture 100+ raw WebSocket frames during live games
+- Identify 5-10 actual event names used by server
+- Update event subscriptions with discovered names
+- Validate that live updates are received correctly
+
+**Success Metrics:**
+- `live_updates` > 0 during games
+- Console shows `[RAW FRAME]` messages
+- Debug JSON contains actual event data
+- Can identify specific events for scores, lines, odds
+
+---
+
+### Prevention Tips
+
+1. **Always Use Raw Frame Logging for New Integrations**
+   - Don't guess at event names
+   - Capture real traffic first
+   - Then implement specific handlers
+
+2. **Timing Matters**
+   - Install interceptors AFTER connection establishment
+   - Transport/socket doesn't exist before start()
+
+3. **Library Compatibility**
+   - Try multiple handler attribute names
+   - Different versions use different names
+   - Fail gracefully if handler not found
+
+4. **Real-Time + Historical**
+   - Print to console for immediate feedback
+   - Log to file for detailed analysis
+   - Both perspectives are valuable
+
+---
