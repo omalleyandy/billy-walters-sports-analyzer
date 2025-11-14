@@ -49,6 +49,26 @@ output/overtime/ncaaf/live/*.json
 !output/overtime/ncaaf/pregame/.gitkeep
 !output/overtime/ncaaf/live/.gitkeep
 
+# Weekly regenerated analysis outputs
+output/edge_detection/*.txt
+output/edge_detection/*.json
+output/edge_detection/*.jsonl
+output/injuries/*.json
+output/injuries/*.jsonl
+output/massey/*.json
+output/ncaaf/**/*.json
+output/action_network/*.json
+output/weather/*.json
+
+# Keep directory structure with .gitkeep files
+!output/edge_detection/.gitkeep
+!output/injuries/.gitkeep
+!output/massey/.gitkeep
+!output/ncaaf/.gitkeep
+!output/ncaaf/teams/.gitkeep
+!output/action_network/.gitkeep
+!output/weather/.gitkeep
+
 # Databases with real data (NEVER commit)
 data/**/*.db
 *.sqlite
