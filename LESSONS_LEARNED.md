@@ -4,6 +4,96 @@ This document captures issues encountered during development, their solutions, a
 
 ---
 
+## Session: 2025-11-14 - Firecrawl MCP Completions Error (Unresolved)
+
+### Context
+Attempted to configure Firecrawl MCP server for web scraping in Cursor. The server consistently fails with a completions capability error across all tested versions.
+
+### Problem: Firecrawl MCP Server Does Not Support Completions
+
+**Symptoms:**
+```
+Error: Server does not support completions (required for completion/complete)
+    at Server.assertRequestHandlerCapability
+    at Server.setRequestHandler
+    at FastMCPSession.setupCompleteHandlers
+    at new FastMCPSession
+    at FastMCP.start
+```
+
+**Root Cause:**
+Firecrawl MCP uses FastMCP library, which automatically tries to register completion handlers via `setupCompleteHandlers()`. However, Cursor's MCP SDK implementation does not support the `completions` capability, causing a fundamental incompatibility.
+
+**Versions Tested (All Failed):**
+- 3.0.9, 3.1.7, 3.2.0, 3.3.0, 3.4.0, 3.5.2
+- All versions from 3.0.9 onwards exhibit the same error
+- The error occurs at initialization, before any tools can be accessed
+
+**Impact:**
+- Firecrawl MCP completely unusable in Cursor
+- Cannot use Firecrawl's powerful web scraping tools
+- Missing structured data extraction capabilities
+- No web search functionality via Firecrawl
+
+### Solution: Temporarily Disable Firecrawl MCP
+
+**Workaround:**
+1. Comment out Firecrawl MCP in `c:\Users\omall\.cursor\mcp.json`
+2. Use Playwright MCP as alternative for web scraping (already configured)
+3. Wait for upstream fix from Firecrawl team
+
+**File:** `c:\Users\omall\.cursor\mcp.json`
+
+**Configuration Change:**
+```json
+// Temporarily disabled due to completions error
+// "firecrawl-mcp": {
+//   "command": "npx",
+//   "args": ["-y", "firecrawl-mcp"],
+//   "env": {
+//     "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+//   }
+// }
+```
+
+### Alternative: Use Playwright MCP
+
+Playwright MCP is already configured and working:
+```json
+"Playwright": {
+  "command": "npx -y @playwright/mcp@latest",
+  "env": {},
+  "args": []
+}
+```
+
+Playwright MCP provides:
+- Web scraping capabilities
+- Browser automation
+- Screenshot capture
+- Page interaction tools
+
+### Next Steps
+
+1. **Monitor Firecrawl MCP releases** - Check GitHub for fixes to FastMCP completions compatibility
+2. **File GitHub issue** - Report this incompatibility with Cursor's MCP SDK
+3. **Use Playwright MCP** - Leverage existing Playwright configuration for web scraping needs
+4. **Re-enable when fixed** - Uncomment Firecrawl MCP configuration once issue is resolved
+
+### Related Issues
+
+- FastMCP library may need to make completions optional
+- Cursor MCP SDK may need to support completions capability
+- This is a compatibility issue between two tools, not a bug in either
+
+### Prevention
+
+- When adding new MCP servers, test initialization first before investing time in configuration
+- Check for known compatibility issues with Cursor's MCP SDK
+- Have alternative tools ready (Playwright MCP in this case)
+
+---
+
 ## Session: 2025-11-13 - SignalR WebSocket Live Odds Monitoring - Complete Debugging
 
 ### Context

@@ -1,28 +1,34 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+
   "env": {
-    "PYTHONPATH": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\src",
-    "PROJECT_ROOT": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer"
+    "PROJECT_ROOT": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer",
+    "PYTHONPATH": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer\\src"
   },
+
   "includeCoAuthoredBy": true,
+
   "permissions": {
+    "defaultMode": "acceptEdits",
+
     "allow": [
-      "Bash(git push:*)",
-      "Bash(git pull:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
+      // Core git introspection (safe, read-only-ish)
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
-      "Bash(git checkout:*)",
       "Bash(git branch:*)",
-      "Bash(git fetch:*)",
-      "Bash(git merge:*)",
-      "Bash(git rebase:*)",
-      "Bash(git stash:*)",
       "Bash(git show:*)",
       "Bash(git remote:*)",
       "Bash(git tag:*)",
+      "Bash(git stash:*)",
+      "Bash(git fetch:*)",
+
+      // Core git workflow helpers that are usually fine in this project
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+
+      // uv / Python tooling
       "Bash(uv run python:*)",
       "Bash(uv run pytest:*)",
       "Bash(uv run ruff:*)",
@@ -33,16 +39,8 @@
       "Bash(uv lock:*)",
       "Bash(uv pip:*)",
       "Bash(python:*)",
-      "Bash(gh pr:*)",
-      "Bash(gh run:*)",
-      "Bash(gh issue:*)",
-      "Bash(gh workflow:*)",
-      "Bash(gh release:*)",
-      "Bash(gh repo:*)",
-      "Bash(gh api:*)",
-      "Bash(gh auth:*)",
-      "Bash(gh label:*)",
-      "Bash(gh project:*)",
+
+      // Basic shell utilities
       "Bash(ls:*)",
       "Bash(cat:*)",
       "Bash(tail:*)",
@@ -50,7 +48,6 @@
       "Bash(grep:*)",
       "Bash(find:*)",
       "Bash(mkdir:*)",
-      "Bash(cd:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(touch:*)",
@@ -61,35 +58,70 @@
       "Bash(sort:*)",
       "Bash(uniq:*)",
       "Bash(diff:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
+      "Bash(tee:*)",
+
+      // Slash commands & patterns specific to your project
+      "SlashCommand(/collect-all-data)",
+      "SlashCommand(/current-week)",
+      "SlashCommand(/analyze-matchup)",
+      "SlashCommand(/document-lesson)",
+      "SlashCommand(/edge-detector)",
+      "SlashCommand(/betting-card)",
+
+      // Narrowed WebFetch allowance for ESPN only
+      "WebFetch(domain:www.espn.com)",
+
+      // Helpful Select-String patterns for your logs
+      "Bash(Select-String -Pattern \"EDGE DETECTION|Total Edges|games from|BET HOME|BET AWAY|EDGE:\")",
+      "Bash(Select-String -Pattern \"power|rating\")"
+    ],
+
+    "ask": [
+      // Potentially dangerous or wider scope actions: ask first
+      "Bash(git push:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset:*)",
+
+      // GitHub CLI – powerful enough to always prompt
+      "Bash(gh pr:*)",
+      "Bash(gh run:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh workflow:*)",
+      "Bash(gh release:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh label:*)",
+      "Bash(gh project:*)",
+
+      // Node tooling – let it run, but ask first
       "Bash(npm:*)",
       "Bash(npx:*)",
       "Bash(node:*)",
-      "Bash($null)",
-      "Bash(Select-Object -First 10)",
-      "WebFetch(domain:www.espn.com)",
-      "SlashCommand(/collect-all-data)",
-      "SlashCommand(/current-week)",
-      "Bash(Select-String -Pattern \"EDGE DETECTION|Total Edges|games from|BET (HOME|AWAY)|EDGE:\")",
-      "Bash(Select-Object -First 30)",
-      "SlashCommand(/analyze-matchup)",
-      "Bash(Select-String -Pattern \"power|rating\")",
-      "SlashCommand(/document-lesson)",
-      "Bash(tee:*)",
-      "Bash(git reset:*)"
+
+      // Any other WebFetch not explicitly whitelisted
+      "WebFetch"
     ],
+
     "deny": [
-      "Bash(rm -rf:*)",
+      // Nuclear / foot-gun git commands
       "Bash(git push --force:*)",
       "Bash(git reset --hard:*)",
-      "Bash(git clean -fd:*)"
-    ],
-    "ask": [],
-    "defaultMode": "default"
+      "Bash(git clean -fd:*)",
+
+      // Classic unsafe shell primitives
+      "Bash(rm -rf:*)",
+
+      // Broad network exfil helpers – use WebFetch instead (and ask)
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ]
   },
+
   "model": "sonnet",
   "enableAllProjectMcpServers": true,
+
   "hooks": {
     "SessionStart": [
       {
@@ -192,9 +224,11 @@
       }
     ]
   },
+
   "statusLine": {
     "type": "command",
     "command": "uv run python .claude/status_line.py"
   },
+
   "alwaysThinkingEnabled": true
 }
