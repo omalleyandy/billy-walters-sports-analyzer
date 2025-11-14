@@ -94,6 +94,7 @@ async def test_validated_action_network():
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="Overtime clients archived - use overtime_api_client or overtime_hybrid_scraper")
 async def test_overtime_client():
     """Test Overtime API client without validation."""
     print("\n" + "=" * 70)
@@ -138,6 +139,7 @@ async def test_overtime_client():
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="Overtime clients archived - use overtime_api_client or overtime_hybrid_scraper")
 async def test_validated_overtime():
     """Test Overtime API client with validation."""
     print("\n" + "=" * 70)
@@ -341,6 +343,7 @@ async def test_validated_weather():
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(reason="Uses archived Overtime clients - needs update to use overtime_api_client")
 async def test_full_integration():
     """Test full integration of all clients."""
     print("\n" + "=" * 70)
