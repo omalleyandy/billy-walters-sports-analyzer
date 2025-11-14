@@ -1028,17 +1028,17 @@ def main():
     if not weather_client.api_key:
         logger.warning("No AccuWeather API key - weather analysis will be skipped")
 
-    # Load proprietary 90/10 power ratings (Week 9 is latest with real data)
+    # Load proprietary 90/10 power ratings (Week 11 is latest with real data)
     logger.info("=" * 80)
     logger.info("USING BILLY WALTERS PROPRIETARY 90/10 POWER RATINGS FOR SPREADS")
     logger.info("=" * 80)
-    detector.load_proprietary_ratings(week=9)  # Latest week with actual game results
+    detector.load_proprietary_ratings(week=11)  # Latest week with actual game results
 
     # Load Massey ratings for Offensive/Defensive data (needed for totals)
     logger.info("=" * 80)
     logger.info("LOADING MASSEY OFF/DEF RATINGS FOR TOTALS ANALYSIS")
     logger.info("=" * 80)
-    massey_file = "output/massey/nfl_ratings_20251109_050042.json"
+    massey_file = "output/massey/nfl_ratings_20251113_153241.json"
     massey_ratings_for_totals = {}
     if os.path.exists(massey_file):
         # Store current ratings
