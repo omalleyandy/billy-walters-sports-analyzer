@@ -387,21 +387,24 @@ class BillyWaltersPowerRatingIntegration:
 
     def save_results(self) -> Path:
         """Save integration results to JSON file."""
+        power_ratings_dict = {
+            team: {
+                "team": rating.team,
+                "rating": rating.rating,
+                "offensive_rating": rating.offensive_rating,
+                "defensive_rating": rating.defensive_rating,
+                "source": rating.source,
+            }
+            for team, rating in self.power_ratings.items()
+        }
+        
         output_data = {
             "week": self.week,
             "league": self.league_short,
             "timestamp": datetime.now().isoformat(),
-            "power_ratings": {
-                team: {
-                    "team": rating.team,
-                    "rating": rating.rating,
-                    "offensive_rating": rating.offensive_rating,
-                    "defensive_rating": rating.defensive_rating,
-                    "source": rating.source,
-                }
-                for team, rating in self.power_ratings.items()
-            },
-            "team_count": len(self.power_ratings),
+            "power_ratings": power_ratings_dict,
+            # Use actual number of keys in power_ratings object (accounts for duplicates from different naming conventions)
+            "team_count": len(power_ratings_dict),
             "games_analyzed": len(self.overtime_odds),
         }
 
