@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-14T20:07:52.414185",
+    "leagues": [
+      "NFL",
+      "NCAAF"
+    ],
+    "duration_seconds": 300
+  },
+  "summary": {
+    "games_tracked": 0,
+    "total_line_updates": 0,
+    "significant_movements": 0
+  },
+  "games": [],
+  "significant_events": []
+}

@@ -606,12 +606,20 @@ class OvertimeHybridScraper:
             self.logger.error(f"SubscribeSports failed: {e}")
 
     async def _login(self, page: Page) -> None:
-        """Login using Playwright"""
+        """
+        Login using Playwright with AngularJS-specific selectors.
+        
+        Login form structure:
+        - Login button: <a ng-click="ShowLoginView()" class="btn btn-signup">LOGIN</a>
+        - Customer ID: <input ng-model="Login.customerId" placeholder="Customer Id.">
+        - Password: <input ng-model="Login.password" type="password" placeholder="Password">
+        - Submit: <button ng-click="Login.Authenticate()" class="btn btn-default btn-login">LOGIN</button>
+        """
 
         # Wait for login button
         await page.wait_for_selector("a.btn-signup", state="attached", timeout=10000)
 
-        # Click login button (JavaScript click bypasses visibility)
+        # Click login button (JavaScript click bypasses visibility - AngularJS ng-click handler)
         await page.evaluate("""
             () => {
                 const loginBtn = document.querySelector('a.btn-signup');
@@ -620,21 +628,30 @@ class OvertimeHybridScraper:
         """)
         await page.wait_for_timeout(2000)
 
-        # Fill credentials
-        customer_input = await page.query_selector('input[placeholder*="Customer"]')
+        # Fill credentials using AngularJS ng-model selectors (more reliable than placeholder)
+        customer_input = await page.query_selector('input[ng-model="Login.customerId"], input[placeholder*="Customer"]')
         if customer_input:
             await customer_input.fill(self.customer_id)
+            print("   Customer ID filled")
+        else:
+            print("   [WARNING] Customer ID input not found")
 
-        password_input = await page.query_selector('input[type="password"]')
+        password_input = await page.query_selector('input[ng-model="Login.password"], input[type="password"]')
         if password_input:
             await password_input.fill(self.password)
+            print("   Password filled")
+        else:
+            print("   [WARNING] Password input not found")
 
-        # Submit login
-        login_btn = await page.query_selector('button:has-text("LOGIN")')
+        # Submit login using specific button class (AngularJS ng-click="Login.Authenticate()")
+        login_btn = await page.query_selector('button.btn-login, button:has-text("LOGIN")')
         if login_btn:
+            # Use JavaScript click to ensure AngularJS ng-click handler fires
             await login_btn.click()
             await page.wait_for_timeout(5000)
-            print("   Login successful")
+            print("   Login submitted (waiting for authentication)")
+        else:
+            print("   [WARNING] Login button not found")
 
     async def _extract_account_info(self, page: Page) -> Optional[Dict[str, str]]:
         """Extract account balance and info"""

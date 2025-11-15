@@ -473,10 +473,12 @@ class DataUpdater:
         logger.info("-" * 80)
 
         try:
-            from data.espn_injury_scraper import ESPNInjuryScraper
+            from data.nfl_official_injury_scraper import NFLOfficialInjuryScraper
 
-            scraper = ESPNInjuryScraper()
-            injuries = scraper.scrape_nfl_injuries()
+            scraper = NFLOfficialInjuryScraper()
+
+            # Await async scraper (returns list of injury dicts directly)
+            injuries = await scraper.scrape_injuries(week=self.week_num, save=False)
 
             # Save injuries
             output_file = self.output_dir / f"nfl_week_{self.week_num}_injuries.json"
@@ -486,7 +488,7 @@ class DataUpdater:
                         "week": self.week_num,
                         "season": 2025,
                         "updated": datetime.now().isoformat(),
-                        "source": "ESPN Injury Report",
+                        "source": "NFL Official Injury Report",
                         "injuries": injuries,
                     },
                     f,
