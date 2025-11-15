@@ -23,8 +23,8 @@ class MasseyRatingsScraper:
     def __init__(self):
         """Initialize scraper"""
         self.base_url = "https://masseyratings.com"
-        self.output_dir = "output/massey"
-        os.makedirs(self.output_dir, exist_ok=True)
+        self.output_base_dir = "output/massey"
+        os.makedirs(self.output_base_dir, exist_ok=True)
 
         # Track API calls
         self.captured_requests = []
@@ -180,14 +180,20 @@ class MasseyRatingsScraper:
 
         # Save data
         if save:
-            filepath = f"{self.output_dir}/nfl_ratings_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            # Use new output structure: output/massey/nfl/ratings/
+            output_dir = os.path.join(self.output_base_dir, "nfl", "ratings")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"nfl_ratings_{timestamp}.json")
+            
             with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
-                api_file = f"{self.output_dir}/nfl_api_responses_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                api_file = os.path.join(output_dir, f"nfl_api_responses_{timestamp}.json")
                 with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
                 logger.info(
@@ -316,14 +322,20 @@ class MasseyRatingsScraper:
 
         # Save data
         if save:
-            filepath = f"{self.output_dir}/ncaaf_ratings_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            # Use new output structure: output/massey/ncaaf/ratings/
+            output_dir = os.path.join(self.output_base_dir, "ncaaf", "ratings")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"ncaaf_ratings_{timestamp}.json")
+            
             with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
-                api_file = f"{self.output_dir}/ncaaf_api_responses_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                api_file = os.path.join(output_dir, f"ncaaf_api_responses_{timestamp}.json")
                 with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
                 logger.info(
@@ -331,6 +343,168 @@ class MasseyRatingsScraper:
                 )
 
         return ratings_data
+
+    async def scrape_nfl_games(self, save=True):
+        """
+        Scrape NFL games data
+
+        Returns:
+            dict: NFL games data
+        """
+        logger.info("=" * 60)
+        logger.info("Scraping NFL Games")
+        logger.info("=" * 60)
+
+        url = f"{self.base_url}/nfl/games"
+
+        # Reset capture lists
+        self.captured_requests = []
+        self.captured_responses = []
+
+        games_data = {"sport": "NFL", "url": url, "scraped_at": datetime.now().isoformat()}
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context()
+            page = await context.new_page()
+
+            # Set up network monitoring
+            page.on("response", self.handle_response)
+
+            logger.info(f"Loading {url}...")
+            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+
+            # Wait for content and extract data
+            await page.wait_for_timeout(3000)
+            content = await page.content()
+            games_data["html_length"] = len(content)
+
+            await browser.close()
+
+        # Save data
+        if save:
+            output_dir = os.path.join(self.output_base_dir, "nfl", "games")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"nfl_games_{timestamp}.json")
+            
+            with open(filepath, "w") as f:
+                json.dump(games_data, f, indent=2)
+            logger.info(f"Saved to {filepath}")
+
+        return games_data
+
+    async def scrape_ncaaf_games(self, save=True):
+        """
+        Scrape NCAAF games data
+
+        Returns:
+            dict: NCAAF games data
+        """
+        logger.info("=" * 60)
+        logger.info("Scraping NCAAF Games")
+        logger.info("=" * 60)
+
+        url = f"{self.base_url}/cf/fbs/games"
+
+        # Reset capture lists
+        self.captured_requests = []
+        self.captured_responses = []
+
+        games_data = {"sport": "NCAAF", "url": url, "scraped_at": datetime.now().isoformat()}
+
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=True)
+            context = await browser.new_context()
+            page = await context.new_page()
+
+            # Set up network monitoring
+            page.on("response", self.handle_response)
+
+            logger.info(f"Loading {url}...")
+            await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+
+            # Wait for content and extract data
+            await page.wait_for_timeout(3000)
+            content = await page.content()
+            games_data["html_length"] = len(content)
+
+            await browser.close()
+
+        # Save data
+        if save:
+            output_dir = os.path.join(self.output_base_dir, "ncaaf", "games")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"ncaaf_games_{timestamp}.json")
+            
+            with open(filepath, "w") as f:
+                json.dump(games_data, f, indent=2)
+            logger.info(f"Saved to {filepath}")
+
+        return games_data
+
+    async def scrape_nfl_matchups(self, save=True):
+        """
+        Scrape NFL matchup predictions (if endpoint exists)
+
+        Returns:
+            dict: NFL matchup data
+        """
+        logger.info("=" * 60)
+        logger.info("Scraping NFL Matchups")
+        logger.info("=" * 60)
+
+        url = f"{self.base_url}/nfl/matchups"
+        # Note: This endpoint may not exist - will need to verify
+
+        matchups_data = {"sport": "NFL", "url": url, "scraped_at": datetime.now().isoformat()}
+
+        # Save data
+        if save:
+            output_dir = os.path.join(self.output_base_dir, "nfl", "matchups")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"nfl_matchups_{timestamp}.json")
+            
+            with open(filepath, "w") as f:
+                json.dump(matchups_data, f, indent=2)
+            logger.info(f"Saved to {filepath}")
+
+        return matchups_data
+
+    async def scrape_ncaaf_matchups(self, save=True):
+        """
+        Scrape NCAAF matchup predictions (if endpoint exists)
+
+        Returns:
+            dict: NCAAF matchup data
+        """
+        logger.info("=" * 60)
+        logger.info("Scraping NCAAF Matchups")
+        logger.info("=" * 60)
+
+        url = f"{self.base_url}/cf/fbs/matchups"
+        # Note: This endpoint may not exist - will need to verify
+
+        matchups_data = {"sport": "NCAAF", "url": url, "scraped_at": datetime.now().isoformat()}
+
+        # Save data
+        if save:
+            output_dir = os.path.join(self.output_base_dir, "ncaaf", "matchups")
+            os.makedirs(output_dir, exist_ok=True)
+            
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"ncaaf_matchups_{timestamp}.json")
+            
+            with open(filepath, "w") as f:
+                json.dump(matchups_data, f, indent=2)
+            logger.info(f"Saved to {filepath}")
+
+        return matchups_data
 
     async def scrape_both(self):
         """Scrape both NFL and NCAAF ratings"""

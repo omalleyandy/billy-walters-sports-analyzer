@@ -144,8 +144,8 @@ Examples:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("data/raw/espn/scoreboard"),
-        help="Output directory for raw JSON. Default: data/raw/espn/scoreboard",
+        default=Path("output/espn/scoreboard/ncaaf"),
+        help="Output directory for raw JSON. Default: output/espn/scoreboard/ncaaf",
     )
     parser.add_argument(
         "--parquet-dir",
