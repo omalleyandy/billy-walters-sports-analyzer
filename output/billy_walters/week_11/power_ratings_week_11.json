@@ -1,0 +1,457 @@
+{
+  "week": 11,
+  "league": "nfl",
+  "timestamp": "2025-11-14T18:29:13.003772",
+  "power_ratings": {
+    "Atlanta Falcons": {
+      "team": "Atlanta Falcons",
+      "rating": 72.7225,
+      "offensive_rating": 72.4912744,
+      "defensive_rating": 75.23789000000001,
+      "source": "espn_enhanced"
+    },
+    "Chicago": {
+      "team": "Chicago",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Tampa Bay Buccaneers": {
+      "team": "Tampa Bay Buccaneers",
+      "rating": 75.7775,
+      "offensive_rating": 75.3553356,
+      "defensive_rating": 75.16772,
+      "source": "espn_enhanced"
+    },
+    "Green Bay Packers": {
+      "team": "Green Bay Packers",
+      "rating": 77.0555,
+      "offensive_rating": 75.17683439999999,
+      "defensive_rating": 77.35644,
+      "source": "espn_enhanced"
+    },
+    "New England": {
+      "team": "New England",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Kansas City": {
+      "team": "Kansas City",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Buffalo Bills": {
+      "team": "Buffalo Bills",
+      "rating": 77.8335,
+      "offensive_rating": 77.4724423,
+      "defensive_rating": 75.85772,
+      "source": "espn_enhanced"
+    },
+    "Cleveland Browns": {
+      "team": "Cleveland Browns",
+      "rating": 71.389,
+      "offensive_rating": 70.6132211,
+      "defensive_rating": 75.58133,
+      "source": "espn_enhanced"
+    },
+    "Denver": {
+      "team": "Denver",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Jacksonville Jaguars": {
+      "team": "Jacksonville Jaguars",
+      "rating": 74.167,
+      "offensive_rating": 74.4878856,
+      "defensive_rating": 74.39466,
+      "source": "espn_enhanced"
+    },
+    "Tampa Bay": {
+      "team": "Tampa Bay",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Detroit Lions": {
+      "team": "Detroit Lions",
+      "rating": 79.611,
+      "offensive_rating": 79.29644110000001,
+      "defensive_rating": 75.889,
+      "source": "espn_enhanced"
+    },
+    "Green Bay": {
+      "team": "Green Bay",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "New Orleans": {
+      "team": "New Orleans",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Carolina": {
+      "team": "Carolina",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Dallas": {
+      "team": "Dallas",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Washington Commanders": {
+      "team": "Washington Commanders",
+      "rating": 72.15,
+      "offensive_rating": 74.253,
+      "defensive_rating": 72.08500000000001,
+      "source": "espn_enhanced"
+    },
+    "Cincinnati Bengals": {
+      "team": "Cincinnati Bengals",
+      "rating": 70.3335,
+      "offensive_rating": 74.9322244,
+      "defensive_rating": 70.0,
+      "source": "espn_enhanced"
+    },
+    "LA Rams": {
+      "team": "LA Rams",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Jacksonville": {
+      "team": "Jacksonville",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "New York Giants": {
+      "team": "New York Giants",
+      "rating": 72.2,
+      "offensive_rating": 74.029,
+      "defensive_rating": 72.536,
+      "source": "espn_enhanced"
+    },
+    "Chicago Bears": {
+      "team": "Chicago Bears",
+      "rating": 74.556,
+      "offensive_rating": 76.9257744,
+      "defensive_rating": 72.54911,
+      "source": "espn_enhanced"
+    },
+    "Houston Texans": {
+      "team": "Houston Texans",
+      "rating": 78.0,
+      "offensive_rating": 74.49571999999999,
+      "defensive_rating": 79.01761,
+      "source": "espn_enhanced"
+    },
+    "Minnesota": {
+      "team": "Minnesota",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "New England Patriots": {
+      "team": "New England Patriots",
+      "rating": 78.909,
+      "offensive_rating": 76.6924991,
+      "defensive_rating": 77.68014000000001,
+      "source": "espn_enhanced"
+    },
+    "Los Angeles Rams": {
+      "team": "Los Angeles Rams",
+      "rating": 80.4445,
+      "offensive_rating": 77.527829,
+      "defensive_rating": 78.32111,
+      "source": "espn_enhanced"
+    },
+    "Cleveland": {
+      "team": "Cleveland",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "San Francisco 49ers": {
+      "team": "San Francisco 49ers",
+      "rating": 74.5,
+      "offensive_rating": 74.41199999999999,
+      "defensive_rating": 75.179,
+      "source": "espn_enhanced"
+    },
+    "Atlanta": {
+      "team": "Atlanta",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Houston": {
+      "team": "Houston",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Baltimore": {
+      "team": "Baltimore",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Seattle": {
+      "team": "Seattle",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Indianapolis Colts": {
+      "team": "Indianapolis Colts",
+      "rating": 80.75,
+      "offensive_rating": 79.869,
+      "defensive_rating": 76.374,
+      "source": "espn_enhanced"
+    },
+    "Buffalo": {
+      "team": "Buffalo",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "New York Jets": {
+      "team": "New York Jets",
+      "rating": 72.05,
+      "offensive_rating": 73.115,
+      "defensive_rating": 73.327,
+      "source": "espn_enhanced"
+    },
+    "Pittsburgh": {
+      "team": "Pittsburgh",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Dallas Cowboys": {
+      "team": "Dallas Cowboys",
+      "rating": 74.222,
+      "offensive_rating": 78.2454477,
+      "defensive_rating": 70.61322,
+      "source": "espn_enhanced"
+    },
+    "Seattle Seahawks": {
+      "team": "Seattle Seahawks",
+      "rating": 80.7225,
+      "offensive_rating": 78.7324411,
+      "defensive_rating": 77.25783,
+      "source": "espn_enhanced"
+    },
+    "NY Giants": {
+      "team": "NY Giants",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Detroit": {
+      "team": "Detroit",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "NY Jets": {
+      "team": "NY Jets",
+      "rating": 99.0,
+      "offensive_rating": 54.45,
+      "defensive_rating": 44.550000000000004,
+      "source": "massey"
+    },
+    "Miami Dolphins": {
+      "team": "Miami Dolphins",
+      "rating": 72.69999999999999,
+      "offensive_rating": 73.34299999999999,
+      "defensive_rating": 73.75099999999999,
+      "source": "espn_enhanced"
+    },
+    "Arizona Cardinals": {
+      "team": "Arizona Cardinals",
+      "rating": 74.2775,
+      "offensive_rating": 74.2353289,
+      "defensive_rating": 74.67328,
+      "source": "espn_enhanced"
+    },
+    "Las Vegas Raiders": {
+      "team": "Las Vegas Raiders",
+      "rating": 70.5,
+      "offensive_rating": 70.2986623,
+      "defensive_rating": 74.60022,
+      "source": "espn_enhanced"
+    },
+    "Philadelphia": {
+      "team": "Philadelphia",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Kansas City Chiefs": {
+      "team": "Kansas City Chiefs",
+      "rating": 79.22200000000001,
+      "offensive_rating": 76.6066089,
+      "defensive_rating": 78.32205,
+      "source": "espn_enhanced"
+    },
+    "Cincinnati": {
+      "team": "Cincinnati",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "New Orleans Saints": {
+      "team": "New Orleans Saints",
+      "rating": 70.25,
+      "offensive_rating": 70.57199999999999,
+      "defensive_rating": 74.339,
+      "source": "espn_enhanced"
+    },
+    "Los Angeles Chargers": {
+      "team": "Los Angeles Chargers",
+      "rating": 76.85,
+      "offensive_rating": 75.535,
+      "defensive_rating": 77.035,
+      "source": "espn_enhanced"
+    },
+    "Pittsburgh Steelers": {
+      "team": "Pittsburgh Steelers",
+      "rating": 74.556,
+      "offensive_rating": 74.43467,
+      "defensive_rating": 73.95577,
+      "source": "espn_enhanced"
+    },
+    "Tennessee": {
+      "team": "Tennessee",
+      "rating": 97.69999999999999,
+      "offensive_rating": 53.735,
+      "defensive_rating": 43.964999999999996,
+      "source": "massey"
+    },
+    "Carolina Panthers": {
+      "team": "Carolina Panthers",
+      "rating": 72.75,
+      "offensive_rating": 71.671,
+      "defensive_rating": 75.7,
+      "source": "espn_enhanced"
+    },
+    "Baltimore Ravens": {
+      "team": "Baltimore Ravens",
+      "rating": 74.6665,
+      "offensive_rating": 75.7597744,
+      "defensive_rating": 73.2845,
+      "source": "espn_enhanced"
+    },
+    "Minnesota Vikings": {
+      "team": "Minnesota Vikings",
+      "rating": 74.333,
+      "offensive_rating": 74.01538769999999,
+      "defensive_rating": 74.96316,
+      "source": "espn_enhanced"
+    },
+    "Denver Broncos": {
+      "team": "Denver Broncos",
+      "rating": 78.1,
+      "offensive_rating": 74.946,
+      "defensive_rating": 78.522,
+      "source": "espn_enhanced"
+    },
+    "Philadelphia Eagles": {
+      "team": "Philadelphia Eagles",
+      "rating": 76.4445,
+      "offensive_rating": 74.9932267,
+      "defensive_rating": 76.11461000000001,
+      "source": "espn_enhanced"
+    },
+    "Tennessee Titans": {
+      "team": "Tennessee Titans",
+      "rating": 70.0,
+      "offensive_rating": 70.0,
+      "defensive_rating": 72.21534,
+      "source": "espn_enhanced"
+    },
+    "Indianapolis": {
+      "team": "Indianapolis",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Arizona": {
+      "team": "Arizona",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Miami": {
+      "team": "Miami",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Washington": {
+      "team": "Washington",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "Las Vegas": {
+      "team": "Las Vegas",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "LA Chargers": {
+      "team": "LA Chargers",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    },
+    "San Francisco": {
+      "team": "San Francisco",
+      "rating": 100.0,
+      "offensive_rating": 55.00000000000001,
+      "defensive_rating": 45.0,
+      "source": "massey"
+    }
+  },
+  "team_count": 64,
+  "games_analyzed": 14
+}

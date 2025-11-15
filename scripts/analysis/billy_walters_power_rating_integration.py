@@ -219,7 +219,7 @@ class BillyWaltersPowerRatingIntegration:
                 base_rating = self._calculate_rating_from_espn_stats(espn_stats)
                 offensive_rating = self._calculate_offensive_rating(espn_stats)
                 defensive_rating = self._calculate_defensive_rating(espn_stats)
-                source = "espn_enhanced"
+                source = "espn"  # No enhancement yet - will be enhanced if Massey data available
             elif massey_data:
                 # Fallback to Massey
                 # Massey rating is on different scale (0-10), convert to 70-100 scale
@@ -258,7 +258,11 @@ class BillyWaltersPowerRatingIntegration:
                 enhanced_rating = max(70.0, min(100.0, enhanced_rating))
                 
                 base_rating = enhanced_rating
-                source = "massey_enhanced_espn"
+                # Update source to reflect enhancement
+                if source == "espn":
+                    source = "espn_enhanced"  # ESPN base enhanced with Massey baseline
+                elif source == "massey":
+                    source = "massey_enhanced_espn"  # Massey base enhanced with ESPN stats
 
             # Standard home field advantage
             home_field_advantage = 3.0 if self.league_short == "nfl" else 3.5
@@ -448,9 +452,36 @@ async def main():
             if not any(results.values()):
                 print("\n[ERROR] No data collected. Cannot proceed.")
                 return 1
+        else:
+            # In analysis-only mode, try to load existing data from disk
+            print("[INFO] Analysis-only mode: Loading existing data...")
+            results = await integration.collect_all_data()
+            
+            # Check if any data was loaded
+            if not any(results.values()):
+                print("\n[ERROR] No existing data found. Cannot run analysis-only mode.")
+                print("[INFO] Run without --analysis-only flag to collect data first, or ensure data files exist:")
+                if integration.league_short == "nfl":
+                    print(f"  - data/current/nfl_team_stats_week_{integration.week}.json")
+                    print(f"  - output/massey/nfl/ratings/nfl_ratings_*.json")
+                    print(f"  - output/overtime/nfl/pregame/api_walters_*.json")
+                else:
+                    print(f"  - data/current/ncaaf_team_stats_week_{integration.week}.json")
+                    print(f"  - output/massey/ncaaf/ratings/ncaaf_ratings_*.json")
+                    print(f"  - output/overtime/ncaaf/pregame/api_walters_*.json")
+                return 1
 
         # Step 2: Calculate power ratings
         if not args.collect_only:
+            # Verify we have data before calculating
+            if not integration.espn_team_stats and not integration.massey_ratings:
+                print("\n[ERROR] No team statistics available. Cannot calculate power ratings.")
+                print("[INFO] Ensure ESPN stats or Massey ratings are available.")
+                return 1
+            
+            if not integration.overtime_odds:
+                print("\n[WARNING] No odds data available. Edge detection will be skipped.")
+            
             power_ratings = integration.calculate_power_ratings()
             
             # Step 3: Detect edges
