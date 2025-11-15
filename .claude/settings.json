@@ -1,0 +1,9 @@
+{
+  "alwaysThinkingEnabled": true,
+
+  "statusLine": {
+    "type": "command",
+    "command": "cd src && python -c \"import sys; sys.path.insert(0, '.'); from walters_analyzer.season_calendar import get_nfl_week, format_season_status; week = get_nfl_week(); status = format_season_status(); print(f'🏈 {status}' if week else 'NFL Offseason')\" 2>nul || echo NFL Calendar",
+    "padding": 1
+  }
+}

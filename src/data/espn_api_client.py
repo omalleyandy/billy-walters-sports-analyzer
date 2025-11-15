@@ -8,6 +8,7 @@ No authentication required!
 import os
 import json
 import httpx
+from datetime import datetime
 from typing import Dict, Optional
 
 
@@ -16,9 +17,17 @@ class ESPNAPIClient:
 
     def __init__(self):
         """Initialize ESPN API client"""
+        # Website base URLs
+        self.nfl_base_url = "https://www.espn.com/nfl"
+        self.ncaaf_base_url = "https://www.espn.com/college-football"
+        
+        # API base URLs
         self.base_url = "https://site.api.espn.com/apis/site/v2/sports/football"
         self.core_api_url = "https://sports.core.api.espn.com/v2/sports/football"
         self.web_api_url = "https://site.web.api.espn.com/apis/v3/sports/football"
+        
+        # News endpoint
+        self.news_url = "https://www.espn.com/google-news-posts"
 
         self.session = httpx.Client()
         self.session.headers.update(
@@ -157,6 +166,69 @@ class ESPNAPIClient:
         r = self.session.get(url, params=params, timeout=30)
         return r.json()
 
+    # Standings
+
+    def get_nfl_standings(self, season: Optional[int] = None) -> Dict:
+        """
+        Get NFL standings
+
+        Args:
+            season: Season year (optional, defaults to current year)
+        """
+        url = f"{self.base_url}/nfl/standings"
+        params = {}
+        if season:
+            params["season"] = season
+
+        r = self.session.get(url, params=params, timeout=30)
+        return r.json()
+
+    def get_ncaaf_standings(self, season: Optional[int] = None) -> Dict:
+        """
+        Get NCAA Football standings
+
+        Args:
+            season: Season year (optional, defaults to current year)
+        """
+        url = f"{self.base_url}/college-football/standings"
+        params = {}
+        if season:
+            params["season"] = season
+
+        r = self.session.get(url, params=params, timeout=30)
+        return r.json()
+
+    # Stats
+
+    def get_nfl_stats(self) -> Dict:
+        """Get NFL statistics page data"""
+        # Note: Stats page is HTML, may need scraping. API endpoint might be available.
+        url = f"{self.base_url}/nfl/stats"
+        r = self.session.get(url, timeout=30)
+        # This returns HTML - may need separate scraper for parsing
+        return {"url": url, "content_type": r.headers.get("content-type")}
+
+    def get_ncaaf_stats(self) -> Dict:
+        """Get NCAA Football statistics page data"""
+        # Note: Stats page is HTML, may need scraping. API endpoint might be available.
+        url = f"{self.base_url}/college-football/stats"
+        r = self.session.get(url, timeout=30)
+        # This returns HTML - may need separate scraper for parsing
+        return {"url": url, "content_type": r.headers.get("content-type")}
+
+    # News
+
+    def get_espn_news_posts(self) -> Dict:
+        """
+        Get ESPN news posts
+
+        Returns:
+            Dictionary with news posts data
+        """
+        url = self.news_url
+        r = self.session.get(url, timeout=30)
+        return r.json()
+
     # Team Statistics
 
     def get_team_statistics(
@@ -273,14 +345,51 @@ class ESPNAPIClient:
 
     # Helper Methods
 
-    def save_to_json(self, data: Dict, filename: str):
-        """Save data to JSON file"""
-        os.makedirs(os.path.dirname(filename) or ".", exist_ok=True)
+    def save_to_json(
+        self,
+        data: Dict,
+        filename: Optional[str] = None,
+        data_type: Optional[str] = None,
+        league: Optional[str] = None,
+        output_dir: str = "output/espn",
+    ):
+        """
+        Save data to JSON file with organized directory structure
 
-        with open(filename, "w", encoding="utf-8") as f:
+        Args:
+            data: Data dictionary to save
+            filename: Full filename path (if provided, used as-is)
+            data_type: Type of data (scoreboard, schedule, standings, stats, teams, odds, news)
+            league: League name (nfl or ncaaf)
+            output_dir: Base output directory (default: output/espn)
+        """
+        if filename:
+            # Use provided filename as-is
+            filepath = filename
+        elif data_type and league:
+            # Use organized structure: output/espn/{data_type}/{league}/
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(
+                output_dir, data_type, league, f"{data_type}_{league}_{timestamp}.json"
+            )
+        elif data_type:
+            # No league subdirectory (e.g., news)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(
+                output_dir, data_type, f"{data_type}_{timestamp}.json"
+            )
+        else:
+            # Fallback to old behavior
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = os.path.join(output_dir, f"espn_data_{timestamp}.json")
+
+        os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True)
+
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
-        print(f"Saved to {filename}")
+        print(f"Saved to {filepath}")
+        return filepath
 
 
 def main():
@@ -313,7 +422,7 @@ def main():
                 print(f"\n   Sample game: {away} @ {home}")
 
         # Save
-        client.save_to_json(scoreboard, "output/espn/nfl_scoreboard.json")
+        client.save_to_json(scoreboard, data_type="scoreboard", league="nfl")
 
     except Exception as e:
         print(f"   Error: {e}")
@@ -340,7 +449,7 @@ def main():
                 print(f"\n   Sample game: {away} @ {home}")
 
         # Save
-        client.save_to_json(scoreboard, "output/espn/ncaaf_scoreboard.json")
+        client.save_to_json(scoreboard, data_type="scoreboard", league="ncaaf")
 
     except Exception as e:
         print(f"   Error: {e}")
@@ -362,7 +471,7 @@ def main():
             )
 
         # Save
-        client.save_to_json(teams, "output/espn/nfl_teams.json")
+        client.save_to_json(teams, data_type="teams", league="nfl")
 
     except Exception as e:
         print(f"   Error: {e}")
@@ -383,8 +492,35 @@ def main():
             print(f"   Sportsbooks: {len(odds_providers)}")
 
         # Save
-        client.save_to_json(odds, "output/espn/nfl_odds.json")
+        client.save_to_json(odds, data_type="odds", league="nfl")
 
+    except Exception as e:
+        print(f"   Error: {e}")
+
+    # Test 5: NFL Standings
+    print("\n5. Fetching NFL standings...")
+    try:
+        standings = client.get_nfl_standings()
+        client.save_to_json(standings, data_type="standings", league="nfl")
+        print("   [OK] Saved NFL standings")
+    except Exception as e:
+        print(f"   Error: {e}")
+
+    # Test 6: NCAAF Standings
+    print("\n6. Fetching NCAAF standings...")
+    try:
+        standings = client.get_ncaaf_standings()
+        client.save_to_json(standings, data_type="standings", league="ncaaf")
+        print("   [OK] Saved NCAAF standings")
+    except Exception as e:
+        print(f"   Error: {e}")
+
+    # Test 7: ESPN News
+    print("\n7. Fetching ESPN news posts...")
+    try:
+        news = client.get_espn_news_posts()
+        client.save_to_json(news, data_type="news")
+        print("   [OK] Saved news posts")
     except Exception as e:
         print(f"   Error: {e}")
 

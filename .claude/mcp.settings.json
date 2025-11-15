@@ -1,0 +1,98 @@
+{
+  "version": "1.1",
+  "variables": {
+    "userHome": "${env:USERPROFILE}",
+    "workspaceRoot": "${workspaceFolder}"
+  },
+  "defaults": {
+    "transport": "stdio",
+    "disabled": false,
+    "metadata": {
+      "write": false
+    },
+    "commandResolve": "firstExists"
+  },
+  "mcpServers": {
+    "chrome-devtools": {
+      "commandCandidates": [
+        "${workspaceRoot}/node_modules/.bin/chrome-devtools-mcp.cmd",
+        "${userHome}/.local/bin/chrome-devtools-mcp",
+        "chrome-devtools-mcp"
+      ],
+      "args": [
+        "--headless",
+        "--isolated"
+      ],
+      "transport": "stdio",
+      "disabled": false
+    },
+    "filesystem": {
+      "commandCandidates": [
+        "${workspaceRoot}/node_modules/.bin/mcp-server-filesystem.cmd",
+        "mcp-server-filesystem"
+      ],
+      "args": [],
+      "transport": "stdio",
+      "disabled": false,
+      "metadata": {
+        "allowedPaths": [
+          "${workspaceRoot}"
+        ],
+        "write": true
+      }
+    },
+    "shell": {
+      "commandCandidates": [
+        "${workspaceRoot}/.venv/Scripts/python.exe",
+        "${workspaceRoot}/.venv/bin/python",
+        "python"
+      ],
+      "args": [
+        "-m",
+        "mcp_server_shell",
+        "--allow",
+        "git",
+        "--allow",
+        "uv",
+        "--allow",
+        "pytest",
+        "--cwd",
+        "${workspaceRoot}"
+      ],
+      "transport": "stdio",
+      "disabled": false
+    }
+  },
+  "projects": {
+    "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer": {
+      "variables": {
+        "projectRoot": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer"
+      },
+      "mcpServers": {
+        "filesystem": {
+          "metadata": {
+            "allowedPaths": [
+              "${projectRoot}",
+              "${projectRoot}/src/data"
+            ],
+            "write": true
+          }
+        },
+        "chrome-devtools": {
+          "args": [
+            "--headless",
+            "--isolated",
+            "--remote-debugging-port=0"
+          ]
+        }
+      }
+    }
+  },
+  "discovery": {
+    "searchPaths": [
+      "${userHome}/Documents",
+      "${workspaceRoot}"
+    ],
+    "nodeModulesLookup": true
+  }
+}

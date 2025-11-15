@@ -34,11 +34,18 @@ class ESPNClient:
     - Data validation and sanitization
     """
 
+    # Website base URLs
+    NFL_WEBSITE_URL = "https://www.espn.com/nfl"
+    NCAAF_WEBSITE_URL = "https://www.espn.com/college-football"
+    
     # ESPN API endpoints
     NFL_BASE_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
     NCAAF_BASE_URL = (
         "https://site.api.espn.com/apis/site/v2/sports/football/college-football"
     )
+    
+    # News endpoint
+    NEWS_URL = "https://www.espn.com/google-news-posts"
 
     def __init__(
         self,
@@ -300,6 +307,74 @@ class ESPNClient:
 
         data = await self._make_request(url, params)
         return self._enrich_standings(data, league)
+
+    async def get_schedule(
+        self,
+        league: Literal["NFL", "NCAAF"],
+        week: int | None = None,
+        season: int | None = None,
+    ) -> dict[str, Any]:
+        """
+        Get league schedule.
+
+        Args:
+            league: League ("NFL" or "NCAAF")
+            week: Week number (optional)
+            season: Season year (optional)
+
+        Returns:
+            Schedule data (same as scoreboard)
+        """
+        # Schedule is same as scoreboard endpoint
+        return await self.get_scoreboard(league, week=week, season=season)
+
+    async def get_news(self) -> dict[str, Any]:
+        """
+        Get ESPN news posts.
+
+        Returns:
+            News posts data
+        """
+        logger.info("Fetching ESPN news posts")
+        data = await self._make_request(self.NEWS_URL)
+        return self._enrich_news(data)
+
+    async def get_odds(
+        self,
+        league: Literal["NFL", "NCAAF"],
+    ) -> dict[str, Any]:
+        """
+        Get betting odds for league.
+
+        Args:
+            league: League ("NFL" or "NCAAF")
+
+        Returns:
+            Odds data
+        """
+        # Note: Odds may use web API endpoint
+        # For now, use scoreboard which includes odds
+        base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
+        url = f"{base_url}/scoreboard"
+        
+        logger.info(f"Fetching {league} odds")
+        data = await self._make_request(url)
+        return self._enrich_odds(data, league)
+
+    def _enrich_news(self, data: dict[str, Any]) -> dict[str, Any]:
+        """Add metadata to news data."""
+        enriched = data.copy()
+        enriched["source"] = "espn"
+        enriched["fetch_time"] = datetime.now().isoformat()
+        return enriched
+
+    def _enrich_odds(self, data: dict[str, Any], league: str) -> dict[str, Any]:
+        """Add metadata to odds data."""
+        enriched = data.copy()
+        enriched["league"] = league
+        enriched["source"] = "espn"
+        enriched["fetch_time"] = datetime.now().isoformat()
+        return enriched
 
     async def get_game_details(
         self,

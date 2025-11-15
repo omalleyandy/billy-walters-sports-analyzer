@@ -137,7 +137,7 @@ def scrape_all_team_stats(league="college-football", week=None):
     if week:
         filename = f"data/current/{league_short}_team_stats_week_{week}.json"
     else:
-        filename = f"output/espn/{league_short}_team_stats_{timestamp}.json"
+        filename = f"output/espn/stats/{league_short}/team_stats_{league_short}_{timestamp}.json"
 
     Path(filename).parent.mkdir(parents=True, exist_ok=True)
 
