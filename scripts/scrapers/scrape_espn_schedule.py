@@ -94,7 +94,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
 
     for lg, result in results.items():
         if result.get("success"):
-            print(f"{lg.upper()}: {result['game_count']} games → {result['filepath']}")
+            print(f"{lg.upper()}: {result['game_count']} games -> {result['filepath']}")
         else:
             print(f"{lg.upper()}: FAILED - {result.get('error')}")
 

@@ -84,7 +84,7 @@ def scrape_standings(league: str, season: int | None = None):
 
     for lg, result in results.items():
         if result.get("success"):
-            print(f"{lg.upper()}: Saved → {result['filepath']}")
+            print(f"{lg.upper()}: Saved -> {result['filepath']}")
         else:
             print(f"{lg.upper()}: FAILED - {result.get('error')}")
 
