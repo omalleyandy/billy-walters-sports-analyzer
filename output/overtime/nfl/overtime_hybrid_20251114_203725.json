@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "source": "overtime.ag",
+    "scraper": "hybrid (playwright + signalr)",
+    "scraped_at": "2025-11-14T20:37:25.254827",
+    "version": "1.0.0"
+  },
+  "account": {
+    "balance": "Daily Figures",
+    "available": "Open Bets",
+    "pending": null
+  },
+  "pregame": {
+    "games": [],
+    "count": 0
+  },
+  "live": {
+    "updates": [],
+    "count": 0
+  }
+}
