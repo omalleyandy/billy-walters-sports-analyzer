@@ -413,8 +413,7 @@ Timing Recommendations:
     parser.add_argument(
         "--analyze-movements",
         action="store_true",
-        default=True,
-        help="Enable line movement analysis (default: enabled)",
+        help="Enable line movement analysis (enabled by default, this flag is explicit)",
     )
 
     parser.add_argument(
@@ -438,7 +437,9 @@ async def main():
 
     args = parse_args()
 
-    analyze = args.analyze_movements and not args.no_analyze
+    # Analysis is enabled by default unless --no-analyze is provided
+    # --analyze-movements is kept for explicit enablement but defaults to enabled anyway
+    analyze = not args.no_analyze
 
     print("=" * 70)
     print("NCAAF Live Odds Scraper")
