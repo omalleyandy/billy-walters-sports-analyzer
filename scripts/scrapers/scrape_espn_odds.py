@@ -91,9 +91,7 @@ def scrape_odds(league: str):
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(
-        description="Scrape ESPN NFL/NCAAF betting odds"
-    )
+    parser = argparse.ArgumentParser(description="Scrape ESPN NFL/NCAAF betting odds")
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf", "all"],

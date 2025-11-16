@@ -35,7 +35,9 @@ class NCAAFEdgeDetector:
     # NCAAF-specific constants (FIX 1: Reduced from 3.5 to 2.5)
     HFA = 2.5  # Home field advantage (reduced from 3.5 based on Week 12 analysis)
     MIN_EDGE = 1.5  # Minimum edge for a play (same as NFL)
-    MARKET_RESPECT_THRESHOLD = 10.0  # FIX 2: Skip edges >10 pts (market is probably right)
+    MARKET_RESPECT_THRESHOLD = (
+        10.0  # FIX 2: Skip edges >10 pts (market is probably right)
+    )
 
     # Billy Walters edge thresholds (same as NFL)
     THRESHOLDS = {
@@ -211,9 +213,8 @@ class NCAAFEdgeDetector:
             market_spread = game["spread"]["home"]
 
             # FIX 3: Apply bias correction for favorites/underdogs
-            betting_favorite = (
-                (predicted > market_spread and predicted < 0)
-                or (predicted < market_spread and predicted > 0)
+            betting_favorite = (predicted > market_spread and predicted < 0) or (
+                predicted < market_spread and predicted > 0
             )
 
             if betting_favorite:
@@ -260,7 +261,9 @@ class NCAAFEdgeDetector:
                     "away_team": away_team,
                     "home_team": home_team,
                     "game_time": game["game_time"],
-                    "predicted_line": round(predicted_corrected, 1),  # Use bias-corrected prediction
+                    "predicted_line": round(
+                        predicted_corrected, 1
+                    ),  # Use bias-corrected prediction
                     "market_line": market_spread,
                     "edge": round(edge, 1),
                     "edge_abs": round(abs(edge), 1),

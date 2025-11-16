@@ -46,7 +46,11 @@ def scrape_news():
                 date = item.get("pubDate", "No date")
                 print(f"    {title} - {date}")
 
-        result = {"success": True, "post_count": len(items) if items else 0, "filepath": filepath}
+        result = {
+            "success": True,
+            "post_count": len(items) if items else 0,
+            "filepath": filepath,
+        }
 
     except Exception as e:
         print(f"  [ERROR] {e}")

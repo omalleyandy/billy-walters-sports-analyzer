@@ -218,7 +218,8 @@ def main():
     )
 
     nfl_site = sub.add_parser(
-        "scrape-nfl-site", help="Crawl nfl.com core sections for quick research snapshots"
+        "scrape-nfl-site",
+        help="Crawl nfl.com core sections for quick research snapshots",
     )
     nfl_site.add_argument(
         "--output-dir",

@@ -21,11 +21,11 @@ for game in old_data.get("games", []):
         old_games[key] = game
 
 # Compare with new games
-print(f"\n{'='*100}")
+print(f"\n{'=' * 100}")
 print(f"LINE MOVEMENT REPORT")
 print(f"Old: {old_file.name} (12:24 PM)")
 print(f"New: {new_file.name} (12:27 PM)")
-print(f"{'='*100}\n")
+print(f"{'=' * 100}\n")
 
 movements = []
 
@@ -52,20 +52,14 @@ for game in new_data.get("games", []):
 
     # Only report if movement occurred
     if abs(spread_move) >= 0.5 or abs(total_move) >= 0.5:
-        movements.append({
-            "game": f"{game['away_team']} @ {game['home_team']}",
-            "time": game.get("game_time"),
-            "spread": {
-                "old": old_spread,
-                "new": new_spread,
-                "move": spread_move
-            },
-            "total": {
-                "old": old_total,
-                "new": new_total,
-                "move": total_move
+        movements.append(
+            {
+                "game": f"{game['away_team']} @ {game['home_team']}",
+                "time": game.get("game_time"),
+                "spread": {"old": old_spread, "new": new_spread, "move": spread_move},
+                "total": {"old": old_total, "new": new_total, "move": total_move},
             }
-        })
+        )
 
 if not movements:
     print("[INFO] No significant line movements detected (all lines stable)")
@@ -78,16 +72,24 @@ else:
     for move in movements:
         print(f"{move['game']} ({move['time']})")
 
-        if abs(move['spread']['move']) >= 0.5:
-            direction = "moved toward FAVORITE" if move['spread']['move'] < 0 else "moved toward UNDERDOG"
-            print(f"  Spread: {move['spread']['old']:+.1f} -> {move['spread']['new']:+.1f} ({move['spread']['move']:+.1f}) - {direction}")
+        if abs(move["spread"]["move"]) >= 0.5:
+            direction = (
+                "moved toward FAVORITE"
+                if move["spread"]["move"] < 0
+                else "moved toward UNDERDOG"
+            )
+            print(
+                f"  Spread: {move['spread']['old']:+.1f} -> {move['spread']['new']:+.1f} ({move['spread']['move']:+.1f}) - {direction}"
+            )
 
-        if abs(move['total']['move']) >= 0.5:
-            direction = "UNDER" if move['total']['move'] < 0 else "OVER"
-            print(f"  Total:  {move['total']['old']:.1f} -> {move['total']['new']:.1f} ({move['total']['move']:+.1f}) - {direction} movement")
+        if abs(move["total"]["move"]) >= 0.5:
+            direction = "UNDER" if move["total"]["move"] < 0 else "OVER"
+            print(
+                f"  Total:  {move['total']['old']:.1f} -> {move['total']['new']:.1f} ({move['total']['move']:+.1f}) - {direction} movement"
+            )
 
         print()
 
-print(f"\n{'='*100}")
+print(f"\n{'=' * 100}")
 print(f"Line movement analysis complete")
-print(f"{'='*100}\n")
+print(f"{'=' * 100}\n")

@@ -46,12 +46,14 @@ TEAM_NAME_MAP = {
     "Jacksonville State": "Jacksonville St",
 }
 
+
 def normalize_team_name(name):
     return TEAM_NAME_MAP.get(name, name)
 
-print(f"\n{'='*100}")
+
+print(f"\n{'=' * 100}")
 print(f"FAVORITES WITH POSITIVE EDGES")
-print(f"{'='*100}\n")
+print(f"{'=' * 100}\n")
 
 favorite_edges = []
 
@@ -85,16 +87,18 @@ for game in games:
 
         # Check if our model says home should be favored by MORE
         if edge < 0:  # Negative edge means home team undervalued
-            favorite_edges.append({
-                "game": f"{away} @ {home}",
-                "time": game["game_time"],
-                "favorite": home,
-                "market_line": market_line,
-                "predicted_line": round(predicted_spread, 1),
-                "edge": round(abs(edge), 1),
-                "play": f"{home} {market_line:.1f}",
-                "ratings": f"{away}: {away_rating:.2f}, {home}: {home_rating:.2f}"
-            })
+            favorite_edges.append(
+                {
+                    "game": f"{away} @ {home}",
+                    "time": game["game_time"],
+                    "favorite": home,
+                    "market_line": market_line,
+                    "predicted_line": round(predicted_spread, 1),
+                    "edge": round(abs(edge), 1),
+                    "play": f"{home} {market_line:.1f}",
+                    "ratings": f"{away}: {away_rating:.2f}, {home}: {home_rating:.2f}",
+                }
+            )
 
     elif market_spread > 0:
         # Away team is market favorite
@@ -106,16 +110,18 @@ for game in games:
             # Calculate the away line that should exist
             predicted_away_line = -predicted_spread
 
-            favorite_edges.append({
-                "game": f"{away} @ {home}",
-                "time": game["game_time"],
-                "favorite": away,
-                "market_line": market_line,
-                "predicted_line": round(predicted_away_line, 1),
-                "edge": round(edge, 1),
-                "play": f"{away} {market_line:.1f}",
-                "ratings": f"{away}: {away_rating:.2f}, {home}: {home_rating:.2f}"
-            })
+            favorite_edges.append(
+                {
+                    "game": f"{away} @ {home}",
+                    "time": game["game_time"],
+                    "favorite": away,
+                    "market_line": market_line,
+                    "predicted_line": round(predicted_away_line, 1),
+                    "edge": round(edge, 1),
+                    "play": f"{away} {market_line:.1f}",
+                    "ratings": f"{away}: {away_rating:.2f}, {home}: {home_rating:.2f}",
+                }
+            )
 
 # Sort by edge
 favorite_edges.sort(key=lambda x: x["edge"], reverse=True)
@@ -130,7 +136,15 @@ else:
     print(f"Found {len(favorite_edges)} favorites with positive edges:\n")
 
     for i, fav in enumerate(favorite_edges, 1):
-        grade = "MAX BET" if fav["edge"] >= 7 else "STRONG" if fav["edge"] >= 4 else "MODERATE" if fav["edge"] >= 2 else "LEAN"
+        grade = (
+            "MAX BET"
+            if fav["edge"] >= 7
+            else "STRONG"
+            if fav["edge"] >= 4
+            else "MODERATE"
+            if fav["edge"] >= 2
+            else "LEAN"
+        )
 
         print(f"{i}. [{grade}] {fav['game']} ({fav['time']})")
         print(f"   PLAY: {fav['play']}")
@@ -140,9 +154,9 @@ else:
         print(f"   Ratings: {fav['ratings']}")
         print()
 
-print(f"\n{'='*100}")
+print(f"\n{'=' * 100}")
 print(f"ANALYSIS COMPLETE")
-print(f"{'='*100}\n")
+print(f"{'=' * 100}\n")
 
 # Additional analysis
 print("\nWHY ARE THERE FEW/NO FAVORITE EDGES?")
@@ -152,4 +166,4 @@ print("2. Line Inflation: Bookmakers shade lines toward favorites to balance act
 print("3. True Edges: Most value in NCAAF comes from inflated favorite lines")
 print("4. Billy Walters Approach: Historically won by betting inflated underdogs")
 print("\nRECOMMENDATION: Focus on the underdog plays identified earlier.")
-print(f"{'='*100}\n")
+print(f"{'=' * 100}\n")

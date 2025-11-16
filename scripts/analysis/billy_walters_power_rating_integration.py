@@ -62,19 +62,19 @@ class BillyWaltersPowerRatingIntegration:
         self.week = week
         self.league = league
         self.league_short = "ncaaf" if league == "college-football" else "nfl"
-        
+
         # Clients
         self.espn_client = ESPNAPIClient()
         self.massey_scraper = MasseyRatingsScraper()
         self.overtime_client = OvertimeApiClient()
         self.edge_detector = BillyWaltersEdgeDetector()
-        
+
         # Data storage
         self.espn_team_stats: Dict[str, Dict] = {}
         self.massey_ratings: Dict[str, Dict] = {}
         self.overtime_odds: Dict[str, Dict] = {}
         self.power_ratings: Dict[str, PowerRating] = {}
-        
+
         # Output directory
         self.output_dir = Path(f"output/billy_walters/week_{week}")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -105,8 +105,10 @@ class BillyWaltersPowerRatingIntegration:
             if self.league_short == "nfl":
                 stats_file = Path(f"data/current/nfl_team_stats_week_{self.week}.json")
             else:
-                stats_file = Path(f"data/current/ncaaf_team_stats_week_{self.week}.json")
-            
+                stats_file = Path(
+                    f"data/current/ncaaf_team_stats_week_{self.week}.json"
+                )
+
             if stats_file.exists():
                 with open(stats_file, "r") as f:
                     data = json.load(f)
@@ -117,7 +119,9 @@ class BillyWaltersPowerRatingIntegration:
                 results["espn_stats"] = True
             else:
                 print(f"    [WARNING] Stats file not found: {stats_file}")
-                print(f"    [INFO] Run: uv run python scripts/scrapers/scrape_espn_team_stats.py --league {self.league_short} --week {self.week}")
+                print(
+                    f"    [INFO] Run: uv run python scripts/scrapers/scrape_espn_team_stats.py --league {self.league_short} --week {self.week}"
+                )
         except Exception as e:
             print(f"    [ERROR] Failed to load ESPN stats: {e}")
 
@@ -125,10 +129,14 @@ class BillyWaltersPowerRatingIntegration:
         print("\n[2/3] Collecting Massey Ratings (fallback)...")
         try:
             if self.league_short == "nfl":
-                massey_file = list(Path("output/massey/nfl/ratings").glob("nfl_ratings_*.json"))
+                massey_file = list(
+                    Path("output/massey/nfl/ratings").glob("nfl_ratings_*.json")
+                )
             else:
-                massey_file = list(Path("output/massey/ncaaf/ratings").glob("ncaaf_ratings_*.json"))
-            
+                massey_file = list(
+                    Path("output/massey/ncaaf/ratings").glob("ncaaf_ratings_*.json")
+                )
+
             if massey_file:
                 # Use most recent
                 massey_file = sorted(massey_file, reverse=True)[0]
@@ -140,14 +148,20 @@ class BillyWaltersPowerRatingIntegration:
                         # Teams can be dict with "name" key or list format
                         for team in teams_list:
                             if isinstance(team, dict):
-                                team_name = team.get("name") or team.get("team") or team.get("Team")
+                                team_name = (
+                                    team.get("name")
+                                    or team.get("team")
+                                    or team.get("Team")
+                                )
                                 if team_name:
                                     self.massey_ratings[team_name] = team
                 print(f"    [OK] Loaded {len(self.massey_ratings)} teams from Massey")
                 results["massey_ratings"] = True
             else:
                 print(f"    [WARNING] Massey ratings not found")
-                print(f"    [INFO] Run: uv run python -m src.data.massey_ratings_scraper")
+                print(
+                    f"    [INFO] Run: uv run python -m src.data.massey_ratings_scraper"
+                )
         except Exception as e:
             print(f"    [ERROR] Failed to load Massey ratings: {e}")
 
@@ -155,10 +169,14 @@ class BillyWaltersPowerRatingIntegration:
         print("\n[3/3] Collecting Overtime.ag Odds...")
         try:
             if self.league_short == "nfl":
-                odds_file = list(Path("output/overtime/nfl/pregame").glob("api_walters_*.json"))
+                odds_file = list(
+                    Path("output/overtime/nfl/pregame").glob("api_walters_*.json")
+                )
             else:
-                odds_file = list(Path("output/overtime/ncaaf/pregame").glob("api_walters_*.json"))
-            
+                odds_file = list(
+                    Path("output/overtime/ncaaf/pregame").glob("api_walters_*.json")
+                )
+
             if odds_file:
                 # Use most recent
                 odds_file = sorted(odds_file, reverse=True)[0]
@@ -172,7 +190,9 @@ class BillyWaltersPowerRatingIntegration:
                 results["overtime_odds"] = True
             else:
                 print(f"    [WARNING] Overtime odds not found")
-                print(f"    [INFO] Run: uv run python scripts/scrapers/scrape_overtime_api.py --{self.league_short}")
+                print(
+                    f"    [INFO] Run: uv run python scripts/scrapers/scrape_overtime_api.py --{self.league_short}"
+                )
         except Exception as e:
             print(f"    [ERROR] Failed to load Overtime odds: {e}")
 
@@ -231,7 +251,7 @@ class BillyWaltersPowerRatingIntegration:
                     base_rating = max(70.0, min(100.0, base_rating))
                 except (ValueError, TypeError):
                     base_rating = 75.0  # Default if can't parse
-                
+
                 # Massey doesn't always have offensive/defensive breakdown
                 # Use defaults based on base rating
                 offensive_rating = base_rating * 0.55
@@ -247,22 +267,29 @@ class BillyWaltersPowerRatingIntegration:
                 ppg = espn_stats.get("points_per_game", 0)
                 papg = espn_stats.get("points_allowed_per_game", 0)
                 to_margin = espn_stats.get("turnover_margin", 0)
-                
+
                 # Enhancement factors (Billy Walters methodology)
                 offensive_enhancement = (ppg - 23.3) * 0.15  # League average ~23.3
                 defensive_enhancement = (23.3 - papg) * 0.15  # Favor lower PAPG
                 turnover_enhancement = to_margin * 0.3
-                
-                enhanced_rating = base_rating + offensive_enhancement + defensive_enhancement + turnover_enhancement
+
+                enhanced_rating = (
+                    base_rating
+                    + offensive_enhancement
+                    + defensive_enhancement
+                    + turnover_enhancement
+                )
                 # Clamp to 70-100 scale
                 enhanced_rating = max(70.0, min(100.0, enhanced_rating))
-                
+
                 base_rating = enhanced_rating
                 # Update source to reflect enhancement
                 if source == "espn":
                     source = "espn_enhanced"  # ESPN base enhanced with Massey baseline
                 elif source == "massey":
-                    source = "massey_enhanced_espn"  # Massey base enhanced with ESPN stats
+                    source = (
+                        "massey_enhanced_espn"  # Massey base enhanced with ESPN stats
+                    )
 
             # Standard home field advantage
             home_field_advantage = 3.0 if self.league_short == "nfl" else 3.5
@@ -279,10 +306,12 @@ class BillyWaltersPowerRatingIntegration:
             power_ratings[team_name] = power_rating
 
         self.power_ratings = power_ratings
-        
+
         print(f"\nCalculated {len(power_ratings)} power ratings")
         print("\nTop 10 Power Ratings:")
-        sorted_ratings = sorted(power_ratings.items(), key=lambda x: x[1].rating, reverse=True)
+        sorted_ratings = sorted(
+            power_ratings.items(), key=lambda x: x[1].rating, reverse=True
+        )
         for i, (team, rating) in enumerate(sorted_ratings[:10], 1):
             print(f"  {i:2d}. {team:25s} {rating.rating:5.2f} ({rating.source})")
 
@@ -292,14 +321,14 @@ class BillyWaltersPowerRatingIntegration:
         """Calculate base power rating from ESPN statistics."""
         ppg = stats.get("points_per_game", 23.3)
         papg = stats.get("points_allowed_per_game", 23.3)
-        
+
         # Billy Walters base formula: Rating = 75 + (PPG - 23.3) * 0.5 - (PAPG - 23.3) * 0.5
         base = 75.0
         offensive_component = (ppg - 23.3) * 0.5
         defensive_component = (23.3 - papg) * 0.5
-        
+
         rating = base + offensive_component + defensive_component
-        
+
         # Clamp to 70-100 scale
         return max(70.0, min(100.0, rating))
 
@@ -307,7 +336,7 @@ class BillyWaltersPowerRatingIntegration:
         """Calculate offensive rating component."""
         ppg = stats.get("points_per_game", 23.3)
         ypg = stats.get("total_yards_per_game", 350.0)
-        
+
         # Normalize to 70-100 scale (simplified)
         offensive = 75.0 + (ppg - 23.3) * 0.5 + (ypg - 350.0) * 0.01
         return max(70.0, min(100.0, offensive))
@@ -316,7 +345,7 @@ class BillyWaltersPowerRatingIntegration:
         """Calculate defensive rating component."""
         papg = stats.get("points_allowed_per_game", 23.3)
         yapg = stats.get("total_yards_allowed_per_game", 350.0)
-        
+
         # Normalize to 70-100 scale (simplified)
         # Lower PAPG and YAPG = better defense
         defensive = 75.0 + (23.3 - papg) * 0.5 + (350.0 - yapg) * 0.01
@@ -345,7 +374,10 @@ class BillyWaltersPowerRatingIntegration:
             total = game_data.get("total", {}).get("points", 0.0)
 
             # Skip if we don't have power ratings for both teams
-            if away_team not in self.power_ratings or home_team not in self.power_ratings:
+            if (
+                away_team not in self.power_ratings
+                or home_team not in self.power_ratings
+            ):
                 continue
 
             try:
@@ -362,26 +394,32 @@ class BillyWaltersPowerRatingIntegration:
                 )
 
                 if edge:
-                    edges.append({
-                        "game": f"{away_team} @ {home_team}",
-                        "edge_points": edge.edge_points,
-                        "recommended_bet": edge.recommended_bet,
-                        "market_spread": spread,
-                        "predicted_spread": edge.predicted_spread,
-                        "confidence": edge.confidence_score,
-                        "kelly_fraction": edge.kelly_fraction,
-                    })
+                    edges.append(
+                        {
+                            "game": f"{away_team} @ {home_team}",
+                            "edge_points": edge.edge_points,
+                            "recommended_bet": edge.recommended_bet,
+                            "market_spread": spread,
+                            "predicted_spread": edge.predicted_spread,
+                            "confidence": edge.confidence_score,
+                            "kelly_fraction": edge.kelly_fraction,
+                        }
+                    )
 
             except Exception as e:
-                print(f"    [ERROR] Failed to detect edge for {away_team} @ {home_team}: {e}")
+                print(
+                    f"    [ERROR] Failed to detect edge for {away_team} @ {home_team}: {e}"
+                )
 
         print(f"\nDetected {len(edges)} betting edges")
-        
+
         if edges:
             print("\nTop Edges:")
             sorted_edges = sorted(edges, key=lambda x: x["edge_points"], reverse=True)
             for i, edge in enumerate(sorted_edges[:5], 1):
-                print(f"  {i}. {edge['game']:35s} Edge: {edge['edge_points']:.2f} pts | {edge['recommended_bet']}")
+                print(
+                    f"  {i}. {edge['game']:35s} Edge: {edge['edge_points']:.2f} pts | {edge['recommended_bet']}"
+                )
 
         return edges
 
@@ -397,7 +435,7 @@ class BillyWaltersPowerRatingIntegration:
             }
             for team, rating in self.power_ratings.items()
         }
-        
+
         output_data = {
             "week": self.week,
             "league": self.league_short,
@@ -443,15 +481,13 @@ async def main():
 
     league_api = "college-football" if args.league == "ncaaf" else "nfl"
 
-    integration = BillyWaltersPowerRatingIntegration(
-        week=args.week, league=league_api
-    )
+    integration = BillyWaltersPowerRatingIntegration(week=args.week, league=league_api)
 
     try:
         # Step 1: Collect data
         if not args.analysis_only:
             results = await integration.collect_all_data()
-            
+
             if not any(results.values()):
                 print("\n[ERROR] No data collected. Cannot proceed.")
                 return 1
@@ -459,17 +495,25 @@ async def main():
             # In analysis-only mode, try to load existing data from disk
             print("[INFO] Analysis-only mode: Loading existing data...")
             results = await integration.collect_all_data()
-            
+
             # Check if any data was loaded
             if not any(results.values()):
-                print("\n[ERROR] No existing data found. Cannot run analysis-only mode.")
-                print("[INFO] Run without --analysis-only flag to collect data first, or ensure data files exist:")
+                print(
+                    "\n[ERROR] No existing data found. Cannot run analysis-only mode."
+                )
+                print(
+                    "[INFO] Run without --analysis-only flag to collect data first, or ensure data files exist:"
+                )
                 if integration.league_short == "nfl":
-                    print(f"  - data/current/nfl_team_stats_week_{integration.week}.json")
+                    print(
+                        f"  - data/current/nfl_team_stats_week_{integration.week}.json"
+                    )
                     print(f"  - output/massey/nfl/ratings/nfl_ratings_*.json")
                     print(f"  - output/overtime/nfl/pregame/api_walters_*.json")
                 else:
-                    print(f"  - data/current/ncaaf_team_stats_week_{integration.week}.json")
+                    print(
+                        f"  - data/current/ncaaf_team_stats_week_{integration.week}.json"
+                    )
                     print(f"  - output/massey/ncaaf/ratings/ncaaf_ratings_*.json")
                     print(f"  - output/overtime/ncaaf/pregame/api_walters_*.json")
                 return 1
@@ -478,18 +522,22 @@ async def main():
         if not args.collect_only:
             # Verify we have data before calculating
             if not integration.espn_team_stats and not integration.massey_ratings:
-                print("\n[ERROR] No team statistics available. Cannot calculate power ratings.")
+                print(
+                    "\n[ERROR] No team statistics available. Cannot calculate power ratings."
+                )
                 print("[INFO] Ensure ESPN stats or Massey ratings are available.")
                 return 1
-            
+
             if not integration.overtime_odds:
-                print("\n[WARNING] No odds data available. Edge detection will be skipped.")
-            
+                print(
+                    "\n[WARNING] No odds data available. Edge detection will be skipped."
+                )
+
             power_ratings = integration.calculate_power_ratings()
-            
+
             # Step 3: Detect edges
             edges = integration.detect_edges()
-            
+
             # Step 4: Save results
             integration.save_results()
 

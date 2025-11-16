@@ -41,7 +41,13 @@ class SubagentValidator:
             data_dir = project_root / "data" / "current"
 
         self.data_dir = Path(data_dir)
-        self.output_dir = Path(__file__).parent.parent.parent / "output" / "overtime" / "nfl" / "pregame"
+        self.output_dir = (
+            Path(__file__).parent.parent.parent
+            / "output"
+            / "overtime"
+            / "nfl"
+            / "pregame"
+        )
 
         self.errors: List[str] = []
         self.warnings: List[str] = []
@@ -152,14 +158,18 @@ class SubagentValidator:
             # Validate dates fall within week
             if "date" in game:
                 try:
-                    game_date = datetime.fromisoformat(game["date"].replace("Z", "+00:00"))
+                    game_date = datetime.fromisoformat(
+                        game["date"].replace("Z", "+00:00")
+                    )
                     week_start, week_end = get_week_date_range(self.week, League.NFL)
                     if not (week_start <= game_date.date() <= week_end):
                         self.warnings.append(
                             f"Game {i} date {game['date']} falls outside Week {self.week} range"
                         )
                 except (ValueError, AttributeError):
-                    self.errors.append(f"Game {i} has invalid date format: {game.get('date')}")
+                    self.errors.append(
+                        f"Game {i} has invalid date format: {game.get('date')}"
+                    )
 
         return len(self.errors) == 0
 
@@ -196,9 +206,7 @@ class SubagentValidator:
         ]
         missing_columns = [col for col in required_columns if col not in df.columns]
         if missing_columns:
-            self.errors.append(
-                f"Betting lines CSV missing columns: {missing_columns}"
-            )
+            self.errors.append(f"Betting lines CSV missing columns: {missing_columns}")
             return False
 
         # Validate game_id format
@@ -519,9 +527,7 @@ def main():
     parser.add_argument(
         "--data-dir", type=str, default=None, help="Data directory path"
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Show warnings"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Show warnings")
 
     args = parser.parse_args()
 
@@ -542,7 +548,9 @@ def main():
         print()
 
     if is_valid:
-        print(f"✅ All subagent outputs validated successfully for Week {validator.week}")
+        print(
+            f"✅ All subagent outputs validated successfully for Week {validator.week}"
+        )
         return 0
     else:
         print(f"❌ Validation failed for Week {validator.week}")
@@ -551,4 +559,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

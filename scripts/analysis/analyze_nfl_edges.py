@@ -164,9 +164,7 @@ class NFLEdgeDetector:
 
         return -predicted  # Negative = home favored
 
-    def apply_bias_correction(
-        self, predicted: float, market: float
-    ) -> float:
+    def apply_bias_correction(self, predicted: float, market: float) -> float:
         """
         FIX 3: Apply systematic bias correction for favorites/underdogs
 
@@ -180,9 +178,8 @@ class NFLEdgeDetector:
         Returns:
             Corrected predicted spread
         """
-        betting_favorite = (
-            (predicted > market and predicted < 0)
-            or (predicted < market and predicted > 0)
+        betting_favorite = (predicted > market and predicted < 0) or (
+            predicted < market and predicted > 0
         )
 
         if betting_favorite:
@@ -234,9 +231,7 @@ class NFLEdgeDetector:
         else:
             return "NO PLAY", 0.0, "52%"
 
-    def detect_edges(
-        self, min_edge: float = MIN_EDGE
-    ) -> List[Dict]:
+    def detect_edges(self, min_edge: float = MIN_EDGE) -> List[Dict]:
         """
         Detect betting edges across all NFL games.
 
@@ -263,9 +258,8 @@ class NFLEdgeDetector:
             market_spread = game["spread"]["home"]
 
             # FIX 3: Apply bias correction
-            betting_favorite = (
-                (predicted > market_spread and predicted < 0)
-                or (predicted < market_spread and predicted > 0)
+            betting_favorite = (predicted > market_spread and predicted < 0) or (
+                predicted < market_spread and predicted > 0
             )
 
             if betting_favorite:
@@ -350,7 +344,9 @@ class NFLEdgeDetector:
         lines.append("")
 
         if not edges:
-            lines.append("[INFO] No edges detected meeting minimum threshold (3.5 points)")
+            lines.append(
+                "[INFO] No edges detected meeting minimum threshold (3.5 points)"
+            )
             lines.append("[INFO] NFL market is highly efficient - this is normal")
             lines.append("")
         else:
@@ -386,8 +382,10 @@ class NFLEdgeDetector:
                     lines.append(f"Kelly %: {edge['kelly_pct']}% of bankroll")
                     lines.append(f"Expected Win Rate: {edge['win_rate']}")
 
-                    if edge['crosses_key_number']:
-                        lines.append(f"[KEY NUMBER] Crosses {edge['key_number']} - EXTRA VALUE!")
+                    if edge["crosses_key_number"]:
+                        lines.append(
+                            f"[KEY NUMBER] Crosses {edge['key_number']} - EXTRA VALUE!"
+                        )
 
                     lines.append(f"Total: {edge['total']}")
                     lines.append("")
@@ -395,7 +393,9 @@ class NFLEdgeDetector:
         lines.append("=" * 80)
         lines.append("BILLY WALTERS NFL METHODOLOGY (WITH FIXES)")
         lines.append("=" * 80)
-        lines.append(f"Home Field Advantage: {self.HFA} points (Billy Walters current value)")
+        lines.append(
+            f"Home Field Advantage: {self.HFA} points (Billy Walters current value)"
+        )
         lines.append(f"Minimum Edge: {self.MIN_EDGE} points (higher than NCAAF 1.5)")
         lines.append("Market Respect: Skip edges >10 points (market likely right)")
         lines.append("Bias Correction: 0.85x favorites, 1.15x underdogs")

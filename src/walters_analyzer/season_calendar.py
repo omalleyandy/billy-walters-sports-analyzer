@@ -224,7 +224,7 @@ def get_week_date_range(week: int, league: League = League.NFL) -> tuple[date, d
         week_start = NFL_2025_WEEK_1_START + timedelta(weeks=week - 1)
         week_end = week_start + timedelta(days=6)  # Thursday to Wednesday
         return (week_start, week_end)
-    
+
     elif league == League.NCAAF:
         if not 0 <= week <= NCAAF_2025_REGULAR_SEASON_WEEKS:
             raise ValueError(f"Week must be 0-{NCAAF_2025_REGULAR_SEASON_WEEKS}")
@@ -235,9 +235,9 @@ def get_week_date_range(week: int, league: League = League.NFL) -> tuple[date, d
         else:
             week_start = NCAAF_2025_WEEK_1_START + timedelta(weeks=week - 1)
             week_end = week_start + timedelta(days=6)  # Saturday to Friday
-        
+
         return (week_start, week_end)
-    
+
     else:
         raise ValueError(f"Unknown league: {league}")
 
@@ -282,7 +282,7 @@ def format_season_status(
             return "NFL 2025 Preseason"
         else:
             return "NFL Offseason"
-    
+
     elif league == League.NCAAF:
         phase = get_ncaaf_season_phase(target_date)
         week = get_ncaaf_week(target_date)
@@ -301,7 +301,7 @@ def format_season_status(
             return "NCAAF FBS 2025 Preseason"
         else:
             return "NCAAF FBS Offseason"
-    
+
     else:
         raise ValueError(f"Unknown league: {league}")
 

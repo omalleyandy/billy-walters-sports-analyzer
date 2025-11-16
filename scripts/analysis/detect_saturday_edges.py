@@ -68,7 +68,8 @@ def load_saturday_odds() -> List[Dict]:
     # Filter for full games only on Saturday
     all_games = data.get("games", [])
     return [
-        g for g in all_games
+        g
+        for g in all_games
         if g.get("period") == "Game" and "11/15/2025" in g.get("game_time", "")
     ]
 
@@ -84,16 +85,11 @@ def load_weather_adjustments() -> Dict[str, Dict]:
         weather_reports = json.load(f)
 
     # Index by home team
-    return {
-        report["home_team"]: report["impact"]
-        for report in weather_reports
-    }
+    return {report["home_team"]: report["impact"] for report in weather_reports}
 
 
 def calculate_predicted_spread(
-    away_rating: float,
-    home_rating: float,
-    hfa: float = 2.5
+    away_rating: float, home_rating: float, hfa: float = 2.5
 ) -> float:
     """Calculate predicted spread using power ratings.
 
@@ -102,10 +98,7 @@ def calculate_predicted_spread(
     return (home_rating - away_rating) + hfa
 
 
-def calculate_edge(
-    predicted_line: float,
-    market_line: float
-) -> float:
+def calculate_edge(predicted_line: float, market_line: float) -> float:
     """Calculate edge (predicted - market).
 
     Positive edge = value on away team
@@ -137,7 +130,7 @@ def calculate_total_edge(
     away_rating: float,
     home_rating: float,
     market_total: float,
-    weather_adj: float = 0.0
+    weather_adj: float = 0.0,
 ) -> Tuple[float, float]:
     """Calculate predicted total and edge.
 
@@ -159,9 +152,9 @@ def calculate_total_edge(
 def main():
     """Main edge detection function."""
 
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"SATURDAY NCAAF EDGE DETECTION - Billy Walters Methodology")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
     # Load data
     print("[1/4] Loading power ratings...")
@@ -211,20 +204,24 @@ def main():
         grade, stake = classify_edge(edge)
 
         if abs(edge) >= 1.0:  # Only track edges >= 1 point
-            spread_edges.append({
-                "game": f"{away_team} @ {home_team}",
-                "away_team": away_team,
-                "home_team": home_team,
-                "game_time": game.get("game_time"),
-                "market_spread": market_spread,
-                "predicted_spread": round(predicted_spread, 1),
-                "edge": round(edge, 1),
-                "grade": grade,
-                "stake": stake,
-                "recommendation": f"{away_team} {spread.get('away', 0):+.1f}" if edge > 0 else f"{home_team} {market_spread:+.1f}",
-                "weather_adj": spread_adj,
-                "power_ratings": f"{away_team}: {away_rating:.2f}, {home_team}: {home_rating:.2f}"
-            })
+            spread_edges.append(
+                {
+                    "game": f"{away_team} @ {home_team}",
+                    "away_team": away_team,
+                    "home_team": home_team,
+                    "game_time": game.get("game_time"),
+                    "market_spread": market_spread,
+                    "predicted_spread": round(predicted_spread, 1),
+                    "edge": round(edge, 1),
+                    "grade": grade,
+                    "stake": stake,
+                    "recommendation": f"{away_team} {spread.get('away', 0):+.1f}"
+                    if edge > 0
+                    else f"{home_team} {market_spread:+.1f}",
+                    "weather_adj": spread_adj,
+                    "power_ratings": f"{away_team}: {away_rating:.2f}, {home_team}: {home_rating:.2f}",
+                }
+            )
 
         # TOTAL EDGE
         market_total = total.get("points", 0.0)
@@ -236,61 +233,71 @@ def main():
             total_grade, total_stake = classify_edge(total_edge)
 
             if abs(total_edge) >= 1.0:  # Only track edges >= 1 point
-                total_edges.append({
-                    "game": f"{away_team} @ {home_team}",
-                    "away_team": away_team,
-                    "home_team": home_team,
-                    "game_time": game.get("game_time"),
-                    "market_total": market_total,
-                    "predicted_total": round(predicted_total, 1),
-                    "edge": round(total_edge, 1),
-                    "grade": total_grade,
-                    "stake": total_stake,
-                    "recommendation": f"OVER {market_total}" if total_edge > 0 else f"UNDER {market_total}",
-                    "weather_adj": total_adj,
-                    "weather_severity": weather_impact.get("severity", "NONE"),
-                    "power_ratings": f"{away_team}: {away_rating:.2f}, {home_team}: {home_rating:.2f}"
-                })
+                total_edges.append(
+                    {
+                        "game": f"{away_team} @ {home_team}",
+                        "away_team": away_team,
+                        "home_team": home_team,
+                        "game_time": game.get("game_time"),
+                        "market_total": market_total,
+                        "predicted_total": round(predicted_total, 1),
+                        "edge": round(total_edge, 1),
+                        "grade": total_grade,
+                        "stake": total_stake,
+                        "recommendation": f"OVER {market_total}"
+                        if total_edge > 0
+                        else f"UNDER {market_total}",
+                        "weather_adj": total_adj,
+                        "weather_severity": weather_impact.get("severity", "NONE"),
+                        "power_ratings": f"{away_team}: {away_rating:.2f}, {home_team}: {home_rating:.2f}",
+                    }
+                )
 
     # Sort by edge strength
     spread_edges.sort(key=lambda x: abs(x["edge"]), reverse=True)
     total_edges.sort(key=lambda x: abs(x["edge"]), reverse=True)
 
     # Print spread edges
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"SPREAD EDGES ({len(spread_edges)} opportunities found)")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
     for i, edge in enumerate(spread_edges[:20], 1):  # Top 20
         print(f"{i}. [{edge['grade']}] {edge['game']}")
         print(f"   Game Time: {edge['game_time']}")
         print(f"   Market: {edge['market_spread']:+.1f}")
-        print(f"   Predicted: {edge['predicted_spread']:+.1f} (weather adj: {edge['weather_adj']:+.1f})")
+        print(
+            f"   Predicted: {edge['predicted_spread']:+.1f} (weather adj: {edge['weather_adj']:+.1f})"
+        )
         print(f"   Edge: {edge['edge']:+.1f} points")
         print(f"   PLAY: {edge['recommendation']} ({edge['stake']} Kelly)")
         print(f"   Ratings: {edge['power_ratings']}")
         print()
 
     # Print total edges
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"TOTAL EDGES ({len(total_edges)} opportunities found)")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
     for i, edge in enumerate(total_edges[:20], 1):  # Top 20
-        weather_tag = "[RAIN]" if edge.get("weather_severity") in ["HIGH", "EXTREME"] else ""
+        weather_tag = (
+            "[RAIN]" if edge.get("weather_severity") in ["HIGH", "EXTREME"] else ""
+        )
         print(f"{i}. [{edge['grade']}] {edge['game']} {weather_tag}")
         print(f"   Game Time: {edge['game_time']}")
         print(f"   Market: {edge['market_total']:.1f}")
-        print(f"   Predicted: {edge['predicted_total']:.1f} (weather adj: {edge['weather_adj']:+.1f})")
+        print(
+            f"   Predicted: {edge['predicted_total']:.1f} (weather adj: {edge['weather_adj']:+.1f})"
+        )
         print(f"   Edge: {edge['edge']:+.1f} points")
         print(f"   PLAY: {edge['recommendation']} ({edge['stake']} Kelly)")
         print(f"   Ratings: {edge['power_ratings']}")
         print()
 
     # Summary
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"SUMMARY")
-    print(f"{'='*100}")
+    print(f"{'=' * 100}")
 
     # Count by grade
     max_bet_spreads = [e for e in spread_edges if e["grade"] == "MAX BET"]
@@ -313,7 +320,9 @@ def main():
     print(f"  MODERATE (2-4 pts):   {len(moderate_totals)}")
     print(f"  Total:                {len(total_edges)}")
 
-    print(f"\nWeather-impacted games: {len([e for e in total_edges if e.get('weather_severity') in ['HIGH', 'EXTREME']])}")
+    print(
+        f"\nWeather-impacted games: {len([e for e in total_edges if e.get('weather_severity') in ['HIGH', 'EXTREME']])}"
+    )
 
     if missing_ratings:
         print(f"\nTeams without ratings: {', '.join(sorted(missing_ratings))}")
@@ -324,10 +333,10 @@ def main():
             "generated_at": "2025-11-15T12:00:00",
             "games_analyzed": len(games),
             "spread_edges_found": len(spread_edges),
-            "total_edges_found": len(total_edges)
+            "total_edges_found": len(total_edges),
         },
         "spread_edges": spread_edges,
-        "total_edges": total_edges
+        "total_edges": total_edges,
     }
 
     output_file = Path("output/reports/saturday_edge_detection_11-15-2025.json")
@@ -335,7 +344,7 @@ def main():
         json.dump(output, f, indent=2)
 
     print(f"\n[SAVED] {output_file}")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
 
 if __name__ == "__main__":

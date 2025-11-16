@@ -14,7 +14,9 @@ from typing import Any, Callable, Literal
 
 from .action_network_client import ActionNetworkClient
 from .espn_client import ESPNClient
-from .overtime_api_client import OvertimeApiClient as OvertimeAPIClient  # Updated to use new API client
+from .overtime_api_client import (
+    OvertimeApiClient as OvertimeAPIClient,
+)  # Updated to use new API client
 from .validated_espn import DataQualityReport, ESPNDataValidator
 from .weather_client import WeatherClient
 

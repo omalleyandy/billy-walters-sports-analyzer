@@ -786,9 +786,8 @@ class BillyWaltersEdgeDetector:
         """
         # Determine if we're betting the favorite or underdog
         betting_favorite = (
-            (predicted_spread > market_spread and predicted_spread < 0)
-            or (predicted_spread < market_spread and predicted_spread > 0)
-        )
+            predicted_spread > market_spread and predicted_spread < 0
+        ) or (predicted_spread < market_spread and predicted_spread > 0)
 
         if betting_favorite:
             # We think the favorite should be favored by more than market
@@ -807,7 +806,9 @@ class BillyWaltersEdgeDetector:
 
         return corrected
 
-    def should_skip_large_edge(self, edge_abs: float, predicted: float, market: float) -> bool:
+    def should_skip_large_edge(
+        self, edge_abs: float, predicted: float, market: float
+    ) -> bool:
         """
         FIX 2: Market respect threshold
 
@@ -916,7 +917,9 @@ class BillyWaltersEdgeDetector:
         edge_points = abs(predicted_spread_corrected - market_spread)
 
         # FIX 2: Market respect threshold - skip if edge is too large
-        if self.should_skip_large_edge(edge_points, predicted_spread_corrected, market_spread):
+        if self.should_skip_large_edge(
+            edge_points, predicted_spread_corrected, market_spread
+        ):
             return None
 
         # Determine which side has edge (using corrected prediction)

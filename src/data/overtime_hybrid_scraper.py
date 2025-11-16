@@ -389,7 +389,7 @@ class OvertimeHybridScraper:
         """
         try:
             # Access the transport (WebSocket connection)
-            if not hasattr(self.signalr_connection, 'transport'):
+            if not hasattr(self.signalr_connection, "transport"):
                 print("   [WARNING] No transport attribute - cannot intercept frames")
                 return
 
@@ -397,7 +397,7 @@ class OvertimeHybridScraper:
 
             # Different signalr-client-aio versions use different attributes
             # Try multiple possible message handler names
-            handler_names = ['_on_message', 'on_message', 'handle_message']
+            handler_names = ["_on_message", "on_message", "handle_message"]
 
             for handler_name in handler_names:
                 if hasattr(transport, handler_name):
@@ -428,7 +428,9 @@ class OvertimeHybridScraper:
 
                     # Replace the handler with our interceptor
                     setattr(transport, handler_name, make_interceptor(original_handler))
-                    print(f"   [OK] Raw frame interceptor installed on '{handler_name}'")
+                    print(
+                        f"   [OK] Raw frame interceptor installed on '{handler_name}'"
+                    )
                     return
 
             print(
@@ -473,28 +475,35 @@ class OvertimeHybridScraper:
 
         if self.verbose_logging:
             try:
-                data_str = json.dumps(data) if isinstance(data, (dict, list)) else str(data)
-                print(f"   [WebSocket] {timestamp} | {event_name} | {data_str[:200]}...")
+                data_str = (
+                    json.dumps(data) if isinstance(data, (dict, list)) else str(data)
+                )
+                print(
+                    f"   [WebSocket] {timestamp} | {event_name} | {data_str[:200]}..."
+                )
             except Exception as e:
                 print(f"   [WebSocket] {timestamp} | {event_name} | <unparseable: {e}>")
 
     def _on_universal_event(self, *args, **kwargs) -> None:
         """Universal handler to catch any events we registered"""
         import inspect
+
         frame = inspect.currentframe()
         event_name = "unknown_event"
 
         # Try to get the event name from the call stack
         if frame and frame.f_back:
-            event_name = frame.f_back.f_locals.get('event', 'unknown')
+            event_name = frame.f_back.f_locals.get("event", "unknown")
 
         self._log_raw_message(event_name, {"args": args, "kwargs": kwargs})
 
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": event_name,
-            "data": {"args": args, "kwargs": kwargs},
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": event_name,
+                "data": {"args": args, "kwargs": kwargs},
+            }
+        )
 
         print(f"   [EVENT DETECTED] {event_name}")
         if args:
@@ -520,11 +529,13 @@ class OvertimeHybridScraper:
     def _on_game_update(self, data: Any) -> None:
         """Handler for game updates"""
         self._log_raw_message("gameUpdate", data)
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "game_update",
-            "data": data,
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "game_update",
+                "data": data,
+            }
+        )
         print(f"   [GAME UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
@@ -534,11 +545,13 @@ class OvertimeHybridScraper:
     def _on_lines_update(self, data: Any) -> None:
         """Handler for lines updates"""
         self._log_raw_message("linesUpdate", data)
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "lines_update",
-            "data": data,
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "lines_update",
+                "data": data,
+            }
+        )
         print(f"   [LINES UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
@@ -548,11 +561,13 @@ class OvertimeHybridScraper:
     def _on_odds_update(self, data: Any) -> None:
         """Handler for odds updates"""
         self._log_raw_message("oddsUpdate", data)
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "odds_update",
-            "data": data,
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "odds_update",
+                "data": data,
+            }
+        )
         print(f"   [ODDS UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
@@ -562,11 +577,13 @@ class OvertimeHybridScraper:
     def _on_score_update(self, data: Any) -> None:
         """Handler for score updates"""
         self._log_raw_message("scoreUpdate", data)
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "score_update",
-            "data": data,
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "score_update",
+                "data": data,
+            }
+        )
         print(f"   [SCORE UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
@@ -576,11 +593,13 @@ class OvertimeHybridScraper:
     def _on_message(self, message: Any) -> None:
         """Generic message handler"""
         self._log_raw_message("message", message)
-        self.live_updates.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "type": "message",
-            "data": message,
-        })
+        self.live_updates.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "type": "message",
+                "data": message,
+            }
+        )
         print(f"   [MESSAGE] Generic message received!")
         self.logger.info(f"SignalR message: {message}")
 
@@ -608,7 +627,7 @@ class OvertimeHybridScraper:
     async def _login(self, page: Page) -> None:
         """
         Login using Playwright with AngularJS-specific selectors.
-        
+
         Login form structure:
         - Login button: <a ng-click="ShowLoginView()" class="btn btn-signup">LOGIN</a>
         - Customer ID: <input ng-model="Login.customerId" placeholder="Customer Id.">
@@ -629,14 +648,18 @@ class OvertimeHybridScraper:
         await page.wait_for_timeout(2000)
 
         # Fill credentials using AngularJS ng-model selectors (more reliable than placeholder)
-        customer_input = await page.query_selector('input[ng-model="Login.customerId"], input[placeholder*="Customer"]')
+        customer_input = await page.query_selector(
+            'input[ng-model="Login.customerId"], input[placeholder*="Customer"]'
+        )
         if customer_input:
             await customer_input.fill(self.customer_id)
             print("   Customer ID filled")
         else:
             print("   [WARNING] Customer ID input not found")
 
-        password_input = await page.query_selector('input[ng-model="Login.password"], input[type="password"]')
+        password_input = await page.query_selector(
+            'input[ng-model="Login.password"], input[type="password"]'
+        )
         if password_input:
             await password_input.fill(self.password)
             print("   Password filled")
@@ -644,7 +667,9 @@ class OvertimeHybridScraper:
             print("   [WARNING] Password input not found")
 
         # Submit login using specific button class (AngularJS ng-click="Login.Authenticate()")
-        login_btn = await page.query_selector('button.btn-login, button:has-text("LOGIN")')
+        login_btn = await page.query_selector(
+            'button.btn-login, button:has-text("LOGIN")'
+        )
         if login_btn:
             # Use JavaScript click to ensure AngularJS ng-click handler fires
             await login_btn.click()

@@ -62,9 +62,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
             print(f"  Games found: {len(events)}")
 
             # Save using new output structure
-            filepath = client.save_to_json(
-                schedule, data_type="schedule", league=lg
-            )
+            filepath = client.save_to_json(schedule, data_type="schedule", league=lg)
 
             results[lg] = {
                 "success": True,
@@ -103,9 +101,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(
-        description="Scrape ESPN NFL/NCAAF schedules"
-    )
+    parser = argparse.ArgumentParser(description="Scrape ESPN NFL/NCAAF schedules")
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf", "all"],

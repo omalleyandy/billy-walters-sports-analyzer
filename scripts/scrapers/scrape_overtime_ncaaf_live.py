@@ -44,7 +44,9 @@ class LineMovementTracker:
         self.movements: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
         self.initial_lines: Dict[str, Dict[str, Any]] = {}
 
-    def record_line(self, game_id: str, timestamp: str, line_data: Dict[str, Any]) -> None:
+    def record_line(
+        self, game_id: str, timestamp: str, line_data: Dict[str, Any]
+    ) -> None:
         """
         Record a line snapshot for a game.
 
@@ -92,7 +94,10 @@ class LineMovementTracker:
 
         # Calculate changes (use explicit None checks to handle 0 as valid value)
         spread_movement = None
-        if initial.get("visitor_spread") is not None and current.get("visitor_spread") is not None:
+        if (
+            initial.get("visitor_spread") is not None
+            and current.get("visitor_spread") is not None
+        ):
             spread_movement = current["visitor_spread"] - initial["visitor_spread"]
 
         total_movement = None
@@ -100,22 +105,31 @@ class LineMovementTracker:
             total_movement = current["total"] - initial["total"]
 
         ml_movement_visitor = None
-        if initial.get("visitor_moneyline") is not None and current.get("visitor_moneyline") is not None:
+        if (
+            initial.get("visitor_moneyline") is not None
+            and current.get("visitor_moneyline") is not None
+        ):
             ml_movement_visitor = (
                 current["visitor_moneyline"] - initial["visitor_moneyline"]
             )
 
         ml_movement_home = None
-        if initial.get("home_moneyline") is not None and current.get("home_moneyline") is not None:
+        if (
+            initial.get("home_moneyline") is not None
+            and current.get("home_moneyline") is not None
+        ):
             ml_movement_home = current["home_moneyline"] - initial["home_moneyline"]
 
         # Detect significant movements
-        significant_spread = abs(spread_movement) >= 1.0 if spread_movement is not None else False
-        significant_total = abs(total_movement) >= 1.0 if total_movement is not None else False
-        significant_ml = (
-            (ml_movement_visitor is not None and abs(ml_movement_visitor) >= 20) or
-            (ml_movement_home is not None and abs(ml_movement_home) >= 20)
+        significant_spread = (
+            abs(spread_movement) >= 1.0 if spread_movement is not None else False
         )
+        significant_total = (
+            abs(total_movement) >= 1.0 if total_movement is not None else False
+        )
+        significant_ml = (
+            ml_movement_visitor is not None and abs(ml_movement_visitor) >= 20
+        ) or (ml_movement_home is not None and abs(ml_movement_home) >= 20)
 
         # Calculate velocity (movements per hour)
         time_span_hours = self._calculate_time_span(
@@ -139,7 +153,9 @@ class LineMovementTracker:
                 "moneyline": significant_ml,
             },
             "velocity": {
-                "movements_per_hour": movement_count / time_span_hours if time_span_hours > 0 else 0,
+                "movements_per_hour": movement_count / time_span_hours
+                if time_span_hours > 0
+                else 0,
                 "total_movements": movement_count,
                 "time_span_hours": time_span_hours,
             },
@@ -171,9 +187,7 @@ class LineMovementTracker:
             analysis = self.analyze_movements(game_id)
             if "significant" in analysis:
                 if any(analysis["significant"].values()):
-                    significant_games.append(
-                        {"game_id": game_id, "analysis": analysis}
-                    )
+                    significant_games.append({"game_id": game_id, "analysis": analysis})
 
         return {
             "total_games_tracked": total_games,
@@ -192,8 +206,7 @@ class LineMovementTracker:
             },
             "summary": self.get_summary(),
             "games": {
-                game_id: self.analyze_movements(game_id)
-                for game_id in self.movements
+                game_id: self.analyze_movements(game_id) for game_id in self.movements
             },
         }
 
@@ -242,7 +255,9 @@ class NCAAFLiveScraper:
         print("=" * 70)
         print()
         print(f"Duration: {self.duration} seconds ({self.duration / 3600:.1f} hours)")
-        print(f"Line movement analysis: {'enabled' if self.analyze_movements else 'disabled'}")
+        print(
+            f"Line movement analysis: {'enabled' if self.analyze_movements else 'disabled'}"
+        )
         print()
 
         # Create base scraper
@@ -313,7 +328,7 @@ class NCAAFLiveScraper:
     def _subscribe_ncaaf_sports(self, scraper: OvertimeHybridScraper) -> None:
         """
         Subscribe to NCAAF sports on SignalR hub (replaces NFL subscription).
-        
+
         Args:
             scraper: The OvertimeHybridScraper instance with signalr_connection
         """
@@ -331,7 +346,7 @@ class NCAAFLiveScraper:
             print("   [OK] Subscribed to NCAAF/CFB sports")
         except Exception as e:
             print(f"   [ERROR] SubscribeSports (NCAAF) failed: {e}")
-            if hasattr(scraper, 'logger'):
+            if hasattr(scraper, "logger"):
                 scraper.logger.error(f"SubscribeSports (NCAAF) failed: {e}")
 
     def _process_update(self, update: Dict[str, Any]) -> None:

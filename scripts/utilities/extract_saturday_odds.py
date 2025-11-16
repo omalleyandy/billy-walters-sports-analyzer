@@ -19,10 +19,10 @@ for game in all_games:
 saturday_games.sort(key=lambda x: x.get("game_time", ""))
 
 # Print summary
-print(f"\n{'='*80}")
+print(f"\n{'=' * 80}")
 print(f"NCAAF SATURDAY (11/15/2025) - FULL GAME LINES")
 print(f"Total Games: {len(saturday_games)}")
-print(f"{'='*80}\n")
+print(f"{'=' * 80}\n")
 
 # Group by time slots
 time_slots = {}
@@ -47,10 +47,14 @@ for time_slot in sorted(time_slots.keys()):
 
         away_spread = spread.get("away", "N/A")
         home_spread = spread.get("home", "N/A")
-        spread_odds = f"({spread.get('away_odds', 'N/A')}/{spread.get('home_odds', 'N/A')})"
+        spread_odds = (
+            f"({spread.get('away_odds', 'N/A')}/{spread.get('home_odds', 'N/A')})"
+        )
 
         total_pts = total.get("points", "N/A")
-        total_odds = f"(O{total.get('over_odds', 'N/A')}/U{total.get('under_odds', 'N/A')})"
+        total_odds = (
+            f"(O{total.get('over_odds', 'N/A')}/U{total.get('under_odds', 'N/A')})"
+        )
 
         ml_away = ml.get("away", "N/A")
         ml_home = ml.get("home", "N/A")
@@ -60,10 +64,15 @@ for time_slot in sorted(time_slots.keys()):
         print(f"    Total:  {total_pts:5} {total_odds}")
 
         # Only print moneyline if available
-        if ml_away != "N/A" and ml_home != "N/A" and ml_away is not None and ml_home is not None:
+        if (
+            ml_away != "N/A"
+            and ml_home != "N/A"
+            and ml_away is not None
+            and ml_home is not None
+        ):
             print(f"    ML:     {ml_away:+5} / {ml_home:+6}")
         print()
 
-print(f"\n{'='*80}")
+print(f"\n{'=' * 80}")
 print(f"Data pulled: {odds_file.name}")
-print(f"{'='*80}\n")
+print(f"{'=' * 80}\n")

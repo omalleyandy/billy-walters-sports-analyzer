@@ -255,7 +255,11 @@ class NFLComScraper:
         url = f"{self.BASE_URL}/schedules/"
         soup = self._get_soup(url)
         script_tag = next(
-            (tag for tag in soup.find_all("script") if tag.string and "homeTeam" in tag.string),
+            (
+                tag
+                for tag in soup.find_all("script")
+                if tag.string and "homeTeam" in tag.string
+            ),
             None,
         )
         games: list[dict[str, Any]] = []
@@ -269,7 +273,8 @@ class NFLComScraper:
         filtered = [
             game
             for game in games
-            if game.get("seasonType") == self.season_type and game.get("week") == self.week
+            if game.get("seasonType") == self.season_type
+            and game.get("week") == self.week
         ]
         target_games = filtered or [
             game for game in games if game.get("seasonType") == self.season_type
@@ -293,7 +298,9 @@ class NFLComScraper:
                 }
             )
         target_week = (
-            self.week if filtered else (target_games[0].get("week") if target_games else self.week)
+            self.week
+            if filtered
+            else (target_games[0].get("week") if target_games else self.week)
         )
         return [
             ScrapeJob(
@@ -354,7 +361,9 @@ class NFLComScraper:
                 filename="transactions.json",
                 payload={
                     "source": url,
-                    "heading": _clean_text(heading.get_text(strip=True)) if heading else "",
+                    "heading": _clean_text(heading.get_text(strip=True))
+                    if heading
+                    else "",
                     "rows": rows,
                 },
             )
@@ -363,14 +372,18 @@ class NFLComScraper:
     def _scrape_players(self) -> list[ScrapeJob]:
         url = f"{self.BASE_URL}/players/"
         soup = self._get_soup(url)
-        popular_section = soup.find("div", class_="nfl-c-player-directory__popular-players")
+        popular_section = soup.find(
+            "div", class_="nfl-c-player-directory__popular-players"
+        )
         players: list[dict[str, str]] = []
         if popular_section:
             for link in popular_section.find_all("a"):
                 name = _clean_text(link.get_text(strip=True))
                 if not name:
                     continue
-                players.append({"name": name, "url": urljoin(self.BASE_URL, link.get("href", ""))})
+                players.append(
+                    {"name": name, "url": urljoin(self.BASE_URL, link.get("href", ""))}
+                )
         return [
             ScrapeJob(
                 section="players",
@@ -389,7 +402,9 @@ class NFLComScraper:
             title_tag = promo.find(["h3", "h4"])
             teams.append(
                 {
-                    "name": _clean_text(title_tag.get_text(strip=True)) if title_tag else "",
+                    "name": _clean_text(title_tag.get_text(strip=True))
+                    if title_tag
+                    else "",
                     "url": urljoin(self.BASE_URL, link.get("href", "")) if link else "",
                 }
             )
@@ -448,7 +463,9 @@ class NFLComScraper:
             header = table.find("th")
             standings_tables.append(
                 {
-                    "division": _clean_text(header.get_text(strip=True)) if header else "",
+                    "division": _clean_text(header.get_text(strip=True))
+                    if header
+                    else "",
                     "rows": _table_to_records(table),
                 }
             )

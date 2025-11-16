@@ -185,7 +185,9 @@ def main():
             if is_valid:
                 print_status("All subagent outputs validated successfully", "success")
             else:
-                print_status("Validation failed - fix errors before proceeding", "error")
+                print_status(
+                    "Validation failed - fix errors before proceeding", "error"
+                )
                 return 1
 
     # Step 4: Edge Detection

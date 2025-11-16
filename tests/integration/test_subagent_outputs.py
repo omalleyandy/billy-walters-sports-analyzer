@@ -102,7 +102,9 @@ class TestSubagent1Schedule:
         for game in data["games"]:
             assert "game_id" in game, "Game missing game_id"
             game_id = game["game_id"]
-            assert game_id.startswith(f"NFL_2025_{current_week}_"), f"Invalid game_id format: {game_id}"
+            assert game_id.startswith(f"NFL_2025_{current_week}_"), (
+                f"Invalid game_id format: {game_id}"
+            )
             assert game_id not in game_ids, f"Duplicate game_id: {game_id}"
             game_ids.append(game_id)
 
@@ -119,7 +121,9 @@ class TestSubagent1Schedule:
             assert "stadium" in game, f"Game {game.get('game_id')} missing stadium"
             stadium = game["stadium"]
             assert isinstance(stadium, dict), "Stadium must be a dictionary"
-            assert "is_dome" in stadium, f"Stadium missing 'is_dome' flag (critical for weather)"
+            assert "is_dome" in stadium, (
+                f"Stadium missing 'is_dome' flag (critical for weather)"
+            )
 
 
 class TestSubagent2BettingLines:
@@ -222,7 +226,9 @@ class TestSubagent3Weather:
 
         for game in data.get("games", []):
             if game.get("is_dome"):
-                assert game.get("weather") is None, f"Dome stadium {game.get('game_id')} should have weather: null"
+                assert game.get("weather") is None, (
+                    f"Dome stadium {game.get('game_id')} should have weather: null"
+                )
 
     def test_weather_outdoor_stadiums_have_data(self, current_week, data_dir):
         """Test outdoor stadiums have weather data."""
@@ -235,8 +241,9 @@ class TestSubagent3Weather:
 
         for game in data.get("games", []):
             if "is_dome" in game and not game.get("is_dome"):
-                assert "weather" in game and game["weather"] is not None, \
+                assert "weather" in game and game["weather"] is not None, (
                     f"Outdoor stadium {game.get('game_id')} missing weather data"
+                )
 
 
 class TestSubagent4TeamSituational:
@@ -261,7 +268,9 @@ class TestSubagent4TeamSituational:
         for team in data.get("teams", []):
             if "power_rating" in team and "overall" in team["power_rating"]:
                 rating = team["power_rating"]["overall"]
-                assert 70 <= rating <= 100, f"Power rating {rating} outside valid range (70-100)"
+                assert 70 <= rating <= 100, (
+                    f"Power rating {rating} outside valid range (70-100)"
+                )
 
     def test_s_factor_caps(self, current_week, data_dir):
         """Test S-factor adjustments within caps."""
@@ -278,7 +287,9 @@ class TestSubagent4TeamSituational:
                 sf = team["situational_factors"]
                 if "total_s_factor_adjustment" in sf:
                     adj = sf["total_s_factor_adjustment"]
-                    assert abs(adj) <= 2.0, f"S-factor adjustment {adj} exceeds ±2.0 cap"
+                    assert abs(adj) <= 2.0, (
+                        f"S-factor adjustment {adj} exceeds ±2.0 cap"
+                    )
 
         # Check game-level net S-factors
         for game in data.get("games", []):
@@ -311,7 +322,9 @@ class TestSubagent5PlayerSituational:
         for team in data.get("teams", []):
             if "cumulative_player_impact" in team:
                 impact = team["cumulative_player_impact"]
-                assert abs(impact) <= 3.0, f"Cumulative player impact {impact} exceeds ±3.0 cap"
+                assert abs(impact) <= 3.0, (
+                    f"Cumulative player impact {impact} exceeds ±3.0 cap"
+                )
 
 
 class TestSubagent6Injuries:
@@ -355,7 +368,9 @@ class TestSubagent6Injuries:
                 summary = team["injury_summary"]
                 if "cumulative_point_impact" in summary:
                     impact = summary["cumulative_point_impact"]
-                    assert abs(impact) <= 3.0, f"Injury impact {impact} exceeds ±3.0 cap"
+                    assert abs(impact) <= 3.0, (
+                        f"Injury impact {impact} exceeds ±3.0 cap"
+                    )
 
         # Check game-level net injury adjustments
         for game in data.get("games", []):
@@ -363,7 +378,9 @@ class TestSubagent6Injuries:
                 im = game["injury_matchup"]
                 if "net_injury_adjustment" in im:
                     net = im["net_injury_adjustment"]
-                    assert abs(net) <= 5.0, f"Net injury adjustment {net} exceeds ±5.0 cap"
+                    assert abs(net) <= 5.0, (
+                        f"Net injury adjustment {net} exceeds ±5.0 cap"
+                    )
 
 
 class TestCrossValidation:
@@ -395,5 +412,6 @@ class TestCrossValidation:
 
         # Should have substantial overlap (some games may be missing if not yet posted)
         overlap = schedule_game_ids & odds_game_ids
-        assert len(overlap) >= len(schedule_game_ids) * 0.8, \
+        assert len(overlap) >= len(schedule_game_ids) * 0.8, (
             f"Less than 80% game overlap: {len(overlap)}/{len(schedule_game_ids)}"
+        )

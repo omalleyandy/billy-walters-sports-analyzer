@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, List
 
+
 # Load data
 def load_power_ratings() -> Dict[str, float]:
     """Load NCAAF power ratings."""
@@ -11,6 +12,7 @@ def load_power_ratings() -> Dict[str, float]:
     with open(ratings_file) as f:
         data = json.load(f)
         return data.get("ratings", {})
+
 
 def load_latest_odds() -> List[Dict]:
     """Load latest odds."""
@@ -23,6 +25,7 @@ def load_latest_odds() -> List[Dict]:
 
     return data.get("games", [])
 
+
 def load_weather() -> Dict[str, Dict]:
     """Load weather data."""
     weather_file = Path("output/reports/saturday_weather_report_11-15-2025.json")
@@ -33,6 +36,7 @@ def load_weather() -> Dict[str, Dict]:
         weather_reports = json.load(f)
 
     return {r["home_team"]: r["impact"] for r in weather_reports}
+
 
 # Team name mapping
 TEAM_NAME_MAP = {
@@ -63,19 +67,23 @@ TEAM_NAME_MAP = {
     "Jacksonville State": "Jacksonville St",
 }
 
+
 def normalize_team_name(name: str) -> str:
     return TEAM_NAME_MAP.get(name, name)
+
 
 def calculate_edge(away_rating, home_rating, market_spread, weather_adj=0, hfa=2.5):
     """Calculate spread edge."""
     predicted = (home_rating - away_rating) + hfa + weather_adj
     return predicted - market_spread
 
+
 def calculate_total_edge(away_rating, home_rating, market_total, weather_adj=0):
     """Calculate total edge."""
     avg_rating = (away_rating + home_rating) / 2
     predicted = avg_rating * 7.0 + weather_adj
     return predicted - market_total
+
 
 def classify_edge(edge):
     """Classify edge strength."""
@@ -90,15 +98,17 @@ def classify_edge(edge):
         return "LEAN", "1%"
     return "NO PLAY", "0%"
 
+
 def parse_time(time_str):
     """Parse game time to hour."""
     # Format: "11/15/2025 19:00"
     return int(time_str.split()[1].split(":")[0])
 
+
 def main():
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"EVENING GAMES ANALYSIS (7:00 PM ET and Later)")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
     # Load data
     ratings = load_power_ratings()
@@ -107,7 +117,8 @@ def main():
 
     # Filter for evening games (19:00 = 7:00 PM or later)
     evening_games = [
-        g for g in all_games
+        g
+        for g in all_games
         if g.get("period") == "Game"
         and "11/15/2025" in g.get("game_time", "")
         and parse_time(g.get("game_time", "00:00")) >= 19
@@ -138,37 +149,43 @@ def main():
 
         # Calculate edges
         market_spread = spread.get("home", 0)
-        spread_edge = calculate_edge(away_rating, home_rating, market_spread, spread_adj)
+        spread_edge = calculate_edge(
+            away_rating, home_rating, market_spread, spread_adj
+        )
         spread_grade, spread_stake = classify_edge(spread_edge)
 
         market_total = total.get("points", 0)
-        total_edge = calculate_total_edge(away_rating, home_rating, market_total, total_adj)
+        total_edge = calculate_total_edge(
+            away_rating, home_rating, market_total, total_adj
+        )
         total_grade, total_stake = classify_edge(total_edge)
 
-        games_analysis.append({
-            "game": f"{away} @ {home}",
-            "time": game["game_time"],
-            "away": away,
-            "home": home,
-            "spread": {
-                "market": market_spread,
-                "edge": round(spread_edge, 1),
-                "grade": spread_grade,
-                "stake": spread_stake,
-                "away_line": spread.get("away"),
-                "away_odds": spread.get("away_odds")
-            },
-            "total": {
-                "market": market_total,
-                "edge": round(total_edge, 1),
-                "grade": total_grade,
-                "stake": total_stake,
-                "over_odds": total.get("over_odds"),
-                "under_odds": total.get("under_odds")
-            },
-            "weather": weather_sev,
-            "ratings": {"away": away_rating, "home": home_rating}
-        })
+        games_analysis.append(
+            {
+                "game": f"{away} @ {home}",
+                "time": game["game_time"],
+                "away": away,
+                "home": home,
+                "spread": {
+                    "market": market_spread,
+                    "edge": round(spread_edge, 1),
+                    "grade": spread_grade,
+                    "stake": spread_stake,
+                    "away_line": spread.get("away"),
+                    "away_odds": spread.get("away_odds"),
+                },
+                "total": {
+                    "market": market_total,
+                    "edge": round(total_edge, 1),
+                    "grade": total_grade,
+                    "stake": total_stake,
+                    "over_odds": total.get("over_odds"),
+                    "under_odds": total.get("under_odds"),
+                },
+                "weather": weather_sev,
+                "ratings": {"away": away_rating, "home": home_rating},
+            }
+        )
 
     # Sort by time
     games_analysis.sort(key=lambda x: x["time"])
@@ -177,7 +194,7 @@ def main():
     time_slots = {}
     for g in games_analysis:
         hour = parse_time(g["time"])
-        slot = f"{hour}:00 PM ET" if hour <= 12 else f"{hour-12}:00 PM ET"
+        slot = f"{hour}:00 PM ET" if hour <= 12 else f"{hour - 12}:00 PM ET"
         if slot not in time_slots:
             time_slots[slot] = []
         time_slots[slot].append(g)
@@ -185,37 +202,51 @@ def main():
     # Print analysis
     for slot in sorted(time_slots.keys(), key=lambda x: int(x.split(":")[0])):
         games = time_slots[slot]
-        print(f"\n{'='*100}")
+        print(f"\n{'=' * 100}")
         print(f"{slot} ({len(games)} games)")
-        print(f"{'='*100}\n")
+        print(f"{'=' * 100}\n")
 
         for game in games:
-            weather_tag = f" [{game['weather']}]" if game['weather'] in ["HIGH", "EXTREME"] else ""
+            weather_tag = (
+                f" [{game['weather']}]"
+                if game["weather"] in ["HIGH", "EXTREME"]
+                else ""
+            )
             print(f"{game['game']}{weather_tag}")
-            print(f"  Ratings: {game['away']} {game['ratings']['away']:.2f} vs {game['home']} {game['ratings']['home']:.2f}")
+            print(
+                f"  Ratings: {game['away']} {game['ratings']['away']:.2f} vs {game['home']} {game['ratings']['home']:.2f}"
+            )
 
             # Spread
-            if game['spread']['grade'] != "NO PLAY":
-                rec = f"{game['away']} {game['spread']['away_line']:+.1f}" if game['spread']['edge'] > 0 else f"{game['home']} {game['spread']['market']:+.1f}"
-                print(f"  SPREAD: [{game['spread']['grade']}] {rec} ({game['spread']['edge']:+.1f} edge, {game['spread']['stake']} Kelly)")
+            if game["spread"]["grade"] != "NO PLAY":
+                rec = (
+                    f"{game['away']} {game['spread']['away_line']:+.1f}"
+                    if game["spread"]["edge"] > 0
+                    else f"{game['home']} {game['spread']['market']:+.1f}"
+                )
+                print(
+                    f"  SPREAD: [{game['spread']['grade']}] {rec} ({game['spread']['edge']:+.1f} edge, {game['spread']['stake']} Kelly)"
+                )
 
             # Total
-            if game['total']['grade'] != "NO PLAY":
-                rec = "OVER" if game['total']['edge'] > 0 else "UNDER"
-                print(f"  TOTAL:  [{game['total']['grade']}] {rec} {game['total']['market']:.1f} ({game['total']['edge']:+.1f} edge, {game['total']['stake']} Kelly)")
+            if game["total"]["grade"] != "NO PLAY":
+                rec = "OVER" if game["total"]["edge"] > 0 else "UNDER"
+                print(
+                    f"  TOTAL:  [{game['total']['grade']}] {rec} {game['total']['market']:.1f} ({game['total']['edge']:+.1f} edge, {game['total']['stake']} Kelly)"
+                )
 
             print()
 
     # Summary
-    print(f"\n{'='*100}")
+    print(f"\n{'=' * 100}")
     print(f"EVENING GAMES SUMMARY")
-    print(f"{'='*100}\n")
+    print(f"{'=' * 100}\n")
 
-    max_spreads = [g for g in games_analysis if g['spread']['grade'] == "MAX BET"]
-    strong_spreads = [g for g in games_analysis if g['spread']['grade'] == "STRONG"]
+    max_spreads = [g for g in games_analysis if g["spread"]["grade"] == "MAX BET"]
+    strong_spreads = [g for g in games_analysis if g["spread"]["grade"] == "STRONG"]
 
-    max_totals = [g for g in games_analysis if g['total']['grade'] == "MAX BET"]
-    strong_totals = [g for g in games_analysis if g['total']['grade'] == "STRONG"]
+    max_totals = [g for g in games_analysis if g["total"]["grade"] == "MAX BET"]
+    strong_totals = [g for g in games_analysis if g["total"]["grade"] == "STRONG"]
 
     print(f"SPREAD OPPORTUNITIES:")
     print(f"  MAX BET (7+ pts):   {len(max_spreads)}")
@@ -225,9 +256,12 @@ def main():
     print(f"  MAX BET (7+ pts):   {len(max_totals)}")
     print(f"  STRONG (4-7 pts):   {len(strong_totals)}")
 
-    print(f"\nWeather-impacted:    {len([g for g in games_analysis if g['weather'] in ['HIGH', 'EXTREME']])}")
+    print(
+        f"\nWeather-impacted:    {len([g for g in games_analysis if g['weather'] in ['HIGH', 'EXTREME']])}"
+    )
 
-    print(f"\n{'='*100}\n")
+    print(f"\n{'=' * 100}\n")
+
 
 if __name__ == "__main__":
     main()

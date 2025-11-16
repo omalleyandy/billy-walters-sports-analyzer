@@ -104,7 +104,9 @@ class LiveOddsMonitor:
 
         # Customize SignalR subscription for requested leagues
         original_subscribe = scraper._subscribe_sports
-        scraper._subscribe_sports = lambda: self._subscribe_leagues(scraper, original_subscribe)
+        scraper._subscribe_sports = lambda: self._subscribe_leagues(
+            scraper, original_subscribe
+        )
 
         # Monkey-patch handlers to capture line updates
         self._install_custom_handlers(scraper)
@@ -150,20 +152,24 @@ class LiveOddsMonitor:
         subscriptions = []
 
         if "NFL" in self.leagues:
-            subscriptions.extend([
-                {"sport": "FOOTBALL", "league": "NFL"},
-                {"sportId": 1, "league": "NFL"},
-                "NFL",
-            ])
+            subscriptions.extend(
+                [
+                    {"sport": "FOOTBALL", "league": "NFL"},
+                    {"sportId": 1, "league": "NFL"},
+                    "NFL",
+                ]
+            )
 
         if "NCAAF" in self.leagues or "CFB" in self.leagues:
-            subscriptions.extend([
-                {"sport": "FOOTBALL", "league": "NCAAF"},
-                {"sport": "FOOTBALL", "league": "CFB"},
-                {"sportId": 1, "league": "NCAAF"},
-                "NCAAF",
-                "CFB",
-            ])
+            subscriptions.extend(
+                [
+                    {"sport": "FOOTBALL", "league": "NCAAF"},
+                    {"sport": "FOOTBALL", "league": "CFB"},
+                    {"sportId": 1, "league": "NCAAF"},
+                    "NCAAF",
+                    "CFB",
+                ]
+            )
 
         try:
             scraper.signalr_connection.send("SubscribeSports", subscriptions)
@@ -219,8 +225,12 @@ class LiveOddsMonitor:
                 "home_spread_odds": self._safe_int(home.get("spreadOdds")),
                 "home_moneyline": self._safe_int(home.get("moneyline")),
                 "total": self._safe_float(visitor.get("total") or home.get("total")),
-                "total_over_odds": self._safe_int(visitor.get("overOdds") or home.get("overOdds")),
-                "total_under_odds": self._safe_int(visitor.get("underOdds") or home.get("underOdds")),
+                "total_over_odds": self._safe_int(
+                    visitor.get("overOdds") or home.get("overOdds")
+                ),
+                "total_under_odds": self._safe_int(
+                    visitor.get("underOdds") or home.get("underOdds")
+                ),
             }
 
             # Skip if no meaningful data
@@ -233,12 +243,14 @@ class LiveOddsMonitor:
                 movement = self._calculate_movement(last_line, line_snapshot)
 
                 if movement["significant"]:
-                    self.significant_movements.append({
-                        "game_id": game_id,
-                        "timestamp": timestamp,
-                        "movement": movement,
-                        "teams": self.game_info.get(game_id, {}).get("teams"),
-                    })
+                    self.significant_movements.append(
+                        {
+                            "game_id": game_id,
+                            "timestamp": timestamp,
+                            "movement": movement,
+                            "teams": self.game_info.get(game_id, {}).get("teams"),
+                        }
+                    )
 
                     if not self.quiet:
                         teams = self.game_info.get(game_id, {}).get("teams", "Unknown")
@@ -248,7 +260,9 @@ class LiveOddsMonitor:
                         if movement["total"] is not None:
                             self._print(f"  Total: {movement['total']:+.1f}")
                         if movement["moneyline_visitor"] is not None:
-                            self._print(f"  ML Visitor: {movement['moneyline_visitor']:+d}")
+                            self._print(
+                                f"  ML Visitor: {movement['moneyline_visitor']:+d}"
+                            )
 
             # Record line
             self.line_history[game_id].append(line_snapshot)
@@ -290,24 +304,33 @@ class LiveOddsMonitor:
         ml_visitor_move = None
         ml_home_move = None
 
-        if old.get("visitor_spread") is not None and new.get("visitor_spread") is not None:
+        if (
+            old.get("visitor_spread") is not None
+            and new.get("visitor_spread") is not None
+        ):
             spread_move = new["visitor_spread"] - old["visitor_spread"]
 
         if old.get("total") is not None and new.get("total") is not None:
             total_move = new["total"] - old["total"]
 
-        if old.get("visitor_moneyline") is not None and new.get("visitor_moneyline") is not None:
+        if (
+            old.get("visitor_moneyline") is not None
+            and new.get("visitor_moneyline") is not None
+        ):
             ml_visitor_move = new["visitor_moneyline"] - old["visitor_moneyline"]
 
-        if old.get("home_moneyline") is not None and new.get("home_moneyline") is not None:
+        if (
+            old.get("home_moneyline") is not None
+            and new.get("home_moneyline") is not None
+        ):
             ml_home_move = new["home_moneyline"] - old["home_moneyline"]
 
         # Determine if significant
         significant = (
-            (spread_move is not None and abs(spread_move) >= 0.5) or
-            (total_move is not None and abs(total_move) >= 0.5) or
-            (ml_visitor_move is not None and abs(ml_visitor_move) >= 10) or
-            (ml_home_move is not None and abs(ml_home_move) >= 10)
+            (spread_move is not None and abs(spread_move) >= 0.5)
+            or (total_move is not None and abs(total_move) >= 0.5)
+            or (ml_visitor_move is not None and abs(ml_visitor_move) >= 10)
+            or (ml_home_move is not None and abs(ml_home_move) >= 10)
         )
 
         return {
@@ -575,6 +598,7 @@ async def main():
         print()
         print(f"[ERROR] Monitoring failed: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

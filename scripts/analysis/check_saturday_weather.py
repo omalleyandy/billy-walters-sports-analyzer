@@ -29,7 +29,6 @@ TEAM_CITIES = {
     "Virginia": ("Charlottesville", "VA"),
     "Virginia Tech": ("Blacksburg", "VA"),
     "Wake Forest": ("Winston-Salem", "NC"),
-
     # Big Ten
     "Illinois": ("Champaign", "IL"),
     "Iowa": ("Iowa City", "IA"),
@@ -38,14 +37,12 @@ TEAM_CITIES = {
     "Penn State": ("State College", "PA"),
     "Purdue": ("West Lafayette", "IN"),
     "Washington": ("Seattle", "WA"),
-
     # Big 12
     "Baylor": ("Waco", "TX"),
     "BYU": ("Provo", "UT"),
     "TCU": ("Fort Worth", "TX"),
     "Texas Tech": ("Lubbock", "TX"),
     "Utah": ("Salt Lake City", "UT"),
-
     # SEC
     "Alabama": ("Tuscaloosa", "AL"),
     "Florida": ("Gainesville", "FL"),
@@ -56,7 +53,6 @@ TEAM_CITIES = {
     "Oklahoma": ("Norman", "OK"),
     "Tennessee": ("Knoxville", "TN"),
     "Texas": ("Austin", "TX"),
-
     # Pac-12 / Mountain West / Others
     "Boise State": ("Boise", "ID"),
     "Fresno State": ("Fresno", "CA"),
@@ -68,7 +64,6 @@ TEAM_CITIES = {
     "UCLA": ("Los Angeles", "CA"),
     "Washington State": ("Pullman", "WA"),
     "Wyoming": ("Laramie", "WY"),
-
     # Sun Belt / Conference USA / AAC
     "Appalachian State": ("Boone", "NC"),
     "Coastal Carolina": ("Conway", "SC"),
@@ -89,7 +84,6 @@ TEAM_CITIES = {
     "Tulane": ("New Orleans", "LA"),
     "UL Monroe": ("Monroe", "LA"),
     "Western Kentucky": ("Bowling Green", "KY"),
-
     # Mountain West
     "Central Florida": ("Orlando", "FL"),
     "Colorado State": ("Fort Collins", "CO"),
@@ -97,7 +91,6 @@ TEAM_CITIES = {
     "New Mexico State": ("Las Cruces", "NM"),
     "Ohio State": ("Columbus", "OH"),
     "Utah State": ("Logan", "UT"),
-
     # Others
     "Delaware": ("Newark", "DE"),
     "Louisiana Tech": ("Ruston", "LA"),
@@ -167,14 +160,18 @@ def apply_walters_weather_impact(temp: float, wind: float, precip_prob: float) -
         "total_adjustment": round(total_adj, 1),
         "spread_adjustment": round(spread_adj, 1),
         "notes": notes,
-        "severity": "EXTREME" if abs(total_adj) >= 5 else "HIGH" if abs(total_adj) >= 3 else "MODERATE" if abs(total_adj) >= 1 else "NONE"
+        "severity": "EXTREME"
+        if abs(total_adj) >= 5
+        else "HIGH"
+        if abs(total_adj) >= 3
+        else "MODERATE"
+        if abs(total_adj) >= 1
+        else "NONE",
     }
 
 
 async def check_game_weather(
-    client: AccuWeatherClient,
-    home_team: str,
-    game_time_str: str
+    client: AccuWeatherClient, home_team: str, game_time_str: str
 ) -> Optional[Dict]:
     """Check weather for a specific game."""
 
@@ -235,7 +232,7 @@ async def check_game_weather(
                 "precipitation_prob": precip_prob,
                 "description": description,
             },
-            "impact": impact
+            "impact": impact,
         }
 
     except Exception as e:
@@ -254,13 +251,14 @@ async def main():
     # Filter for full games only
     all_games = data.get("games", [])
     saturday_games = [
-        g for g in all_games
+        g
+        for g in all_games
         if g.get("period") == "Game" and "11/15/2025" in g.get("game_time", "")
     ]
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"SATURDAY NCAAF WEATHER REPORT (11/15/2025)")
-    print(f"{'='*80}\n")
+    print(f"{'=' * 80}\n")
     print(f"Total games: {len(saturday_games)}")
     print(f"Checking weather for outdoor games...\n")
 
@@ -302,7 +300,9 @@ async def main():
             report["total"] = game.get("total", {})
             weather_reports.append(report)
 
-    print(f"\n[INFO] Checked {checked_count} games, skipped {skipped_indoor} indoor, {skipped_no_city} without city mapping")
+    print(
+        f"\n[INFO] Checked {checked_count} games, skipped {skipped_indoor} indoor, {skipped_no_city} without city mapping"
+    )
 
     await client.close()
 
@@ -311,9 +311,9 @@ async def main():
     weather_reports.sort(key=lambda x: severity_order.get(x["impact"]["severity"], 99))
 
     # Print weather reports
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"WEATHER IMPACT ANALYSIS ({len(weather_reports)} outdoor games)")
-    print(f"{'='*80}\n")
+    print(f"{'=' * 80}\n")
 
     for report in weather_reports:
         severity = report["impact"]["severity"]
@@ -324,28 +324,36 @@ async def main():
         print(f"  Location: {report['location']}")
         print(f"  Game Time: {report['game_time']} ({report['hours_until']}h away)")
         print(f"  Forecast Type: {report.get('forecast_type', 'Unknown')}")
-        print(f"  Weather: {report['weather']['temperature']}°F, {report['weather']['wind_speed']} mph wind, {report['weather']['precipitation_prob']}% precip")
+        print(
+            f"  Weather: {report['weather']['temperature']}°F, {report['weather']['wind_speed']} mph wind, {report['weather']['precipitation_prob']}% precip"
+        )
         print(f"  Description: {report['weather']['description']}")
-        print(f"  Impact: {report['impact']['total_adjustment']:+.1f} total, {report['impact']['spread_adjustment']:+.1f} spread")
+        print(
+            f"  Impact: {report['impact']['total_adjustment']:+.1f} total, {report['impact']['spread_adjustment']:+.1f} spread"
+        )
 
         for note in report["impact"]["notes"]:
             print(f"    - {note}")
 
         print(f"  Market Total: {report['total'].get('points', 'N/A')}")
-        print(f"  Adjusted Total: {report['total'].get('points', 0) + report['impact']['total_adjustment']:.1f}")
+        print(
+            f"  Adjusted Total: {report['total'].get('points', 0) + report['impact']['total_adjustment']:.1f}"
+        )
         print()
 
     # Summary
     extreme_games = [r for r in weather_reports if r["impact"]["severity"] == "EXTREME"]
     high_games = [r for r in weather_reports if r["impact"]["severity"] == "HIGH"]
 
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print(f"Games with EXTREME weather impact: {len(extreme_games)}")
     print(f"Games with HIGH weather impact: {len(high_games)}")
-    print(f"\nRecommendation: Focus on games with EXTREME/HIGH impact for weather-based edges")
-    print(f"{'='*80}\n")
+    print(
+        f"\nRecommendation: Focus on games with EXTREME/HIGH impact for weather-based edges"
+    )
+    print(f"{'=' * 80}\n")
 
     # Save report
     output_file = Path("output/reports/saturday_weather_report_11-15-2025.json")
