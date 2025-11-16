@@ -243,11 +243,11 @@ class LiveOddsMonitor:
                     if not self.quiet:
                         teams = self.game_info.get(game_id, {}).get("teams", "Unknown")
                         self._print(f"\n[MOVEMENT] {teams}")
-                        if movement["spread"]:
+                        if movement["spread"] is not None:
                             self._print(f"  Spread: {movement['spread']:+.1f}")
-                        if movement["total"]:
+                        if movement["total"] is not None:
                             self._print(f"  Total: {movement['total']:+.1f}")
-                        if movement["moneyline_visitor"]:
+                        if movement["moneyline_visitor"] is not None:
                             self._print(f"  ML Visitor: {movement['moneyline_visitor']:+d}")
 
             # Record line

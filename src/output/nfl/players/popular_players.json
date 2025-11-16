@@ -1,0 +1,66 @@
+{
+  "scraped_at": "2025-11-15T20:05:25.993859+00:00",
+  "source": "https://www.nfl.com/players/",
+  "players": [
+    {
+      "name": "Tyreek Hill",
+      "url": "https://www.nfl.com/players/tyreek-hill/"
+    },
+    {
+      "name": "Lamar Jackson",
+      "url": "https://www.nfl.com/players/lamar-jackson/"
+    },
+    {
+      "name": "Christian McCaffrey",
+      "url": "https://www.nfl.com/players/christian-mccaffrey/"
+    },
+    {
+      "name": "Patrick Mahomes",
+      "url": "https://www.nfl.com/players/patrick-mahomes/"
+    },
+    {
+      "name": "Myles Garrett",
+      "url": "https://www.nfl.com/players/myles-garrett/"
+    },
+    {
+      "name": "Chris Jones",
+      "url": "https://www.nfl.com/players/chris-jones/"
+    },
+    {
+      "name": "Trent Williams",
+      "url": "https://www.nfl.com/players/trent-williams/"
+    },
+    {
+      "name": "T.J. Watt",
+      "url": "https://www.nfl.com/players/t-j-watt/"
+    },
+    {
+      "name": "Travis Kelce",
+      "url": "https://www.nfl.com/players/travis-kelce/"
+    },
+    {
+      "name": "Maxx Crosby",
+      "url": "https://www.nfl.com/players/maxx-crosby-x6606/"
+    },
+    {
+      "name": "Fred Warner",
+      "url": "https://www.nfl.com/players/fred-warner/"
+    },
+    {
+      "name": "Josh Allen",
+      "url": "https://www.nfl.com/players/josh-allen/"
+    },
+    {
+      "name": "CeeDee Lamb",
+      "url": "https://www.nfl.com/players/ceedee-lamb/"
+    },
+    {
+      "name": "George Kittle",
+      "url": "https://www.nfl.com/players/george-kittle/"
+    },
+    {
+      "name": "Jalen Hurts",
+      "url": "https://www.nfl.com/players/jalen-hurts/"
+    }
+  ]
+}

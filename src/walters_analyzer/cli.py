@@ -5,6 +5,7 @@ import subprocess
 import logging
 from walters_analyzer.wkcard import load_card, summarize_card, validate_gates
 from walters_analyzer.config import get_settings
+from walters_analyzer.ingest.nfl_site_scraper import NFLComScraper
 
 
 def setup_logging(settings):
@@ -214,6 +215,31 @@ def main():
         choices=["prematch", "live"],
         default="prematch",
         help="Odds type: prematch or live (default: prematch)",
+    )
+
+    nfl_site = sub.add_parser(
+        "scrape-nfl-site", help="Crawl nfl.com core sections for quick research snapshots"
+    )
+    nfl_site.add_argument(
+        "--output-dir",
+        default="src/output/nfl",
+        help="Directory to store normalized nfl.com outputs (default: src/output/nfl)",
+    )
+    nfl_site.add_argument(
+        "--season",
+        type=int,
+        help="Season year to capture schedule context (default: current year)",
+    )
+    nfl_site.add_argument(
+        "--week",
+        type=int,
+        help="Week number for schedule/injury snapshots (default: current week)",
+    )
+    nfl_site.add_argument(
+        "--season-type",
+        choices=["PRE", "REG", "POST"],
+        default="REG",
+        help="Season type for schedule snapshots (default: REG)",
     )
 
     # view-odds: View scraped pregame odds
@@ -805,6 +831,21 @@ def main():
 
         # Run async scraper
         asyncio.run(scrape_highlightly())
+
+    elif args.cmd == "scrape-nfl-site":
+        scraper = NFLComScraper(
+            output_root=args.output_dir,
+            season=args.season,
+            week=args.week,
+            season_type=args.season_type,
+        )
+        saved = scraper.scrape()
+        if not saved:
+            print("No nfl.com artifacts were written.")
+        else:
+            print("Saved nfl.com snapshots:")
+            for rel_path, file_path in sorted(saved.items()):
+                print(f"  - {rel_path} -> {file_path}")
         sys.exit(0)
 
     elif args.cmd == "view-odds":

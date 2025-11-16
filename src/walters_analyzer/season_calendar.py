@@ -33,6 +33,16 @@ NFL_2025_REGULAR_SEASON_WEEKS = 18
 NFL_2025_PLAYOFF_START = date(2026, 1, 10)  # Wild Card Weekend
 NFL_2025_SUPER_BOWL = date(2026, 2, 8)  # Super Bowl LX
 
+# NCAAF FBS 2025 Season Key Dates
+# Week 0 starts Saturday, August 23, 2025 (some teams)
+# Week 1 starts Saturday, August 30, 2025 (full slate)
+NCAAF_2025_WEEK_0_START = date(2025, 8, 23)
+NCAAF_2025_WEEK_1_START = date(2025, 8, 30)
+NCAAF_2025_REGULAR_SEASON_WEEKS = 14  # Through Week 14
+NCAAF_2025_CONFERENCE_CHAMPIONSHIP_WEEK = date(2025, 12, 6)
+NCAAF_2025_PLAYOFF_START = date(2025, 12, 20)  # First Round
+NCAAF_2025_NATIONAL_CHAMPIONSHIP = date(2026, 1, 20)
+
 
 def get_nfl_week(target_date: date | None = None) -> int | None:
     """
@@ -74,6 +84,51 @@ def get_nfl_week(target_date: date | None = None) -> int | None:
     return min(week_number, NFL_2025_REGULAR_SEASON_WEEKS)
 
 
+def get_ncaaf_week(target_date: date | None = None) -> int | None:
+    """
+    Calculate the current NCAAF FBS week based on a date.
+
+    Args:
+        target_date: Date to check (defaults to today)
+
+    Returns:
+        Week number (0-14) or None if not in regular season
+        Note: Week 0 exists for select early games
+
+    Examples:
+        >>> get_ncaaf_week(date(2025, 8, 23))  # Week 0
+        0
+        >>> get_ncaaf_week(date(2025, 8, 30))  # Week 1
+        1
+        >>> get_ncaaf_week(date(2025, 11, 15))  # Week 12
+        12
+    """
+    if target_date is None:
+        target_date = date.today()
+
+    # Check if before season starts
+    if target_date < NCAAF_2025_WEEK_0_START:
+        return None
+
+    # Check if after regular season ends
+    regular_season_end = NCAAF_2025_WEEK_1_START + timedelta(
+        weeks=NCAAF_2025_REGULAR_SEASON_WEEKS
+    )
+    if target_date >= regular_season_end:
+        return None
+
+    # Handle Week 0 (before Week 1 start)
+    if target_date < NCAAF_2025_WEEK_1_START:
+        return 0
+
+    # Calculate weeks since Week 1 start
+    days_since_week_1 = (target_date - NCAAF_2025_WEEK_1_START).days
+    week_number = (days_since_week_1 // 7) + 1
+
+    # Cap at 14 weeks
+    return min(week_number, NCAAF_2025_REGULAR_SEASON_WEEKS)
+
+
 def get_nfl_season_phase(target_date: date | None = None) -> SeasonPhase:
     """
     Determine the current phase of the NFL season.
@@ -111,14 +166,52 @@ def get_nfl_season_phase(target_date: date | None = None) -> SeasonPhase:
     return SeasonPhase.OFFSEASON
 
 
+def get_ncaaf_season_phase(target_date: date | None = None) -> SeasonPhase:
+    """
+    Determine the current phase of the NCAAF season.
+
+    Args:
+        target_date: Date to check (defaults to today)
+
+    Returns:
+        SeasonPhase enum value
+    """
+    if target_date is None:
+        target_date = date.today()
+
+    # Check National Championship
+    if target_date == NCAAF_2025_NATIONAL_CHAMPIONSHIP:
+        return SeasonPhase.SUPER_BOWL  # Using SUPER_BOWL for championship game
+
+    # Check playoffs
+    regular_season_end = NCAAF_2025_WEEK_1_START + timedelta(
+        weeks=NCAAF_2025_REGULAR_SEASON_WEEKS
+    )
+    if NCAAF_2025_PLAYOFF_START <= target_date < NCAAF_2025_NATIONAL_CHAMPIONSHIP:
+        return SeasonPhase.PLAYOFFS
+
+    # Check regular season (including Week 0)
+    if NCAAF_2025_WEEK_0_START <= target_date < regular_season_end:
+        return SeasonPhase.REGULAR_SEASON
+
+    # Check preseason (roughly July-early August)
+    preseason_start = NCAAF_2025_WEEK_0_START - timedelta(days=30)
+    if preseason_start <= target_date < NCAAF_2025_WEEK_0_START:
+        return SeasonPhase.PRESEASON
+
+    # Otherwise offseason
+    return SeasonPhase.OFFSEASON
+
+
 def get_week_date_range(week: int, league: League = League.NFL) -> tuple[date, date]:
     """
     Get the date range (start, end) for a given week.
 
     NFL weeks run Thursday to Wednesday.
+    NCAAF weeks run Saturday to Friday.
 
     Args:
-        week: Week number (1-18 for NFL)
+        week: Week number (1-18 for NFL, 0-14 for NCAAF)
         league: League (NFL or NCAAF)
 
     Returns:
@@ -131,50 +224,99 @@ def get_week_date_range(week: int, league: League = League.NFL) -> tuple[date, d
         week_start = NFL_2025_WEEK_1_START + timedelta(weeks=week - 1)
         week_end = week_start + timedelta(days=6)  # Thursday to Wednesday
         return (week_start, week_end)
+    
+    elif league == League.NCAAF:
+        if not 0 <= week <= NCAAF_2025_REGULAR_SEASON_WEEKS:
+            raise ValueError(f"Week must be 0-{NCAAF_2025_REGULAR_SEASON_WEEKS}")
+
+        if week == 0:
+            week_start = NCAAF_2025_WEEK_0_START
+            week_end = NCAAF_2025_WEEK_1_START - timedelta(days=1)
+        else:
+            week_start = NCAAF_2025_WEEK_1_START + timedelta(weeks=week - 1)
+            week_end = week_start + timedelta(days=6)  # Saturday to Friday
+        
+        return (week_start, week_end)
+    
     else:
-        raise NotImplementedError("NCAAF calendar not yet implemented")
+        raise ValueError(f"Unknown league: {league}")
 
 
-def format_season_status(target_date: date | None = None) -> str:
+def format_season_status(
+    target_date: date | None = None, league: League = League.NFL
+) -> str:
     """
-    Get a human-readable status of the current NFL season.
+    Get a human-readable status of the current season.
 
     Args:
         target_date: Date to check (defaults to today)
+        league: League to check (NFL or NCAAF)
 
     Returns:
         Formatted status string
 
     Examples:
-        >>> format_season_status(date(2025, 11, 9))
+        >>> format_season_status(date(2025, 11, 9), League.NFL)
         'NFL 2025 Regular Season - Week 10 (Nov 6-12, 2025)'
+        >>> format_season_status(date(2025, 11, 15), League.NCAAF)
+        'NCAAF FBS 2025 Regular Season - Week 12 (Nov 15-21, 2025)'
     """
     if target_date is None:
         target_date = date.today()
 
-    phase = get_nfl_season_phase(target_date)
-    week = get_nfl_week(target_date)
+    if league == League.NFL:
+        phase = get_nfl_season_phase(target_date)
+        week = get_nfl_week(target_date)
 
-    if phase == SeasonPhase.REGULAR_SEASON and week:
-        start, end = get_week_date_range(week)
-        return (
-            f"NFL 2025 Regular Season - Week {week} "
-            f"({start.strftime('%b %d')}-{end.strftime('%d, %Y')})"
-        )
-    elif phase == SeasonPhase.PLAYOFFS:
-        return "NFL 2025 Playoffs"
-    elif phase == SeasonPhase.SUPER_BOWL:
-        return f"Super Bowl LX - {NFL_2025_SUPER_BOWL.strftime('%B %d, %Y')}"
-    elif phase == SeasonPhase.PRESEASON:
-        return "NFL 2025 Preseason"
+        if phase == SeasonPhase.REGULAR_SEASON and week:
+            start, end = get_week_date_range(week, League.NFL)
+            return (
+                f"NFL 2025 Regular Season - Week {week} "
+                f"({start.strftime('%b %d')}-{end.strftime('%d, %Y')})"
+            )
+        elif phase == SeasonPhase.PLAYOFFS:
+            return "NFL 2025 Playoffs"
+        elif phase == SeasonPhase.SUPER_BOWL:
+            return f"Super Bowl LX - {NFL_2025_SUPER_BOWL.strftime('%B %d, %Y')}"
+        elif phase == SeasonPhase.PRESEASON:
+            return "NFL 2025 Preseason"
+        else:
+            return "NFL Offseason"
+    
+    elif league == League.NCAAF:
+        phase = get_ncaaf_season_phase(target_date)
+        week = get_ncaaf_week(target_date)
+
+        if phase == SeasonPhase.REGULAR_SEASON and week is not None:
+            start, end = get_week_date_range(week, League.NCAAF)
+            return (
+                f"NCAAF FBS 2025 Regular Season - Week {week} "
+                f"({start.strftime('%b %d')}-{end.strftime('%d, %Y')})"
+            )
+        elif phase == SeasonPhase.PLAYOFFS:
+            return "NCAAF FBS 2025 College Football Playoff"
+        elif phase == SeasonPhase.SUPER_BOWL:
+            return f"CFP National Championship - {NCAAF_2025_NATIONAL_CHAMPIONSHIP.strftime('%B %d, %Y')}"
+        elif phase == SeasonPhase.PRESEASON:
+            return "NCAAF FBS 2025 Preseason"
+        else:
+            return "NCAAF FBS Offseason"
+    
     else:
-        return "NFL Offseason"
+        raise ValueError(f"Unknown league: {league}")
 
 
 if __name__ == "__main__":
     # Test with current date
     today = date.today()
     print(f"Today: {today.strftime('%B %d, %Y')}")
-    print(f"Status: {format_season_status()}")
-    print(f"Week: {get_nfl_week()}")
-    print(f"Phase: {get_nfl_season_phase().value}")
+    print()
+    print("NFL Status:")
+    print(f"  {format_season_status(league=League.NFL)}")
+    print(f"  Week: {get_nfl_week()}")
+    print(f"  Phase: {get_nfl_season_phase().value}")
+    print()
+    print("NCAAF FBS Status:")
+    print(f"  {format_season_status(league=League.NCAAF)}")
+    print(f"  Week: {get_ncaaf_week()}")
+    print(f"  Phase: {get_ncaaf_season_phase().value}")

@@ -55,6 +55,13 @@ async def check_gameday_weather(team_name: str, game_time_str: str):
         "Philadelphia": ("Philadelphia", "PA"),
         "New England Patriots": ("Foxborough", "MA"),
         "New England": ("Foxborough", "MA"),
+        "Tennessee Titans": ("Nashville", "TN"),
+        "Tennessee": ("Nashville", "TN"),
+        "Denver Broncos": ("Denver", "CO"),
+        "Denver": ("Denver", "CO"),
+        "Cleveland Browns": ("Cleveland", "OH"),
+        "Cleveland": ("Cleveland", "OH"),
+        "Buffalo Bills": ("Buffalo", "NY"),
         # NCAAF MAC Teams
         "Massachusetts": ("Amherst", "MA"),
         "UMass": ("Amherst", "MA"),
