@@ -122,7 +122,7 @@ class TestSubagent1Schedule:
             stadium = game["stadium"]
             assert isinstance(stadium, dict), "Stadium must be a dictionary"
             assert "is_dome" in stadium, (
-                f"Stadium missing 'is_dome' flag (critical for weather)"
+                "Stadium missing 'is_dome' flag (critical for weather)"
             )
 
 

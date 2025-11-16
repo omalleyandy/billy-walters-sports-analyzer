@@ -211,11 +211,11 @@ class OvertimeAgScraper:
             # TODO: Implement actual parsing based on HTML structure
             # For now, this is a placeholder that saves debug files
 
-            print(f"\n⚠️  NEXT STEPS:")
-            print(f"1. Review the debug HTML file to understand page structure")
-            print(f"2. Implement parsing logic based on actual HTML elements")
-            print(f"3. Look for patterns like game containers, team names, odds")
-            print(f"4. Update this scrape_betting_lines() method with parsing code")
+            print("\n⚠️  NEXT STEPS:")
+            print("1. Review the debug HTML file to understand page structure")
+            print("2. Implement parsing logic based on actual HTML elements")
+            print("3. Look for patterns like game containers, team names, odds")
+            print("4. Update this scrape_betting_lines() method with parsing code")
 
             return lines
 

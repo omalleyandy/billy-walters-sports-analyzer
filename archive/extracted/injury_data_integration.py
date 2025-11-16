@@ -167,12 +167,12 @@ class InjuryDataProcessor:
 
         # Separate home and away injuries
         home_team = (
-            game_data[game_data["is_home"] == True]
+            game_data[game_data["is_home"]]
             if "is_home" in game_data
             else game_data.iloc[: len(game_data) // 2]
         )
         away_team = (
-            game_data[game_data["is_home"] == False]
+            game_data[not game_data["is_home"]]
             if "is_home" in game_data
             else game_data.iloc[len(game_data) // 2 :]
         )

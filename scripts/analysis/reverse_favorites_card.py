@@ -64,7 +64,7 @@ def parse_time(time_str):
 
 
 print(f"\n{'=' * 100}")
-print(f"REVERSE FAVORITES - QUALITY TEAMS GETTING POINTS")
+print("REVERSE FAVORITES - QUALITY TEAMS GETTING POINTS")
 print(f"{'=' * 100}\n")
 print("These are situations where the BETTER (or equal) team is an underdog.")
 print("You're not betting 'underdogs' - you're betting QUALITY getting disrespected!\n")
@@ -246,7 +246,7 @@ for i, play in enumerate(equal_teams, 1):
     print()
 
 print(f"\n{'=' * 100}")
-print(f"RECOMMENDED BETTING STRATEGY")
+print("RECOMMENDED BETTING STRATEGY")
 print(f"{'=' * 100}\n")
 
 print(
@@ -256,7 +256,7 @@ print("TIER 2 PLAYS (Equal Team): Great value - you're getting points in a coin 
 
 # Top 10 overall
 print(f"\n{'=' * 100}")
-print(f"TOP 10 REVERSE FAVORITES (Ranked by Quality)")
+print("TOP 10 REVERSE FAVORITES (Ranked by Quality)")
 print(f"{'=' * 100}\n")
 
 for i, play in enumerate(reverse_favs[:10], 1):

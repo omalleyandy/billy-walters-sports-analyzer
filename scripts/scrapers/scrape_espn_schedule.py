@@ -36,7 +36,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print(f"ESPN SCHEDULE SCRAPER")
+    print("ESPN SCHEDULE SCRAPER")
     print("=" * 70)
 
     results = {}
@@ -72,7 +72,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
 
             # Show sample games
             if events:
-                print(f"\n  Sample games:")
+                print("\n  Sample games:")
                 for event in events[:3]:
                     comps = event.get("competitions", [{}])[0]
                     teams = comps.get("competitors", [])

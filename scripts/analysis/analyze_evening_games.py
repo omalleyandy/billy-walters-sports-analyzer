@@ -107,7 +107,7 @@ def parse_time(time_str):
 
 def main():
     print(f"\n{'=' * 100}")
-    print(f"EVENING GAMES ANALYSIS (7:00 PM ET and Later)")
+    print("EVENING GAMES ANALYSIS (7:00 PM ET and Later)")
     print(f"{'=' * 100}\n")
 
     # Load data
@@ -239,7 +239,7 @@ def main():
 
     # Summary
     print(f"\n{'=' * 100}")
-    print(f"EVENING GAMES SUMMARY")
+    print("EVENING GAMES SUMMARY")
     print(f"{'=' * 100}\n")
 
     max_spreads = [g for g in games_analysis if g["spread"]["grade"] == "MAX BET"]
@@ -248,11 +248,11 @@ def main():
     max_totals = [g for g in games_analysis if g["total"]["grade"] == "MAX BET"]
     strong_totals = [g for g in games_analysis if g["total"]["grade"] == "STRONG"]
 
-    print(f"SPREAD OPPORTUNITIES:")
+    print("SPREAD OPPORTUNITIES:")
     print(f"  MAX BET (7+ pts):   {len(max_spreads)}")
     print(f"  STRONG (4-7 pts):   {len(strong_spreads)}")
 
-    print(f"\nTOTAL OPPORTUNITIES:")
+    print("\nTOTAL OPPORTUNITIES:")
     print(f"  MAX BET (7+ pts):   {len(max_totals)}")
     print(f"  STRONG (4-7 pts):   {len(strong_totals)}")
 

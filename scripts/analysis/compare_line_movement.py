@@ -22,7 +22,7 @@ for game in old_data.get("games", []):
 
 # Compare with new games
 print(f"\n{'=' * 100}")
-print(f"LINE MOVEMENT REPORT")
+print("LINE MOVEMENT REPORT")
 print(f"Old: {old_file.name} (12:24 PM)")
 print(f"New: {new_file.name} (12:27 PM)")
 print(f"{'=' * 100}\n")
@@ -91,5 +91,5 @@ else:
         print()
 
 print(f"\n{'=' * 100}")
-print(f"Line movement analysis complete")
+print("Line movement analysis complete")
 print(f"{'=' * 100}\n")

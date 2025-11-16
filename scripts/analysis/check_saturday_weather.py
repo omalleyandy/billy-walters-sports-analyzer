@@ -257,10 +257,10 @@ async def main():
     ]
 
     print(f"\n{'=' * 80}")
-    print(f"SATURDAY NCAAF WEATHER REPORT (11/15/2025)")
+    print("SATURDAY NCAAF WEATHER REPORT (11/15/2025)")
     print(f"{'=' * 80}\n")
     print(f"Total games: {len(saturday_games)}")
-    print(f"Checking weather for outdoor games...\n")
+    print("Checking weather for outdoor games...\n")
 
     # Initialize weather client
     api_key = os.getenv("ACCUWEATHER_API_KEY")
@@ -346,12 +346,12 @@ async def main():
     high_games = [r for r in weather_reports if r["impact"]["severity"] == "HIGH"]
 
     print(f"\n{'=' * 80}")
-    print(f"SUMMARY")
+    print("SUMMARY")
     print(f"{'=' * 80}")
     print(f"Games with EXTREME weather impact: {len(extreme_games)}")
     print(f"Games with HIGH weather impact: {len(high_games)}")
     print(
-        f"\nRecommendation: Focus on games with EXTREME/HIGH impact for weather-based edges"
+        "\nRecommendation: Focus on games with EXTREME/HIGH impact for weather-based edges"
     )
     print(f"{'=' * 80}\n")
 

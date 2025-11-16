@@ -52,7 +52,7 @@ def normalize_team_name(name):
 
 
 print(f"\n{'=' * 100}")
-print(f"FAVORITES WITH POSITIVE EDGES")
+print("FAVORITES WITH POSITIVE EDGES")
 print(f"{'=' * 100}\n")
 
 favorite_edges = []
@@ -155,7 +155,7 @@ else:
         print()
 
 print(f"\n{'=' * 100}")
-print(f"ANALYSIS COMPLETE")
+print("ANALYSIS COMPLETE")
 print(f"{'=' * 100}\n")
 
 # Additional analysis

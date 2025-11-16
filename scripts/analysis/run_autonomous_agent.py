@@ -42,7 +42,7 @@ def format_decision_report(decision, game_data) -> str:
     report.append(f"Expected Value: {decision.expected_value:.2f}%")
 
     # Reasoning chain (top 3 steps)
-    report.append(f"\n[REASONING] Top Factors:")
+    report.append("\n[REASONING] Top Factors:")
     for step in decision.reasoning_chain[:3]:
         report.append(f"\n{step.step_number}. {step.description}")
         report.append(f"   Confidence: {step.confidence:.0%}")
@@ -51,7 +51,7 @@ def format_decision_report(decision, game_data) -> str:
         report.append(f"   Impact: {step.impact_on_decision}")
 
     # Risk assessment
-    report.append(f"\n[RISK ASSESSMENT]")
+    report.append("\n[RISK ASSESSMENT]")
     report.append(
         f"  Overall Risk: {decision.risk_assessment.get('confidence', 0):.0%}"
     )
@@ -139,7 +139,7 @@ async def main():
     bet_count = len(recommendations)
     pass_count = total_games - bet_count
 
-    print(f"[SUMMARY]")
+    print("[SUMMARY]")
     print(f"  Total Games Analyzed: {total_games}")
     print(f"  Betting Opportunities: {bet_count}")
     print(f"  Pass/No Value: {pass_count}")
@@ -178,12 +178,12 @@ async def main():
 
         report_file = output_dir / f"agent_recommendations_{timestamp}.txt"
         with open(report_file, "w") as f:
-            f.write(f"Billy Walters Autonomous Agent Analysis\n")
+            f.write("Billy Walters Autonomous Agent Analysis\n")
             f.write(f"Generated: {datetime.now()}\n")
-            f.write(f"\n")
+            f.write("\n")
             f.write(f"Total Games: {total_games}\n")
             f.write(f"Recommendations: {bet_count}\n")
-            f.write(f"\n")
+            f.write("\n")
             f.write("=" * 80 + "\n")
             f.write("RECOMMENDATIONS (Sorted by EV)\n")
             f.write("=" * 80 + "\n\n")

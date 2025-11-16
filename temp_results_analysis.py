@@ -263,7 +263,7 @@ for classification in ["MAX BET", "STRONG", "MODERATE", "LEAN"]:
         win_pct = wins / total_decided * 100
         print(f"Record: {wins}-{losses} ({win_pct:.1f}%)")
     else:
-        print(f"Record: All games pending")
+        print("Record: All games pending")
     print()
 
     for game, status in data["games"]:

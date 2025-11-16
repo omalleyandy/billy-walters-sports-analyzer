@@ -25,14 +25,15 @@ def print_header(text: str, week: int):
 
 def print_status(message: str, status: str = "info"):
     """Print status message."""
+    # Use ASCII-safe symbols for Windows compatibility
     symbols = {
-        "info": "ℹ️",
-        "success": "✅",
-        "error": "❌",
-        "warning": "⚠️",
-        "pending": "⏳",
+        "info": "[INFO]",
+        "success": "[OK]",
+        "error": "[ERROR]",
+        "warning": "[WARNING]",
+        "pending": "[PENDING]",
     }
-    symbol = symbols.get(status, "•")
+    symbol = symbols.get(status, "[*]")
     print(f"{symbol} {message}")
 
 
@@ -79,7 +80,7 @@ def main():
     # Print header
     status = format_season_status(league=League.NFL)
     print(f"\n{'=' * 70}")
-    print(f"Billy Walters Subagent Workflow")
+    print("Billy Walters Subagent Workflow")
     print(f"{status}")
     print(f"Week: {week}")
     print(f"{'=' * 70}\n")
@@ -88,6 +89,10 @@ def main():
         print_status("DRY RUN MODE - No actions will be executed", "warning")
         print()
 
+    # Setup project root for imports
+    project_root = Path(__file__).parent.parent.parent
+    sys.path.insert(0, str(project_root))
+    
     # Import validation
     from scripts.validation.validate_subagent_outputs import SubagentValidator
 
@@ -109,8 +114,7 @@ def main():
         if missing_vars:
             print_status(f"Missing environment variables: {missing_vars}", "warning")
 
-        # Check directories
-        project_root = Path(__file__).parent.parent.parent
+        # Check directories (project_root already defined above)
         data_dir = project_root / "data" / "current"
         output_dir = project_root / "output" / "overtime" / "nfl" / "pregame"
 
@@ -126,22 +130,22 @@ def main():
     print_status("Subagents can run in parallel", "info")
     print()
     print("Subagent 1: Schedule & Game Info")
-    print("  → data/current/nfl_week_{week}_schedule.json")
+    print(f"  -> data/current/nfl_week_{week}_schedule.json")
     print()
     print("Subagent 2: Betting Lines")
-    print("  → output/overtime/nfl/pregame/api_walters_week_{week}_{timestamp}.csv")
+    print(f"  -> output/overtime/nfl/pregame/api_walters_week_{week}_{{timestamp}}.csv")
     print()
     print("Subagent 3: Weather Data")
-    print("  → data/current/nfl_week_{week}_weather.json")
+    print(f"  -> data/current/nfl_week_{week}_weather.json")
     print()
     print("Subagent 4: Team Situational Analysis")
-    print("  → data/current/nfl_week_{week}_team_situational.json")
+    print(f"  -> data/current/nfl_week_{week}_team_situational.json")
     print()
     print("Subagent 5: Player Situational Analysis")
-    print("  → data/current/nfl_week_{week}_player_situational.json")
+    print(f"  -> data/current/nfl_week_{week}_player_situational.json")
     print()
     print("Subagent 6: Injury Reports")
-    print("  → data/current/nfl_week_{week}_injuries.json")
+    print(f"  -> data/current/nfl_week_{week}_injuries.json")
     print()
 
     if args.dry_run:

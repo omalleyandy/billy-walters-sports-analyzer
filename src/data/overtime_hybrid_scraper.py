@@ -258,11 +258,11 @@ class OvertimeHybridScraper:
                     connection_id = data.get("ConnectionId")
 
                     if connection_token:
-                        print(f"   [OK] Negotiation successful")
+                        print("   [OK] Negotiation successful")
                         print(f"   Connection ID: {connection_id[:20]}...")
                         return connection_token
                     else:
-                        print(f"   [ERROR] No ConnectionToken in response")
+                        print("   [ERROR] No ConnectionToken in response")
                         return None
                 else:
                     print(f"   [ERROR] Negotiation failed: {response.status_code}")
@@ -536,7 +536,7 @@ class OvertimeHybridScraper:
                 "data": data,
             }
         )
-        print(f"   [GAME UPDATE] Data received!")
+        print("   [GAME UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
         except:
@@ -552,7 +552,7 @@ class OvertimeHybridScraper:
                 "data": data,
             }
         )
-        print(f"   [LINES UPDATE] Data received!")
+        print("   [LINES UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
         except:
@@ -568,7 +568,7 @@ class OvertimeHybridScraper:
                 "data": data,
             }
         )
-        print(f"   [ODDS UPDATE] Data received!")
+        print("   [ODDS UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
         except:
@@ -584,7 +584,7 @@ class OvertimeHybridScraper:
                 "data": data,
             }
         )
-        print(f"   [SCORE UPDATE] Data received!")
+        print("   [SCORE UPDATE] Data received!")
         try:
             print(f"   Preview: {json.dumps(data, default=str)[:200]}...")
         except:
@@ -600,7 +600,7 @@ class OvertimeHybridScraper:
                 "data": message,
             }
         )
-        print(f"   [MESSAGE] Generic message received!")
+        print("   [MESSAGE] Generic message received!")
         self.logger.info(f"SignalR message: {message}")
 
     def _subscribe_customer(self) -> None:

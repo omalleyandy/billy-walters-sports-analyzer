@@ -98,7 +98,7 @@ class PowerRatingManager:
             self.save_ratings(week=0, label="Baseline_Massey")
 
             print(f"✅ Initialized {len(self.ratings)} teams")
-            print(f"📊 Sample ratings:")
+            print("📊 Sample ratings:")
             for team, rating in list(self.ratings.items())[:5]:
                 print(f"  {team}: {rating:.2f}")
 

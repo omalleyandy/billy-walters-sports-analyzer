@@ -829,8 +829,13 @@ for team_info in team_data["teams"]:
         source="billy_walters"
     )
 
+# Load schedule data (CRITICAL: Must be loaded first)
+with open(f"data/current/nfl_week_{week}_schedule.json") as f:
+    schedule_data = json.load(f)
+
 # Load betting lines (find latest file)
 import glob
+import os
 odds_files = glob.glob(f"output/overtime/nfl/pregame/api_walters_week_{week}_*.csv")
 latest_odds = max(odds_files, key=os.path.getctime)
 odds_df = pd.read_csv(latest_odds)

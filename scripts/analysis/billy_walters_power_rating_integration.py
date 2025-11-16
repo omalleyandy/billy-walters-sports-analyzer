@@ -158,9 +158,9 @@ class BillyWaltersPowerRatingIntegration:
                 print(f"    [OK] Loaded {len(self.massey_ratings)} teams from Massey")
                 results["massey_ratings"] = True
             else:
-                print(f"    [WARNING] Massey ratings not found")
+                print("    [WARNING] Massey ratings not found")
                 print(
-                    f"    [INFO] Run: uv run python -m src.data.massey_ratings_scraper"
+                    "    [INFO] Run: uv run python -m src.data.massey_ratings_scraper"
                 )
         except Exception as e:
             print(f"    [ERROR] Failed to load Massey ratings: {e}")
@@ -189,7 +189,7 @@ class BillyWaltersPowerRatingIntegration:
                 print(f"    [OK] Loaded {len(self.overtime_odds)} games from Overtime")
                 results["overtime_odds"] = True
             else:
-                print(f"    [WARNING] Overtime odds not found")
+                print("    [WARNING] Overtime odds not found")
                 print(
                     f"    [INFO] Run: uv run python scripts/scrapers/scrape_overtime_api.py --{self.league_short}"
                 )
@@ -508,14 +508,14 @@ async def main():
                     print(
                         f"  - data/current/nfl_team_stats_week_{integration.week}.json"
                     )
-                    print(f"  - output/massey/nfl/ratings/nfl_ratings_*.json")
-                    print(f"  - output/overtime/nfl/pregame/api_walters_*.json")
+                    print("  - output/massey/nfl/ratings/nfl_ratings_*.json")
+                    print("  - output/overtime/nfl/pregame/api_walters_*.json")
                 else:
                     print(
                         f"  - data/current/ncaaf_team_stats_week_{integration.week}.json"
                     )
-                    print(f"  - output/massey/ncaaf/ratings/ncaaf_ratings_*.json")
-                    print(f"  - output/overtime/ncaaf/pregame/api_walters_*.json")
+                    print("  - output/massey/ncaaf/ratings/ncaaf_ratings_*.json")
+                    print("  - output/overtime/ncaaf/pregame/api_walters_*.json")
                 return 1
 
         # Step 2: Calculate power ratings

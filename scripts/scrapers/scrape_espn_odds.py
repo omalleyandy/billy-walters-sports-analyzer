@@ -32,7 +32,7 @@ def scrape_odds(league: str):
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print(f"ESPN ODDS SCRAPER")
+    print("ESPN ODDS SCRAPER")
     print("=" * 70)
 
     results = {}
@@ -60,7 +60,7 @@ def scrape_odds(league: str):
 
             # Show sample games with odds
             if items:
-                print(f"\n  Sample games:")
+                print("\n  Sample games:")
                 for item in items[:3]:
                     event_id = item.get("id", "Unknown")
                     odds_providers = item.get("odds", [])

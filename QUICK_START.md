@@ -263,10 +263,13 @@ uv run python power_rating_updater.py
    "
    ```
 
-2. **Use Existing Vegas Insider Scraper**
+2. **Use Existing Overtime.ag Scraper**
    ```powershell
-   # Get current betting lines
-   uv run python vegas_insider_live_scraper.py
+   # Get current betting lines (primary API method)
+   uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+   
+   # Or use hybrid scraper for live game monitoring
+   uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 3600
    ```
 
 3. **Manual Power Rating Calculation**

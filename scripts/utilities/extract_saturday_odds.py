@@ -20,7 +20,7 @@ saturday_games.sort(key=lambda x: x.get("game_time", ""))
 
 # Print summary
 print(f"\n{'=' * 80}")
-print(f"NCAAF SATURDAY (11/15/2025) - FULL GAME LINES")
+print("NCAAF SATURDAY (11/15/2025) - FULL GAME LINES")
 print(f"Total Games: {len(saturday_games)}")
 print(f"{'=' * 80}\n")
 

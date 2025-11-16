@@ -36,7 +36,7 @@ def scrape_standings(league: str, season: int | None = None):
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print(f"ESPN STANDINGS SCRAPER")
+    print("ESPN STANDINGS SCRAPER")
     print("=" * 70)
 
     results = {}

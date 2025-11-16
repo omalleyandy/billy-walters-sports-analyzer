@@ -153,7 +153,7 @@ def main():
     """Main edge detection function."""
 
     print(f"\n{'=' * 100}")
-    print(f"SATURDAY NCAAF EDGE DETECTION - Billy Walters Methodology")
+    print("SATURDAY NCAAF EDGE DETECTION - Billy Walters Methodology")
     print(f"{'=' * 100}\n")
 
     # Load data
@@ -296,7 +296,7 @@ def main():
 
     # Summary
     print(f"\n{'=' * 100}")
-    print(f"SUMMARY")
+    print("SUMMARY")
     print(f"{'=' * 100}")
 
     # Count by grade
@@ -308,13 +308,13 @@ def main():
     strong_totals = [e for e in total_edges if e["grade"] == "STRONG"]
     moderate_totals = [e for e in total_edges if e["grade"] == "MODERATE"]
 
-    print(f"\nSPREAD OPPORTUNITIES:")
+    print("\nSPREAD OPPORTUNITIES:")
     print(f"  MAX BET (7+ pts):     {len(max_bet_spreads)}")
     print(f"  STRONG (4-7 pts):     {len(strong_spreads)}")
     print(f"  MODERATE (2-4 pts):   {len(moderate_spreads)}")
     print(f"  Total:                {len(spread_edges)}")
 
-    print(f"\nTOTAL OPPORTUNITIES:")
+    print("\nTOTAL OPPORTUNITIES:")
     print(f"  MAX BET (7+ pts):     {len(max_bet_totals)}")
     print(f"  STRONG (4-7 pts):     {len(strong_totals)}")
     print(f"  MODERATE (2-4 pts):   {len(moderate_totals)}")
