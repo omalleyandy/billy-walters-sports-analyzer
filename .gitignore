@@ -1,10 +1,21 @@
+#############################
+# Python bytecode / cache
+#############################
 __pycache__/
 *.pyc
 .pytest_cache/
+
+#############################
+# Virtual envs & tool caches
+#############################
 .venv/
 .scrapy/
 playwright/.cache/
-# Secrets and credentials (NEVER commit)
+
+#############################
+# Secrets and credentials
+# (NEVER commit)
+#############################
 .env
 .env.*
 .env_master
@@ -17,32 +28,56 @@ secrets/
 *.key
 id_rsa*
 
-# System files
+#############################
+# System / OS files
+#############################
 .DS_Store
 .overtime_state.json
-snapshots/
 
 # Windows Zone.Identifier files
 *:Zone.Identifier
 
-# IDE/Editor configs
+#############################
+# IDE / Editor configs
+#############################
 .vscode/settings.json
 .idea/
 
+#############################
+# Snapshots / debug artifacts
+#############################
+snapshots/
+
+#############################
 # Data files (large, regenerable)
+# Raw scraped data lives in data/
+#############################
 data/**/*.jsonl
 data/**/*.json
 data/**/*.parquet
 data/**/*.csv
 data/**/*.xml
 data/**/*.zip
+data/**/*.db
+data/**/*.html
+*.sqlite
+*.sqlite3
+dumps/
+backups/
+
+# Keep docs/metadata under data/
 !data/**/README.md
+
+#############################
+# Output files (regenerable)
+#############################
 
 # Overtime.ag scraper outputs (organized structure)
 output/overtime/nfl/pregame/*.json
 output/overtime/nfl/live/*.json
 output/overtime/ncaaf/pregame/*.json
 output/overtime/ncaaf/live/*.json
+
 # Keep directory structure
 !output/overtime/nfl/pregame/.gitkeep
 !output/overtime/nfl/live/.gitkeep
@@ -69,28 +104,41 @@ output/weather/*.json
 !output/action_network/.gitkeep
 !output/weather/.gitkeep
 
-# Databases with real data (NEVER commit)
-data/**/*.db
-*.sqlite
-*.sqlite3
-dumps/
-backups/
+#############################
+# Logs
+#############################
 
-# Temporary files (but not in tests/ directory)
+# Ignore all logs dirs
+**/logs/
+
+# But keep src/logs dir itself and its .gitkeep
+!src/logs/
+src/logs/*
+!src/logs/.gitkeep
+
+#############################
+# Temporary / scratch files
+#############################
+
+# One-off root-level scripts (tests live under tests/)
+#/test_*.py   # uncomment if you want to ignore root-level test_*.py
 /test_*.py
 diagnose_*.py
 fix_*.py
 skip_*.py
 replace_*.py
-*.html
+
+# HTML debug dumps & throwaway files
+snapshots/**/*.html
+*debug*.html
 new_extract_function.txt
 NUL
 
-# Backup directories and logs
+# Backup directories
 *.bak/
-**/logs/
-src/logs/
 
-# Claude Code - Personal preferences
+#############################
+# Claude Code - personal prefs
+#############################
 CLAUDE.local.md
 .claude/hooks/*.local.*md
