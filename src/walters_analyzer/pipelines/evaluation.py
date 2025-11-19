@@ -1,22 +1,51 @@
-from typing import Dict, Any
+from __future__ import annotations
+
+from typing import Any, Dict
+
+from walters_analyzer.models.core import Game, MatchupEvaluation, Team
+
+Factors = Dict[str, Any]
 
 
-def evaluate_matchup(game: Game,
-                     home_team: Team,
-                     away_team: Team,
-                     factors: Dict[str, Any]) -> MatchupEvaluation:
-    # factors holds s/w/e and market info from your engine
+def evaluate_matchup(
+    game: Game,
+    home_team: Team,
+    away_team: Team,
+    factors: Factors,
+) -> MatchupEvaluation:
+    """Compute a MatchupEvaluation from teams + precomputed factor inputs.
+
+    `factors` is expected to contain:
+      - home_factor_points / away_factor_points  (S+W+E combined, in points)
+      - market_spread                            (current line)
+      - effective_spread                         (model-adjusted spread)
+      - edge_percentage                          (converted percent edge)
+      - star_rating                              (discrete 0–3 stars)
+      - s_home / s_away                          (situational points)
+      - w_home / w_away                          (weather points)
+      - e_home / e_away                          (emotional/motivational points)
+      - notes                                    (optional free-text/list)
+    """
+
+    # Base difference from raw power ratings (before S/W/E adjustments).
     base_power_diff = (home_team.power_rating or 0.0) - (away_team.power_rating or 0.0)
 
-    adjusted_power_home = (home_team.power_rating or 0.0) + factors["home_factor_points"] / 5.0
-    adjusted_power_away = (away_team.power_rating or 0.0) + factors["away_factor_points"] / 5.0
+    # Factor points are expressed in "S/W/E points" where 5 points = 1 spread pt.
+    adjusted_power_home = (home_team.power_rating or 0.0) + (
+        factors["home_factor_points"] / 5.0
+    )
+    adjusted_power_away = (away_team.power_rating or 0.0) + (
+        factors["away_factor_points"] / 5.0
+    )
 
     predicted_spread = adjusted_power_home - adjusted_power_away
     market_spread = factors["market_spread"]
     effective_spread = factors["effective_spread"]
     edge_percentage = factors["edge_percentage"]
     star_rating = factors["star_rating"]
-    qualifies_as_play = edge_percentage >= 5.5  # from your edge threshold table
+
+    # Threshold is aligned with your edge table (e.g. ≥ 5.5% = playable).
+    qualifies_as_play = edge_percentage >= 5.5
 
     return MatchupEvaluation(
         evaluation_id=f"EVAL-{game.game_id}",
