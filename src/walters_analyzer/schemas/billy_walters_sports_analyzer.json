@@ -1,0 +1,420 @@
+{
+  "graph_id": "billy_walters_sports_analyzer",
+  "version": "1.0",
+  "description": "Conceptual knowledge graph of the Billy Walters NFL handicapping methodology.",
+  "nodes": [
+    {
+      "id": "System.BWSA",
+      "label": "Billy Walters Sports Analyzer",
+      "type": "System",
+      "props": {
+        "purpose": "Research-grade NFL handicapping engine implementing Billy Walters methodology.",
+        "domain": ["NFL", "sports_analytics", "handicapping"],
+        "core_equation": "GamePrediction = PowerRating + S_Factors + W_Factors + E_Factors"
+      }
+    },
+
+    {
+      "id": "Concept.MasterClassBasics",
+      "label": "Master Class Basics",
+      "type": "Concept",
+      "props": {
+        "principles": [
+          "Identify value in every decision.",
+          "Treat betting like an investment fund.",
+          "Bet 1-3 percent of bankroll per play.",
+          "Invest time to analyze teams and opportunities."
+        ]
+      }
+    },
+
+    {
+      "id": "Entity.Team",
+      "label": "Team",
+      "type": "Entity",
+      "props": {
+        "fields": ["team_id", "name", "conference", "division"],
+        "rating_field": "power_rating"
+      }
+    },
+
+    {
+      "id": "Entity.Player",
+      "label": "Player",
+      "type": "Entity",
+      "props": {
+        "fields": ["player_id", "name", "team_id", "position"],
+        "value_unit": "spread_points",
+        "notes": "Most players ~0; ~600 materially affect spreads."
+      }
+    },
+
+    {
+      "id": "Entity.Game",
+      "label": "Game",
+      "type": "Entity",
+      "props": {
+        "fields": [
+          "game_id",
+          "week",
+          "season",
+          "home_team_id",
+          "away_team_id",
+          "kickoff_datetime",
+          "stadium",
+          "surface_type",
+          "timezone"
+        ]
+      }
+    },
+
+    {
+      "id": "Concept.HomeFieldAdvantage",
+      "label": "Home Field Advantage",
+      "type": "Concept",
+      "props": {
+        "average_points": 2.5,
+        "description": "Average NFL home field advantage in spread-equivalent points."
+      }
+    },
+
+    {
+      "id": "Entity.PowerRating",
+      "label": "Power Rating",
+      "type": "Metric",
+      "props": {
+        "unit": "spread_points",
+        "range_approx": [-10, 10],
+        "description": "Team strength in point-spread-equivalent units."
+      }
+    },
+
+    {
+      "id": "Process.PowerRatingUpdate",
+      "label": "Weekly Power Rating Update",
+      "type": "Process",
+      "props": {
+        "formula": "NewRating = 0.90 * OldRating + 0.10 * TrueGamePerformance",
+        "true_game_components": [
+          "score_differential",
+          "opponent_power_rating",
+          "injury_differential",
+          "home_field_adjustment"
+        ]
+      }
+    },
+
+    {
+      "id": "Metric.TrueGamePerformance",
+      "label": "True Game Performance Level",
+      "type": "Metric",
+      "props": {
+        "unit": "spread_points",
+        "components": [
+          "score_differential",
+          "opponent_power_rating",
+          "injury_differential",
+          "home_field_adjustment"
+        ]
+      }
+    },
+
+    {
+      "id": "Entity.Injury",
+      "label": "Injury",
+      "type": "Entity",
+      "props": {
+        "fields": ["player_id", "status", "severity", "injury_type", "expected_return"],
+        "status_enum": ["OUT", "DOUBTFUL", "QUESTIONABLE", "PROBABLE", "HEALTHY"],
+        "impact_unit": "spread_points"
+      }
+    },
+
+    {
+      "id": "Concept.InjuryImpactModel",
+      "label": "Injury Impact Model",
+      "type": "Concept",
+      "props": {
+        "principles": [
+          "Player value converted to spread-equivalent points.",
+          "OUT: remove full value; add replacement value if non-zero.",
+          "QUESTIONABLE: discount by probability of playing.",
+          "Cluster injuries in same unit (WR/OL/DL/DB/LB/RB) apply multiplicative penalties.",
+          "QB evaluation uses separate, higher-impact scale."
+        ],
+        "qb_value_range": [6.0, 9.5],
+        "non_qb_value_peak": 3.0
+      }
+    },
+
+    {
+      "id": "Metric.InjuryDifferential",
+      "label": "Injury Differential",
+      "type": "Metric",
+      "props": {
+        "unit": "spread_points",
+        "description": "Team injury value minus opponent injury value."
+      }
+    },
+
+    {
+      "id": "Entity.GameFactors",
+      "label": "Game Factors",
+      "type": "Entity",
+      "props": {
+        "groups": ["S_Factors", "W_Factors", "E_Factors"],
+        "scaling_rule": "5_factor_points = 1_spread_point"
+      }
+    },
+
+    {
+      "id": "Entity.SFactors",
+      "label": "S-Factors",
+      "type": "MetricGroup",
+      "props": {
+        "description": "Situational and scheduling factors.",
+        "unit": "factor_points",
+        "conversion": "0.20_spread_points_per_factor",
+        "examples": [
+          "turf_mismatch",
+          "divisional_game",
+          "short_week_or_extra_rest",
+          "bye_week_effect",
+          "multi_week_road_trip",
+          "time_zone_travel",
+          "primetime_game",
+          "blowout_bounceback",
+          "SuperBowl_hangover"
+        ],
+        "typical_range": {
+          "min": 0,
+          "max": 18,
+          "avg_per_team": 3.2
+        }
+      }
+    },
+
+    {
+      "id": "Entity.WFactors",
+      "label": "W-Factors",
+      "type": "MetricGroup",
+      "props": {
+        "description": "Weather-related factors.",
+        "unit": "factor_points",
+        "conversion": "0.20_spread_points_per_factor",
+        "inputs": [
+          "temperature",
+          "precipitation",
+          "wind_speed",
+          "surface_type",
+          "qb_weather_profile"
+        ],
+        "qb_modifier_unit": "0.15_spread_points"
+      }
+    },
+
+    {
+      "id": "Entity.EFactors",
+      "label": "E-Factors",
+      "type": "MetricGroup",
+      "props": {
+        "description": "Emotional and motivational factors.",
+        "unit": "factor_points",
+        "conversion": "0.20_spread_points_per_factor",
+        "examples": [
+          "losing_streak",
+          "playoff_motivation",
+          "coaching_change",
+          "roster_turmoil",
+          "game_importance"
+        ]
+      }
+    },
+
+    {
+      "id": "Process.GamePrediction",
+      "label": "Game Prediction Process",
+      "type": "Process",
+      "props": {
+        "formula": "PredictedSpread = AdjustedPowerHome - AdjustedPowerAway",
+        "steps": [
+          "Update team power ratings via 90/10 formula.",
+          "Apply S/W/E factors to each team.",
+          "Compute adjusted power ratings.",
+          "Subtract away from home to get predicted spread."
+        ]
+      }
+    },
+
+    {
+      "id": "Entity.MarketLine",
+      "label": "Market Line",
+      "type": "Entity",
+      "props": {
+        "fields": ["spread", "vig", "total", "moneyline_favorite", "moneyline_dog", "book"],
+        "primary_source": "overtime.ag/sports#/",
+        "secondary_sources": ["DonBest", "VegasInsider", "Covers", "SpankOdds", "ESPN"]
+      }
+    },
+
+    {
+      "id": "Concept.EffectiveSpread",
+      "label": "Effective Spread",
+      "type": "Concept",
+      "props": {
+        "description": "Spread adjusted for vig/price changes.",
+        "rule": "Price > -110 => effective_spread_grows; Price < -110 => effective_spread_shrinks.",
+        "note": "Used for edge calculations and key-number crossing."
+      }
+    },
+
+    {
+      "id": "Entity.KeyNumber",
+      "label": "Key Number",
+      "type": "Metric",
+      "props": {
+        "unit": "margin_probability_percent",
+        "examples": {
+          "3": 8,
+          "7": 6,
+          "6": 5,
+          "14": 5
+        },
+        "full_table_present": true,
+        "usage": "Each integer margin has a probability used to compute edge%."
+      }
+    },
+
+    {
+      "id": "Metric.EdgePercentage",
+      "label": "Edge Percentage",
+      "type": "Metric",
+      "props": {
+        "unit": "percent",
+        "description": "Sum of key-number probabilities between predicted and market spreads, with adjustments.",
+        "rules": [
+          "Add prob of each integer between predicted and market spreads.",
+          "Whole numbers at endpoints count for half value.",
+          "Subtract 1 point value when crossing zero.",
+          "Minimum 5.5% required for a play."
+        ]
+      }
+    },
+
+    {
+      "id": "Metric.StarRating",
+      "label": "Star Rating",
+      "type": "Metric",
+      "props": {
+        "unit": "stars",
+        "mapping": [
+          { "edge_percent": 5.5, "stars": 0.5 },
+          { "edge_percent": 7.0, "stars": 1.0 },
+          { "edge_percent": 9.0, "stars": 1.5 },
+          { "edge_percent": 11.0, "stars": 2.0 },
+          { "edge_percent": 13.0, "stars": 2.5 },
+          { "edge_percent": 15.0, "stars": 3.0 }
+        ]
+      }
+    },
+
+    {
+      "id": "Entity.Bet",
+      "label": "Bet Recommendation",
+      "type": "Entity",
+      "props": {
+        "fields": [
+          "bet_type",        // spread | moneyline | total | none
+          "side",            // home | away
+          "edge_percent",
+          "star_rating",
+          "stake_fraction",  // fraction_of_bankroll
+          "rationale"
+        ],
+        "constraints": {
+          "max_per_play_fraction": 0.03,
+          "minimum_edge_percent": 5.5
+        }
+      }
+    },
+
+    {
+      "id": "Concept.MoneylineVsSpread",
+      "label": "Moneyline vs Spread Decision",
+      "type": "Concept",
+      "props": {
+        "rules": [
+          "Convert spread to fair moneyline using table.",
+          "If offered ML is better than fair → use moneyline.",
+          "If worse → use spread."
+        ],
+        "note": "Moneyline uses favorite negative prices and dog positive prices."
+      }
+    },
+
+    {
+      "id": "Entity.MoneylineConversionTable",
+      "label": "Moneyline Conversion Table",
+      "type": "ReferenceTable",
+      "props": {
+        "description": "Mapping from spread to favorite/dog moneyline at -110 baseline.",
+        "has_full_table": true
+      }
+    },
+
+    {
+      "id": "Concept.BettingStrategy",
+      "label": "Betting Strategy",
+      "type": "Concept",
+      "props": {
+        "rules": [
+          "Bet favorites early, underdogs late.",
+          "Prioritize crossing key numbers (3, 7).",
+          "Use bankroll-based sizing (1–3% per play).",
+          "Only bet when model vs. market discrepancy is significant (edge% ≥ 5.5)."
+        ]
+      }
+    }
+  ],
+
+  "edges": [
+    { "from": "System.BWSA", "to": "Entity.Team", "type": "USES", "description": "Models all NFL teams using power ratings." },
+    { "from": "System.BWSA", "to": "Entity.Player", "type": "USES", "description": "Incorporates player value and injuries." },
+    { "from": "System.BWSA", "to": "Entity.Game", "type": "USES", "description": "Evaluates each NFL game as a matchup." },
+    { "from": "System.BWSA", "to": "Entity.PowerRating", "type": "USES", "description": "Core team strength metric." },
+    { "from": "System.BWSA", "to": "Entity.GameFactors", "type": "USES", "description": "Applies S/W/E factors to adjust predictions." },
+    { "from": "System.BWSA", "to": "Entity.MarketLine", "type": "USES", "description": "Compares model to market lines from overtime.ag." },
+    { "from": "System.BWSA", "to": "Entity.Bet", "type": "OUTPUTS", "description": "Produces research-only bet recommendations." },
+
+    { "from": "Concept.MasterClassBasics", "to": "Concept.BettingStrategy", "type": "INFORMS", "description": "High-level principles guide strategy rules." },
+
+    { "from": "Entity.Team", "to": "Entity.PowerRating", "type": "HAS_METRIC", "description": "Each team has a power rating in spread-equivalent points." },
+    { "from": "Entity.Player", "to": "Concept.InjuryImpactModel", "type": "EVALUATED_BY", "description": "Player injuries change team spread value." },
+    { "from": "Entity.Injury", "to": "Metric.InjuryDifferential", "type": "CONTRIBUTES_TO", "description": "Team injury totals compared vs opponent." },
+
+    { "from": "Process.PowerRatingUpdate", "to": "Metric.TrueGamePerformance", "type": "USES", "description": "True performance is 10% of next week's rating." },
+    { "from": "Metric.TrueGamePerformance", "to": "Entity.PowerRating", "type": "UPDATES", "description": "Forms basis for rating evolution." },
+
+    { "from": "Entity.GameFactors", "to": "Entity.SFactors", "type": "CONTAINS", "description": "Situational factors." },
+    { "from": "Entity.GameFactors", "to": "Entity.WFactors", "type": "CONTAINS", "description": "Weather factors." },
+    { "from": "Entity.GameFactors", "to": "Entity.EFactors", "type": "CONTAINS", "description": "Emotional factors." },
+
+    { "from": "Entity.SFactors", "to": "Process.GamePrediction", "type": "ADJUSTS", "description": "Adjusts base power ratings by schedule/situation." },
+    { "from": "Entity.WFactors", "to": "Process.GamePrediction", "type": "ADJUSTS", "description": "Adjusts for weather, especially wind/temp/precip." },
+    { "from": "Entity.EFactors", "to": "Process.GamePrediction", "type": "ADJUSTS", "description": "Adjusts for motivation, streaks, coaching changes." },
+
+    { "from": "Entity.Game", "to": "Process.GamePrediction", "type": "INPUT_TO", "description": "Teams, venue, and timing feed prediction process." },
+    { "from": "Entity.MarketLine", "to": "Concept.EffectiveSpread", "type": "DERIVES", "description": "Spread + vig converted into effective spread." },
+
+    { "from": "Concept.EffectiveSpread", "to": "Metric.EdgePercentage", "type": "USED_IN", "description": "Effective spread defines which key numbers are crossed." },
+    { "from": "Entity.KeyNumber", "to": "Metric.EdgePercentage", "type": "WEIGHTS", "description": "Key number probabilities sum to edge%." },
+    { "from": "Metric.EdgePercentage", "to": "Metric.StarRating", "type": "MAPPED_TO", "description": "Edge% → star rating via defined thresholds." },
+    { "from": "Metric.StarRating", "to": "Entity.Bet", "type": "DRIVES", "description": "Star rating determines stake fraction and priority." },
+
+    { "from": "Concept.MoneylineVsSpread", "to": "Entity.MoneylineConversionTable", "type": "USES", "description": "Spread ↔ fair moneyline logic based on table." },
+    { "from": "Concept.MoneylineVsSpread", "to": "Entity.Bet", "type": "SELECTS", "description": "Chooses between spread or moneyline based on value." },
+
+    { "from": "Concept.BettingStrategy", "to": "Entity.Bet", "type": "CONSTRAINS", "description": "Imposes bankroll and timing rules on bet sizing and timing." },
+    { "from": "Concept.HomeFieldAdvantage", "to": "Metric.TrueGamePerformance", "type": "ADJUSTS", "description": "Home: subtract HFA; away: add HFA in true performance." }
+  ]
+}

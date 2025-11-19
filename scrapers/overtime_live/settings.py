@@ -25,10 +25,10 @@ DOWNLOAD_HANDLERS = {
 }
 
 # Respectful cadence
-CONCURRENT_REQUESTS = 2
+CONCURRENT_REQUESTS = 1  # Reduced to avoid triggering bot detection
 AUTOTHROTTLE_ENABLED = True
 AUTOTHROTTLE_START_DELAY = 1.0
-DOWNLOAD_TIMEOUT = 60
+DOWNLOAD_TIMEOUT = 180  # Match Playwright timeout
 
 # Updated User-Agent to latest Chrome (January 2025)
 DEFAULT_REQUEST_HEADERS = {
@@ -41,7 +41,7 @@ PROXY_URL = os.getenv("PROXY_URL") or os.getenv("OVERTIME_PROXY")
 
 # Playwright launch options with proxy support
 PLAYWRIGHT_BROWSER_TYPE = "chromium"
-PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 90_000
+PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT = 180_000  # 3 minutes for CloudFlare
 
 # Configure proxy if available
 _proxy_config = {}

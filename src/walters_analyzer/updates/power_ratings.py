@@ -12,8 +12,13 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 
-# Import existing scrapers
-from massey_ratings_live_scraper import MasseyRatingsScraper
+# Import existing scrapers (optional - only needed for Massey initialization)
+try:
+    from ..scrapers.massey_ratings_live_scraper import MasseyRatingsScraper
+    MASSEY_AVAILABLE = True
+except ImportError:
+    MASSEY_AVAILABLE = False
+    MasseyRatingsScraper = None  # Placeholder for type hints
 
 
 @dataclass
@@ -71,13 +76,18 @@ class PowerRatingManager:
         This should be run at the start of the season to establish
         the initial ratings that will be updated weekly.
         """
-        print(f"\n🔧 Initializing {self.sport.upper()} power ratings from Massey...")
+        if not MASSEY_AVAILABLE:
+            print("[ERROR] Massey scraper not available")
+            print("   Install required dependencies or use manual initialization")
+            return
+            
+        print(f"\n[*] Initializing {self.sport.upper()} power ratings from Massey...")
 
         scraper = MasseyRatingsScraper()
 
         try:
             await scraper.initialize()
-            print("✅ Browser initialized")
+            print("[*] Browser initialized")
 
             # Map sport names
             massey_sport = "nfl" if self.sport == "nfl" else "cf"
@@ -97,13 +107,13 @@ class PowerRatingManager:
             # Save baseline
             self.save_ratings(week=0, label="Baseline_Massey")
 
-            print(f"✅ Initialized {len(self.ratings)} teams")
-            print("📊 Sample ratings:")
+            print(f"[*] Initialized {len(self.ratings)} teams")
+            print("[CHART] Sample ratings:")
             for team, rating in list(self.ratings.items())[:5]:
                 print(f"  {team}: {rating:.2f}")
 
         except Exception as e:
-            print(f"❌ Error initializing from Massey: {e}")
+            print(f"[ERROR] Error initializing from Massey: {e}")
             await scraper.close()
 
     def load_ratings(self, week: int = None):
@@ -121,7 +131,7 @@ class PowerRatingManager:
                 # Get latest
                 latest = max(data["history"], key=lambda x: x["week"])
                 self.ratings = latest["ratings"]
-                print(f"✅ Loaded ratings from Week {latest['week']}")
+                print(f"[*] Loaded ratings from Week {latest['week']}")
             else:
                 # Get specific week
                 week_data = next(
@@ -129,12 +139,12 @@ class PowerRatingManager:
                 )
                 if week_data:
                     self.ratings = week_data["ratings"]
-                    print(f"✅ Loaded ratings from Week {week}")
+                    print(f"[*] Loaded ratings from Week {week}")
                 else:
-                    print(f"❌ No ratings found for Week {week}")
+                    print(f"[ERROR] No ratings found for Week {week}")
 
         except FileNotFoundError:
-            print(f"⚠️  No ratings file found at {self.ratings_file}")
+            print(f"[WARNING]  No ratings file found at {self.ratings_file}")
             self.ratings = {}
 
     def save_ratings(self, week: int, label: str = ""):
@@ -176,10 +186,10 @@ class PowerRatingManager:
                     indent=2,
                 )
 
-            print(f"💾 Saved ratings for Week {week} {label}")
+            print(f"[*] Saved ratings for Week {week} {label}")
 
         except Exception as e:
-            print(f"❌ Error saving ratings: {e}")
+            print(f"[ERROR] Error saving ratings: {e}")
 
     def update_with_90_10_formula(
         self,
@@ -237,7 +247,7 @@ class PowerRatingManager:
         self.ratings[winner] = winner_new
         self.ratings[loser] = loser_new
 
-        print(f"\n📊 Updated ratings for {winner} vs {loser}:")
+        print(f"\n[CHART] Updated ratings for {winner} vs {loser}:")
         print(
             f"  {winner}: {old_winner:.2f} → {winner_new:.2f} ({winner_new - old_winner:+.2f})"
         )
@@ -267,7 +277,7 @@ class PowerRatingManager:
         # Save updated ratings
         self.save_ratings(week, label="Updated_90_10")
 
-        print(f"\n✅ Updated {len(games)} games for Week {week}")
+        print(f"\n[*] Updated {len(games)} games for Week {week}")
 
     def export_to_excel(self, filename: str = None):
         """
@@ -299,7 +309,7 @@ class PowerRatingManager:
 
         # Save
         df.to_excel(filename, index=False)
-        print(f"📊 Exported to {filename}")
+        print(f"[CHART] Exported to {filename}")
 
 
 # Example usage and testing
@@ -314,14 +324,14 @@ async def main():
     manager = PowerRatingManager(sport="nfl")
 
     # Option 1: Initialize from Massey (Week 0 baseline)
-    print("\n1️⃣  Initialize from Massey Ratings...")
+    print("\n1[*]⃣  Initialize from Massey Ratings...")
     await manager.initialize_from_massey()
 
     # Option 2: Load existing ratings
     # manager.load_ratings(week=5)
 
     # Example: Update with sample game results
-    print("\n2️⃣  Example: Update from Week 1 games...")
+    print("\n2[*]⃣  Example: Update from Week 1 games...")
 
     sample_games = [
         GameResult(
@@ -354,7 +364,7 @@ async def main():
     # Export to Excel
     manager.export_to_excel()
 
-    print("\n✅ Power rating update complete!")
+    print("\n[*] Power rating update complete!")
 
 
 if __name__ == "__main__":

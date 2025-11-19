@@ -40,7 +40,7 @@ async def test_api_connection():
     # Check if API key is configured
     settings = get_settings()
     if not settings.odds_api_key:
-        print("❌ ODDS_API_KEY not found in environment")
+        print("[ERROR] ODDS_API_KEY not found in environment")
         print()
         print("To set up:")
         print("  1. Sign up at https://the-odds-api.com/")
@@ -50,7 +50,7 @@ async def test_api_connection():
         print()
         return False
 
-    print("✅ API key configured")
+    print("[*] API key configured")
     print()
 
     # Fetch NFL odds
@@ -58,14 +58,14 @@ async def test_api_connection():
     odds = await client.get_odds("americanfootball_nfl")
 
     if not odds:
-        print("❌ No odds data received")
+        print("[ERROR] No odds data received")
         print("   This could mean:")
         print("   - Invalid API key")
         print("   - No active NFL games")
         print("   - API rate limit reached")
         return False
 
-    print("✅ Successfully fetched odds!")
+    print("[*] Successfully fetched odds!")
     print(f"   Total book/game combinations: {len(odds)}")
     print(f"   Unique games: {len(set(o['game_id'] for o in odds))}")
     print()
@@ -104,7 +104,7 @@ async def test_line_extraction():
     odds = await client.get_odds("americanfootball_nfl")
 
     if not odds:
-        print("⚠️  Skipping - no odds data")
+        print("[WARNING]  Skipping - no odds data")
         return
 
     # Get sharp vs public book breakdown
@@ -121,7 +121,7 @@ async def test_line_extraction():
         game_odds[game_id].append(odd)
 
     if not game_odds:
-        print("⚠️  No games found")
+        print("[WARNING]  No games found")
         return
 
     # Pick first game
@@ -216,7 +216,7 @@ async def test_monitoring():
         print()
 
     except KeyboardInterrupt:
-        print("\n⚠️  Test interrupted")
+        print("\n[WARNING]  Test interrupted")
 
 
 async def main():
@@ -229,15 +229,15 @@ async def main():
     # Test 1: API Connection
     connected = await test_api_connection()
     if not connected:
-        print("\n❌ API connection test failed. Fix the above issues and try again.")
+        print("\n[ERROR] API connection test failed. Fix the above issues and try again.")
         return
 
-    print("✅ Test 1 passed!\n")
+    print("[*] Test 1 passed!\n")
     await asyncio.sleep(1)
 
     # Test 2: Line Extraction
     await test_line_extraction()
-    print("✅ Test 2 passed!\n")
+    print("[*] Test 2 passed!\n")
     await asyncio.sleep(1)
 
     # Test 3: Monitoring (optional)
@@ -247,16 +247,16 @@ async def main():
 
     if response == "y":
         await test_monitoring()
-        print("✅ Test 3 passed!\n")
+        print("[*] Test 3 passed!\n")
     else:
-        print("⏭️  Skipping monitoring test\n")
+        print("⏭[*]  Skipping monitoring test\n")
 
     # Final summary
     print("=" * 80)
     print("ALL TESTS COMPLETE!")
     print("=" * 80)
     print()
-    print("✅ Your market data integration is working!")
+    print("[*] Your market data integration is working!")
     print()
     print("Next steps:")
     print("  1. Run full monitoring: uv run walters-analyzer monitor-sharp --sport nfl")

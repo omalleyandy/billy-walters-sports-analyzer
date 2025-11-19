@@ -111,15 +111,15 @@ class HighlightlyClient:
             # Check rate limits
             remaining = response.headers.get("x-ratelimit-requests-remaining")
             if remaining:
-                print(f"ℹ️  API requests remaining: {remaining}")
+                print(f"ℹ[*]  API requests remaining: {remaining}")
 
             return response.json()
 
         except httpx.HTTPStatusError as e:
-            print(f"❌ HTTP Error {e.response.status_code}: {e.response.text}")
+            print(f"[ERROR] HTTP Error {e.response.status_code}: {e.response.text}")
             raise
         except httpx.HTTPError as e:
-            print(f"❌ Request error: {e}")
+            print(f"[ERROR] Request error: {e}")
             raise
 
     # ========================================================================

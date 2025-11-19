@@ -33,8 +33,8 @@ async def basic_scrape_example():
     result = await scraper.scrape()
 
     # Display results
-    print(f"\n✓ Scraped {result['summary']['total_games']} game entries")
-    print(f"✓ {result['summary']['unique_matchups']} unique matchups")
+    print(f"\n[OK] Scraped {result['summary']['total_games']} game entries")
+    print(f"[OK] {result['summary']['unique_matchups']} unique matchups")
 
     # Show first game
     if result["games"]:
@@ -64,7 +64,7 @@ async def convert_data_example():
     walters_data = convert_overtime_to_walters(overtime_data)
 
     # Display conversion results
-    print("\n✓ Conversion Complete")
+    print("\n[OK] Conversion Complete")
     print(f"  - Total converted: {walters_data['summary']['total_converted']}")
     print(f"  - Conversion rate: {walters_data['summary']['conversion_rate']}")
 
@@ -108,7 +108,7 @@ async def save_to_files_example():
     with open(raw_file, "w") as f:
         json.dump(overtime_data, f, indent=2, default=str)
 
-    print(f"✓ Raw data saved to: {raw_file}")
+    print(f"[OK] Raw data saved to: {raw_file}")
 
     # Convert and save
     walters_data = convert_overtime_to_walters(overtime_data)
@@ -117,7 +117,7 @@ async def save_to_files_example():
     with open(walters_file, "w") as f:
         json.dump(walters_data, f, indent=2, default=str)
 
-    print(f"✓ Walters data saved to: {walters_file}")
+    print(f"[OK] Walters data saved to: {walters_file}")
 
     # Create summary file
     summary_file = output_dir / "summary.txt"
@@ -138,7 +138,7 @@ async def save_to_files_example():
             )
             f.write(f"  Pending: {overtime_data['account_info']['pending']}\n")
 
-    print(f"✓ Summary saved to: {summary_file}")
+    print(f"[OK] Summary saved to: {summary_file}")
 
 
 async def analyze_games_example():
@@ -173,12 +173,12 @@ async def analyze_games_example():
 
             # Simple value indicators
             if abs(spread) > 10:
-                print("  ⚠️  Large spread - potential blowout")
+                print("  [WARNING]  Large spread - potential blowout")
 
             if total < 40:
-                print("  🏈 Low-scoring game expected")
+                print("  [NFL] Low-scoring game expected")
             elif total > 50:
-                print("  🔥 High-scoring game expected")
+                print("  [HOT] High-scoring game expected")
 
 
 async def main():
@@ -207,9 +207,9 @@ async def main():
         print("\nCheck the examples/output directory for saved files.")
 
     except KeyboardInterrupt:
-        print("\n\n⚠️  Examples interrupted by user")
+        print("\n\n[WARNING]  Examples interrupted by user")
     except Exception as e:
-        print(f"\n✗ Error running examples: {e}")
+        print(f"\n[X] Error running examples: {e}")
         import traceback
 
         traceback.print_exc()

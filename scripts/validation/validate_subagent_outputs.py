@@ -536,24 +536,24 @@ def main():
 
     # Print results
     if errors:
-        print("❌ VALIDATION ERRORS:")
+        print("[ERROR] VALIDATION ERRORS:")
         for error in errors:
             print(f"  - {error}")
         print()
 
     if warnings and args.verbose:
-        print("⚠️  WARNINGS:")
+        print("[WARNING]  WARNINGS:")
         for warning in warnings:
             print(f"  - {warning}")
         print()
 
     if is_valid:
         print(
-            f"✅ All subagent outputs validated successfully for Week {validator.week}"
+            f"[*] All subagent outputs validated successfully for Week {validator.week}"
         )
         return 0
     else:
-        print(f"❌ Validation failed for Week {validator.week}")
+        print(f"[ERROR] Validation failed for Week {validator.week}")
         return 1
 
 

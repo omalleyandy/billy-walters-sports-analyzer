@@ -25,6 +25,15 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Snapshot directories
+BASE_SNAPSHOT_DIR = Path(r"C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\snapshots\overtime-live")
+NFL_SNAPSHOT_DIR = BASE_SNAPSHOT_DIR / "nfl"
+NCAAF_SNAPSHOT_DIR = BASE_SNAPSHOT_DIR / "ncaaf"
+
+# Ensure snapshot directories exist
+NFL_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+NCAAF_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+
 
 @dataclass
 class BettingLine:
@@ -89,7 +98,7 @@ class OvertimeAgScraper:
 
     async def initialize(self):
         """Initialize Playwright browser with stealth settings"""
-        print("🚀 Initializing browser...")
+        print("[LAUNCH] Initializing browser...")
         playwright = await async_playwright().start()
 
         # Launch browser with stealth settings
@@ -121,7 +130,7 @@ class OvertimeAgScraper:
             });
         """)
 
-        print("✅ Browser initialized")
+        print("[*] Browser initialized")
 
     async def close(self):
         """Close browser and cleanup"""
@@ -132,15 +141,18 @@ class OvertimeAgScraper:
         if self.browser:
             await self.browser.close()
 
-    async def navigate_to_sports(self) -> bool:
+    async def navigate_to_sports(self, sport: Optional[str] = None) -> bool:
         """
         Navigate to overtime.ag/sports and wait for content to load
+
+        Args:
+            sport: Optional sport identifier for snapshot naming ('nfl' or 'ncaaf')
 
         Returns:
             True if successful, False otherwise
         """
         try:
-            print(f"\n🌐 Navigating to {self.BASE_URL}...")
+            print(f"\n[*] Navigating to {self.BASE_URL}...")
 
             # Navigate to sports page
             response = await self.page.goto(
@@ -149,46 +161,61 @@ class OvertimeAgScraper:
 
             if response is None or response.status != 200:
                 print(
-                    f"❌ Failed to load page: {response.status if response else 'No response'}"
+                    f"[ERROR] Failed to load page: {response.status if response else 'No response'}"
                 )
                 return False
 
-            print("✅ Page loaded")
+            print("[*] Page loaded")
 
             # Wait for Angular to initialize
             await asyncio.sleep(5)
 
-            # Take screenshot for debugging
-            await self.page.screenshot(path="overtime_screenshot.png")
-            print("📸 Screenshot saved to overtime_screenshot.png")
+            # Take screenshot - save to appropriate snapshot directory if sport specified
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            if sport:
+                snapshot_dir = NFL_SNAPSHOT_DIR if sport == 'nfl' else NCAAF_SNAPSHOT_DIR
+                screenshot_path = snapshot_dir / f"overtime_screenshot_{timestamp}.png"
+            else:
+                screenshot_path = Path("overtime_screenshot.png")
+            
+            await self.page.screenshot(path=str(screenshot_path))
+            print(f"[*] Screenshot saved to {screenshot_path}")
 
             return True
 
         except Exception as e:
-            print(f"❌ Error navigating: {e}")
+            print(f"[ERROR] Error navigating: {e}")
             return False
 
     async def save_debug_files(self, sport: str):
-        """Save HTML and text for debugging"""
+        """Save HTML and text snapshots for debugging"""
         try:
             content = await self.page.content()
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            
+            # Determine snapshot directory based on sport
+            snapshot_dir = NFL_SNAPSHOT_DIR if sport == 'nfl' else NCAAF_SNAPSHOT_DIR
 
-            # Save HTML
-            html_file = f"overtime_debug_{sport}_{timestamp}.html"
+            # Save HTML snapshot
+            html_file = snapshot_dir / f"overtime_debug_{sport}_{timestamp}.html"
             with open(html_file, "w", encoding="utf-8") as f:
                 f.write(content)
-            print(f"💾 Debug HTML saved to: {html_file}")
+            print(f"[*] HTML snapshot saved to: {html_file}")
 
-            # Save text
+            # Save text snapshot
             page_text = await self.page.inner_text("body")
-            text_file = f"overtime_text_{sport}_{timestamp}.txt"
+            text_file = snapshot_dir / f"overtime_text_{sport}_{timestamp}.txt"
             with open(text_file, "w", encoding="utf-8") as f:
                 f.write(page_text)
-            print(f"💾 Page text saved to: {text_file}")
+            print(f"[*] Text snapshot saved to: {text_file}")
+            
+            # Save screenshot snapshot
+            screenshot_file = snapshot_dir / f"overtime_screenshot_{sport}_{timestamp}.png"
+            await self.page.screenshot(path=str(screenshot_file))
+            print(f"[*] Screenshot snapshot saved to: {screenshot_file}")
 
         except Exception as e:
-            print(f"⚠️  Could not save debug files: {e}")
+            print(f"[WARNING]  Could not save debug files: {e}")
 
     async def scrape_betting_lines(self, sport: str = "nfl") -> List[BettingLine]:
         """
@@ -203,7 +230,7 @@ class OvertimeAgScraper:
         lines = []
 
         try:
-            print(f"\n🔍 Scraping {sport.upper()} betting lines...")
+            print(f"\n[SEARCH] Scraping {sport.upper()} betting lines...")
 
             # Save debug files
             await self.save_debug_files(sport)
@@ -211,7 +238,7 @@ class OvertimeAgScraper:
             # TODO: Implement actual parsing based on HTML structure
             # For now, this is a placeholder that saves debug files
 
-            print("\n⚠️  NEXT STEPS:")
+            print("\n[WARNING]  NEXT STEPS:")
             print("1. Review the debug HTML file to understand page structure")
             print("2. Implement parsing logic based on actual HTML elements")
             print("3. Look for patterns like game containers, team names, odds")
@@ -220,35 +247,35 @@ class OvertimeAgScraper:
             return lines
 
         except Exception as e:
-            print(f"❌ Error scraping betting lines: {e}")
+            print(f"[ERROR] Error scraping betting lines: {e}")
             return lines
 
     async def scrape_nfl(self) -> List[BettingLine]:
         """Scrape NFL betting lines"""
         print("\n" + "=" * 60)
-        print("🏈 SCRAPING NFL LINES FROM OVERTIME.AG")
+        print("[NFL] SCRAPING NFL LINES FROM OVERTIME.AG")
         print("=" * 60)
 
-        if not await self.navigate_to_sports():
+        if not await self.navigate_to_sports(sport="nfl"):
             return []
 
         lines = await self.scrape_betting_lines("nfl")
 
-        print(f"\n✅ Scraping complete: {len(lines)} NFL betting lines found")
+        print(f"\n[*] Scraping complete: {len(lines)} NFL betting lines found")
         return lines
 
     async def scrape_ncaaf(self) -> List[BettingLine]:
         """Scrape NCAA Football betting lines"""
         print("\n" + "=" * 60)
-        print("🏈 SCRAPING NCAAF LINES FROM OVERTIME.AG")
+        print("[NFL] SCRAPING NCAAF LINES FROM OVERTIME.AG")
         print("=" * 60)
 
-        if not await self.navigate_to_sports():
+        if not await self.navigate_to_sports(sport="ncaaf"):
             return []
 
         lines = await self.scrape_betting_lines("ncaaf")
 
-        print(f"\n✅ Scraping complete: {len(lines)} NCAAF betting lines found")
+        print(f"\n[*] Scraping complete: {len(lines)} NCAAF betting lines found")
         return lines
 
     async def scrape_all_football(self) -> Dict[str, List[BettingLine]]:
@@ -259,7 +286,7 @@ class OvertimeAgScraper:
             Dictionary with 'nfl' and 'ncaaf' keys containing lists of BettingLine objects
         """
         print("\n" + "=" * 60)
-        print("🏈 SCRAPING ALL FOOTBALL LINES FROM OVERTIME.AG")
+        print("[NFL] SCRAPING ALL FOOTBALL LINES FROM OVERTIME.AG")
         print("=" * 60)
 
         results = {"nfl": [], "ncaaf": []}
@@ -267,8 +294,8 @@ class OvertimeAgScraper:
         # Scrape NFL
         results["nfl"] = await self.scrape_nfl()
 
-        # Navigate back to main sports page
-        await self.navigate_to_sports()
+        # Wait before switching sports
+        await asyncio.sleep(2)
 
         # Scrape NCAAF
         results["ncaaf"] = await self.scrape_ncaaf()
@@ -296,10 +323,10 @@ class OvertimeAgScraper:
             with open(output_file, "w") as f:
                 json.dump(serializable, f, indent=2, default=str)
 
-            print(f"\n💾 Results saved to: {output_file}")
+            print(f"\n[*] Results saved to: {output_file}")
 
         except Exception as e:
-            print(f"⚠️  Could not save results: {e}")
+            print(f"[WARNING]  Could not save results: {e}")
 
 
 async def main():
@@ -315,7 +342,7 @@ async def main():
         nfl_lines = await scraper.scrape_nfl()
 
         print("\n" + "=" * 60)
-        print(f"📊 RESULTS: {len(nfl_lines)} NFL betting lines")
+        print(f"[CHART] RESULTS: {len(nfl_lines)} NFL betting lines")
         print("=" * 60)
 
         if nfl_lines:
@@ -333,20 +360,20 @@ async def main():
                     print(f"  ML: {line.away_ml} / {line.home_ml}")
         else:
             print(
-                "\n⚠️  No betting lines found yet - parsing logic needs to be implemented"
+                "\n[WARNING]  No betting lines found yet - parsing logic needs to be implemented"
             )
             print(
-                "📁 Check the debug files (HTML and text) to understand page structure"
+                "[*] Check the debug files (HTML and text) to understand page structure"
             )
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         import traceback
 
         traceback.print_exc()
     finally:
         await scraper.close()
-        print("\n✅ Browser closed")
+        print("\n[*] Browser closed")
 
 
 if __name__ == "__main__":

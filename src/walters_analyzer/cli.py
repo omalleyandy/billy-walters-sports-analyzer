@@ -612,7 +612,7 @@ def main():
         if env_path.exists():
             load_dotenv(env_path)
         else:
-            print("⚠️  Warning: .env file not found in project root")
+            print("[WARNING]  Warning: .env file not found in project root")
             print("   Make sure HIGHLIGHTLY_API_KEY is set as an environment variable")
 
         async def scrape_highlightly():
@@ -641,7 +641,7 @@ def main():
                     async with HighlightlyClient() as client:
                         # Teams endpoint
                         if args.endpoint in ["teams", "all"]:
-                            print("📥 Fetching teams...")
+                            print("[*] Fetching teams...")
                             teams = await client.get_teams(
                                 league=league, name=args.name
                             )
@@ -651,7 +651,7 @@ def main():
 
                         # Matches endpoint
                         if args.endpoint in ["matches", "all"]:
-                            print("📥 Fetching matches...")
+                            print("[*] Fetching matches...")
                             matches = await client.get_matches(
                                 league=league, date=args.date, season=args.season
                             )
@@ -665,7 +665,7 @@ def main():
                         # Match details (requires match_id)
                         if args.endpoint == "matches" and args.match_id:
                             print(
-                                f"📥 Fetching match details for ID {args.match_id}..."
+                                f"[*] Fetching match details for ID {args.match_id}..."
                             )
                             match_details = await client.get_match_by_id(args.match_id)
                             if match_details:
@@ -680,7 +680,7 @@ def main():
 
                         # Odds endpoint
                         if args.endpoint in ["odds", "all"]:
-                            print(f"📥 Fetching odds ({args.odds_type})...")
+                            print(f"[*] Fetching odds ({args.odds_type})...")
                             odds = await client.get_odds(
                                 match_id=args.match_id,
                                 odds_type=args.odds_type,
@@ -704,7 +704,7 @@ def main():
 
                         # Bookmakers endpoint
                         if args.endpoint in ["bookmakers", "all"]:
-                            print("📥 Fetching bookmakers...")
+                            print("[*] Fetching bookmakers...")
                             bookmakers = await client.get_bookmakers(name=args.name)
                             if bookmakers:
                                 save_to_jsonl(
@@ -714,7 +714,7 @@ def main():
 
                         # Highlights endpoint
                         if args.endpoint in ["highlights", "all"]:
-                            print("📥 Fetching highlights...")
+                            print("[*] Fetching highlights...")
                             highlights = await client.get_highlights(
                                 league_name=league,
                                 date=args.date,
@@ -734,7 +734,7 @@ def main():
 
                         # Standings endpoint
                         if args.endpoint in ["standings", "all"]:
-                            print("📥 Fetching standings...")
+                            print("[*] Fetching standings...")
                             standings = await client.get_standings(
                                 league_type=league, year=args.season
                             )
@@ -752,9 +752,9 @@ def main():
                         # Lineups endpoint (requires match_id)
                         if args.endpoint == "lineups":
                             if not args.match_id:
-                                print("❌ --match-id required for lineups endpoint")
+                                print("[ERROR] --match-id required for lineups endpoint")
                                 sys.exit(1)
-                            print(f"📥 Fetching lineups for match {args.match_id}...")
+                            print(f"[*] Fetching lineups for match {args.match_id}...")
                             lineups = await client.get_lineups(args.match_id)
                             if lineups:
                                 save_to_jsonl(
@@ -768,7 +768,7 @@ def main():
 
                         # Players endpoint
                         if args.endpoint in ["players", "all"]:
-                            print("📥 Fetching players...")
+                            print("[*] Fetching players...")
                             players = await client.get_players(name=args.name)
                             if players:
                                 extra = args.name if args.name else "all"
@@ -780,10 +780,10 @@ def main():
                         # Last five games (requires team_id)
                         if args.endpoint == "last-five":
                             if not args.team_id:
-                                print("❌ --team-id required for last-five endpoint")
+                                print("[ERROR] --team-id required for last-five endpoint")
                                 sys.exit(1)
                             print(
-                                f"📥 Fetching last 5 games for team {args.team_id}..."
+                                f"[*] Fetching last 5 games for team {args.team_id}..."
                             )
                             last_five = await client.get_last_five_games(args.team_id)
                             if last_five:
@@ -800,11 +800,11 @@ def main():
                         if args.endpoint == "head-to-head":
                             if not args.team_id or not args.team_id_two:
                                 print(
-                                    "❌ --team-id and --team-id-two required for head-to-head endpoint"
+                                    "[ERROR] --team-id and --team-id-two required for head-to-head endpoint"
                                 )
                                 sys.exit(1)
                             print(
-                                f"📥 Fetching head-to-head for teams {args.team_id} vs {args.team_id_two}..."
+                                f"[*] Fetching head-to-head for teams {args.team_id} vs {args.team_id_two}..."
                             )
                             h2h = await client.get_head_to_head(
                                 args.team_id, args.team_id_two
@@ -820,14 +820,14 @@ def main():
                                 total_saved += len(h2h)
 
                 except Exception as e:
-                    print(f"❌ Error scraping {sport_key}: {e}")
+                    print(f"[ERROR] Error scraping {sport_key}: {e}")
                     import traceback
 
                     traceback.print_exc()
                     sys.exit(1)
 
             print(f"\n{'=' * 60}")
-            print(f"✅ Scraping complete! Total items saved: {total_saved}")
+            print(f"[*] Scraping complete! Total items saved: {total_saved}")
             print(f"{'=' * 60}\n")
 
         # Run async scraper
@@ -890,14 +890,14 @@ def main():
 
         if args.today:
             games = viewer.get_today_games()
-            print("📅 Today's games:\n")
+            print("[*] Today's games:\n")
         elif args.upcoming is not None:
             days = args.upcoming if args.upcoming else 7
             games = viewer.get_upcoming_games(days=days)
-            print(f"📅 Upcoming games (next {days} days):\n")
+            print(f"[*] Upcoming games (next {days} days):\n")
         elif args.date:
             games = viewer.filter_by_date(args.date)
-            print(f"📅 Games on {args.date}:\n")
+            print(f"[*] Games on {args.date}:\n")
 
         if args.team:
             games = [
@@ -940,7 +940,7 @@ def main():
 
         # Test mode - check API connection
         if args.test:
-            print("🔍 Testing connection to The Odds API...")
+            print("[SEARCH] Testing connection to The Odds API...")
             print()
 
             async def test_connection():
@@ -948,7 +948,7 @@ def main():
                 odds = await client.get_odds(sport_key)
 
                 if not odds:
-                    print("❌ Failed to fetch odds. Check your ODDS_API_KEY in .env")
+                    print("[ERROR] Failed to fetch odds. Check your ODDS_API_KEY in .env")
                     print()
                     print("To get an API key:")
                     print("  1. Sign up at https://the-odds-api.com/")
@@ -956,9 +956,9 @@ def main():
                     print("  3. Add to .env: ODDS_API_KEY=your_key_here")
                     sys.exit(1)
 
-                print("✅ Successfully connected!")
+                print("[*] Successfully connected!")
                 print(
-                    f"✅ Fetched odds for {len(set(o['game_id'] for o in odds))} games"
+                    f"[*] Fetched odds for {len(set(o['game_id'] for o in odds))} games"
                 )
                 print()
 
@@ -966,7 +966,7 @@ def main():
                 if odds:
                     sample = odds[0]
                     teams = sample.get("teams", {})
-                    print("📊 Sample game:")
+                    print("[CHART] Sample game:")
                     print(f"   {teams.get('away')} @ {teams.get('home')}")
                     print(f"   Book: {sample.get('book')}")
 
@@ -976,7 +976,7 @@ def main():
                         print(f"   Spread: {line:+.1f}")
 
                 print()
-                print("✅ All systems ready! Remove --test to start monitoring.")
+                print("[*] All systems ready! Remove --test to start monitoring.")
 
             asyncio.run(test_connection())
             sys.exit(0)
@@ -1026,7 +1026,7 @@ def main():
                 # Print summary
                 summary = monitor.get_alert_summary()
                 print("\n" + "=" * 80)
-                print("📊 MONITORING SUMMARY")
+                print("[CHART] MONITORING SUMMARY")
                 print("=" * 80)
                 print(f"Total Alerts: {summary.get('total_alerts', 0)}")
 
@@ -1043,13 +1043,13 @@ def main():
                 print()
 
             except KeyboardInterrupt:
-                print("\n\n🛑 Monitoring stopped by user")
+                print("\n\n[*] Monitoring stopped by user")
 
                 # Print summary even if interrupted
                 summary = monitor.get_alert_summary()
                 if summary.get("total_alerts", 0) > 0:
                     print(
-                        f"\n📊 Captured {summary['total_alerts']} alerts before stopping"
+                        f"\n[CHART] Captured {summary['total_alerts']} alerts before stopping"
                     )
 
         asyncio.run(start_monitoring())

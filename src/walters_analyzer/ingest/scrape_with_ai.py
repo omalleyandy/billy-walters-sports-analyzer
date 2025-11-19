@@ -221,7 +221,7 @@ async def main():
             f"\nPerformance Score: {insights.get('performance_analysis', {}).get('performance_score', 0)}/100"
         )
         print(
-            f"Extraction Success: {'✓' if insights.get('extraction_success') else '✗'}"
+            f"Extraction Success: {'[OK]' if insights.get('extraction_success') else '[X]'}"
         )
 
         recommendations = insights.get("recommendations", [])

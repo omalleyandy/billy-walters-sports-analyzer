@@ -20,7 +20,7 @@ def load_nfl_schedule(data_dir="data/nfl_schedule"):
     # Find the most recent week 9 file
     week9_files = sorted(schedule_path.glob("nfl_week9_*.jsonl"), reverse=True)
     if not week9_files:
-        print("⚠️  No Week 9 schedule data found!")
+        print("[WARNING]  No Week 9 schedule data found!")
         return []
 
     with open(week9_files[0], "r") as f:
@@ -37,7 +37,7 @@ def load_injuries(data_dir="data/injuries"):
     # Find the most recent injury file
     injury_files = sorted(injury_path.glob("*.json"), reverse=True)
     if not injury_files:
-        print("⚠️  No injury data found!")
+        print("[WARNING]  No injury data found!")
         return []
 
     with open(injury_files[0], "r") as f:
@@ -152,22 +152,22 @@ def main():
     print()
 
     # Initialize Billy Walters valuation system
-    print("🔧 Initializing Billy Walters valuation system...")
+    print("[*] Initializing Billy Walters valuation system...")
     bw_valuation = BillyWaltersValuation(sport="NFL")
-    print("✓ Billy Walters system ready")
+    print("[OK] Billy Walters system ready")
     print()
 
     # Load data
-    print("📊 Loading data...")
+    print("[CHART] Loading data...")
     games = load_nfl_schedule()
     injuries = load_injuries()
 
     if not games or not injuries:
-        print("❌ Missing required data files!")
+        print("[ERROR] Missing required data files!")
         return
 
-    print(f"✓ Loaded {len(games)} games")
-    print(f"✓ Loaded {len(injuries)} injury reports")
+    print(f"[OK] Loaded {len(games)} games")
+    print(f"[OK] Loaded {len(injuries)} injury reports")
     print()
 
     # Analyze each game
@@ -217,9 +217,9 @@ def main():
         away_bw = away_impact.get("bw_analysis", {})
         home_bw = home_impact.get("bw_analysis", {})
 
-        print(f"{'═' * 80}")
+        print(f"{'[*]' * 80}")
         print(f"#{idx}. {away_team} @ {home_team}")
-        print(f"{'─' * 80}")
+        print(f"{'[*]' * 80}")
         print(f"Spread: {spread} | Total: {total} | Venue: {game['venue_name']}")
         print(
             f"Dome: {'Yes' if game.get('is_dome') else 'No'} | {game.get('venue_city')}, {game.get('venue_state')}"
@@ -227,7 +227,7 @@ def main():
         print()
 
         # Away team injuries (Billy Walters format)
-        print(f"🏈 {away_team} ({game['away_record']})")
+        print(f"[NFL] {away_team} ({game['away_record']})")
         print(
             f"   Billy Walters Impact: {away_impact['score']:.1f} point spread points"
         )
@@ -236,7 +236,7 @@ def main():
         )
 
         if away_impact["qb_out"] > 0:
-            print("   ⚠️  CRITICAL: QB OUT!")
+            print("   [WARNING]  CRITICAL: QB OUT!")
 
         # Show detailed injury breakdown
         if away_bw.get("detailed_breakdown"):
@@ -253,12 +253,12 @@ def main():
         if away_bw.get("position_group_crises"):
             print("   Position Group Impact:")
             for crisis in away_bw["position_group_crises"]:
-                print(f"      ⚠️  {crisis}")
+                print(f"      [WARNING]  {crisis}")
 
         print()
 
         # Home team injuries (Billy Walters format)
-        print(f"🏠 {home_team} ({game['home_record']})")
+        print(f"[*] {home_team} ({game['home_record']})")
         print(
             f"   Billy Walters Impact: {home_impact['score']:.1f} point spread points"
         )
@@ -267,7 +267,7 @@ def main():
         )
 
         if home_impact["qb_out"] > 0:
-            print("   ⚠️  CRITICAL: QB OUT!")
+            print("   [WARNING]  CRITICAL: QB OUT!")
 
         # Show detailed injury breakdown
         if home_bw.get("detailed_breakdown"):
@@ -284,20 +284,20 @@ def main():
         if home_bw.get("position_group_crises"):
             print("   Position Group Impact:")
             for crisis in home_bw["position_group_crises"]:
-                print(f"      ⚠️  {crisis}")
+                print(f"      [WARNING]  {crisis}")
 
         print()
 
         # Billy Walters betting analysis
         net_impact = home_impact["score"] - away_impact["score"]
-        print(f"{'─' * 80}")
-        print("💰 BILLY WALTERS BETTING ANALYSIS:")
-        print(f"{'─' * 80}")
+        print(f"{'[*]' * 80}")
+        print("[MONEY] BILLY WALTERS BETTING ANALYSIS:")
+        print(f"{'[*]' * 80}")
         print(f"Net Injury Advantage: {net_impact:+.1f} points")
 
         if abs(net_impact) >= 3.0:
             favored_team = away_team if net_impact < 0 else home_team
-            print(f"   🎯 STRONG EDGE: {favored_team} has significant injury advantage")
+            print(f"   [TARGET] STRONG EDGE: {favored_team} has significant injury advantage")
             print(f"   Action: STRONG PLAY on {favored_team}")
             print("   Bet Sizing: 2-3% of bankroll")
             print(
@@ -305,17 +305,17 @@ def main():
             )
         elif abs(net_impact) >= 1.5:
             favored_team = away_team if net_impact < 0 else home_team
-            print(f"   📊 MODERATE EDGE: {favored_team} has injury advantage")
+            print(f"   [CHART] MODERATE EDGE: {favored_team} has injury advantage")
             print(f"   Action: MODERATE PLAY on {favored_team}")
             print("   Bet Sizing: 1-2% of bankroll")
             print(f"   Historical: 58% win rate with {abs(net_impact):.1f}+ point edge")
         else:
-            print("   ✓ BALANCED: Injuries relatively even between teams")
+            print("   [OK] BALANCED: Injuries relatively even between teams")
             print("   Action: NO EDGE from injuries - look for other factors")
 
         if analysis["total_impact"] >= 7.0:
             print(
-                f"   ⚠️  WARNING: Combined {analysis['total_impact']:.1f} pts impact - high volatility game"
+                f"   [WARNING]  WARNING: Combined {analysis['total_impact']:.1f} pts impact - high volatility game"
             )
 
         print()
@@ -351,7 +351,7 @@ def main():
     print(f"High volatility games (7+ pts total): {high_impact_games}/{len(games)}")
 
     print()
-    print("✓ Billy Walters analysis complete!")
+    print("[OK] Billy Walters analysis complete!")
     print("  • Point values based on position/tier-specific impacts")
     print("  • Injury capacities calculated (Out=0%, Questionable=92%, etc.)")
     print("  • Market inefficiency detection applied (15% underreaction factor)")
