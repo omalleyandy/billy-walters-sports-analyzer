@@ -206,14 +206,12 @@ class SimpleLiveBettingScraper:
             """)
 
             # For now, return diagnostic info
-            return [
-                {
-                    "game_id": "diagnostic",
-                    "matchup": "Diagnostic Data",
-                    "data": games_data,
-                    "timestamp": datetime.now().isoformat(),
-                }
-            ]
+            return [{
+                "game_id": "diagnostic",
+                "matchup": "Diagnostic Data",
+                "data": games_data,
+                "timestamp": datetime.now().isoformat(),
+            }]
 
         except Exception as e:
             print(f"  [ERROR] Extraction failed: {e}")
@@ -226,20 +224,15 @@ class SimpleLiveBettingScraper:
         # Save full snapshots
         snapshots_file = self.output_dir / f"live_snapshots_{timestamp}.json"
         with open(snapshots_file, "w", encoding="utf-8") as f:
-            json.dump(
-                {
-                    "metadata": {
-                        "generated_at": datetime.now().isoformat(),
-                        "duration_seconds": self.duration,
-                        "interval_seconds": self.interval,
-                        "total_checks": len(self.snapshots),
-                    },
-                    "snapshots": self.snapshots,
+            json.dump({
+                "metadata": {
+                    "generated_at": datetime.now().isoformat(),
+                    "duration_seconds": self.duration,
+                    "interval_seconds": self.interval,
+                    "total_checks": len(self.snapshots),
                 },
-                f,
-                indent=2,
-                default=str,
-            )
+                "snapshots": self.snapshots,
+            }, f, indent=2, default=str)
 
         print(f"\n[OK] Saved snapshots: {snapshots_file}")
         print(f"Total checks: {len(self.snapshots)}")

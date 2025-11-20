@@ -36,7 +36,7 @@ def check_for_api_keys(data: dict) -> list[str]:
                 for key_type, pattern in patterns.items():
                     if re.search(pattern, content, re.IGNORECASE):
                         errors.append(
-                            f"[ERROR] Potential {key_type} found in {file_path}. "
+                            f"❌ Potential {key_type} found in {file_path}. "
                             "Never commit API keys!"
                         )
             except Exception:
@@ -60,11 +60,11 @@ def validate_python_files(data: dict) -> list[str]:
                 functions = re.findall(r"def\s+(\w+)\s*\([^)]*\):", content)
                 if functions and "-> " not in content:
                     errors.append(
-                        f"[WARNING]  {file_path}: Consider adding type hints to functions"
+                        f"⚠️  {file_path}: Consider adding type hints to functions"
                     )
 
             except Exception as e:
-                errors.append(f"[ERROR] Error reading {file_path}: {e}")
+                errors.append(f"❌ Error reading {file_path}: {e}")
 
     return errors
 
@@ -75,7 +75,7 @@ def main():
         # Read input from stdin
         input_data = json.loads(sys.stdin.read())
     except json.JSONDecodeError:
-        print("[ERROR] Invalid JSON input", file=sys.stderr)
+        print("❌ Invalid JSON input", file=sys.stderr)
         sys.exit(1)
 
     all_errors = []
@@ -86,13 +86,13 @@ def main():
 
     # Output results
     if all_errors:
-        print("[*] Pre-commit validation failed:\n")
+        print("🚨 Pre-commit validation failed:\n")
         for error in all_errors:
             print(error)
-        print("\n[INFO] Fix these issues before committing.")
+        print("\n💡 Fix these issues before committing.")
         sys.exit(1)
     else:
-        print("[*] Pre-commit checks passed!")
+        print("✅ Pre-commit checks passed!")
         sys.exit(0)
 
 

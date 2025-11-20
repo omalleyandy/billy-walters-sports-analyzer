@@ -334,15 +334,12 @@ class BillyWaltersEdgeDetector:
                         f"Could not extract Off/Def ratings for {team_name}: {e}"
                     )
 
-            # League-specific HFA (FIX 1: Reduced NCAAF from 3.5 to 2.5)
-            hfa = 2.5 if league == "nfl" else 2.5  # NFL: 2.5, NCAAF: 2.5
-
             self.power_ratings[team_name] = PowerRating(
                 team=team_name,
                 rating=rating,
                 offensive_rating=offensive_rating,
                 defensive_rating=defensive_rating,
-                home_field_advantage=hfa,
+                home_field_advantage=2.5,  # Standard NFL HFA
                 source="massey",
             )
 
@@ -767,66 +764,6 @@ class BillyWaltersEdgeDetector:
     # EDGE DETECTION
     # =================================================================
 
-    def apply_bias_correction(
-        self, predicted_spread: float, market_spread: float
-    ) -> float:
-        """
-        FIX 3: Apply systematic bias correction for favorites/underdogs
-
-        Analysis shows:
-        - Favorites overestimated by avg 2.4 pts
-        - Underdogs underestimated by avg 2.5 pts
-
-        Args:
-            predicted_spread: Our predicted spread (positive = home favored)
-            market_spread: Market spread (positive = home favored)
-
-        Returns:
-            Corrected predicted spread
-        """
-        # Determine if we're betting the favorite or underdog
-        betting_favorite = (
-            predicted_spread > market_spread and predicted_spread < 0
-        ) or (predicted_spread < market_spread and predicted_spread > 0)
-
-        if betting_favorite:
-            # We think the favorite should be favored by more than market
-            # Apply 15% haircut to favorite's strength
-            corrected = predicted_spread * 0.85
-            logger.debug(
-                f"Bias correction (favorite): {predicted_spread:.1f} → {corrected:.1f}"
-            )
-        else:
-            # We think the underdog is undervalued
-            # Apply 15% boost to underdog's strength
-            corrected = predicted_spread * 1.15
-            logger.debug(
-                f"Bias correction (underdog): {predicted_spread:.1f} → {corrected:.1f}"
-            )
-
-        return corrected
-
-    def should_skip_large_edge(
-        self, edge_abs: float, predicted: float, market: float
-    ) -> bool:
-        """
-        FIX 2: Market respect threshold
-
-        If our edge is >10 points, we're probably wrong (not the market)
-        Large disagreements are a red flag, not an opportunity
-
-        Returns:
-            True if edge is too large and should be skipped
-        """
-        if edge_abs > 10:
-            logger.warning(
-                f"MARKET RESPECT: Edge of {edge_abs:.1f} pts is suspiciously large "
-                f"(predicted: {predicted:.1f}, market: {market:.1f}). "
-                f"Skipping - market is probably right."
-            )
-            return True
-        return False
-
     def calculate_predicted_spread(
         self,
         away_team: str,
@@ -908,25 +845,14 @@ class BillyWaltersEdgeDetector:
             away_team, home_team, sit_adj + injury_adj, weather_adj
         )
 
-        # FIX 3: Apply bias correction for favorites/underdogs
-        predicted_spread_corrected = self.apply_bias_correction(
-            predicted_spread, market_spread
-        )
+        # Calculate edge
+        edge_points = abs(predicted_spread - market_spread)
 
-        # Calculate edge (using corrected prediction)
-        edge_points = abs(predicted_spread_corrected - market_spread)
-
-        # FIX 2: Market respect threshold - skip if edge is too large
-        if self.should_skip_large_edge(
-            edge_points, predicted_spread_corrected, market_spread
-        ):
-            return None
-
-        # Determine which side has edge (using corrected prediction)
+        # Determine which side has edge
         recommended_bet = None
-        if predicted_spread_corrected - market_spread > self.MIN_EDGE_THRESHOLD:
+        if predicted_spread - market_spread > self.MIN_EDGE_THRESHOLD:
             recommended_bet = "home"  # Market undervaluing home team
-        elif market_spread - predicted_spread_corrected > self.MIN_EDGE_THRESHOLD:
+        elif market_spread - predicted_spread > self.MIN_EDGE_THRESHOLD:
             recommended_bet = "away"  # Market undervaluing away team
 
         # Only proceed if we have minimum edge
@@ -935,14 +861,14 @@ class BillyWaltersEdgeDetector:
         ):
             return None
 
-        # Check for key number crossing (using corrected prediction)
+        # Check for key number crossing
         crosses_key = False
         key_number_value = None
         for key_num in self.KEY_NUMBERS:
             if (
-                min(predicted_spread_corrected, market_spread)
+                min(predicted_spread, market_spread)
                 < key_num
-                < max(predicted_spread_corrected, market_spread)
+                < max(predicted_spread, market_spread)
             ):
                 crosses_key = True
                 key_number_value = key_num
@@ -992,7 +918,7 @@ class BillyWaltersEdgeDetector:
             home_team=home_team,
             away_rating=away_rating,
             home_rating=home_rating,
-            predicted_spread=predicted_spread_corrected,  # Use bias-corrected prediction
+            predicted_spread=predicted_spread,
             market_spread=market_spread,
             market_total=market_total,
             best_odds=best_odds,

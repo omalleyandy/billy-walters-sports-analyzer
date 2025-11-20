@@ -11,7 +11,7 @@ Provides Chrome DevTools Protocol integration for monitoring:
 Usage:
     # In a Playwright scraper:
     from data.chrome_devtools_monitor import ChromeDevToolsMonitor
-
+    
     monitor = ChromeDevToolsMonitor(page)
     await monitor.start_monitoring()
     # ... do scraping ...
@@ -33,13 +33,11 @@ logger = logging.getLogger(__name__)
 class ChromeDevToolsMonitor:
     """
     Chrome DevTools Protocol monitor for Playwright pages.
-
+    
     Tracks network activity, performance metrics, and resource loading.
     """
 
-    def __init__(
-        self, page: Page, enable_network: bool = True, enable_performance: bool = True
-    ):
+    def __init__(self, page: Page, enable_network: bool = True, enable_performance: bool = True):
         """
         Initialize Chrome DevTools monitor.
 
@@ -51,7 +49,7 @@ class ChromeDevToolsMonitor:
         self.page = page
         self.enable_network = enable_network
         self.enable_performance = enable_performance
-
+        
         # Data storage
         self.requests: List[Dict[str, Any]] = []
         self.responses: List[Dict[str, Any]] = []
@@ -62,7 +60,7 @@ class ChromeDevToolsMonitor:
             "requests_by_type": {},
             "requests_by_domain": {},
         }
-
+        
         # Start time for monitoring
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
@@ -70,17 +68,17 @@ class ChromeDevToolsMonitor:
     async def start_monitoring(self) -> None:
         """Start monitoring network and performance."""
         self.start_time = datetime.now()
-
+        
         if self.enable_network:
             # Set up network request/response handlers
             self.page.on("request", self._on_request)
             self.page.on("response", self._on_response)
             self.page.on("requestfailed", self._on_request_failed)
-
+        
         if self.enable_performance:
             # Enable performance tracking
             await self.page.context.tracing.start(screenshots=False, snapshots=False)
-
+        
         logger.info("Chrome DevTools monitoring started")
 
     async def stop_monitoring(self) -> Dict[str, Any]:
@@ -91,16 +89,14 @@ class ChromeDevToolsMonitor:
             Dictionary with all collected metrics
         """
         self.end_time = datetime.now()
-
+        
         # Calculate duration
-        duration = (
-            (self.end_time - self.start_time).total_seconds() if self.start_time else 0
-        )
-
+        duration = (self.end_time - self.start_time).total_seconds() if self.start_time else 0
+        
         # Collect performance metrics if enabled
         if self.enable_performance:
             await self._collect_performance_metrics()
-
+        
         # Compile final metrics
         metrics = {
             "start_time": self.start_time.isoformat() if self.start_time else None,
@@ -115,11 +111,9 @@ class ChromeDevToolsMonitor:
             "requests": self.requests[:100],  # Limit to first 100 requests
             "responses": self.responses[:100],  # Limit to first 100 responses
         }
-
-        logger.info(
-            f"Monitoring stopped. Collected {len(self.requests)} requests, {len(self.responses)} responses"
-        )
-
+        
+        logger.info(f"Monitoring stopped. Collected {len(self.requests)} requests, {len(self.responses)} responses")
+        
         return metrics
 
     def _on_request(self, request) -> None:
@@ -132,20 +126,19 @@ class ChromeDevToolsMonitor:
             "resource_type": request.resource_type,
             "timestamp": datetime.now().isoformat(),
         }
-
+        
         self.requests.append(request_data)
         self.network_metrics["total_requests"] += 1
-
+        
         # Track by resource type
         resource_type = request.resource_type
         self.network_metrics["requests_by_type"][resource_type] = (
             self.network_metrics["requests_by_type"].get(resource_type, 0) + 1
         )
-
+        
         # Track by domain
         try:
             from urllib.parse import urlparse
-
             domain = urlparse(request.url).netloc
             self.network_metrics["requests_by_domain"][domain] = (
                 self.network_metrics["requests_by_domain"].get(domain, 0) + 1
@@ -162,7 +155,7 @@ class ChromeDevToolsMonitor:
             "headers": response.headers,
             "timestamp": datetime.now().isoformat(),
         }
-
+        
         # Get response size if available
         try:
             content_length = response.headers.get("content-length")
@@ -171,7 +164,7 @@ class ChromeDevToolsMonitor:
                 self.network_metrics["total_bytes"] += int(content_length)
         except Exception:
             pass
-
+        
         self.responses.append(response_data)
 
     def _on_request_failed(self, request) -> None:
@@ -182,7 +175,7 @@ class ChromeDevToolsMonitor:
             "failure_text": request.failure if hasattr(request, "failure") else None,
             "timestamp": datetime.now().isoformat(),
         }
-
+        
         self.requests.append({**failure_data, "failed": True})
 
     async def _collect_performance_metrics(self) -> None:
@@ -190,14 +183,14 @@ class ChromeDevToolsMonitor:
         try:
             # Get performance metrics via CDP
             cdp_session = await self.page.context.new_cdp_session(self.page)
-
+            
             # Get performance timing
             performance_timing = await cdp_session.send("Performance.getMetrics")
-
+            
             self.performance_metrics = {
                 "metrics": performance_timing.get("metrics", []),
             }
-
+            
             await cdp_session.detach()
         except Exception as e:
             logger.warning(f"Could not collect performance metrics: {e}")
@@ -216,9 +209,7 @@ class ChromeDevToolsMonitor:
         metrics = {
             "start_time": self.start_time.isoformat() if self.start_time else None,
             "end_time": self.end_time.isoformat() if self.end_time else None,
-            "duration_seconds": (self.end_time - self.start_time).total_seconds()
-            if self.start_time and self.end_time
-            else 0,
+            "duration_seconds": (self.end_time - self.start_time).total_seconds() if self.start_time and self.end_time else 0,
             "network": {
                 **self.network_metrics,
                 "request_count": len(self.requests),
@@ -228,13 +219,13 @@ class ChromeDevToolsMonitor:
             "sample_requests": self.requests[:50],  # Save sample of requests
             "sample_responses": self.responses[:50],  # Save sample of responses
         }
-
+        
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
-
+        
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)
-
+        
         logger.info(f"Metrics saved to {filepath}")
         return filepath
 
@@ -245,12 +236,8 @@ class ChromeDevToolsMonitor:
         Returns:
             Dictionary with summary statistics
         """
-        duration = (
-            (self.end_time - self.start_time).total_seconds()
-            if self.start_time and self.end_time
-            else 0
-        )
-
+        duration = (self.end_time - self.start_time).total_seconds() if self.start_time and self.end_time else 0
+        
         return {
             "duration_seconds": duration,
             "total_requests": len(self.requests),

@@ -23,7 +23,7 @@ def load_injuries():
     injury_files = sorted(injury_path.glob("nfl_injuries*.json"), reverse=True)
 
     if not injury_files:
-        print("[ERROR] No injury data found!")
+        print("❌ No injury data found!")
         return []
 
     with open(injury_files[0]) as f:
@@ -37,16 +37,16 @@ def main():
     print()
 
     # Initialize Billy Walters valuation
-    print("[*] Initializing Billy Walters valuation system...")
+    print("🔧 Initializing Billy Walters valuation system...")
     bw_valuation = BillyWaltersValuation(sport="NFL")
-    print("[OK] Billy Walters system ready")
+    print("✓ Billy Walters system ready")
     print()
 
     injuries = load_injuries()
     if not injuries:
         return
 
-    print(f"[OK] Loaded {len(injuries)} injury reports")
+    print(f"✓ Loaded {len(injuries)} injury reports")
     print()
 
     # Group by position and status
@@ -96,9 +96,9 @@ def main():
                 pos_value = bw_valuation.calculate_player_value(pos, tier=None)
                 total_points_lost = position_values.get(pos, 0)
 
-                print(f"{'[*]' * 80}")
+                print(f"{'═' * 80}")
                 print(f"  {pos} POSITION ANALYSIS")
-                print(f"{'[*]' * 80}")
+                print(f"{'─' * 80}")
                 print(f"  Base Value per Player: {pos_value:.1f} points")
                 print(
                     f"  Out/IR: {total_unavailable} players | Questionable: {len(questionable)} players"
@@ -142,7 +142,7 @@ def main():
 
     # QB Deep Dive
     print("=" * 80)
-    print("  [NFL] QUARTERBACK INJURY REPORT (MOST CRITICAL FOR BETTING!)")
+    print("  🏈 QUARTERBACK INJURY REPORT (MOST CRITICAL FOR BETTING!)")
     print("=" * 80)
     print()
 
@@ -159,7 +159,7 @@ def main():
 
     # Position Group Crisis Analysis
     print("\n" + "=" * 80)
-    print("  [CHART] POSITION GROUP CRISIS ANALYSIS")
+    print("  📊 POSITION GROUP CRISIS ANALYSIS")
     print("=" * 80)
     print()
 
@@ -189,7 +189,7 @@ def main():
     )
 
     if ol_count >= 5:
-        print("  [WARNING]  O-LINE CRISIS LEAGUE-WIDE:")
+        print("  ⚠️  O-LINE CRISIS LEAGUE-WIDE:")
         print(f"     {ol_count} O-linemen out ({ol_impact:.1f} pts total impact)")
         print(
             "     Expect increased sack rates (+68% typical), reduced rushing efficiency (-1.2 YPC)"
@@ -200,7 +200,7 @@ def main():
         print()
 
     if db_count >= 10:
-        print("  [WARNING]  SECONDARY DEPLETION LEAGUE-WIDE:")
+        print("  ⚠️  SECONDARY DEPLETION LEAGUE-WIDE:")
         print(f"     {db_count} DBs out ({db_impact:.1f} pts total impact)")
         print(
             "     Expect increased passing yards (+85 typical), higher completion% (+8%)"
@@ -211,7 +211,7 @@ def main():
         print()
 
     if skill_count >= 15:
-        print("  [WARNING]  SKILL POSITION CRISIS:")
+        print("  ⚠️  SKILL POSITION CRISIS:")
         print(
             f"     {skill_count} skill players out ({skill_impact:.1f} pts total impact)"
         )
@@ -221,7 +221,7 @@ def main():
 
     # Recovery Timeline Analysis
     print("=" * 80)
-    print("  ⏱[*]  RECOVERY TIMELINE TRACKER")
+    print("  ⏱️  RECOVERY TIMELINE TRACKER")
     print("=" * 80)
     print()
     print("  Typical Recovery Times (Billy Walters methodology):")
@@ -253,7 +253,7 @@ def main():
 
     print()
     print("=" * 80)
-    print("  [MONEY] BILLY WALTERS BETTING INSIGHTS")
+    print("  💰 BILLY WALTERS BETTING INSIGHTS")
     print("=" * 80)
     print()
 
@@ -267,7 +267,7 @@ def main():
         f"  • O-line injuries: {ol_count} out = More sacks, less offense (UNDER lean)"
     )
     print()
-    print("  [TARGET] Key Betting Strategies:")
+    print("  🎯 Key Betting Strategies:")
     print(
         "     1. Teams with 3+ point injury disadvantage = Strong fade (64% win rate)"
     )
@@ -275,7 +275,7 @@ def main():
     print("     3. Markets underreact by 15% on average (seek those gaps)")
     print("     4. Position group crises (2+ same unit) more impactful than stars")
     print()
-    print("  [WARNING]  Always cross-reference with actual lines and team depth charts")
+    print("  ⚠️  Always cross-reference with actual lines and team depth charts")
     print()
 
 

@@ -14,9 +14,7 @@ from typing import Any, Callable, Literal
 
 from .action_network_client import ActionNetworkClient
 from .espn_client import ESPNClient
-from .overtime_api_client import (
-    OvertimeApiClient as OvertimeAPIClient,
-)  # Updated to use new API client
+from .overtime_api_client import OvertimeApiClient as OvertimeAPIClient  # Updated to use new API client
 from .validated_espn import DataQualityReport, ESPNDataValidator
 from .weather_client import WeatherClient
 
@@ -378,7 +376,7 @@ class DataOrchestrator:
                         await self._validate_result(task)
 
                     task.status = CollectionStatus.COMPLETED
-                    logger.info(f"[OK] Completed: {task.description}")
+                    logger.info(f"✓ Completed: {task.description}")
                     break
 
                 except asyncio.TimeoutError:
@@ -396,7 +394,7 @@ class DataOrchestrator:
                         await asyncio.sleep(wait_time)
                     else:
                         task.status = CollectionStatus.FAILED
-                        logger.error(f"[X] Failed: {task.description}")
+                        logger.error(f"✗ Failed: {task.description}")
 
                 except Exception as e:
                     error_msg = str(e)
@@ -412,7 +410,7 @@ class DataOrchestrator:
                         await asyncio.sleep(wait_time)
                     else:
                         task.status = CollectionStatus.FAILED
-                        logger.error(f"[X] Failed: {task.description}")
+                        logger.error(f"✗ Failed: {task.description}")
 
             task.end_time = datetime.now()
 
@@ -546,18 +544,18 @@ class DataOrchestrator:
         logger.info(f"Degraded: {report.degraded_sources}")
         logger.info(f"Success Rate: {report.success_rate:.1f}%")
         logger.info(
-            f"Health Status: {'[OK] HEALTHY' if report.is_healthy else '[X] UNHEALTHY'}"
+            f"Health Status: {'✓ HEALTHY' if report.is_healthy else '✗ UNHEALTHY'}"
         )
 
         if report.get_failed_tasks():
             logger.info("\nFailed Tasks:")
             for task in report.get_failed_tasks():
-                logger.info(f"  [X] {task.description}: {task.error}")
+                logger.info(f"  ✗ {task.description}: {task.error}")
 
         if report.get_degraded_tasks():
             logger.info("\nDegraded Tasks:")
             for task in report.get_degraded_tasks():
-                logger.info(f"  [WARNING] {task.description}")
+                logger.info(f"  ⚠ {task.description}")
                 if task.quality_report:
                     logger.info(
                         f"    Quality: {task.quality_report.validation_rate:.1f}%"

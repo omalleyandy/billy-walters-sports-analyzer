@@ -359,14 +359,14 @@ def main():
     elif args.bet_id:
         if args.update_closing_line is not None:
             result = tracker.update_closing_line(args.bet_id, args.update_closing_line)
-            print(f"\n[*] Updated closing line for {args.bet_id}")
+            print(f"\n✅ Updated closing line for {args.bet_id}")
             print(f"   Bet Line: {result['bet_line']:+.1f}")
             print(f"   Closing Line: {result['closing_line']:+.1f}")
             print(f"   CLV: {result['clv']:+.2f} points")
         elif args.update_score:
             away, home = args.update_score
             result = tracker.update_final_score(args.bet_id, away, home)
-            print(f"\n[*] Updated final score for {args.bet_id}")
+            print(f"\n✅ Updated final score for {args.bet_id}")
             print(f"   Final Score: {result['final_score']}")
             print(f"   Result: {result['result'].upper()}")
             print(f"   Profit/Loss: {result['profit_loss']:+.2f} units")

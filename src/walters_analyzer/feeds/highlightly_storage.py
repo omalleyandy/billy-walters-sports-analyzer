@@ -66,7 +66,7 @@ def save_to_jsonl(
             count += 1
 
     logger.info(f"Saved {count} items to {filepath}")
-    print(f"[*] Saved {count} items to {filepath}")
+    print(f"✅ Saved {count} items to {filepath}")
 
     return filepath
 
