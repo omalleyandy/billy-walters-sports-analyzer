@@ -242,16 +242,16 @@ class OvertimeLiveSpider(scrapy.Spider):
 
             if ip_info:
                 self.logger.info(
-                    f"✓ Proxy IP verified: {ip_info.get('ip')} "
+                    f"[OK] Proxy IP verified: {ip_info.get('ip')} "
                     f"({ip_info.get('city')}, {ip_info.get('region')}, {ip_info.get('country')})"
                 )
                 return True
             else:
-                self.logger.warning("⚠ Could not parse IP info")
+                self.logger.warning("[WARNING] Could not parse IP info")
                 return False
 
         except Exception as e:
-            self.logger.error(f"✗ Proxy verification failed: {e}")
+            self.logger.error(f"[X] Proxy verification failed: {e}")
             return False
 
     async def _perform_login(self, page: Page) -> bool:

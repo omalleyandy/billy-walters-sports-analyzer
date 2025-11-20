@@ -884,19 +884,19 @@ async def main():
     }
 
     # Make autonomous decision
-    print("🤖 Autonomous Agent Analysis")
+    print("[*] Autonomous Agent Analysis")
     print("=" * 60)
 
     decision = await agent.make_autonomous_decision(game_data)
 
     # Display reasoning chain
-    print(f"\n📊 Game: {decision.game_id}")
+    print(f"\n[CHART] Game: {decision.game_id}")
     print(f"Recommendation: {decision.recommendation.upper()}")
     print(f"Confidence: {decision.confidence.name}")
     print(f"Stake: {decision.stake_percentage:.1f}% of bankroll")
     print(f"Expected Value: {decision.expected_value:.2f}%")
 
-    print("\n🧠 Reasoning Chain:")
+    print("\n[*] Reasoning Chain:")
     for step in decision.reasoning_chain:
         print(f"\nStep {step.step_number}: {step.description}")
         print(f"  Confidence: {step.confidence:.1%}")
@@ -904,7 +904,7 @@ async def main():
             print(f"  • {evidence}")
         print(f"  Impact: {step.impact_on_decision}")
 
-    print("\n⚠️ Risk Assessment:")
+    print("\n[WARNING] Risk Assessment:")
     for key, value in decision.risk_assessment.items():
         print(f"  {key}: {value:.2f}")
 
@@ -914,7 +914,7 @@ async def main():
     # Get strategy recommendations
     strategies = await agent.meta_learner.get_strategy_recommendations()
     if strategies:
-        print("\n📈 Learned Strategy Performance:")
+        print("\n[UP] Learned Strategy Performance:")
         for strategy, performance in strategies.items():
             print(f"  {strategy}: {performance['recommendation']}")
 

@@ -252,7 +252,9 @@ class AgentDataLoader:
                 "total_impact": impact_data.get("total_impact", 0.0),
                 "critical_count": len(impact_data.get("critical_injuries", [])),
                 "injury_count": len(injured_players),
-                "injury_details": impact_data.get("detailed_breakdown", [])[:5],  # Top 5
+                "injury_details": impact_data.get("detailed_breakdown", [])[
+                    :5
+                ],  # Top 5
             }
         else:
             return {
@@ -305,9 +307,7 @@ class AgentDataLoader:
 
             # Calculate predicted spread from power ratings
             # Predicted = (home_rating - away_rating) + home_field_advantage
-            predicted_spread = (
-                home_rating - away_rating + self.home_field_advantage
-            )
+            predicted_spread = home_rating - away_rating + self.home_field_advantage
 
             # Game time
             game_date_str = overtime_game.get("GameDateTimeString", "")
@@ -316,8 +316,16 @@ class AgentDataLoader:
             game_id = f"{away_team_raw.replace(' ', '_')}_at_{home_team_raw.replace(' ', '_')}"
 
             # Calculate injury impacts if data available
-            home_injury_impact = {"total_impact": 0.0, "critical_count": 0, "injury_count": 0}
-            away_injury_impact = {"total_impact": 0.0, "critical_count": 0, "injury_count": 0}
+            home_injury_impact = {
+                "total_impact": 0.0,
+                "critical_count": 0,
+                "injury_count": 0,
+            }
+            away_injury_impact = {
+                "total_impact": 0.0,
+                "critical_count": 0,
+                "injury_count": 0,
+            }
 
             if injuries_by_team:
                 home_injury_impact = self.calculate_team_injury_impact(
@@ -426,5 +434,7 @@ if __name__ == "__main__":
             f"  Injuries: Home {game['home_injury_count']} ({game['home_injury_impact']:+.1f} pts), "
             f"Away {game['away_injury_count']} ({game['away_injury_impact']:+.1f} pts)"
         )
-        print(f"  Injury Advantage: {game['injury_advantage']:+.1f} (positive = home healthier)")
+        print(
+            f"  Injury Advantage: {game['injury_advantage']:+.1f} (positive = home healthier)"
+        )
         print()

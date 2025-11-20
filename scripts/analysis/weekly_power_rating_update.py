@@ -314,12 +314,12 @@ class WeeklyPowerRatingUpdater:
             # Generate report
             self.generate_rating_change_report()
 
-            logger.info("✅ WEEKLY UPDATE COMPLETE!")
+            logger.info("[*] WEEKLY UPDATE COMPLETE!")
             logger.info(f"Power ratings updated through Week {self.week_num}")
             logger.info("")
 
         except Exception as e:
-            logger.error(f"❌ Update failed: {e}")
+            logger.error(f"[ERROR] Update failed: {e}")
             raise
 
 

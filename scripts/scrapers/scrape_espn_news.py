@@ -25,7 +25,7 @@ def scrape_news():
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print(f"ESPN NEWS SCRAPER")
+    print("ESPN NEWS SCRAPER")
     print("=" * 70)
 
     print("\nFetching ESPN news posts...")
@@ -40,13 +40,17 @@ def scrape_news():
         items = news.get("items", [])
         if items:
             print(f"  Posts found: {len(items)}")
-            print(f"\n  Sample posts:")
+            print("\n  Sample posts:")
             for item in items[:3]:
                 title = item.get("title", "No title")
                 date = item.get("pubDate", "No date")
                 print(f"    {title} - {date}")
 
-        result = {"success": True, "post_count": len(items) if items else 0, "filepath": filepath}
+        result = {
+            "success": True,
+            "post_count": len(items) if items else 0,
+            "filepath": filepath,
+        }
 
     except Exception as e:
         print(f"  [ERROR] {e}")

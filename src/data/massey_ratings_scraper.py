@@ -183,17 +183,19 @@ class MasseyRatingsScraper:
             # Use new output structure: output/massey/nfl/ratings/
             output_dir = os.path.join(self.output_base_dir, "nfl", "ratings")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"nfl_ratings_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
-                api_file = os.path.join(output_dir, f"nfl_api_responses_{timestamp}.json")
+                api_file = os.path.join(
+                    output_dir, f"nfl_api_responses_{timestamp}.json"
+                )
                 with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
                 logger.info(
@@ -325,17 +327,19 @@ class MasseyRatingsScraper:
             # Use new output structure: output/massey/ncaaf/ratings/
             output_dir = os.path.join(self.output_base_dir, "ncaaf", "ratings")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"ncaaf_ratings_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(ratings_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
 
             # Save captured API calls
             if self.captured_responses:
-                api_file = os.path.join(output_dir, f"ncaaf_api_responses_{timestamp}.json")
+                api_file = os.path.join(
+                    output_dir, f"ncaaf_api_responses_{timestamp}.json"
+                )
                 with open(api_file, "w") as f:
                     json.dump(self.captured_responses, f, indent=2)
                 logger.info(
@@ -361,7 +365,11 @@ class MasseyRatingsScraper:
         self.captured_requests = []
         self.captured_responses = []
 
-        games_data = {"sport": "NFL", "url": url, "scraped_at": datetime.now().isoformat()}
+        games_data = {
+            "sport": "NFL",
+            "url": url,
+            "scraped_at": datetime.now().isoformat(),
+        }
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
@@ -385,10 +393,10 @@ class MasseyRatingsScraper:
         if save:
             output_dir = os.path.join(self.output_base_dir, "nfl", "games")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"nfl_games_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(games_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
@@ -412,7 +420,11 @@ class MasseyRatingsScraper:
         self.captured_requests = []
         self.captured_responses = []
 
-        games_data = {"sport": "NCAAF", "url": url, "scraped_at": datetime.now().isoformat()}
+        games_data = {
+            "sport": "NCAAF",
+            "url": url,
+            "scraped_at": datetime.now().isoformat(),
+        }
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
@@ -436,10 +448,10 @@ class MasseyRatingsScraper:
         if save:
             output_dir = os.path.join(self.output_base_dir, "ncaaf", "games")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"ncaaf_games_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(games_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
@@ -460,16 +472,20 @@ class MasseyRatingsScraper:
         url = f"{self.base_url}/nfl/matchups"
         # Note: This endpoint may not exist - will need to verify
 
-        matchups_data = {"sport": "NFL", "url": url, "scraped_at": datetime.now().isoformat()}
+        matchups_data = {
+            "sport": "NFL",
+            "url": url,
+            "scraped_at": datetime.now().isoformat(),
+        }
 
         # Save data
         if save:
             output_dir = os.path.join(self.output_base_dir, "nfl", "matchups")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"nfl_matchups_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(matchups_data, f, indent=2)
             logger.info(f"Saved to {filepath}")
@@ -490,16 +506,20 @@ class MasseyRatingsScraper:
         url = f"{self.base_url}/cf/fbs/matchups"
         # Note: This endpoint may not exist - will need to verify
 
-        matchups_data = {"sport": "NCAAF", "url": url, "scraped_at": datetime.now().isoformat()}
+        matchups_data = {
+            "sport": "NCAAF",
+            "url": url,
+            "scraped_at": datetime.now().isoformat(),
+        }
 
         # Save data
         if save:
             output_dir = os.path.join(self.output_base_dir, "ncaaf", "matchups")
             os.makedirs(output_dir, exist_ok=True)
-            
+
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filepath = os.path.join(output_dir, f"ncaaf_matchups_{timestamp}.json")
-            
+
             with open(filepath, "w") as f:
                 json.dump(matchups_data, f, indent=2)
             logger.info(f"Saved to {filepath}")

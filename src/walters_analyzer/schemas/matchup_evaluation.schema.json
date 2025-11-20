@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bwsa/schemas/matchup_evaluation.schema.json",
+  "title": "MatchupEvaluation",
+  "type": "object",
+  "properties": {
+    "evaluation_id": { "type": "string" },
+    "game_id": { "type": "string" },
+    "model_version": { "type": "string" },
+    "home_team_id": { "type": "string" },
+    "away_team_id": { "type": "string" },
+
+    "base_power_diff": { "type": "number" },
+
+    "s_factor_points_home": { "type": "number" },
+    "s_factor_points_away": { "type": "number" },
+    "w_factor_points_home": { "type": "number" },
+    "w_factor_points_away": { "type": "number" },
+    "e_factor_points_home": { "type": "number" },
+    "e_factor_points_away": { "type": "number" },
+
+    "adjusted_power_home": { "type": "number" },
+    "adjusted_power_away": { "type": "number" },
+
+    "predicted_spread": { "type": "number" },
+    "market_spread": { "type": "number" },
+    "effective_spread": { "type": "number" },
+
+    "edge_percentage": { "type": "number" },
+    "star_rating": { "type": "number" },
+    "qualifies_as_play": { "type": "boolean" },
+
+    "notes": { "type": ["string", "null"] }
+  },
+  "required": [
+    "evaluation_id",
+    "game_id",
+    "model_version",
+    "home_team_id",
+    "away_team_id",
+    "base_power_diff",
+    "s_factor_points_home",
+    "s_factor_points_away",
+    "w_factor_points_home",
+    "w_factor_points_away",
+    "e_factor_points_home",
+    "e_factor_points_away",
+    "adjusted_power_home",
+    "adjusted_power_away",
+    "predicted_spread",
+    "market_spread",
+    "effective_spread",
+    "edge_percentage",
+    "star_rating",
+    "qualifies_as_play"
+  ],
+  "additionalProperties": false
+}
