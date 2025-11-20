@@ -36,7 +36,7 @@ def scrape_standings(league: str, season: int | None = None):
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print("ESPN STANDINGS SCRAPER")
+    print(f"ESPN STANDINGS SCRAPER")
     print("=" * 70)
 
     results = {}
@@ -59,7 +59,9 @@ def scrape_standings(league: str, season: int | None = None):
                 standings = client.get_ncaaf_standings(season=season)
 
             # Save using new output structure
-            filepath = client.save_to_json(standings, data_type="standings", league=lg)
+            filepath = client.save_to_json(
+                standings, data_type="standings", league=lg
+            )
 
             # Try to extract division/conference info
             children = standings.get("children", [])
@@ -91,7 +93,9 @@ def scrape_standings(league: str, season: int | None = None):
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(description="Scrape ESPN NFL/NCAAF standings")
+    parser = argparse.ArgumentParser(
+        description="Scrape ESPN NFL/NCAAF standings"
+    )
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf", "all"],

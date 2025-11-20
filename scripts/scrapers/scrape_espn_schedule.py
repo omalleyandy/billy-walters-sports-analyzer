@@ -36,7 +36,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
     client = ESPNAPIClient()
 
     print("=" * 70)
-    print("ESPN SCHEDULE SCRAPER")
+    print(f"ESPN SCHEDULE SCRAPER")
     print("=" * 70)
 
     results = {}
@@ -62,7 +62,9 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
             print(f"  Games found: {len(events)}")
 
             # Save using new output structure
-            filepath = client.save_to_json(schedule, data_type="schedule", league=lg)
+            filepath = client.save_to_json(
+                schedule, data_type="schedule", league=lg
+            )
 
             results[lg] = {
                 "success": True,
@@ -72,7 +74,7 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
 
             # Show sample games
             if events:
-                print("\n  Sample games:")
+                print(f"\n  Sample games:")
                 for event in events[:3]:
                     comps = event.get("competitions", [{}])[0]
                     teams = comps.get("competitors", [])
@@ -101,7 +103,9 @@ def scrape_schedule(league: str, week: int | None = None, season: int | None = N
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(description="Scrape ESPN NFL/NCAAF schedules")
+    parser = argparse.ArgumentParser(
+        description="Scrape ESPN NFL/NCAAF schedules"
+    )
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf", "all"],

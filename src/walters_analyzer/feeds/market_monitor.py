@@ -70,7 +70,7 @@ class MarketMonitor:
 
         end_time = datetime.now() + timedelta(minutes=duration_minutes)
 
-        print(f"[SEARCH] Monitoring {sport} for {duration_minutes} minutes...")
+        print(f"🔍 Monitoring {sport} for {duration_minutes} minutes...")
         print(f"   Checking every {check_interval} seconds")
         print(
             f"   Alert threshold: {self.settings.skills.market_analysis.alert_threshold} points"
@@ -87,13 +87,13 @@ class MarketMonitor:
             odds = await self.client.get_odds(sport)
 
             if not odds:
-                print("   [WARNING]  No odds data received")
+                print("   ⚠️  No odds data received")
             else:
-                print(f"   [OK] Fetched odds for {len(odds)} book/game combinations")
+                print(f"   ✓ Fetched odds for {len(odds)} book/game combinations")
 
                 # Process each game
                 games = self._group_by_game(odds)
-                print(f"   [OK] Monitoring {len(games)} games")
+                print(f"   ✓ Monitoring {len(games)} games")
 
                 for game_id, game_odds in games.items():
                     # Analyze for sharp money
@@ -103,10 +103,10 @@ class MarketMonitor:
                         self._send_alert(alert)
 
             # Wait before next check
-            print(f"   ⏱[*]  Waiting {check_interval} seconds...\n")
+            print(f"   ⏱️  Waiting {check_interval} seconds...\n")
             await asyncio.sleep(check_interval)
 
-        print(f"\n[*] Monitoring complete. Total alerts: {len(self.alerts)}")
+        print(f"\n✅ Monitoring complete. Total alerts: {len(self.alerts)}")
 
     async def monitor_game(
         self,
@@ -125,7 +125,7 @@ class MarketMonitor:
         interval = self.settings.skills.market_analysis.monitor_interval
         end_time = datetime.now() + timedelta(minutes=duration_minutes)
 
-        print(f"[SEARCH] Monitoring game {game_id} for {duration_minutes} minutes...")
+        print(f"🔍 Monitoring game {game_id} for {duration_minutes} minutes...")
 
         while datetime.now() < end_time:
             # Fetch all odds for sport
@@ -141,7 +141,7 @@ class MarketMonitor:
                 if alert:
                     self._send_alert(alert)
             else:
-                print(f"[WARNING]  No odds found for game {game_id}")
+                print(f"⚠️  No odds found for game {game_id}")
 
             # Wait before next check
             await asyncio.sleep(interval)
@@ -282,7 +282,7 @@ class MarketMonitor:
     def _print_alert(self, alert: Dict):
         """Print alert to console"""
         print("\n" + "=" * 80)
-        print("[*] SHARP MONEY ALERT")
+        print("🚨 SHARP MONEY ALERT")
         print("=" * 80)
 
         teams = alert.get("teams", {})
@@ -375,7 +375,7 @@ async def main():
 
     # Print summary
     summary = monitor.get_alert_summary()
-    print("\n[CHART] MONITORING SUMMARY")
+    print("\n📊 MONITORING SUMMARY")
     print("=" * 80)
     print(f"Total Alerts: {summary.get('total_alerts')}")
     print(f"Average Confidence: {summary.get('avg_confidence', 0):.1f}%")

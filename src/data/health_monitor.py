@@ -395,10 +395,10 @@ class HealthMonitor:
         # System health
         system_health = self.get_system_health()
         health_icon = {
-            HealthStatus.HEALTHY: "[OK]",
-            HealthStatus.DEGRADED: "[WARNING]",
-            HealthStatus.UNHEALTHY: "[X]",
-            HealthStatus.CRITICAL: "[*]",
+            HealthStatus.HEALTHY: "✓",
+            HealthStatus.DEGRADED: "⚠",
+            HealthStatus.UNHEALTHY: "✗",
+            HealthStatus.CRITICAL: "☠",
             HealthStatus.UNKNOWN: "?",
         }[system_health]
 
@@ -447,7 +447,7 @@ async def main():
 
     # Register callback
     def alert_callback(alert: Alert):
-        print(f"[*] ALERT: {alert.message}")
+        print(f"🚨 ALERT: {alert.message}")
 
     monitor.register_alert_callback(alert_callback)
 

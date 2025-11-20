@@ -5,7 +5,6 @@
 ## 🚀 What's New - Ultimate Edition Features
 
 ### 🎉 ALL PHASES COMPLETE!  **v0.8.0 Beta**
-- **Dynamic Week Tracking**: Auto-detects NFL (Week 11) & NCAAF (Week 12) - No more manual updates! ✅
 - **MCP Server**: Full Claude Desktop integration with 6 analysis tools ✅
 - **Autonomous Agent**: Self-learning AI with 5-step reasoning chains ✅
 - **AI-Enhanced Scraper**: Performance monitoring, network analysis, auto-debugging ✅
@@ -50,64 +49,6 @@
 - **Autonomous Agent**: Self-learning betting agent with reasoning chains (✅ INTEGRATED)
 - **ML Infrastructure**: XGBoost, scikit-learn for prediction and optimization (✅ INSTALLED)
 - **Billy Walters Valuation**: Position-specific injury impacts and market inefficiencies
-
-## 📅 Dynamic Week Tracking (NEW!)
-
-### Automatic Season Calendar
-
-The system now automatically detects the current week for both NFL and NCAAF, eliminating manual updates and preventing wrong-week analysis.
-
-**Current Status** (as of November 15, 2025):
-- **NFL**: Week 11 (November 14-20, 2025)
-- **NCAAF FBS**: Week 12 (November 15-21, 2025)
-
-**Quick Check**:
-```bash
-cd src && uv run python -m walters_analyzer.season_calendar
-```
-
-**Output**:
-```
-Today: November 15, 2025
-
-NFL Status:
-  NFL 2025 Regular Season - Week 11 (Nov 14-20, 2025)
-  Week: 11
-  Phase: regular_season
-
-NCAAF FBS Status:
-  NCAAF FBS 2025 Regular Season - Week 12 (Nov 15-21, 2025)
-  Week: 12
-  Phase: regular_season
-```
-
-**In Your Scripts**:
-```python
-from walters_analyzer.season_calendar import get_nfl_week, get_ncaaf_week
-
-# Auto-detect current week (returns None if season inactive)
-nfl_week = get_nfl_week()      # Returns: 11
-ncaaf_week = get_ncaaf_week()  # Returns: 12
-
-if nfl_week is None:
-    print("⚠️ NFL season not active")
-    exit(1)
-
-print(f"✅ Analyzing Week {nfl_week} games")
-```
-
-**Why This Matters**:
-- ❌ **Before**: Hardcoded "Week 5" throughout codebase - manual updates required
-- ✅ **After**: Automatically knows current week - zero maintenance
-- 🛡️ **Safety**: Returns `None` when season inactive - prevents invalid analysis
-- 🔄 **Multi-League**: Separate tracking for NFL (18 weeks) and NCAAF (14 weeks + Week 0)
-
-**Documentation**:
-- Full guide: [DYNAMIC_WEEK_TRACKING_SUMMARY.md](DYNAMIC_WEEK_TRACKING_SUMMARY.md)
-- Updated instructions: [PROJECT_INSTRUCTIONS_V2.md](PROJECT_INSTRUCTIONS_V2.md)
-- Project memory: [PROJECT_MEMORY.md](PROJECT_MEMORY.md)
-
----
 
 ## Billy Walters Methodology
 
@@ -585,9 +526,6 @@ See [.claude/README.md](.claude/README.md) for complete autonomous agent documen
 
 ### Core Documentation
 - [README.md](README.md) - This file (main documentation)
-- **[PROJECT_MEMORY.md](PROJECT_MEMORY.md)** - 🆕 Project memory for future sessions
-- **[PROJECT_INSTRUCTIONS_V2.md](PROJECT_INSTRUCTIONS_V2.md)** - 🆕 Updated AI assistant instructions with dynamic weeks
-- **[DYNAMIC_WEEK_TRACKING_SUMMARY.md](DYNAMIC_WEEK_TRACKING_SUMMARY.md)** - 🆕 Week tracking implementation guide
 - [INTEGRATION_ANALYSIS.md](docs/reports/INTEGRATION_ANALYSIS.md) - Integration architecture and strategy
 - [.claude/README.md](.claude/README.md) - MCP server and autonomous agent guide
 

@@ -223,7 +223,7 @@ async def discover_with_login():
         await page.goto("https://overtime.ag", wait_until="networkidle")
 
         print("3. Logging in...")
-        await page.click("a.btn-signup")
+        await page.click('a.btn-signup')
         await asyncio.sleep(1)
 
         await page.fill('input[ng-model="Username"]', customer_id)
@@ -275,9 +275,9 @@ async def discover_with_login():
         print(f"   Hub name: {hub_info['hub_name']}")
         print(f"   Connection state: {hub_info['connection_state']}")
 
-        if hub_info["events"]:
+        if hub_info['events']:
             print(f"\n   Found {len(hub_info['events'])} client methods:")
-            for event in hub_info["events"]:
+            for event in hub_info['events']:
                 print(f"      - {event}")
 
         print("\n7. Keeping browser open for manual inspection...")
@@ -295,16 +295,16 @@ async def discover_with_login():
     print("ANALYSIS RESULTS")
     print("=" * 70)
 
-    if hub_info["events"]:
+    if hub_info['events']:
         print("\nDiscovered SignalR Client Events:")
-        for event in sorted(hub_info["events"]):
+        for event in sorted(hub_info['events']):
             print(f"  - {event}")
 
         print("\n" + "=" * 70)
         print("PYTHON CODE TO ADD TO SCRAPER")
         print("=" * 70)
         print()
-        for event in sorted(hub_info["events"]):
+        for event in sorted(hub_info['events']):
             print(f'self.signalr_connection.on("{event}", self._on_{event})')
 
         # Save results
@@ -315,10 +315,10 @@ async def discover_with_login():
             "discovered_at": "2025-11-13",
             "source": "overtime.ag",
             "method": "browser_evaluation",
-            "hub_name": hub_info["hub_name"],
-            "connection_state": hub_info["connection_state"],
-            "total_events": len(hub_info["events"]),
-            "events": sorted(hub_info["events"]),
+            "hub_name": hub_info['hub_name'],
+            "connection_state": hub_info['connection_state'],
+            "total_events": len(hub_info['events']),
+            "events": sorted(hub_info['events']),
         }
 
         with open(output_file, "w") as f:
@@ -334,11 +334,7 @@ if __name__ == "__main__":
         asyncio.run(discover_with_login())
     else:
         print("Usage:")
-        print(
-            "  Basic discovery:  uv run python scripts/dev/discover_signalr_events.py"
-        )
-        print(
-            "  With login:       uv run python scripts/dev/discover_signalr_events.py --with-login"
-        )
+        print("  Basic discovery:  uv run python scripts/dev/discover_signalr_events.py")
+        print("  With login:       uv run python scripts/dev/discover_signalr_events.py --with-login")
         print()
         asyncio.run(discover_with_login())

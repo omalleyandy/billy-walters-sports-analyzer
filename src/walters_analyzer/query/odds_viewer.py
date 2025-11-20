@@ -247,7 +247,7 @@ class OddsViewer:
             print(f"No games found for '{team_name}'")
             return
 
-        print(f"\n[UP] LINE COMPARISON FOR '{team_name.upper()}':")
+        print(f"\n📈 LINE COMPARISON FOR '{team_name.upper()}':")
         print("=" * 80)
 
         for game in sorted(games, key=lambda g: g.get("event_date", "")):
@@ -342,7 +342,7 @@ class OddsViewer:
                     ]
                 )
 
-        print(f"[*] Exported {len(games)} games to {output_file}")
+        print(f"✅ Exported {len(games)} games to {output_file}")
 
 
 def main():

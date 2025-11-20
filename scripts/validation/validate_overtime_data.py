@@ -59,11 +59,11 @@ class ValidationResult:
 
         print("\n" + "=" * 80)
         if self.errors:
-            print("[ERROR] VALIDATION FAILED")
+            print("❌ VALIDATION FAILED")
         elif self.warnings:
-            print("[WARNING]  VALIDATION PASSED WITH WARNINGS")
+            print("⚠️  VALIDATION PASSED WITH WARNINGS")
         else:
-            print("[*] VALIDATION PASSED")
+            print("✅ VALIDATION PASSED")
         print("=" * 80 + "\n")
 
 

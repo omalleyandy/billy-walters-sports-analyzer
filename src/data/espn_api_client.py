@@ -20,12 +20,12 @@ class ESPNAPIClient:
         # Website base URLs
         self.nfl_base_url = "https://www.espn.com/nfl"
         self.ncaaf_base_url = "https://www.espn.com/college-football"
-
+        
         # API base URLs
         self.base_url = "https://site.api.espn.com/apis/site/v2/sports/football"
         self.core_api_url = "https://sports.core.api.espn.com/v2/sports/football"
         self.web_api_url = "https://site.web.api.espn.com/apis/v3/sports/football"
-
+        
         # News endpoint
         self.news_url = "https://www.espn.com/google-news-posts"
 
