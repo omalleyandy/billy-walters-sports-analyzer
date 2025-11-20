@@ -141,8 +141,9 @@ class WeeklyPowerRatingUpdater:
         Returns:
             GameResult object
         """
-        # Parse date
-        game_date = date.fromisoformat(game_dict["date"])
+        # Parse date (handle timezone indicator)
+        date_str = game_dict["date"].replace('Z', '').split('T')[0]
+        game_date = date.fromisoformat(date_str)
 
         # Create GameResult
         return GameResult(

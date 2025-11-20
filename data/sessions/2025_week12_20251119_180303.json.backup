@@ -1,0 +1,38 @@
+{
+  "session_id": "2025_week12_20251119_180303",
+  "start_time": "2025-11-19T18:03:03.591506",
+  "last_updated": "2025-11-19T18:16:55.881967",
+  "week": 12,
+  "season": 2025,
+  "bankroll": 20000.0,
+  "active_bets": [],
+  "pending_opportunities": [
+    "PIT @ CLE",
+    "IND vs DET",
+    "ARI vs SEA"
+  ],
+  "power_ratings_updated": true,
+  "injuries_checked": true,
+  "weather_checked": true,
+  "opportunities_identified": 3,
+  "bets_placed": 0,
+  "total_risk_deployed": 0.0,
+  "notes": [
+    {
+      "timestamp": "2025-11-19T18:08:02.494246",
+      "category": "analysis",
+      "note": "Power ratings updated with Week {week-1} results"
+    },
+    {
+      "timestamp": "2025-11-19T18:16:37.348538",
+      "category": "data",
+      "note": "Latest injury reports reviewed"
+    },
+    {
+      "timestamp": "2025-11-19T18:16:55.881962",
+      "category": "data",
+      "note": "Weather forecasts checked for outdoor games"
+    }
+  ],
+  "metadata": {}
+}

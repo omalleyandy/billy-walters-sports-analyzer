@@ -1,0 +1,56 @@
+============================================================
+S AND W FACTOR MODULE TEST RESULTS
+============================================================
+
+TEST 1: Importing module...
+[SUCCESS] All imports working!
+
+TEST 2: Helper Functions
+  - Bills time zone: ET
+  - Dolphins warm weather: True
+  - Lions dome team: True
+[SUCCESS] Helper functions working!
+
+TEST 3: S-Factor Calculation
+  Scenario: Lions (Great team) off bye, hosting Bills
+  - Total S-Factor points: 8.0
+  - Spread adjustment: +1.60
+  - Breakdown: {'turf': 1.0, 'division': 0.0, 'schedule': 0.0, 'bye': 7.0, 'time_zone': 0.0}
+[SUCCESS] S-Factor calculation working!
+
+TEST 4: W-Factor Calculation (Indoor)
+  - Total W-Factor points: 0.0
+  - Spread adjustment: +0.00
+[SUCCESS] W-Factor calculation working!
+
+TEST 5: Weather Factor (Outdoor Cold)
+  Scenario: Dolphins @ Bills in 30 degrees F weather
+  - W-Factor adjustment: +0.50
+  - Effect: Warm-weather Dolphins penalized in cold
+[SUCCESS] Weather factors working!
+
+TEST 6: Bye Week Quality Tiers
+  - Below Average: Home=4 pts, Away=5 pts
+  - Average: Home=5 pts, Away=6 pts
+  - Great: Home=7 pts, Away=8 pts
+[SUCCESS] Bye week tiers working!
+
+TEST 7: Time Zone Factors
+  Scenario: Seahawks (PT) @ Giants (ET) - 10am game
+  - Time zone penalty: 2.0 points
+  - Description: West team in 10am game: +2.0
+[SUCCESS] Time zone factors working!
+
+============================================================
+ALL TESTS PASSED!
+============================================================
+
+The S and W Factor module is fully functional!
+Ready to integrate into Billy Walters analyzer.
+
+Billy Walters 2022-23 Stats:
+  - Average: 3.2 S-factor points per team per week
+  - Average spread adjustment: 0.64 points
+  - Range: 0 to 18 points
+
+Your system is now equipped with complete S and W factors!

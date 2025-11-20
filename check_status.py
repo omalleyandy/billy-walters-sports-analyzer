@@ -164,9 +164,9 @@ if all_ok:
     write_and_print("\n[OK] ALL TESTS PASSED!")
     write_and_print("\nYour MCP server is ready to use.")
     write_and_print("\nNext steps:")
-    write_and_print("  1. Test analyzer: .\.venv\Scripts\python.exe test_analyzer_simple.py")
+    write_and_print(r"  1. Test analyzer: .\.venv\Scripts\python.exe test_analyzer_simple.py")
     write_and_print("  2. Install Node.js from https://nodejs.org/")
-    write_and_print("  3. Run Inspector: npx @modelcontextprotocol/inspector python .claude\walters_mcp_server.py")
+    write_and_print(r"  3. Run Inspector: npx @modelcontextprotocol/inspector python .claude\walters_mcp_server.py")
     write_and_print("  4. Or add to Claude Desktop (see QUICK_START_MCP.md)")
 else:
     write_and_print("\n[X] SOME TESTS FAILED")

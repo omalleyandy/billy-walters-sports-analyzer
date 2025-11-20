@@ -1,15 +1,51 @@
+"""
+Billy Walters Sports Analyzer - Models Package
+
+Core data models for the betting analysis system.
+"""
+
 from .core import (
-    Team,
-    Game,
-    PowerRatingSnapshot,
-    MatchupEvaluation,
+    AdjustmentBreakdown,
     BetRecommendation,
+    BetSide,
+    BetType,
+    Game,
+    MatchupEvaluation,
+    PowerRatingSnapshot,
+    Team,
+)
+from .knowledge_graph import (
+    BettingKnowledgeGraph,
+    create_recommendation_from_evaluation,
+)
+from .matchup_evaluation import (
+    AdjustmentBreakdown,
+    BetRecommendation,
+    MatchupEvaluation,
+)
+from .clv_tracking_module import (
+    CLVAnalyzer,
+    CLVOutcome,
+    CLVSummary,
+    CLVTracking,
 )
 
 __all__ = [
-    "Team",
-    "Game",
-    "PowerRatingSnapshot",
-    "MatchupEvaluation",
+    # Core models
+    "AdjustmentBreakdown",
     "BetRecommendation",
+    "BetSide",
+    "BetType",
+    "Game",
+    "MatchupEvaluation",
+    "PowerRatingSnapshot",
+    "Team",
+    # Knowledge graph
+    "BettingKnowledgeGraph",
+    "create_recommendation_from_evaluation",
+    # CLV tracking
+    "CLVAnalyzer",
+    "CLVOutcome",
+    "CLVSummary",
+    "CLVTracking",
 ]

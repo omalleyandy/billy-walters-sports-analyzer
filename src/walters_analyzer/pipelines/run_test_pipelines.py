@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import Tuple
 
 from walters_analyzer.models.core import (
     AdjustmentBreakdown,
@@ -12,13 +13,16 @@ from walters_analyzer.models.core import (
 )
 
 
-def run_pipeline() -> None:
+def run_pipeline(
+    return_models: bool = False,
+) -> Tuple[MatchupEvaluation, BetRecommendation] | None:
     """
-    Synthetic end-to-end test of the core models and pipeline wiring.
+    Synthetic end-to-end test of the core models
+    and pipeline wiring.
+
+    If return_models is True, returns
+    (evaluation, recommendation) instead of None.
     """
-    # ---------------------------------------------------------------
-    # 1. Fake data — this simulates what your scrapers will produce.
-    # ---------------------------------------------------------------
     now_utc = datetime.now(timezone.utc)
 
     home = Team(
@@ -47,7 +51,14 @@ def run_pipeline() -> None:
         season=2025,
         home_team_id="DET",
         away_team_id="PHI",
-        kickoff_datetime=datetime(2025, 11, 23, 18, 25, tzinfo=timezone.utc),
+        kickoff_datetime=datetime(
+            2025,
+            11,
+            23,
+            18,
+            25,
+            tzinfo=timezone.utc,
+        ),
         stadium="Ford Field",
         surface_type="turf",
         timezone="America/Detroit",
@@ -69,28 +80,23 @@ def run_pipeline() -> None:
         source="massey",
     )
 
-    # ---------------------------------------------------------------
-    # 2. Base model calculation (Billy Walters pipeline skeleton).
-    # ---------------------------------------------------------------
     home_field_edge = 2.5
     base_spread = (home_rating.rating - away_rating.rating) + home_field_edge
 
     adjustments = AdjustmentBreakdown(
-        s_factor_points=0.25,  # small rest advantage
-        w_factor_points=0.0,  # dome stadium
-        e_factor_points=0.0,  # neutral motivation
-        injury_points=-0.5,  # small QB/OL downgrade
+        s_factor_points=0.25,
+        w_factor_points=0.0,
+        e_factor_points=0.0,
+        injury_points=-0.5,
     )
 
     effective_spread = base_spread + adjustments.total_adjustment
 
-    # For testing assume the market spread is DET -2.0
     market_spread = -2.0
 
     edge_points = effective_spread - market_spread
-    # Simple fake conversion to a "percent edge" just for sanity checks.
     edge_percent = abs(edge_points) * 0.9
-    star_rating = 1 if edge_percent > 3 else 0
+    star_rating = 1 if edge_percent > 3.0 else 0
 
     evaluation = MatchupEvaluation(
         game=game,
@@ -109,32 +115,31 @@ def run_pipeline() -> None:
         notes=["Test run only."],
     )
 
-    # ---------------------------------------------------------------
-    # 3. Convert evaluation → BetRecommendation
-    # ---------------------------------------------------------------
     recommendation = BetRecommendation(
+        recommendation_id=f"rec_{game.game_id}_test",
         game_id=game.game_id,
+        evaluation_id=None,
         bet_type="spread",
         side="home",
         line=market_spread,
-        odds=-110,
-        edge_percent=edge_percent,
+        price=-110,
+        edge_percentage=edge_percent,
         star_rating=star_rating,
         stake_fraction=0.02,
+        bankroll=20000.0,
+        is_play=True,
         rationale=(
             "Synthetic test recommendation to confirm the models and pipeline wiring."
         ),
     )
 
-    # ---------------------------------------------------------------
-    # 4. Print everything (LLM-ready JSON)
-    # ---------------------------------------------------------------
     print("\n=== MATCHUP EVALUATION ===")
     print(evaluation.model_dump_json(indent=2))
 
     print("\n=== BET RECOMMENDATION ===")
     print(recommendation.model_dump_json(indent=2))
 
+    if return_models:
+        return evaluation, recommendation
 
-if __name__ == "__main__":
-    run_pipeline()
+    return None

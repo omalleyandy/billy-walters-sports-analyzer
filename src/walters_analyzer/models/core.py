@@ -64,7 +64,7 @@ class Team(BaseModel):
         description="Division name, e.g. 'NFC North'.",
     )
 
-    # Optional “current” rating attached to the team for convenience
+    # Optional "current" rating attached to the team for convenience
     power_rating: float | None = Field(
         None,
         description="Current power rating in spread points (0 = league average).",
@@ -192,7 +192,7 @@ class MatchupEvaluation(BaseModel):
     """
     Full evaluation of a single game: base spread, adjustments, edge, stars.
 
-    This is the main object you’ll pass into the LLM or write out as JSON
+    This is the main object you'll pass into the LLM or write out as JSON
     for wk-card generation.
     """
 
@@ -256,7 +256,7 @@ class MatchupEvaluation(BaseModel):
         ...,
         ge=0,
         le=3,
-        description="0–3 star rating following your Billy Walters rubric.",
+        description="0-3 star rating following your Billy Walters rubric.",
     )
 
     notes: Sequence[str] | None = Field(
@@ -267,6 +267,7 @@ class MatchupEvaluation(BaseModel):
 
 # ------------------------------------------------------------------------------
 # Bet recommendation (output of the pipeline)
+# ALIGNED WITH: schemas/bet_recommendation.schema.json
 # ------------------------------------------------------------------------------
 
 
@@ -274,13 +275,46 @@ class BetRecommendation(BaseModel):
     """
     Plain-language, stake-aware recommendation for a single game.
 
-    Thin “view model” that can be rendered to markdown, JSON, or CLI.
+    Thin "view model" that can be rendered to markdown, JSON, or CLI.
+    This model aligns exactly with bet_recommendation.schema.json
+    
+    Schema requirements:
+    - recommendation_id: Unique identifier (required)
+    - game_id: Reference to Game (required)
+    - evaluation_id: Reference to MatchupEvaluation (optional)
+    - bet_type: 'spread', 'moneyline', 'total', 'none' (required)
+    - side: 'home', 'away', 'over', 'under', 'none' (required)
+    - line: Spread/total number (optional)
+    - price: American odds like -110 (optional)
+    - edge_percentage: Edge as percent (required)
+    - star_rating: 0-3 stars (required)
+    - stake_fraction: 0-0.03 of bankroll (required)
+    - bankroll: Dollar amount (optional)
+    - is_play: Boolean, whether to actually bet (required)
+    - rationale: Text explanation (required)
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    game_id: str = Field(..., description="Game.game_id this bet refers to.")
-    bet_type: BetType = Field(..., description="Spread, moneyline, total, or none.")
+    # Primary identifiers
+    recommendation_id: str = Field(
+        ...,
+        description="Unique identifier for this recommendation (e.g. rec_game123_1234567890).",
+    )
+    game_id: str = Field(
+        ...,
+        description="Game.game_id this bet refers to.",
+    )
+    evaluation_id: str | None = Field(
+        None,
+        description="ID of the MatchupEvaluation that generated this recommendation.",
+    )
+    
+    # Bet specification
+    bet_type: BetType = Field(
+        ...,
+        description="Spread, moneyline, total, or none.",
+    )
     side: BetSide = Field(
         ...,
         description="Home/away for spreads/ML; over/under for totals.",
@@ -291,13 +325,13 @@ class BetRecommendation(BaseModel):
         None,
         description="Point spread or total line associated with this bet.",
     )
-    odds: int | None = Field(
+    price: int | None = Field(
         None,
         description="American odds (e.g. -110, +120). Optional but useful for Kelly.",
     )
 
-    # Edge + staking
-    edge_percent: float = Field(
+    # Edge and staking (uses edge_percentage to match schema)
+    edge_percentage: float = Field(
         ...,
         ge=0.0,
         description="Estimated edge in percent (from MatchupEvaluation.edge_percent).",
@@ -306,24 +340,63 @@ class BetRecommendation(BaseModel):
         ...,
         ge=0,
         le=3,
-        description="0–3 star rating summarizing conviction.",
+        description="0-3 star rating summarizing conviction level.",
     )
     stake_fraction: float = Field(
         ...,
         ge=0.0,
-        le=0.05,
-        description="Fraction of bankroll to stake on this recommendation (e.g. 0.02 = 2%).",
+        le=0.03,
+        description="Fraction of bankroll to stake on this recommendation (max 3%).",
+    )
+    
+    # Optional bankroll reference
+    bankroll: float | None = Field(
+        None,
+        description="Bankroll amount this recommendation is based on.",
+    )
+    
+    # Action flag
+    is_play: bool = Field(
+        ...,
+        description="Whether this recommendation should be acted on (requires 5.5%+ edge).",
     )
 
+    # Narrative
     rationale: str = Field(
         ...,
         description="Human-readable rationale summarizing why this edge exists.",
     )
 
+    # Metadata
     created_at: datetime = Field(
         default_factory=datetime.utcnow,
         description="Timestamp when this recommendation was generated.",
     )
+    
+    # =========================================================================
+    # Backward compatibility properties
+    # =========================================================================
+    # These allow code written for the old API to still work
+    
+    @property
+    def edge_percent(self) -> float:
+        """
+        Backward compatibility for edge_percent (uses edge_percentage internally).
+        
+        The schema uses 'edge_percentage', but some code may reference 'edge_percent'.
+        This property makes both work transparently.
+        """
+        return self.edge_percentage
+    
+    @property
+    def odds(self) -> int | None:
+        """
+        Backward compatibility for odds (uses price internally).
+        
+        The schema uses 'price', but some code may reference 'odds'.
+        This property makes both work transparently.
+        """
+        return self.price
 
 
 # ------------------------------------------------------------------------------

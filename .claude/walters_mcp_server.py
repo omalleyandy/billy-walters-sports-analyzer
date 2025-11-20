@@ -13,6 +13,27 @@ from typing import Dict, List, Optional, Any
 from dataclasses import asdict
 from pathlib import Path
 
+# ============================================================================
+# CRITICAL: Setup logging FIRST before any imports
+# MCP servers MUST NOT write to stdout (breaks JSON-RPC protocol)
+# All diagnostic output goes to stderr and file only
+# ============================================================================
+
+# Create logs directory if needed
+logs_dir = Path(__file__).parent / "logs"
+logs_dir.mkdir(exist_ok=True)
+
+# Configure logging BEFORE imports (so errors go to stderr, not stdout)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stderr),  # Use stderr, NOT stdout
+        logging.FileHandler(logs_dir / "mcp-server.log"),
+    ],
+)
+logger = logging.getLogger(__name__)
+
 # Add src to path if needed
 project_root = Path(__file__).parent
 if (project_root / "src").exists():
@@ -23,8 +44,8 @@ try:
     from fastmcp import FastMCP, Context
     from pydantic import BaseModel, Field
 except ImportError as e:
-    print(f"ERROR: Missing required dependency: {e}")
-    print("Install with: uv pip install 'walters-analyzer[mcp]'")
+    logger.error(f"Missing required dependency: {e}")
+    logger.error("Install with: uv pip install 'walters-analyzer[mcp]'")
     sys.exit(1)
 
 # Import Billy Walters SDK components - with proper error handling
@@ -35,27 +56,25 @@ try:
     from walters_analyzer.research.engine import ResearchEngine
     from walters_analyzer.config import get_settings
 except ImportError as e:
-    print(f"ERROR: Could not import walters_analyzer modules: {e}")
-    print("Make sure the package is installed: uv pip install -e .")
+    logger.error(f"Could not import walters_analyzer modules: {e}")
+    logger.error("Make sure the package is installed: uv pip install -e .")
     sys.exit(1)
 
 # Initialize unified settings
-settings = get_settings()
+try:
+    settings = get_settings()
+    # Update logging level from settings if available
+    if hasattr(settings, "global_config"):
+        log_level = getattr(
+            logging, settings.global_config.log_level.upper(), logging.INFO
+        )
+        logging.getLogger().setLevel(log_level)
+        logger.info(f"Log level set to {settings.global_config.log_level}")
+except Exception as e:
+    logger.warning(f"Could not load advanced settings, using defaults: {e}")
+    settings = None
 
-# Configure logging from settings
-# CRITICAL: MCP servers MUST NOT write to stdout (breaks JSON-RPC protocol)
-# All logs go to stderr and file only
-log_level = getattr(logging, settings.global_config.log_level.upper(), logging.INFO)
-logging.basicConfig(
-    level=log_level,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stderr),  # Use stderr, NOT stdout
-        logging.FileHandler(settings.logs_dir / "mcp-server.log"),
-    ],
-)
-logger = logging.getLogger(__name__)
-logger.info("MCP Server initialized with unified configuration")
+logger.info("MCP Server logging configured - all output to stderr/file only")
 
 # ============================================================================
 # MCP Server Configuration
@@ -126,7 +145,9 @@ class WaltersMCPEngine:
         try:
             analyzer_config = AnalyzerConfig.from_settings()
             self.analyzer = BillyWaltersAnalyzer(config=analyzer_config)
-            logger.info(f"Initialized analyzer with bankroll: ${analyzer_config.bankroll}")
+            logger.info(
+                f"Initialized analyzer with bankroll: ${analyzer_config.bankroll}"
+            )
         except Exception as e:
             logger.error(f"Error initializing analyzer: {e}")
             # Use default values
@@ -141,8 +162,12 @@ class WaltersMCPEngine:
             self.research_engine = None
 
         # Active monitoring (if enabled)
-        self.monitoring_enabled = settings.monitoring.performance_tracking
-        self.clv_tracking_enabled = settings.monitoring.clv_tracking
+        self.monitoring_enabled = (
+            settings.monitoring.performance_tracking if settings else False
+        )
+        self.clv_tracking_enabled = (
+            settings.monitoring.clv_tracking if settings else False
+        )
         self.monitored_games: Dict[str, Any] = {}
         self.active_alerts: List[MarketAlert] = []
 
@@ -151,12 +176,15 @@ class WaltersMCPEngine:
         self.clv_tracker: Dict[str, float] = {}
 
         # Skills configuration
-        self.skills_enabled = {
-            "market_analysis": settings.skills.market_analysis.enabled,
-            "ml_power_ratings": settings.skills.ml_power_ratings.enabled,
-            "situational_database": settings.skills.situational_database.enabled,
-        }
-        logger.info(f"Skills enabled: {self.skills_enabled}")
+        if settings:
+            self.skills_enabled = {
+                "market_analysis": settings.skills.market_analysis.enabled,
+                "ml_power_ratings": settings.skills.ml_power_ratings.enabled,
+                "situational_database": settings.skills.situational_database.enabled,
+            }
+            logger.info(f"Skills enabled: {self.skills_enabled}")
+        else:
+            self.skills_enabled = {}
 
     async def analyze_game_comprehensive(self, request: GameAnalysisRequest) -> Dict:
         """
@@ -168,31 +196,34 @@ class WaltersMCPEngine:
             # Build game input
             home_team = TeamSnapshot(
                 name=request.home_team,
-                injuries=[]  # Will be populated by research if enabled
+                injuries=[],  # Will be populated by research if enabled
             )
-            away_team = TeamSnapshot(
-                name=request.away_team,
-                injuries=[]
-            )
+            away_team = TeamSnapshot(name=request.away_team, injuries=[])
 
             odds = GameOdds(
-                spread=type('Spread', (), {
-                    'home_spread': request.spread,
-                    'home_price': -110,
-                    'away_price': -110
-                })(),
-                total=None if not request.total else type('Total', (), {
-                    'over': request.total,
-                    'over_price': -110,
-                    'under_price': -110
-                })()
+                spread=type(
+                    "Spread",
+                    (),
+                    {
+                        "home_spread": request.spread,
+                        "home_price": -110,
+                        "away_price": -110,
+                    },
+                )(),
+                total=None
+                if not request.total
+                else type(
+                    "Total",
+                    (),
+                    {"over": request.total, "over_price": -110, "under_price": -110},
+                )(),
             )
-            
+
             matchup = GameInput(
                 home_team=home_team,
                 away_team=away_team,
                 odds=odds,
-                game_date=request.game_date or datetime.now().strftime("%Y-%m-%d")
+                game_date=request.game_date or datetime.now().strftime("%Y-%m-%d"),
             )
 
             # Core power rating analysis
@@ -203,11 +234,15 @@ class WaltersMCPEngine:
             if request.include_research and self.research_engine:
                 try:
                     # Injury research
-                    home_injuries = await self.research_engine.comprehensive_injury_research(
-                        request.home_team
+                    home_injuries = (
+                        await self.research_engine.comprehensive_injury_research(
+                            request.home_team
+                        )
                     )
-                    away_injuries = await self.research_engine.comprehensive_injury_research(
-                        request.away_team
+                    away_injuries = (
+                        await self.research_engine.comprehensive_injury_research(
+                            request.away_team
+                        )
                     )
 
                     research_data = {
@@ -288,7 +323,7 @@ class WaltersMCPEngine:
 
         # Key factors
         factors = []
-        if hasattr(analysis, 'key_number_alerts') and analysis.key_number_alerts:
+        if hasattr(analysis, "key_number_alerts") and analysis.key_number_alerts:
             factors.append(f"Key number alerts: {len(analysis.key_number_alerts)}")
         if "injuries" in research:
             factors.append("Injury adjustments applied")
@@ -383,7 +418,9 @@ async def calculate_kelly_stake(
             decimal_odds = (100 / abs(odds)) + 1
 
         # Calculate win probability
-        win_probability = (edge_percentage / 100) + 0.5238  # Baseline 52.38% to break even
+        win_probability = (
+            edge_percentage / 100
+        ) + 0.5238  # Baseline 52.38% to break even
 
         # Kelly formula: f = (bp - q) / b
         b = decimal_odds - 1
@@ -430,7 +467,7 @@ async def get_injury_report(ctx: Context, team: str) -> Dict:
     try:
         if not engine.research_engine:
             return {"error": "Research engine not available"}
-            
+
         injuries = await engine.research_engine.comprehensive_injury_research(team)
 
         # Calculate total impact
