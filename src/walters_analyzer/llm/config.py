@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class LLMSettings(BaseSettings):
@@ -24,9 +24,9 @@ class LLMSettings(BaseSettings):
         description="Max output tokens per response.",
     )
 
-    class Config:
-        env_prefix = "BWSA_LLM_"
-        # This allows env name OR alias (ANTHROPIC_API_KEY).
-        populate_by_name = True
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        env_prefix="BWSA_LLM_",
+        populate_by_name=True,
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )

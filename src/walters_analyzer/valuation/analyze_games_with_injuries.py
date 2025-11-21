@@ -297,7 +297,9 @@ def main():
 
         if abs(net_impact) >= 3.0:
             favored_team = away_team if net_impact < 0 else home_team
-            print(f"   [TARGET] STRONG EDGE: {favored_team} has significant injury advantage")
+            print(
+                f"   [TARGET] STRONG EDGE: {favored_team} has significant injury advantage"
+            )
             print(f"   Action: STRONG PLAY on {favored_team}")
             print("   Bet Sizing: 2-3% of bankroll")
             print(

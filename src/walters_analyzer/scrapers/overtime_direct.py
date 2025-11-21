@@ -26,7 +26,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Snapshot directories
-BASE_SNAPSHOT_DIR = Path(r"C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\snapshots\overtime-live")
+BASE_SNAPSHOT_DIR = Path(
+    r"C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer\snapshots\overtime-live"
+)
 NFL_SNAPSHOT_DIR = BASE_SNAPSHOT_DIR / "nfl"
 NCAAF_SNAPSHOT_DIR = BASE_SNAPSHOT_DIR / "ncaaf"
 
@@ -173,11 +175,13 @@ class OvertimeAgScraper:
             # Take screenshot - save to appropriate snapshot directory if sport specified
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             if sport:
-                snapshot_dir = NFL_SNAPSHOT_DIR if sport == 'nfl' else NCAAF_SNAPSHOT_DIR
+                snapshot_dir = (
+                    NFL_SNAPSHOT_DIR if sport == "nfl" else NCAAF_SNAPSHOT_DIR
+                )
                 screenshot_path = snapshot_dir / f"overtime_screenshot_{timestamp}.png"
             else:
                 screenshot_path = Path("overtime_screenshot.png")
-            
+
             await self.page.screenshot(path=str(screenshot_path))
             print(f"[*] Screenshot saved to {screenshot_path}")
 
@@ -192,9 +196,9 @@ class OvertimeAgScraper:
         try:
             content = await self.page.content()
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            
+
             # Determine snapshot directory based on sport
-            snapshot_dir = NFL_SNAPSHOT_DIR if sport == 'nfl' else NCAAF_SNAPSHOT_DIR
+            snapshot_dir = NFL_SNAPSHOT_DIR if sport == "nfl" else NCAAF_SNAPSHOT_DIR
 
             # Save HTML snapshot
             html_file = snapshot_dir / f"overtime_debug_{sport}_{timestamp}.html"
@@ -208,9 +212,11 @@ class OvertimeAgScraper:
             with open(text_file, "w", encoding="utf-8") as f:
                 f.write(page_text)
             print(f"[*] Text snapshot saved to: {text_file}")
-            
+
             # Save screenshot snapshot
-            screenshot_file = snapshot_dir / f"overtime_screenshot_{sport}_{timestamp}.png"
+            screenshot_file = (
+                snapshot_dir / f"overtime_screenshot_{sport}_{timestamp}.png"
+            )
             await self.page.screenshot(path=str(screenshot_file))
             print(f"[*] Screenshot snapshot saved to: {screenshot_file}")
 

@@ -752,7 +752,9 @@ def main():
                         # Lineups endpoint (requires match_id)
                         if args.endpoint == "lineups":
                             if not args.match_id:
-                                print("[ERROR] --match-id required for lineups endpoint")
+                                print(
+                                    "[ERROR] --match-id required for lineups endpoint"
+                                )
                                 sys.exit(1)
                             print(f"[*] Fetching lineups for match {args.match_id}...")
                             lineups = await client.get_lineups(args.match_id)
@@ -780,7 +782,9 @@ def main():
                         # Last five games (requires team_id)
                         if args.endpoint == "last-five":
                             if not args.team_id:
-                                print("[ERROR] --team-id required for last-five endpoint")
+                                print(
+                                    "[ERROR] --team-id required for last-five endpoint"
+                                )
                                 sys.exit(1)
                             print(
                                 f"[*] Fetching last 5 games for team {args.team_id}..."
@@ -948,7 +952,9 @@ def main():
                 odds = await client.get_odds(sport_key)
 
                 if not odds:
-                    print("[ERROR] Failed to fetch odds. Check your ODDS_API_KEY in .env")
+                    print(
+                        "[ERROR] Failed to fetch odds. Check your ODDS_API_KEY in .env"
+                    )
                     print()
                     print("To get an API key:")
                     print("  1. Sign up at https://the-odds-api.com/")

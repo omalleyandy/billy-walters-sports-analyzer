@@ -229,7 +229,9 @@ async def main():
     # Test 1: API Connection
     connected = await test_api_connection()
     if not connected:
-        print("\n[ERROR] API connection test failed. Fix the above issues and try again.")
+        print(
+            "\n[ERROR] API connection test failed. Fix the above issues and try again."
+        )
         return
 
     print("[*] Test 1 passed!\n")

@@ -44,7 +44,7 @@ def evaluate_matchup(
             source=home_team.rating_source or "custom",
             created_at=datetime.utcnow(),
         )
-    
+
     if not away_rating_snapshot:
         away_rating_snapshot = PowerRatingSnapshot(
             team_id=away_team.team_id,
@@ -57,39 +57,46 @@ def evaluate_matchup(
 
     # Home field edge (default 2.5 points)
     home_field_edge = factors.get("home_field_edge", 2.5)
-    
+
     # Base spread calculation: (home_rating - away_rating) + home_field_advantage
-    base_spread = (home_rating_snapshot.rating - away_rating_snapshot.rating) + home_field_edge
-    
+    base_spread = (
+        home_rating_snapshot.rating - away_rating_snapshot.rating
+    ) + home_field_edge
+
     # Create adjustment breakdown
     # S/W/E factors are in "factor points" where 5 points = 1 spread point
     s_factor_conversion = 5.0  # Billy Walters: 5 S-factor points = 1 spread point
-    
+
     adjustments = AdjustmentBreakdown(
-        s_factor_points=(factors.get("s_home", 0.0) - factors.get("s_away", 0.0)) / s_factor_conversion,
-        w_factor_points=(factors.get("w_home", 0.0) - factors.get("w_away", 0.0)) / s_factor_conversion,
-        e_factor_points=(factors.get("e_home", 0.0) - factors.get("e_away", 0.0)) / s_factor_conversion,
-        injury_points=(factors.get("injury_home", 0.0) - factors.get("injury_away", 0.0)),
+        s_factor_points=(factors.get("s_home", 0.0) - factors.get("s_away", 0.0))
+        / s_factor_conversion,
+        w_factor_points=(factors.get("w_home", 0.0) - factors.get("w_away", 0.0))
+        / s_factor_conversion,
+        e_factor_points=(factors.get("e_home", 0.0) - factors.get("e_away", 0.0))
+        / s_factor_conversion,
+        injury_points=(
+            factors.get("injury_home", 0.0) - factors.get("injury_away", 0.0)
+        ),
     )
-    
+
     # Effective spread after all adjustments
     effective_spread = base_spread + adjustments.total_adjustment
-    
+
     # Market spread (current betting line)
     market_spread = factors["market_spread"]
-    
+
     # Edge calculation in spread points
     edge_points = market_spread - effective_spread  # Positive = value on home team
-    
+
     # Convert edge points to percentage (approximate conversion)
     # Using standard 52.38% breakeven for -110 odds
     # Each point of edge ≈ 2-3% win probability improvement
     edge_percent = abs(edge_points) * 2.5  # Conservative estimate
-    
+
     # Override with explicit edge percentage if provided
     if "edge_percentage" in factors:
         edge_percent = factors["edge_percentage"]
-    
+
     # Star rating based on edge percentage (Billy Walters system)
     # 0 stars: < 5.5% edge (no bet)
     # 1 star: 5.5-7% edge (0.5-1% bankroll)
@@ -103,16 +110,16 @@ def evaluate_matchup(
         star_rating = 2
     else:
         star_rating = 3
-    
+
     # Override with explicit star rating if provided
     if "star_rating" in factors:
         star_rating = factors["star_rating"]
-    
+
     # Build notes list
     notes = factors.get("notes", [])
     if isinstance(notes, str):
         notes = [notes]
-    
+
     return MatchupEvaluation(
         game=game,
         home_team=home_team,

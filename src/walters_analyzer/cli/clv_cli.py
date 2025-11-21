@@ -96,7 +96,7 @@ class CLVCli:
         bet_id = tracking.recommendation_id
 
         # Display confirmation
-        print(f"OK Bet Recorded")
+        print("OK Bet Recorded")
         print(f"Bet ID: {bet_id}")
         print(f"Game: {game_id}")
         print(f"Side: {bet_side} {args.line}")
@@ -143,7 +143,7 @@ class CLVCli:
         self.storage.save_bet(bet)
 
         # Display results
-        print(f"\n[OK] Closing Line Updated")
+        print("\n[OK] Closing Line Updated")
         print(f"Bet ID: {args.bet_id}")
         print(f"Game: {bet.game_id}")
         print(f"Opening Line: {bet.opening_line}")
@@ -162,7 +162,7 @@ class CLVCli:
             msg = "Closing line moved against us (Bad)"
 
         print(f"{symbol} {msg}")
-        print(f"\nNext: Update result after game finishes")
+        print("\nNext: Update result after game finishes")
 
     def update_result(self, args: argparse.Namespace) -> None:
         """
@@ -209,7 +209,7 @@ class CLVCli:
         self.storage.save_bet(bet)
 
         # Display results
-        print(f"\n[OK] Bet Result Recorded")
+        print("\n[OK] Bet Result Recorded")
         print(f"Bet ID: {args.bet_id}")
         print(f"Game: {bet.game_id}")
 
@@ -250,7 +250,7 @@ class CLVCli:
 
         # Display summary
         print(f"\n{'=' * 60}")
-        print(f"CLV TRACKING SUMMARY")
+        print("CLV TRACKING SUMMARY")
         if args.week:
             print(f"Week {args.week}, {args.season if args.season else 2025}")
         print(f"{'=' * 60}")
@@ -260,7 +260,7 @@ class CLVCli:
         print(f"Pending: {summary.bets_pending}")
 
         if summary.bets_resolved > 0:
-            print(f"\n--- CLV Performance ---")
+            print("\n--- CLV Performance ---")
             print(
                 f"Beating Closing: {summary.bets_beating_closing} / {summary.bets_resolved}"
             )

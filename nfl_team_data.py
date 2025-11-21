@@ -30,7 +30,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (A-Turf Titan)",
         "altitude": 600,
         "division": "AFC East",
-        "aliases": ["Buffalo", "Buffalo Bills"]
+        "aliases": ["Buffalo", "Buffalo Bills"],
     },
     "MIA": {
         "name": "Miami Dolphins",
@@ -44,7 +44,7 @@ NFL_TEAMS = {
         "surface": "Artificial (Hellas Matrix Turf)",
         "altitude": 10,
         "division": "AFC East",
-        "aliases": ["Miami", "Miami Dolphins"]
+        "aliases": ["Miami", "Miami Dolphins"],
     },
     "NE": {
         "name": "New England Patriots",
@@ -58,7 +58,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 150,
         "division": "AFC East",
-        "aliases": ["New England", "New England Patriots"]
+        "aliases": ["New England", "New England Patriots"],
     },
     "NYJ": {
         "name": "New York Jets",
@@ -72,9 +72,8 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 10,
         "division": "AFC East",
-        "aliases": ["NY Jets", "New York Jets"]
+        "aliases": ["NY Jets", "New York Jets"],
     },
-    
     # AFC North
     "BAL": {
         "name": "Baltimore Ravens",
@@ -88,7 +87,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 50,
         "division": "AFC North",
-        "aliases": ["Baltimore", "Baltimore Ravens"]
+        "aliases": ["Baltimore", "Baltimore Ravens"],
     },
     "CIN": {
         "name": "Cincinnati Bengals",
@@ -102,7 +101,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 490,
         "division": "AFC North",
-        "aliases": ["Cincinnati", "Cincinnati Bengals"]
+        "aliases": ["Cincinnati", "Cincinnati Bengals"],
     },
     "CLE": {
         "name": "Cleveland Browns",
@@ -116,7 +115,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 660,
         "division": "AFC North",
-        "aliases": ["Cleveland", "Cleveland Browns"]
+        "aliases": ["Cleveland", "Cleveland Browns"],
     },
     "PIT": {
         "name": "Pittsburgh Steelers",
@@ -130,9 +129,8 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 750,
         "division": "AFC North",
-        "aliases": ["Pittsburgh", "Pittsburgh Steelers"]
+        "aliases": ["Pittsburgh", "Pittsburgh Steelers"],
     },
-    
     # AFC South
     "HOU": {
         "name": "Houston Texans",
@@ -146,7 +144,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 50,
         "division": "AFC South",
-        "aliases": ["Houston", "Houston Texans"]
+        "aliases": ["Houston", "Houston Texans"],
     },
     "IND": {
         "name": "Indianapolis Colts",
@@ -160,7 +158,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 730,
         "division": "AFC South",
-        "aliases": ["Indianapolis", "Indianapolis Colts"]
+        "aliases": ["Indianapolis", "Indianapolis Colts"],
     },
     "JAX": {
         "name": "Jacksonville Jaguars",
@@ -174,7 +172,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 20,
         "division": "AFC South",
-        "aliases": ["Jacksonville", "Jacksonville Jaguars", "JAC"]
+        "aliases": ["Jacksonville", "Jacksonville Jaguars", "JAC"],
     },
     "TEN": {
         "name": "Tennessee Titans",
@@ -188,9 +186,8 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 550,
         "division": "AFC South",
-        "aliases": ["Tennessee", "Tennessee Titans"]
+        "aliases": ["Tennessee", "Tennessee Titans"],
     },
-    
     # AFC West
     "DEN": {
         "name": "Denver Broncos",
@@ -204,7 +201,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Kentucky Bluegrass)",
         "altitude": 5280,  # Mile High!
         "division": "AFC West",
-        "aliases": ["Denver", "Denver Broncos"]
+        "aliases": ["Denver", "Denver Broncos"],
     },
     "KC": {
         "name": "Kansas City Chiefs",
@@ -218,7 +215,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Tifway 419)",
         "altitude": 910,
         "division": "AFC West",
-        "aliases": ["Kansas City", "Kansas City Chiefs"]
+        "aliases": ["Kansas City", "Kansas City Chiefs"],
     },
     "LV": {
         "name": "Las Vegas Raiders",
@@ -232,7 +229,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (tray system)",
         "altitude": 2030,
         "division": "AFC West",
-        "aliases": ["Las Vegas", "Las Vegas Raiders", "Raiders"]
+        "aliases": ["Las Vegas", "Las Vegas Raiders", "Raiders"],
     },
     "LAC": {
         "name": "Los Angeles Chargers",
@@ -246,9 +243,8 @@ NFL_TEAMS = {
         "surface": "Matrix Turf",
         "altitude": 100,
         "division": "AFC West",
-        "aliases": ["LA Chargers", "Los Angeles Chargers", "Chargers"]
+        "aliases": ["LA Chargers", "Los Angeles Chargers", "Chargers"],
     },
-    
     # NFC East
     "DAL": {
         "name": "Dallas Cowboys",
@@ -262,7 +258,7 @@ NFL_TEAMS = {
         "surface": "Matrix Turf",
         "altitude": 600,
         "division": "NFC East",
-        "aliases": ["Dallas", "Dallas Cowboys"]
+        "aliases": ["Dallas", "Dallas Cowboys"],
     },
     "NYG": {
         "name": "New York Giants",
@@ -276,7 +272,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 10,
         "division": "NFC East",
-        "aliases": ["NY Giants", "New York Giants", "Giants"]
+        "aliases": ["NY Giants", "New York Giants", "Giants"],
     },
     "PHI": {
         "name": "Philadelphia Eagles",
@@ -290,7 +286,7 @@ NFL_TEAMS = {
         "surface": "Hellas Matrix Turf",
         "altitude": 40,
         "division": "NFC East",
-        "aliases": ["Philadelphia", "Philadelphia Eagles", "Eagles"]
+        "aliases": ["Philadelphia", "Philadelphia Eagles", "Eagles"],
     },
     "WAS": {
         "name": "Washington Commanders",
@@ -304,9 +300,8 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 50,
         "division": "NFC East",
-        "aliases": ["Washington", "Washington Commanders", "Commanders"]
+        "aliases": ["Washington", "Washington Commanders", "Commanders"],
     },
-    
     # NFC North
     "CHI": {
         "name": "Chicago Bears",
@@ -320,7 +315,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Bermuda)",
         "altitude": 590,
         "division": "NFC North",
-        "aliases": ["Chicago", "Chicago Bears", "Bears"]
+        "aliases": ["Chicago", "Chicago Bears", "Bears"],
     },
     "DET": {
         "name": "Detroit Lions",
@@ -334,7 +329,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 600,
         "division": "NFC North",
-        "aliases": ["Detroit", "Detroit Lions", "Lions"]
+        "aliases": ["Detroit", "Detroit Lions", "Lions"],
     },
     "GB": {
         "name": "Green Bay Packers",
@@ -348,7 +343,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Kentucky Bluegrass)",
         "altitude": 640,
         "division": "NFC North",
-        "aliases": ["Green Bay", "Green Bay Packers", "Packers"]
+        "aliases": ["Green Bay", "Green Bay Packers", "Packers"],
     },
     "MIN": {
         "name": "Minnesota Vikings",
@@ -362,9 +357,8 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 840,
         "division": "NFC North",
-        "aliases": ["Minnesota", "Minnesota Vikings", "Vikings"]
+        "aliases": ["Minnesota", "Minnesota Vikings", "Vikings"],
     },
-    
     # NFC South
     "ATL": {
         "name": "Atlanta Falcons",
@@ -378,7 +372,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 1050,
         "division": "NFC South",
-        "aliases": ["Atlanta", "Atlanta Falcons", "Falcons"]
+        "aliases": ["Atlanta", "Atlanta Falcons", "Falcons"],
     },
     "CAR": {
         "name": "Carolina Panthers",
@@ -392,7 +386,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass",
         "altitude": 750,
         "division": "NFC South",
-        "aliases": ["Carolina", "Carolina Panthers", "Panthers"]
+        "aliases": ["Carolina", "Carolina Panthers", "Panthers"],
     },
     "NO": {
         "name": "New Orleans Saints",
@@ -406,7 +400,7 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 0,
         "division": "NFC South",
-        "aliases": ["New Orleans", "New Orleans Saints", "Saints"]
+        "aliases": ["New Orleans", "New Orleans Saints", "Saints"],
     },
     "TB": {
         "name": "Tampa Bay Buccaneers",
@@ -420,9 +414,8 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Tifway 419)",
         "altitude": 10,
         "division": "NFC South",
-        "aliases": ["Tampa Bay", "Tampa Bay Buccaneers", "Buccaneers", "Bucs"]
+        "aliases": ["Tampa Bay", "Tampa Bay Buccaneers", "Buccaneers", "Bucs"],
     },
-    
     # NFC West
     "ARI": {
         "name": "Arizona Cardinals",
@@ -436,7 +429,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (movable field)",
         "altitude": 1100,
         "division": "NFC West",
-        "aliases": ["Arizona", "Arizona Cardinals", "Cardinals"]
+        "aliases": ["Arizona", "Arizona Cardinals", "Cardinals"],
     },
     "LAR": {
         "name": "Los Angeles Rams",
@@ -450,7 +443,7 @@ NFL_TEAMS = {
         "surface": "Matrix Turf",
         "altitude": 100,
         "division": "NFC West",
-        "aliases": ["LA Rams", "Los Angeles Rams", "Rams"]
+        "aliases": ["LA Rams", "Los Angeles Rams", "Rams"],
     },
     "SF": {
         "name": "San Francisco 49ers",
@@ -464,7 +457,7 @@ NFL_TEAMS = {
         "surface": "Natural Grass (Bandera Bermuda)",
         "altitude": 70,
         "division": "NFC West",
-        "aliases": ["San Francisco", "San Francisco 49ers", "49ers"]
+        "aliases": ["San Francisco", "San Francisco 49ers", "49ers"],
     },
     "SEA": {
         "name": "Seattle Seahawks",
@@ -478,45 +471,45 @@ NFL_TEAMS = {
         "surface": "FieldTurf",
         "altitude": 10,
         "division": "NFC West",
-        "aliases": ["Seattle", "Seattle Seahawks", "Seahawks"]
-    }
+        "aliases": ["Seattle", "Seattle Seahawks", "Seahawks"],
+    },
 }
 
 
 def get_team_by_name(name: str) -> Dict:
     """
     Find team by any name variant.
-    
+
     Args:
         name: Team name (any format: "Buffalo Bills", "Buffalo", "BUF")
-        
+
     Returns:
         Team data dict or None if not found
     """
     name = name.strip()
-    
+
     # Try exact abbreviation match first
     if name in NFL_TEAMS:
         return NFL_TEAMS[name]
-    
+
     # Try aliases
     for abbr, data in NFL_TEAMS.items():
         if name in data["aliases"] or name == data["name"]:
             return {**data, "abbreviation": abbr}
-    
+
     return None
 
 
 def get_all_divisions() -> Dict[str, List[str]]:
     """Get all divisions with their teams"""
     divisions = {}
-    
+
     for abbr, data in NFL_TEAMS.items():
         div = data["division"]
         if div not in divisions:
             divisions[div] = []
         divisions[div].append(abbr)
-    
+
     return divisions
 
 
@@ -524,10 +517,10 @@ def is_division_game(team1: str, team2: str) -> bool:
     """Check if two teams are in same division"""
     t1_data = get_team_by_name(team1)
     t2_data = get_team_by_name(team2)
-    
+
     if not t1_data or not t2_data:
         return False
-    
+
     return t1_data["division"] == t2_data["division"]
 
 
@@ -554,7 +547,7 @@ TIMEZONE_OFFSETS = {
     "PT": -8,  # Pacific Time
     "MT": -7,  # Mountain Time
     "CT": -6,  # Central Time
-    "ET": -5   # Eastern Time
+    "ET": -5,  # Eastern Time
 }
 
 
@@ -564,10 +557,12 @@ if __name__ == "__main__":
     print(f"Divisions: {len(get_all_divisions())}")
     print(f"Indoor/Retractable Stadiums: {len(get_indoor_stadiums())}")
     print(f"Natural Grass Stadiums: {len(get_natural_grass_stadiums())}")
-    
+
     # Test lookups
     print("\nTest Lookups:")
-    print(f"'Pittsburgh Steelers' → {get_team_by_name('Pittsburgh Steelers')['abbreviation']}")
+    print(
+        f"'Pittsburgh Steelers' → {get_team_by_name('Pittsburgh Steelers')['abbreviation']}"
+    )
     print(f"'PIT' → {get_team_by_name('PIT')['name']}")
     print(f"Division game? PIT vs CLE: {is_division_game('PIT', 'CLE')}")
     print(f"Division game? PIT vs DAL: {is_division_game('PIT', 'DAL')}")

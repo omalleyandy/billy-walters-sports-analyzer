@@ -4,11 +4,13 @@ from typing import Optional
 from enum import Enum
 from pydantic import BaseModel, Field
 
+
 class CLVOutcome(str, Enum):
     POSITIVE = "positive"
     NEUTRAL = "neutral"
     NEGATIVE = "negative"
     PENDING = "pending"
+
 
 class CLVTracking(BaseModel):
     recommendation_id: str
@@ -30,16 +32,17 @@ class CLVTracking(BaseModel):
     notes: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     @property
     def is_resolved(self) -> bool:
         return self.closing_line is not None and self.final_line is not None
-    
+
     @property
     def clv_beats_spread(self) -> Optional[bool]:
         if self.clv_points is None:
             return None
         return self.clv_points > 0.0
+
 
 class CLVSummary(BaseModel):
     total_bets: int
@@ -60,6 +63,7 @@ class CLVSummary(BaseModel):
     assessment: str
     tracked_date: date
 
+
 class CLVAnalyzer:
     @staticmethod
     def calculate_clv(opening_line: float, closing_line: float):
@@ -71,5 +75,6 @@ class CLVAnalyzer:
         else:
             outcome = CLVOutcome.NEUTRAL
         return clv_points, outcome
+
 
 __all__ = ["CLVOutcome", "CLVTracking", "CLVSummary", "CLVAnalyzer"]

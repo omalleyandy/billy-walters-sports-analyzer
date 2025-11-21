@@ -181,7 +181,7 @@ async def scrape_and_analyze():
         print(f"[NOTE] Notes: {game_config['notes']}")
         print(f"[TARGET] Priority: {game_config['priority']}")
 
-        print(f"\n[CHART] OVERTIME.AG LIVE ODDS:")
+        print("\n[CHART] OVERTIME.AG LIVE ODDS:")
         print(f"   {away_team}: {away_spread:+.1f}")
         print(f"   {home_team}: {home_spread:+.1f}")
 
@@ -192,7 +192,7 @@ async def scrape_and_analyze():
             sfactor_points=game_config["sfactor_points"],
         )
 
-        print(f"\n[INFO] EDGE ANALYSIS:")
+        print("\n[INFO] EDGE ANALYSIS:")
         print(f"   Our Line: {game_config['our_line']:+.1f}")
         print(f"   Overtime Line: {overtime_line:+.1f}")
         print(f"   Base Edge: {result.base_edge_points:.1f} points")
@@ -207,12 +207,14 @@ async def scrape_and_analyze():
         # Calculate bet size
         bet_amount = result.recommended_bet_pct * bankroll
 
-        print(f"\n[MONEY] BET SIZING:")
-        print(f"   Recommended: ${bet_amount:.0f} ({result.recommended_bet_pct*100:.1f}%)")
+        print("\n[MONEY] BET SIZING:")
+        print(
+            f"   Recommended: ${bet_amount:.0f} ({result.recommended_bet_pct * 100:.1f}%)"
+        )
 
         # Warnings
         if result.warnings:
-            print(f"\n[WARNING]  WARNINGS:")
+            print("\n[WARNING]  WARNINGS:")
             for warning in result.warnings:
                 print(f"   {warning}")
 
@@ -245,7 +247,7 @@ async def scrape_and_analyze():
             )
             total_risk += bet_amount
         else:
-            print(f"[ERROR] RECOMMENDATION: NO BET (Edge below 5.5% minimum)")
+            print("[ERROR] RECOMMENDATION: NO BET (Edge below 5.5% minimum)")
             print(f"{'=' * 80}")
 
     # Summary
@@ -268,23 +270,25 @@ async def scrape_and_analyze():
             print(f"      Priority: {bet['priority']}")
 
         print(f"\n{'=' * 80}")
-        print(f"[MONEY] TOTAL RISK: ${total_risk:.0f} ({total_risk/bankroll*100:.1f}%)")
+        print(
+            f"[MONEY] TOTAL RISK: ${total_risk:.0f} ({total_risk / bankroll * 100:.1f}%)"
+        )
 
         if total_risk / bankroll <= 0.15:
-            print(f"[*] Within 15% weekly limit")
+            print("[*] Within 15% weekly limit")
         else:
-            print(f"[WARNING]  EXCEEDS 15% weekly limit!")
+            print("[WARNING]  EXCEEDS 15% weekly limit!")
 
-        print(f"\n[NOTE] NEXT STEPS:")
-        print(f"   1. Go to overtime.ag/sports#/nfl")
-        print(f"   2. Verify lines haven't moved")
-        print(f"   3. Place bets in priority order")
-        print(f"   4. Screenshot confirmations")
+        print("\n[NOTE] NEXT STEPS:")
+        print("   1. Go to overtime.ag/sports#/nfl")
+        print("   2. Verify lines haven't moved")
+        print("   3. Place bets in priority order")
+        print("   4. Screenshot confirmations")
 
     else:
-        print(f"\n[ERROR] NO QUALIFIED BETS")
-        print(f"   • All games below 5.5% minimum edge")
-        print(f"   • Wait for better lines or skip this week")
+        print("\n[ERROR] NO QUALIFIED BETS")
+        print("   • All games below 5.5% minimum edge")
+        print("   • Wait for better lines or skip this week")
 
     print("\n" + "=" * 80)
     print("[WARNING]  REMEMBER: Only bet if edge >= 5.5%!")
@@ -304,7 +308,7 @@ async def scrape_and_analyze():
     output_file.write_text(json.dumps(output, indent=2))
 
     print(f"\n[*] Results saved to: {output_file}")
-    print(f"\nGood luck! [NFL][MONEY]\n")
+    print("\nGood luck! [NFL][MONEY]\n")
 
 
 def main():

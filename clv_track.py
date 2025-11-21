@@ -13,5 +13,5 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 # Import and run
 from walters_analyzer.cli.clv_cli import main
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -215,7 +215,9 @@ class PinnacleClient(MarketDataFeed):
         Note: Requires Pinnacle API credentials
         """
         if not self.api_key:
-            print("[WARNING]  PINNACLE_API_KEY not set. Requires funded Pinnacle account.")
+            print(
+                "[WARNING]  PINNACLE_API_KEY not set. Requires funded Pinnacle account."
+            )
             return []
 
         endpoint = f"{self.base_url}/v1/odds"
@@ -283,14 +285,18 @@ class DraftKingsClient(MarketDataFeed):
         Note: DraftKings doesn't offer a public API
         Recommend using The Odds API instead which includes DraftKings
         """
-        print("[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead.")
+        print(
+            "[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead."
+        )
         return []
 
     async def get_line_history(
         self, game_id: str, market: str = "spread"
     ) -> List[Dict]:
         """Get DraftKings line movement history"""
-        print("[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead.")
+        print(
+            "[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead."
+        )
         return []
 
 

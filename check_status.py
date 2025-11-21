@@ -10,11 +10,13 @@ from datetime import datetime
 # Setup output file
 output_file = Path(__file__).parent / "status_report.txt"
 
+
 def write_and_print(msg):
     """Write to both console and file"""
     print(msg)
     with open(output_file, "a", encoding="utf-8") as f:
         f.write(msg + "\n")
+
 
 # Clear previous report
 output_file.write_text("", encoding="utf-8")
@@ -40,6 +42,7 @@ try:
     import asyncio
     import json
     import logging
+
     write_and_print("[OK] All core modules imported successfully")
 except ImportError as e:
     write_and_print(f"[X] Core module import failed: {e}")
@@ -54,6 +57,7 @@ deps_ok = True
 
 try:
     import pydantic
+
     write_and_print(f"[OK] pydantic {pydantic.VERSION}")
 except ImportError as e:
     write_and_print(f"[X] pydantic: {e}")
@@ -61,6 +65,7 @@ except ImportError as e:
 
 try:
     import fastmcp
+
     write_and_print(f"[OK] fastmcp {fastmcp.__version__}")
 except ImportError as e:
     write_and_print(f"[X] fastmcp: {e}")
@@ -69,6 +74,7 @@ except ImportError as e:
 
 try:
     import aiohttp
+
     write_and_print(f"[OK] aiohttp {aiohttp.__version__}")
 except ImportError as e:
     write_and_print(f"[X] aiohttp: {e}")
@@ -83,14 +89,15 @@ package_ok = True
 
 try:
     from walters_analyzer.config import get_settings
+
     write_and_print("[OK] config module imported")
-    
+
     settings = get_settings()
     write_and_print("[OK] Settings loaded successfully")
     write_and_print(f"  - Bankroll: ${settings.autonomous_agent.initial_bankroll:,}")
     write_and_print(f"  - Max Bet: {settings.autonomous_agent.max_bet_percentage}%")
     write_and_print(f"  - Log Level: {settings.global_config.log_level}")
-    
+
 except ImportError as e:
     write_and_print(f"[X] Config import failed: {e}")
     package_ok = False
@@ -100,6 +107,7 @@ except Exception as e:
 
 try:
     from walters_analyzer.core.analyzer import BillyWaltersAnalyzer
+
     write_and_print("[OK] BillyWaltersAnalyzer imported")
 except ImportError as e:
     write_and_print(f"[X] BillyWaltersAnalyzer: {e}")
@@ -107,13 +115,14 @@ except ImportError as e:
 
 try:
     from walters_analyzer.core.config import AnalyzerConfig
+
     write_and_print("[OK] AnalyzerConfig imported")
-    
+
     config = AnalyzerConfig.from_settings()
     write_and_print(f"  - Bankroll: ${config.bankroll:,}")
     write_and_print(f"  - Max Bet %: {config.max_bet_pct}%")
     write_and_print(f"  - Fractional Kelly: {config.fractional_kelly}")
-    
+
 except ImportError as e:
     write_and_print(f"[X] AnalyzerConfig: {e}")
     package_ok = False
@@ -123,6 +132,7 @@ except Exception as e:
 
 try:
     from walters_analyzer.core.models import GameInput, TeamSnapshot, GameOdds
+
     write_and_print("[OK] Core models imported")
 except ImportError as e:
     write_and_print(f"[X] Core models: {e}")
@@ -135,6 +145,7 @@ write_and_print("=" * 70)
 
 try:
     from walters_analyzer.research.engine import ResearchEngine
+
     write_and_print("[OK] ResearchEngine available")
 except ImportError as e:
     write_and_print(f"[WARNING] ResearchEngine not available: {e}")
@@ -147,7 +158,7 @@ write_and_print("=" * 70)
 
 server_path = project_root / ".claude" / "walters_mcp_server.py"
 if server_path.exists():
-    write_and_print(f"[OK] MCP server file exists")
+    write_and_print("[OK] MCP server file exists")
     write_and_print(f"  Location: {server_path}")
     write_and_print(f"  Size: {server_path.stat().st_size:,} bytes")
 else:
@@ -164,15 +175,21 @@ if all_ok:
     write_and_print("\n[OK] ALL TESTS PASSED!")
     write_and_print("\nYour MCP server is ready to use.")
     write_and_print("\nNext steps:")
-    write_and_print(r"  1. Test analyzer: .\.venv\Scripts\python.exe test_analyzer_simple.py")
+    write_and_print(
+        r"  1. Test analyzer: .\.venv\Scripts\python.exe test_analyzer_simple.py"
+    )
     write_and_print("  2. Install Node.js from https://nodejs.org/")
-    write_and_print(r"  3. Run Inspector: npx @modelcontextprotocol/inspector python .claude\walters_mcp_server.py")
+    write_and_print(
+        r"  3. Run Inspector: npx @modelcontextprotocol/inspector python .claude\walters_mcp_server.py"
+    )
     write_and_print("  4. Or add to Claude Desktop (see QUICK_START_MCP.md)")
 else:
     write_and_print("\n[X] SOME TESTS FAILED")
     write_and_print("\nIssues found:")
     if not deps_ok:
-        write_and_print("  - Missing dependencies. Install with: uv pip install -e .[mcp]")
+        write_and_print(
+            "  - Missing dependencies. Install with: uv pip install -e .[mcp]"
+        )
     if not package_ok:
         write_and_print("  - Package import errors. Install with: uv pip install -e .")
     write_and_print("\nAfter fixing, run this script again.")

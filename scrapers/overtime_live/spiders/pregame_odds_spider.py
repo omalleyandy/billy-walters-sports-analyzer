@@ -27,7 +27,9 @@ try:
 except ImportError:
     STEALTH_AVAILABLE = False
     stealth_async = None
-    print("[WARNING] playwright-stealth not installed. Run: uv pip install playwright-stealth")
+    print(
+        "[WARNING] playwright-stealth not installed. Run: uv pip install playwright-stealth"
+    )
 
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
@@ -151,7 +153,9 @@ class PregameOddsSpider(scrapy.Spider):
             )
             self.logger.info(f"[OK] Using residential proxy: {proxy_display}")
         else:
-            self.logger.warning("[WARNING] No proxy configured - using direct connection")
+            self.logger.warning(
+                "[WARNING] No proxy configured - using direct connection"
+            )
 
     async def start(self):
         """Entry point for the spider"""

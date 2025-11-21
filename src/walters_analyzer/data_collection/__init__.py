@@ -13,7 +13,7 @@ Components:
 from .team_context_builder import (
     TeamContextBuilder,
     classify_recent_performance,
-    calculate_schedule_difficulty
+    calculate_schedule_difficulty,
 )
 
 from .schedule_history_calculator import (
@@ -23,7 +23,7 @@ from .schedule_history_calculator import (
     calculate_travel_distance,
     classify_time_zones,
     calculate_schedule_density,
-    assess_schedule_strain
+    assess_schedule_strain,
 )
 
 __all__ = [
@@ -31,7 +31,6 @@ __all__ = [
     "TeamContextBuilder",
     "classify_recent_performance",
     "calculate_schedule_difficulty",
-    
     # Schedule History Calculator
     "ScheduleHistoryCalculator",
     "GameRecord",

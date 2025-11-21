@@ -15,6 +15,7 @@ import pandas as pd
 # Import existing scrapers (optional - only needed for Massey initialization)
 try:
     from ..scrapers.massey_ratings_live_scraper import MasseyRatingsScraper
+
     MASSEY_AVAILABLE = True
 except ImportError:
     MASSEY_AVAILABLE = False
@@ -80,7 +81,7 @@ class PowerRatingManager:
             print("[ERROR] Massey scraper not available")
             print("   Install required dependencies or use manual initialization")
             return
-            
+
         print(f"\n[*] Initializing {self.sport.upper()} power ratings from Massey...")
 
         scraper = MasseyRatingsScraper()

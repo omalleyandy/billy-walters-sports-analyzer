@@ -277,7 +277,7 @@ class BetRecommendation(BaseModel):
 
     Thin "view model" that can be rendered to markdown, JSON, or CLI.
     This model aligns exactly with bet_recommendation.schema.json
-    
+
     Schema requirements:
     - recommendation_id: Unique identifier (required)
     - game_id: Reference to Game (required)
@@ -309,7 +309,7 @@ class BetRecommendation(BaseModel):
         None,
         description="ID of the MatchupEvaluation that generated this recommendation.",
     )
-    
+
     # Bet specification
     bet_type: BetType = Field(
         ...,
@@ -348,13 +348,13 @@ class BetRecommendation(BaseModel):
         le=0.03,
         description="Fraction of bankroll to stake on this recommendation (max 3%).",
     )
-    
+
     # Optional bankroll reference
     bankroll: float | None = Field(
         None,
         description="Bankroll amount this recommendation is based on.",
     )
-    
+
     # Action flag
     is_play: bool = Field(
         ...,
@@ -372,27 +372,27 @@ class BetRecommendation(BaseModel):
         default_factory=datetime.utcnow,
         description="Timestamp when this recommendation was generated.",
     )
-    
+
     # =========================================================================
     # Backward compatibility properties
     # =========================================================================
     # These allow code written for the old API to still work
-    
+
     @property
     def edge_percent(self) -> float:
         """
         Backward compatibility for edge_percent (uses edge_percentage internally).
-        
+
         The schema uses 'edge_percentage', but some code may reference 'edge_percent'.
         This property makes both work transparently.
         """
         return self.edge_percentage
-    
+
     @property
     def odds(self) -> int | None:
         """
         Backward compatibility for odds (uses price internally).
-        
+
         The schema uses 'price', but some code may reference 'odds'.
         This property makes both work transparently.
         """
