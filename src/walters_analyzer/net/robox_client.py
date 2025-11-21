@@ -15,10 +15,17 @@ import json
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Union, TYPE_CHECKING
 
 import httpx
-from robox import AsyncRobox, Options  # type: ignore[import]
+
+# Runtime check for robox availability
+try:
+    from robox import AsyncRobox, Options  # type: ignore[import]
+    ROBOX_AVAILABLE = True
+except ImportError:
+    ROBOX_AVAILABLE = False
+    # No need to define placeholders - we'll use string annotations
 
 from ..config import config, Config
 
@@ -139,12 +146,18 @@ class RoboxClient:
     """
 
     def __init__(self, cfg: Optional[Config] = None) -> None:
+        if not ROBOX_AVAILABLE:
+            raise ImportError(
+                "robox package is not available. "
+                "This module is a placeholder for future implementation. "
+                "Uncomment 'robox' in pyproject.toml and install to use."
+            )
         self._cfg: Config = cfg or config
-        self._robox: Optional[AsyncRobox] = None
+        self._robox: Optional[Any] = None  # AsyncRobox when available
         self._lock = asyncio.Lock()
         self._circuit = CircuitBreaker()
 
-    async def _ensure_client(self) -> AsyncRobox:
+    async def _ensure_client(self) -> Any:  # Returns AsyncRobox when available
         if self._robox is not None:
             return self._robox
 

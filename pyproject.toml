@@ -31,7 +31,7 @@ dependencies = [
     "anthropic>=0.40.0", # Anthropic SDK for web_fetch integration
     "openai>=2.8.1",
     "jsonschema>=4.17.0", # For schema validation in knowledge graph
-    "robox",
+    # "robox",  # TODO: Uncomment when robox package is available (currently blocks CI)
 ]
 
 [project.scripts]
@@ -206,5 +206,5 @@ reportUnsupportedDunderAll = "warning"
 typeCheckingMode = "basic"
 pythonVersion = "3.11"
 
-[tool.uv.sources]
-robox = { path = "../robox" }
+# [tool.uv.sources]
+# robox = { path = "../robox" }  # TODO: Uncomment when robox package is ready
