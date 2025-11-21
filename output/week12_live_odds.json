@@ -1,0 +1,17 @@
+{
+  "scrape_time": "2025-11-20T05:39:06.311580",
+  "bankroll": 20000.0,
+  "qualified_bets": [
+    {
+      "game": "BUF @ HOU",
+      "bet_team": "Houston Texans",
+      "line": "-6.0",
+      "amount": 400.0,
+      "edge": 11.75,
+      "stars": 2.0,
+      "priority": "CONDITIONAL"
+    }
+  ],
+  "total_risk": 400.0,
+  "risk_percentage": 2.0
+}

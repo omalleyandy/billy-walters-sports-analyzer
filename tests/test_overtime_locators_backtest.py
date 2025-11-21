@@ -131,10 +131,10 @@ class OvertimeLocatorBacktest:
                     count = await locator.count()
                     visible = await locator.is_visible() if count > 0 else False
                     customer_id_result.add_locator(loc_type, loc_str, visible, count)
-                    print(f"  ✓ {loc_str}: found={visible}, count={count}")
+                    print(f"  [OK] {loc_str}: found={visible}, count={count}")
                 except Exception as e:
                     customer_id_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                    print(f"  ✗ {loc_str}: {e}")
+                    print(f"  [X] {loc_str}: {e}")
 
             self.results.append(customer_id_result)
 
@@ -158,10 +158,10 @@ class OvertimeLocatorBacktest:
                     count = await locator.count()
                     visible = await locator.is_visible() if count > 0 else False
                     password_result.add_locator(loc_type, loc_str, visible, count)
-                    print(f"  ✓ {loc_str}: found={visible}, count={count}")
+                    print(f"  [OK] {loc_str}: found={visible}, count={count}")
                 except Exception as e:
                     password_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                    print(f"  ✗ {loc_str}: {e}")
+                    print(f"  [X] {loc_str}: {e}")
 
             self.results.append(password_result)
 
@@ -185,10 +185,10 @@ class OvertimeLocatorBacktest:
                     count = await locator.count()
                     visible = await locator.is_visible() if count > 0 else False
                     login_btn_result.add_locator(loc_type, loc_str, visible, count)
-                    print(f"  ✓ {loc_str}: found={visible}, count={count}")
+                    print(f"  [OK] {loc_str}: found={visible}, count={count}")
                 except Exception as e:
                     login_btn_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                    print(f"  ✗ {loc_str}: {e}")
+                    print(f"  [X] {loc_str}: {e}")
 
             self.results.append(login_btn_result)
 
@@ -198,14 +198,14 @@ class OvertimeLocatorBacktest:
                 await self.page.fill("#txtPassword", password)
                 await self.page.click("#btnDoLogin")
                 await self.page.wait_for_timeout(3000)
-                print("\n✓ Login completed")
+                print("\n[OK] Login completed")
                 return True
             else:
-                print("\n✗ Cannot proceed with login - locators not found")
+                print("\n[X] Cannot proceed with login - locators not found")
                 return False
 
         except Exception as e:
-            print(f"\n✗ Login failed: {e}")
+            print(f"\n[X] Login failed: {e}")
             return False
 
     async def test_sport_selection_locators(self):
@@ -254,10 +254,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 nfl_result.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 nfl_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(nfl_result)
 
@@ -305,10 +305,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 cfb_result.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 cfb_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(cfb_result)
 
@@ -338,10 +338,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 game_result.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 game_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(game_result)
 
@@ -373,10 +373,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 half_result.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 half_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(half_result)
 
@@ -404,10 +404,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 tt_result.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 tt_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(tt_result)
 
@@ -435,11 +435,11 @@ class OvertimeLocatorBacktest:
                 visible = await locator.is_visible() if count > 0 else False
                 container_result.add_locator(loc_type, loc_str, visible, count)
                 print(
-                    f"  {'✓' if visible else '✗'} {loc_str}: visible={visible}, count={count}"
+                    f"  {'[OK]' if visible else '[X]'} {loc_str}: visible={visible}, count={count}"
                 )
             except Exception as e:
                 container_result.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(container_result)
 
@@ -466,10 +466,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 spread_header.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 spread_header.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(spread_header)
 
@@ -491,10 +491,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 ml_header.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 ml_header.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(ml_header)
 
@@ -514,10 +514,10 @@ class OvertimeLocatorBacktest:
 
                 count = await locator.count()
                 totals_header.add_locator(loc_type, loc_str, count > 0, count)
-                print(f"  {'✓' if count > 0 else '✗'} {loc_str}: count={count}")
+                print(f"  {'[OK]' if count > 0 else '[X]'} {loc_str}: count={count}")
             except Exception as e:
                 totals_header.add_locator(loc_type, loc_str, False, 0, str(e))
-                print(f"  ✗ {loc_str}: {e}")
+                print(f"  [X] {loc_str}: {e}")
 
         self.results.append(totals_header)
 
@@ -538,7 +538,7 @@ class OvertimeLocatorBacktest:
                 if match:
                     rotation = match.group(1)
                     team = match.group(2)
-                    if len(team) >= 3 and not any(c in team for c in ["🆕", "�"]):
+                    if len(team) >= 3 and not any(c in team for c in ["[*]", "[*]"]):
                         teams_found.append({"rotation": rotation, "team": team})
 
             team_result.add_locator(
@@ -548,14 +548,14 @@ class OvertimeLocatorBacktest:
                 len(teams_found),
             )
             team_result.set_extraction_result(teams_found[:10])  # Show first 10
-            print(f"    ✓ Found {len(teams_found)} teams via text parsing")
+            print(f"    [OK] Found {len(teams_found)} teams via text parsing")
             for i, team in enumerate(teams_found[:5]):
                 print(f"      {team['rotation']}: {team['team']}")
         except Exception as e:
             team_result.add_locator(
                 "text_parsing", "document.body.innerText parsing", False, 0, str(e)
             )
-            print(f"    ✗ Text parsing failed: {e}")
+            print(f"    [X] Text parsing failed: {e}")
 
         self.results.append(team_result)
 
@@ -584,7 +584,7 @@ class OvertimeLocatorBacktest:
                     len(buttons),
                 )
                 print(
-                    f"    {'✓' if len(buttons) > 0 else '✗'} {desc} buttons: {len(buttons)}"
+                    f"    {'[OK]' if len(buttons) > 0 else '[X]'} {desc} buttons: {len(buttons)}"
                 )
 
                 # Extract first few button values
@@ -602,7 +602,7 @@ class OvertimeLocatorBacktest:
                 odds_result.add_locator(
                     "button_id", f"button[id^='{prefix}_']", False, 0, str(e)
                 )
-                print(f"    ✗ {desc} buttons: {e}")
+                print(f"    [X] {desc} buttons: {e}")
 
         odds_result.set_extraction_result(all_buttons)
         self.results.append(odds_result)
@@ -642,7 +642,7 @@ class OvertimeLocatorBacktest:
         for result in self.results:
             if not result.is_successful():
                 report["recommendations"].append(
-                    f"⚠ {result.name}: No working locators found"
+                    f"[WARNING] {result.name}: No working locators found"
                 )
             elif result.best_locator:
                 working_count = sum(
@@ -650,7 +650,7 @@ class OvertimeLocatorBacktest:
                 )
                 if working_count == 1:
                     report["recommendations"].append(
-                        f"⚠ {result.name}: Only 1 working locator (fragile)"
+                        f"[WARNING] {result.name}: Only 1 working locator (fragile)"
                     )
 
         return report
@@ -663,8 +663,8 @@ class OvertimeLocatorBacktest:
         print(f"\nTimestamp: {report['timestamp']}")
         print("\nSummary:")
         print(f"  Total Tests: {report['summary']['total_tests']}")
-        print(f"  Successful: {report['summary']['successful']} ✓")
-        print(f"  Failed: {report['summary']['failed']} ✗")
+        print(f"  Successful: {report['summary']['successful']} [OK]")
+        print(f"  Failed: {report['summary']['failed']} [X]")
         print(
             f"  Success Rate: {report['summary']['successful'] / report['summary']['total_tests'] * 100:.1f}%"
         )
@@ -676,7 +676,7 @@ class OvertimeLocatorBacktest:
         for category, tests in report["categories"].items():
             print(f"\n{category}:")
             for test in tests:
-                status = "✓" if test["successful"] else "✗"
+                status = "[OK]" if test["successful"] else "[X]"
                 print(f"  {status} {test['name']}")
                 print(f"      Locators tested: {test['locators_tested']}")
                 print(f"      Working locators: {test['working_locators']}")
@@ -733,7 +733,7 @@ async def main():
         report_path = Path(__file__).parent.parent / "backtest_report.json"
         with open(report_path, "w") as f:
             json.dump(report, f, indent=2)
-        print(f"\n✓ Report saved to: {report_path}")
+        print(f"\n[OK] Report saved to: {report_path}")
 
     finally:
         await backtest.teardown()

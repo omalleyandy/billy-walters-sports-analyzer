@@ -451,5 +451,5 @@ if __name__ == "__main__":
     with open(output_file, "w") as f:
         json.dump(walters_data, f, indent=2, default=str)
 
-    print(f"✓ Converted {walters_data['summary']['total_converted']} games")
-    print(f"✓ Saved to: {output_file}")
+    print(f"[OK] Converted {walters_data['summary']['total_converted']} games")
+    print(f"[OK] Saved to: {output_file}")

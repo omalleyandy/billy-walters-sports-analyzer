@@ -4,7 +4,7 @@ Based on OpenAPI schema: https://highlightly.net/documentation/american-football
 """
 
 from typing import Optional, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from enum import Enum
 
 
@@ -71,8 +71,7 @@ class HighlightlyTeam(BaseModel):
     abbreviation: str
     league: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -111,8 +110,7 @@ class TeamStatistics(BaseModel):
     leagueName: str = Field(..., alias="leagueName")
     round: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -131,8 +129,7 @@ class MatchScore(BaseModel):
     firstOvertimePeriod: Optional[str] = Field(None, alias="firstOvertimePeriod")
     secondOvertimePeriod: Optional[str] = Field(None, alias="secondOvertimePeriod")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class MatchStateInfo(BaseModel):
@@ -154,8 +151,7 @@ class MatchTeam(BaseModel):
     displayName: str = Field(..., alias="displayName")
     abbreviation: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class HighlightlyMatch(BaseModel):
@@ -170,8 +166,7 @@ class HighlightlyMatch(BaseModel):
     homeTeam: MatchTeam = Field(..., alias="homeTeam")
     state: MatchStateInfo
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -213,8 +208,7 @@ class MatchStatistics(BaseModel):
     homeTeam: TeamMatchStatistics = Field(..., alias="homeTeam")
     awayTeam: TeamMatchStatistics = Field(..., alias="awayTeam")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlayerStatisticsItem(BaseModel):
@@ -230,8 +224,7 @@ class BoxScorePlayer(BaseModel):
     playerName: str = Field(..., alias="playerName")
     statistics: List[PlayerStatisticsItem]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class BoxScores(BaseModel):
@@ -240,8 +233,7 @@ class BoxScores(BaseModel):
     homeTeam: List[BoxScorePlayer] = Field(..., alias="homeTeam")
     awayTeam: List[BoxScorePlayer] = Field(..., alias="awayTeam")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class TopPerformer(BaseModel):
@@ -252,8 +244,7 @@ class TopPerformer(BaseModel):
     playerPosition: str = Field(..., alias="playerPosition")
     value: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class TopPerformers(BaseModel):
@@ -262,8 +253,7 @@ class TopPerformers(BaseModel):
     homeTeam: List[TopPerformer] = Field(..., alias="homeTeam")
     awayTeam: List[TopPerformer] = Field(..., alias="awayTeam")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class InjuryPlayer(BaseModel):
@@ -295,8 +285,7 @@ class EventPosition(BaseModel):
     period: str
     yardLine: int = Field(..., alias="yardLine")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class MatchEvent(BaseModel):
@@ -310,8 +299,7 @@ class MatchEvent(BaseModel):
     description: str
     isScoringPlay: bool = Field(..., alias="isScoringPlay")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class Prediction(BaseModel):
@@ -322,8 +310,7 @@ class Prediction(BaseModel):
     generatedAt: str = Field(..., alias="generatedAt")
     description: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PredictionData(BaseModel):
@@ -353,8 +340,7 @@ class MatchDetails(BaseModel):
     events: Optional[List[MatchEvent]] = None
     predictions: Optional[PredictionData] = None
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -378,8 +364,7 @@ class BookmakerMarket(BaseModel):
     market: str
     values: List[MarketSelection]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class MatchOdds(BaseModel):
@@ -388,8 +373,7 @@ class MatchOdds(BaseModel):
     matchId: int = Field(..., alias="matchId")
     odds: List[BookmakerMarket]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class Bookmaker(BaseModel):
@@ -418,8 +402,7 @@ class HighlightlyHighlight(BaseModel):
     channel: Optional[str] = None
     source: Optional[str] = None
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class GeoRestriction(BaseModel):
@@ -430,8 +413,7 @@ class GeoRestriction(BaseModel):
     blockedCountries: List[str] = Field(..., alias="blockedCountries")
     embeddable: bool
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -445,8 +427,7 @@ class StandingsStatValue(BaseModel):
     value: str
     displayName: str = Field(..., alias="displayName")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class StandingsTeam(BaseModel):
@@ -458,8 +439,7 @@ class StandingsTeam(BaseModel):
     displayName: str = Field(..., alias="displayName")
     abbreviation: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class TeamStanding(BaseModel):
@@ -481,8 +461,7 @@ class StandingsData(BaseModel):
     endDate: str = Field(..., alias="endDate")
     data: List[TeamStanding]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -500,8 +479,7 @@ class LineupPlayer(BaseModel):
     positionAbbreviation: str = Field(..., alias="positionAbbreviation")
     isStarter: Optional[bool] = Field(None, alias="isStarter")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class TeamLineup(BaseModel):
@@ -530,8 +508,7 @@ class HighlightlyPlayer(BaseModel):
     fullName: Optional[str] = Field(None, alias="fullName")
     logo: Optional[str] = None
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlayerPosition(BaseModel):
@@ -559,8 +536,7 @@ class PlayerTeam(BaseModel):
     displayName: str = Field(..., alias="displayName")
     abbreviation: str
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlayerProfile(BaseModel):
@@ -577,8 +553,7 @@ class PlayerProfile(BaseModel):
     draft: PlayerDraft
     team: PlayerTeam
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlayerSummary(BaseModel):
@@ -589,8 +564,7 @@ class PlayerSummary(BaseModel):
     logo: Optional[str] = None
     profile: PlayerProfile
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class StatEntry(BaseModel):
@@ -610,8 +584,7 @@ class PlayerSeasonStats(BaseModel):
     season: int
     seasonBreakdown: SeasonBreakdown = Field(..., alias="seasonBreakdown")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlayerStatistics(BaseModel):
@@ -622,8 +595,7 @@ class PlayerStatistics(BaseModel):
     logo: Optional[str] = None
     perSeason: List[PlayerSeasonStats] = Field(..., alias="perSeason")
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # ============================================================================
@@ -638,8 +610,7 @@ class Pagination(BaseModel):
     offset: int
     limit: int
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PlanInfo(BaseModel):

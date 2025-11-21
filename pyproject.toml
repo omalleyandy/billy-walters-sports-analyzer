@@ -22,12 +22,16 @@ dependencies = [
     "beautifulsoup4>=4.14.2",
     "scikit-learn>=1.7.2",
     "xgboost>=3.1.1",
-    "httpx>=0.28.1",  # Consolidated HTTP client (replaced requests and aiohttp)
+    "httpx>=0.28.1", # Consolidated HTTP client (replaced requests and aiohttp)
     "pytest-asyncio>=1.2.0",
     "signalrcore>=0.9.5",
     "websocket-client>=1.0.0",
     "tenacity>=8.2.0",
     "pandas>=2.3.3",
+    "anthropic>=0.40.0", # Anthropic SDK for web_fetch integration
+    "openai>=2.8.1",
+    "jsonschema>=4.17.0", # For schema validation in knowledge graph
+    # "robox",  # TODO: Uncomment when robox package is available (currently blocks CI)
 ]
 
 [project.scripts]
@@ -113,6 +117,8 @@ exclude = [
     ".codex",
     "data/_tmp",
     "review",
+    "archive",  # Legacy code - not enforcing line length
+    "src/data/archive",  # Legacy scrapers
     "__pycache__",
     ".git",
     ".pytest_cache",
@@ -125,10 +131,14 @@ line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
-# Allow unused imports in __init__.py files
+# Pragmatic linting for legacy codebase
+# NOTE: E501 (line-too-long) is ignored because we have 518 violations in legacy code.
+# However, ruff format will auto-wrap new code at 88 chars, so new code will comply.
+# For new files: aim for 88-char limit. Use `ruff format` to auto-format.
 ignore = [
     "E402",  # Module level import not at top of file (needed for some dynamic imports)
-    "E501",  # Line too long (let black/ruff format handle this)
+    "E501",  # Line too long - auto-handled by ruff format for new code
+    "E712",  # Comparison to True/False - stylistic preference in tests
     "E722",  # Bare except (legacy code, will fix incrementally)
     "E731",  # Lambda assignment (used for dynamic imports)
     "E741",  # Ambiguous variable name (legacy code)
@@ -145,6 +155,16 @@ select = [
     "W",   # pycodestyle warnings
     "F",   # pyflakes
 ]
+
+# Per-file configuration
+[tool.ruff.lint.per-file-ignores]
+# Allow longer lines in scripts (utility/one-off code)
+"scripts/**/*.py" = ["E501"]
+"examples/**/*.py" = ["E501"]
+"*.py" = ["E501"]  # Temporarily allow for root-level scripts
+
+# Enforce stricter rules in core source code (future goal)
+# "src/**/*.py" = []  # TODO: Remove E501 ignore when legacy code is cleaned up
 
 [tool.pyright]
 # Type checking configuration
@@ -186,3 +206,6 @@ reportUnsupportedDunderAll = "warning"
 # Only report critical issues
 typeCheckingMode = "basic"
 pythonVersion = "3.11"
+
+# [tool.uv.sources]
+# robox = { path = "../robox" }  # TODO: Uncomment when robox package is ready

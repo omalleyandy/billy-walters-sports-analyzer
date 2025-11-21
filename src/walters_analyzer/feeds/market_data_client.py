@@ -60,7 +60,7 @@ class OddsAPIClient(MarketDataFeed):
             odds = await client.get_odds("americanfootball_nfl")
         """
         if not self.api_key:
-            print("⚠️  ODDS_API_KEY not set. Add to .env file.")
+            print("[WARNING]  ODDS_API_KEY not set. Add to .env file.")
             return []
 
         endpoint = f"{self.base_url}/sports/{sport}/odds"
@@ -80,7 +80,7 @@ class OddsAPIClient(MarketDataFeed):
             return self._normalize_odds(data)
 
         except httpx.HTTPError as e:
-            print(f"❌ Error fetching odds: {e}")
+            print(f"[ERROR] Error fetching odds: {e}")
             return []
 
     async def get_line_history(
@@ -91,7 +91,7 @@ class OddsAPIClient(MarketDataFeed):
 
         Note: This requires The Odds API Historical endpoint (paid tier only)
         """
-        print("⚠️  Line history requires paid tier of The Odds API")
+        print("[WARNING]  Line history requires paid tier of The Odds API")
         return []
 
     def _normalize_odds(self, raw_data: List[Dict]) -> List[Dict]:
@@ -215,7 +215,9 @@ class PinnacleClient(MarketDataFeed):
         Note: Requires Pinnacle API credentials
         """
         if not self.api_key:
-            print("⚠️  PINNACLE_API_KEY not set. Requires funded Pinnacle account.")
+            print(
+                "[WARNING]  PINNACLE_API_KEY not set. Requires funded Pinnacle account."
+            )
             return []
 
         endpoint = f"{self.base_url}/v1/odds"
@@ -239,7 +241,7 @@ class PinnacleClient(MarketDataFeed):
             return self._normalize_pinnacle_odds(data)
 
         except httpx.HTTPError as e:
-            print(f"❌ Error fetching Pinnacle odds: {e}")
+            print(f"[ERROR] Error fetching Pinnacle odds: {e}")
             return []
 
     async def get_line_history(
@@ -247,7 +249,7 @@ class PinnacleClient(MarketDataFeed):
     ) -> List[Dict]:
         """Get Pinnacle line movement history"""
         # Pinnacle doesn't provide historical data via API
-        print("⚠️  Pinnacle API doesn't provide historical line data")
+        print("[WARNING]  Pinnacle API doesn't provide historical line data")
         return []
 
     def _get_sport_id(self, sport: str) -> int:
@@ -283,14 +285,18 @@ class DraftKingsClient(MarketDataFeed):
         Note: DraftKings doesn't offer a public API
         Recommend using The Odds API instead which includes DraftKings
         """
-        print("⚠️  DraftKings doesn't have a public API. Use The Odds API instead.")
+        print(
+            "[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead."
+        )
         return []
 
     async def get_line_history(
         self, game_id: str, market: str = "spread"
     ) -> List[Dict]:
         """Get DraftKings line movement history"""
-        print("⚠️  DraftKings doesn't have a public API. Use The Odds API instead.")
+        print(
+            "[WARNING]  DraftKings doesn't have a public API. Use The Odds API instead."
+        )
         return []
 
 

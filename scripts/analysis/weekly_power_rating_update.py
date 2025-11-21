@@ -141,8 +141,9 @@ class WeeklyPowerRatingUpdater:
         Returns:
             GameResult object
         """
-        # Parse date
-        game_date = date.fromisoformat(game_dict["date"])
+        # Parse date (handle timezone indicator)
+        date_str = game_dict["date"].replace("Z", "").split("T")[0]
+        game_date = date.fromisoformat(date_str)
 
         # Create GameResult
         return GameResult(
@@ -314,12 +315,12 @@ class WeeklyPowerRatingUpdater:
             # Generate report
             self.generate_rating_change_report()
 
-            logger.info("✅ WEEKLY UPDATE COMPLETE!")
+            logger.info("[*] WEEKLY UPDATE COMPLETE!")
             logger.info(f"Power ratings updated through Week {self.week_num}")
             logger.info("")
 
         except Exception as e:
-            logger.error(f"❌ Update failed: {e}")
+            logger.error(f"[ERROR] Update failed: {e}")
             raise
 
 

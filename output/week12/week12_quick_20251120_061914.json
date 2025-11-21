@@ -1,0 +1,34 @@
+{
+  "timestamp": "20251120_061914",
+  "opportunities": [
+    {
+      "game": "New York Jets @ Baltimore Ravens",
+      "spread": -13.5,
+      "edge": 7.0,
+      "confidence": "MEDIUM",
+      "stars": 1.5,
+      "recommended": "New York Jets +13.5",
+      "bet_size": 300.0,
+      "reasons": [
+        "Large spread (13.5) - contrarian value"
+      ]
+    },
+    {
+      "game": "Seattle Seahawks @ Tennessee Titans",
+      "spread": 13.5,
+      "edge": 7.0,
+      "confidence": "MEDIUM",
+      "stars": 1.5,
+      "recommended": "Seattle Seahawks +13.5",
+      "bet_size": 300.0,
+      "reasons": [
+        "Large spread (13.5) - contrarian value"
+      ]
+    }
+  ],
+  "risk_summary": {
+    "total_exposure": 600.0,
+    "exposure_pct": 3.0,
+    "num_bets": 2
+  }
+}

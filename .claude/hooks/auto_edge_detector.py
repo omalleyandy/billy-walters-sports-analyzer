@@ -89,7 +89,7 @@ def check_edge_detection_status() -> dict:
 
 def run_edge_detector(week: int) -> bool:
     """Run edge detection analysis."""
-    print(f"\n🔍 Running edge detection for week {week}...")
+    print(f"\n[SEARCH] Running edge detection for week {week}...")
     print("-" * 70)
 
     try:

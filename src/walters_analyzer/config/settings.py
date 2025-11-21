@@ -240,7 +240,8 @@ class OutputDirectoryConfig(BaseModel):
         Get output directory for a specific analysis type and league.
 
         Args:
-            analysis_type: Analysis type (schedule, injuries, odds, power_ratings, cards)
+            analysis_type: Analysis type (schedule, injuries, odds,
+                power_ratings, cards)
             league: League (nfl, ncaaf)
 
         Returns:

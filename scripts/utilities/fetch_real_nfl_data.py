@@ -86,7 +86,7 @@ async def fetch_real_2024_nfl_data():
                     week_games.append(game)
                     all_games.append(game)
 
-                print(f"  ✓ Fetched {len(week_games)} completed games")
+                print(f"  [OK] Fetched {len(week_games)} completed games")
 
                 # Show sample
                 if week_games:

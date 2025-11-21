@@ -37,13 +37,13 @@ class ESPNClient:
     # Website base URLs
     NFL_WEBSITE_URL = "https://www.espn.com/nfl"
     NCAAF_WEBSITE_URL = "https://www.espn.com/college-football"
-    
+
     # ESPN API endpoints
     NFL_BASE_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl"
     NCAAF_BASE_URL = (
         "https://site.api.espn.com/apis/site/v2/sports/football/college-football"
     )
-    
+
     # News endpoint
     NEWS_URL = "https://www.espn.com/google-news-posts"
 
@@ -356,7 +356,7 @@ class ESPNClient:
         # For now, use scoreboard which includes odds
         base_url = self.NFL_BASE_URL if league == "NFL" else self.NCAAF_BASE_URL
         url = f"{base_url}/scoreboard"
-        
+
         logger.info(f"Fetching {league} odds")
         data = await self._make_request(url)
         return self._enrich_odds(data, league)

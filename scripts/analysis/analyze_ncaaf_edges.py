@@ -32,9 +32,12 @@ class NCAAFEdgeDetector:
     - Injury data less reliable
     """
 
-    # NCAAF-specific constants
-    HFA = 3.5  # Home field advantage (higher than NFL)
+    # NCAAF-specific constants (FIX 1: Reduced from 3.5 to 2.5)
+    HFA = 2.5  # Home field advantage (reduced from 3.5 based on Week 12 analysis)
     MIN_EDGE = 1.5  # Minimum edge for a play (same as NFL)
+    MARKET_RESPECT_THRESHOLD = (
+        10.0  # FIX 2: Skip edges >10 pts (market is probably right)
+    )
 
     # Billy Walters edge thresholds (same as NFL)
     THRESHOLDS = {
@@ -209,8 +212,30 @@ class NCAAFEdgeDetector:
             # Get market line
             market_spread = game["spread"]["home"]
 
-            # Calculate edge
-            edge = predicted - market_spread
+            # FIX 3: Apply bias correction for favorites/underdogs
+            betting_favorite = (predicted > market_spread and predicted < 0) or (
+                predicted < market_spread and predicted > 0
+            )
+
+            if betting_favorite:
+                # We think favorite should be favored by more than market
+                # Apply 15% haircut to favorite's strength
+                predicted_corrected = predicted * 0.85
+            else:
+                # We think underdog is undervalued
+                # Apply 15% boost to underdog's strength
+                predicted_corrected = predicted * 1.15
+
+            # Calculate edge (using corrected prediction)
+            edge = predicted_corrected - market_spread
+
+            # FIX 2: Market respect - skip if edge is too large
+            if abs(edge) > self.MARKET_RESPECT_THRESHOLD:
+                print(
+                    f"[MARKET RESPECT] Skipping {away_team} @ {home_team}: "
+                    f"Edge of {abs(edge):.1f} pts is too large (market likely right)"
+                )
+                continue
 
             # Only report if meets minimum threshold
             if abs(edge) < min_edge:
@@ -236,7 +261,9 @@ class NCAAFEdgeDetector:
                     "away_team": away_team,
                     "home_team": home_team,
                     "game_time": game["game_time"],
-                    "predicted_line": round(predicted, 1),
+                    "predicted_line": round(
+                        predicted_corrected, 1
+                    ),  # Use bias-corrected prediction
                     "market_line": market_spread,
                     "edge": round(edge, 1),
                     "edge_abs": round(abs(edge), 1),

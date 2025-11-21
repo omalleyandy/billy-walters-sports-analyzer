@@ -249,9 +249,9 @@ class BillyWaltersValuation:
         edge = game_analysis["edge_analysis"]
 
         lines = []
-        lines.append("═" * 80)
+        lines.append("[*]" * 80)
         lines.append(f"GAME: {away} @ {home}")
-        lines.append("═" * 80)
+        lines.append("[*]" * 80)
 
         # Home team injuries
         lines.append(f"\nHOME TEAM ({home}) INJURIES:")
@@ -269,7 +269,7 @@ class BillyWaltersValuation:
         if home_data.get("position_group_crises"):
             lines.append("\n  Position Group Impact:")
             for crisis in home_data["position_group_crises"]:
-                lines.append(f"    ⚠️  {crisis}")
+                lines.append(f"    [WARNING]  {crisis}")
 
         # Away team injuries
         lines.append(f"\nAWAY TEAM ({away}) INJURIES:")
@@ -287,12 +287,12 @@ class BillyWaltersValuation:
         if away_data.get("position_group_crises"):
             lines.append("\n  Position Group Impact:")
             for crisis in away_data["position_group_crises"]:
-                lines.append(f"    ⚠️  {crisis}")
+                lines.append(f"    [WARNING]  {crisis}")
 
         # Edge analysis
-        lines.append("\n" + "─" * 80)
+        lines.append("\n" + "[*]" * 80)
         lines.append("BILLY WALTERS ANALYSIS:")
-        lines.append("─" * 80)
+        lines.append("[*]" * 80)
         lines.append(
             f"Net Injury Advantage: {edge['net_injury_impact']:+.1f} points ({edge['reasoning']})"
         )

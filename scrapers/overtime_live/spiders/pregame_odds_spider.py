@@ -27,7 +27,9 @@ try:
 except ImportError:
     STEALTH_AVAILABLE = False
     stealth_async = None
-    print("⚠ playwright-stealth not installed. Run: uv pip install playwright-stealth")
+    print(
+        "[WARNING] playwright-stealth not installed. Run: uv pip install playwright-stealth"
+    )
 
 # Local modules
 from ..items import LiveGameItem, Market, QuoteSide, iso_now, game_key_from
@@ -149,9 +151,11 @@ class PregameOddsSpider(scrapy.Spider):
                 if "@" in self._proxy_url
                 else self._proxy_url
             )
-            self.logger.info(f"✓ Using residential proxy: {proxy_display}")
+            self.logger.info(f"[OK] Using residential proxy: {proxy_display}")
         else:
-            self.logger.warning("⚠ No proxy configured - using direct connection")
+            self.logger.warning(
+                "[WARNING] No proxy configured - using direct connection"
+            )
 
     async def start(self):
         """Entry point for the spider"""
@@ -221,16 +225,16 @@ class PregameOddsSpider(scrapy.Spider):
 
             if ip_info:
                 self.logger.info(
-                    f"✓ Proxy IP verified: {ip_info.get('ip')} "
+                    f"[OK] Proxy IP verified: {ip_info.get('ip')} "
                     f"({ip_info.get('city')}, {ip_info.get('region')}, {ip_info.get('country')})"
                 )
                 return True
             else:
-                self.logger.warning("⚠ Could not parse IP info")
+                self.logger.warning("[WARNING] Could not parse IP info")
                 return False
 
         except Exception as e:
-            self.logger.error(f"✗ Proxy verification failed: {e}")
+            self.logger.error(f"[X] Proxy verification failed: {e}")
             return False
 
     async def _perform_login(self, page: Page) -> bool:
@@ -258,7 +262,7 @@ class PregameOddsSpider(scrapy.Spider):
             )
             if customer_id_input:
                 await customer_id_input.fill(customer_id)
-                self.logger.info("✓ Customer ID filled")
+                self.logger.info("[OK] Customer ID filled")
 
             # Password field: //input[@placeholder='Password']
             password_input = await page.wait_for_selector(
@@ -266,7 +270,7 @@ class PregameOddsSpider(scrapy.Spider):
             )
             if password_input:
                 await password_input.fill(password)
-                self.logger.info("✓ Password filled")
+                self.logger.info("[OK] Password filled")
 
             # Login button: //button[@class='btn btn-default btn-login ng-binding']
             login_btn = await page.wait_for_selector(
@@ -275,9 +279,9 @@ class PregameOddsSpider(scrapy.Spider):
             )
             if login_btn:
                 await login_btn.click()
-                self.logger.info("✓ Login button clicked")
+                self.logger.info("[OK] Login button clicked")
                 await page.wait_for_timeout(2000)
-                self.logger.info("✓ Login completed")
+                self.logger.info("[OK] Login completed")
                 return True
 
             return False
@@ -292,15 +296,15 @@ class PregameOddsSpider(scrapy.Spider):
 
         # Apply stealth mode to bypass Cloudflare detection
         if STEALTH_AVAILABLE:
-            self.logger.info("🥷 Applying stealth mode to bypass Cloudflare...")
+            self.logger.info("[*] Applying stealth mode to bypass Cloudflare...")
             try:
                 await stealth_async(page)
-                self.logger.info("✓ Stealth mode activated")
+                self.logger.info("[OK] Stealth mode activated")
             except Exception as e:
                 self.logger.warning(f"Failed to apply stealth: {e}")
         else:
             self.logger.warning(
-                "⚠ Stealth mode not available - may be blocked by Cloudflare"
+                "[WARNING] Stealth mode not available - may be blocked by Cloudflare"
             )
 
         # Skip IP verification - it's slow and causes timeouts with Cloudflare
@@ -321,7 +325,7 @@ class PregameOddsSpider(scrapy.Spider):
             # Wait for page to be interactive
             await page.wait_for_load_state("domcontentloaded", timeout=30_000)
             await page.wait_for_timeout(3000)  # Extra wait for Cloudflare/JS
-            self.logger.info("✓ Sports page loaded")
+            self.logger.info("[OK] Sports page loaded")
         except Exception as e:
             self.logger.warning(f"Load state timeout (might be OK): {e}")
             # Continue anyway - we're already on the page from start()
@@ -373,7 +377,7 @@ class PregameOddsSpider(scrapy.Spider):
             sport_label = await page.wait_for_selector(selector, timeout=10_000)
             if sport_label:
                 await sport_label.click()
-                self.logger.info(f"✓ {sport.upper()} filter clicked")
+                self.logger.info(f"[OK] {sport.upper()} filter clicked")
                 await page.wait_for_timeout(2500)
             else:
                 self.logger.error(f"Could not find {sport.upper()} filter")
