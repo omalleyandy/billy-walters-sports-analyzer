@@ -992,7 +992,8 @@ class BillyWaltersEdgeDetector:
             home_team=home_team,
             away_rating=away_rating,
             home_rating=home_rating,
-            predicted_spread=predicted_spread_corrected,  # Use bias-corrected prediction
+            # Use bias-corrected prediction
+            predicted_spread=predicted_spread_corrected,
             market_spread=market_spread,
             market_total=market_total,
             best_odds=best_odds,

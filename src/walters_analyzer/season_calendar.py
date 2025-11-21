@@ -296,7 +296,8 @@ def format_season_status(
         elif phase == SeasonPhase.PLAYOFFS:
             return "NCAAF FBS 2025 College Football Playoff"
         elif phase == SeasonPhase.SUPER_BOWL:
-            return f"CFP National Championship - {NCAAF_2025_NATIONAL_CHAMPIONSHIP.strftime('%B %d, %Y')}"
+            champ_date = NCAAF_2025_NATIONAL_CHAMPIONSHIP.strftime('%B %d, %Y')
+            return f"CFP National Championship - {champ_date}"
         elif phase == SeasonPhase.PRESEASON:
             return "NCAAF FBS 2025 Preseason"
         else:
