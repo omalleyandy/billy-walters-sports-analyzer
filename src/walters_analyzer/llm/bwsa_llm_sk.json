@@ -1,7 +1,7 @@
 {
-  "team_home": { ... Team ... },
-  "team_away": { ... Team ... },
-  "game": { ... Game ... },
-  "evaluation": { ... MatchupEvaluation ... },
-  "recommendation": { ... BetRecommendation ... }
+  "team_home": {},
+  "team_away": {},
+  "game": {},
+  "evaluation": {},
+  "recommendation": {}
 }

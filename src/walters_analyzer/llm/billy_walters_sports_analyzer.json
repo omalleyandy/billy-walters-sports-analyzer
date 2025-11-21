@@ -324,11 +324,11 @@
       "type": "Entity",
       "props": {
         "fields": [
-          "bet_type",        // spread | moneyline | total | none
-          "side",            // home | away
+          "bet_type",
+          "side",
           "edge_percent",
           "star_rating",
-          "stake_fraction",  // fraction_of_bankroll
+          "stake_fraction",
           "rationale"
         ],
         "constraints": {
