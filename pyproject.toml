@@ -138,6 +138,7 @@ target-version = "py311"
 ignore = [
     "E402",  # Module level import not at top of file (needed for some dynamic imports)
     "E501",  # Line too long - auto-handled by ruff format for new code
+    "E712",  # Comparison to True/False - stylistic preference in tests
     "E722",  # Bare except (legacy code, will fix incrementally)
     "E731",  # Lambda assignment (used for dynamic imports)
     "E741",  # Ambiguous variable name (legacy code)
