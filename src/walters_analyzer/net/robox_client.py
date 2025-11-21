@@ -22,6 +22,7 @@ import httpx
 # Runtime check for robox availability
 try:
     from robox import AsyncRobox, Options  # type: ignore[import]
+
     ROBOX_AVAILABLE = True
 except ImportError:
     ROBOX_AVAILABLE = False
