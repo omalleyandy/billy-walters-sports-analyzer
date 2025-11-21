@@ -53,6 +53,13 @@ This index provides quick navigation to all project documentation organized by t
 - [Architecture](ARCHITECTURE.md) - System architecture overview
 - [CI/CD Documentation](../.github/CI_CD.md) - Continuous integration setup
 
+### MCP Architecture (NEW) 🆕
+- [MCP Quick Start](MCP_QUICK_START.md) - **START HERE** - 5-minute overview
+- [MCP Architecture](MCP_ARCHITECTURE.md) - Complete technical architecture (35+ pages)
+- [MCP Phase 1 Implementation](MCP_PHASE1_IMPLEMENTATION.md) - Step-by-step implementation guide
+- [MCP Before/After Comparison](MCP_BEFORE_AFTER.md) - Visual comparison and benefits
+- [Existing MCP Server](../.claude/walters_mcp_server.py) - Current implementation (basic)
+
 ### Technical Guides
 - [Scraper Quick Reference](SCRAPER_QUICK_REFERENCE.md) - All scrapers at a glance
 - [Overtime Scraping Schedule](OVERTIME_SCRAPING_SCHEDULE.md) - Optimal scraping times
@@ -150,6 +157,12 @@ billy-walters-sports-analyzer/
 2. [GitHub Workflow Guide](guides/GITHUB_WORKFLOW_GUIDE.md)
 3. [CI/CD Documentation](../.github/CI_CD.md)
 
+### I want to build MCP servers (NEW) 🆕
+1. [MCP Quick Start](MCP_QUICK_START.md) - Understand MCP in 5 minutes
+2. [MCP Before/After](MCP_BEFORE_AFTER.md) - See the benefits
+3. [MCP Phase 1 Implementation](MCP_PHASE1_IMPLEMENTATION.md) - Start building (4-6 hours)
+4. [MCP Architecture](MCP_ARCHITECTURE.md) - Full technical details
+
 ## External Resources
 
 - **Billy Walters**: "Gambler: Secrets from a Life at Risk" (book)
@@ -167,7 +180,8 @@ billy-walters-sports-analyzer/
 
 ---
 
-**Last Updated**: 2025-11-11
+**Last Updated**: 2025-11-21
 **Project Status**: Production-ready with active development
+**New**: MCP Architecture documentation added (4 comprehensive guides)
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
