@@ -187,17 +187,21 @@ class BillyWaltersTotalsDetector:
         # Each team's score is influenced by their offense vs opponent's defense
 
         # Away team expected score
+        # CRITICAL FIX: Changed MINUS to PLUS for defensive adjustment
+        # Lower defense rating (e.g., 2.71) = better defense = reduces opponent scoring
+        # (2.71 - 6.0) * 0.4 = -1.32 → PLUS gives -1.32 (correct: subtracts points)
         away_off_adj = (away_off - self.MASSEY_BASELINE_OFF) * self.MASSEY_OFF_TO_POINTS
         home_def_adj = (home_def - self.MASSEY_BASELINE_DEF) * self.MASSEY_DEF_TO_POINTS
         away_expected = (
-            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + away_off_adj - home_def_adj
+            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + away_off_adj + home_def_adj
         )
 
         # Home team expected score
+        # Same fix: PLUS correctly handles defensive ratings
         home_off_adj = (home_off - self.MASSEY_BASELINE_OFF) * self.MASSEY_OFF_TO_POINTS
         away_def_adj = (away_def - self.MASSEY_BASELINE_DEF) * self.MASSEY_DEF_TO_POINTS
         home_expected = (
-            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + home_off_adj - away_def_adj
+            (self.NFL_LEAGUE_AVERAGE_TOTAL / 2) + home_off_adj + away_def_adj
         )
 
         # Base total prediction
