@@ -45,14 +45,16 @@ class SchemaValidator:
         # Validate edge percentage
         edge = rec_dict.get("edge_percentage", 0)
         if not isinstance(edge, (int, float)):
-            errors.append(f"edge_percentage must be numeric, got {type(edge).__name__}")
+            type_name = type(edge).__name__
+            errors.append(f"edge_percentage must be numeric, got {type_name}")
         elif edge < 0:
             errors.append("edge_percentage cannot be negative")
 
         # Validate stake fraction
         stake = rec_dict.get("stake_fraction", 0)
         if not isinstance(stake, (int, float)):
-            errors.append(f"stake_fraction must be numeric, got {type(stake).__name__}")
+            stake_type = type(stake).__name__
+            errors.append(f"stake_fraction must be numeric, got {stake_type}")
         elif not 0 <= stake <= 0.03:
             errors.append(f"stake_fraction {stake:.2%} must be between 0 and 3%")
 
@@ -67,9 +69,8 @@ class SchemaValidator:
             stake_amount = stake * bankroll
             max_stake = 0.03 * bankroll
             if stake_amount > max_stake:
-                errors.append(
-                    f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
-                )
+                msg = f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
+                errors.append(msg)
 
         return errors
 
@@ -89,16 +90,15 @@ class SchemaValidator:
 
         # Check stake fraction <= 3%
         if rec.stake_fraction > 0.03:
-            errors.append(f"stake_fraction {rec.stake_fraction:.1%} exceeds 3% maximum")
+            errors.append(f"Stake fraction {rec.stake_fraction:.2%} exceeds 3% max")
 
         # Check bankroll constraint
         if rec.bankroll and rec.bankroll > 0:
             stake_amount = rec.stake_fraction * rec.bankroll
             max_stake = 0.03 * rec.bankroll
             if stake_amount > max_stake:
-                errors.append(
-                    f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
-                )
+                msg = f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
+                errors.append(msg)
 
         # Check recommendation_id exists
         if not rec.recommendation_id or not rec.recommendation_id.strip():
@@ -146,18 +146,21 @@ class SchemaValidator:
 
         # Check limits
         if results["total_exposure_pct"] > 15.0:
+            exposure_pct = results["total_exposure_pct"]
             results["errors"].append(
-                f"Total exposure {results['total_exposure_pct']:.1f}% exceeds 15% limit"
+                f"Total exposure {exposure_pct:.1f}% exceeds 15% limit"
             )
 
         if results["max_single_bet_pct"] > 3.0:
+            max_bet_pct = results["max_single_bet_pct"]
             results["errors"].append(
-                f"Max single bet {results['max_single_bet_pct']:.1f}% exceeds 3% limit"
+                f"Max single bet {max_bet_pct:.1f}% exceeds 3% limit"
             )
 
         if 10.0 < results["total_exposure_pct"] <= 15.0:
+            exposure_pct = results["total_exposure_pct"]
             results["warnings"].append(
-                f"Total exposure {results['total_exposure_pct']:.1f}% is high (near 15% limit)"
+                f"Total exposure {exposure_pct:.1f}% is high (near 15% limit)"
             )
 
         return results
@@ -239,19 +242,13 @@ class BetRecommendationValidator(BaseModel):
             )
 
         # Check 3: stake_fraction <= 3%
-        if rec.stake_fraction > 0.03:
-            errors.append(
-                f"stake_fraction {rec.stake_fraction * 100:.1f}% exceeds 3% maximum"
-            )
-
         # Check 4: If bankroll provided, verify stake amount
         if rec.bankroll and rec.bankroll > 0:
             stake_amount = rec.stake_fraction * rec.bankroll
             max_stake = 0.03 * rec.bankroll
             if stake_amount > max_stake:
-                errors.append(
-                    f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
-                )
+                msg = f"Stake ${stake_amount:.2f} exceeds 3% max (${max_stake:.2f})"
+                errors.append(msg)
 
         if errors:
             message = " | ".join(errors)

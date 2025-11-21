@@ -161,7 +161,12 @@ This project maintains comprehensive documentation across multiple files:
 - Public APIs must have docstrings
 - Functions must be focused and small
 - Follow existing patterns exactly
-- Line length: 88 chars maximum
+- **Line length: 88 chars maximum (Black/Ruff standard)**
+  - **Auto-format all new code**: `uv run ruff format .`
+  - E501 (line-too-long) currently ignored for legacy code (518 violations)
+  - New files MUST use ruff format to stay under 88 chars
+  - CI checks line length but doesn't fail (informational only)
+  - Future goal: incrementally fix legacy violations
 
 ### 3. Testing Requirements
 - Framework: `uv run pytest`
@@ -860,9 +865,40 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Code Formatting
 
-### Ruff
+### Line Length Policy (UPDATED 2025-11-20)
+
+**Standard**: 88 characters (Black/Ruff standard, modern Python best practice)
+
+**Current Status**:
+- ✅ New code: MUST be formatted with `ruff format` (auto-wraps at 88 chars)
+- ⚠️ Legacy code: 518 line-too-long violations (E501 ignored in ruff config)
+- 📊 CI: Checks line length but doesn't fail (informational only)
+- 🎯 Goal: Incrementally fix legacy code when editing files
+
+**Best Practices**:
 ```bash
-# Format all files
+# ALWAYS format new code before committing
+uv run ruff format .
+
+# Check for violations (informational)
+uv run ruff check . --select E501 --statistics
+
+# Fix long lines manually:
+# 1. Break long f-strings across multiple lines with parentheses
+# 2. Split function arguments across lines
+# 3. Use variables for complex expressions
+# 4. Refer to existing compliant code for patterns
+```
+
+**Why 88 chars (not 79)?**
+- Black formatter standard (widely adopted)
+- Better for modern wide screens
+- More readable than cramped 79-char code
+- Still fits side-by-side diffs on GitHub
+
+### Ruff Commands
+```bash
+# Format all files (REQUIRED before every commit)
 uv run ruff format .
 
 # Check formatting (CI uses this)
@@ -873,6 +909,9 @@ uv run ruff check .
 
 # Auto-fix safe issues
 uv run ruff check . --fix
+
+# Check line length only (informational)
+uv run ruff check . --select E501
 ```
 
 ### Type Checking

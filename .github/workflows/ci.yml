@@ -68,6 +68,12 @@ jobs:
       - name: Lint with ruff
         run: uv run ruff check .
 
+      - name: Check line length (informational only)
+        run: |
+          echo "Checking for line length violations (88 char limit)..."
+          uv run ruff check . --select E501 --statistics || echo "⚠️ Found line-length violations (not failing CI)"
+        continue-on-error: true
+
   type-check:
     name: Type Check
     runs-on: ubuntu-latest
