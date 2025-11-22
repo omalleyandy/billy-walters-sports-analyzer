@@ -32,6 +32,7 @@ dependencies = [
     "openai>=2.8.1",
     "jsonschema>=4.17.0", # For schema validation in knowledge graph
     # "robox",  # TODO: Uncomment when robox package is available (currently blocks CI)
+    "lxml>=6.0.2",
 ]
 
 [project.scripts]
