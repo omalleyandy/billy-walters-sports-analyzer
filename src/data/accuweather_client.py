@@ -591,8 +591,13 @@ class AccuWeatherClient:
         total_adj = 0.0
         spread_adj = 0.0
 
-        temperature = weather_data.get("temperature_f")
-        wind_speed = weather_data.get("wind_speed_mph")
+        # Support both key formats (standardized and legacy)
+        temperature = weather_data.get("temperature") or weather_data.get(
+            "temperature_f"
+        )
+        wind_speed = weather_data.get("wind_speed") or weather_data.get(
+            "wind_speed_mph"
+        )
         precipitation = weather_data.get("precipitation_type")
 
         # Wind impact (most important for passing)
@@ -632,9 +637,11 @@ class AccuWeatherClient:
 # Example usage
 async def main():
     """Example usage of AccuWeatherClient with Billy Walters analysis."""
+    from datetime import timezone
+
     async with AccuWeatherClient() as client:
         # Test: Get weather for Green Bay (outdoor, cold weather stadium)
-        test_time = datetime.now().replace(hour=13, minute=0, second=0)
+        test_time = datetime.now(timezone.utc).replace(hour=13, minute=0, second=0)
         weather = await client.get_game_weather("Green Bay", test_time)
 
         if weather:
@@ -642,10 +649,13 @@ async def main():
             print("Weather for Green Bay Packers")
             print("=" * 60)
             print(f"Indoor: {weather['indoor']}")
-            print(f"Temperature: {weather.get('temperature_f')}°F")
-            print(f"Wind Speed: {weather.get('wind_speed_mph')} MPH")
+            temp = weather.get("temperature") or weather.get("temperature_f")
+            wind = weather.get("wind_speed") or weather.get("wind_speed_mph")
+            desc = weather.get("description") or weather.get("weather_text")
+            print(f"Temperature: {temp}°F")
+            print(f"Wind Speed: {wind} MPH")
             print(f"Precipitation: {weather.get('precipitation_type')}")
-            print(f"Conditions: {weather.get('weather_text')}")
+            print(f"Conditions: {desc}")
 
             # Calculate Billy Walters impact
             total_adj, spread_adj = client.calculate_weather_impact(weather)
