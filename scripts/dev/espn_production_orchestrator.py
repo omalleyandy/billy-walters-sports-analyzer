@@ -36,6 +36,7 @@ from data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
 # Logging Configuration
 # ============================================================================
 
+
 def setup_logging(log_dir: Path) -> logging.Logger:
     """Configure comprehensive logging for production"""
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -73,6 +74,7 @@ def setup_logging(log_dir: Path) -> logging.Logger:
 
 class ComponentStatus(str, Enum):
     """Status of each collection component"""
+
     SUCCESS = "success"
     FAILURE = "failure"
     PARTIAL = "partial"
@@ -82,6 +84,7 @@ class ComponentStatus(str, Enum):
 @dataclass
 class ComponentMetrics:
     """Metrics for a single data collection component"""
+
     component_name: str
     status: ComponentStatus
     start_time: datetime
@@ -103,6 +106,7 @@ class ComponentMetrics:
 @dataclass
 class CollectionSession:
     """Complete ESPN data collection session"""
+
     session_id: str
     league: str  # "nfl" or "ncaaf"
     week: Optional[int]
@@ -163,9 +167,13 @@ class DataArchiver:
 
         # Create directory structure: raw/{league}/{component}/{week}
         if week:
-            archive_dir = self.archive_root / "raw" / league / component_name / f"week_{week}"
+            archive_dir = (
+                self.archive_root / "raw" / league / component_name / f"week_{week}"
+            )
         else:
-            archive_dir = self.archive_root / "raw" / league / component_name / "current"
+            archive_dir = (
+                self.archive_root / "raw" / league / component_name / "current"
+            )
 
         archive_dir.mkdir(parents=True, exist_ok=True)
 
@@ -199,12 +207,14 @@ class DataArchiver:
                         files = sorted(week_dir.glob("*.json"), reverse=True)
                         if files:
                             latest = files[0]
-                            index[component]["latest_files"].append({
-                                "week": week_dir.name,
-                                "file": latest.name,
-                                "size_bytes": latest.stat().st_size,
-                                "modified": latest.stat().st_mtime,
-                            })
+                            index[component]["latest_files"].append(
+                                {
+                                    "week": week_dir.name,
+                                    "file": latest.name,
+                                    "size_bytes": latest.stat().st_size,
+                                    "modified": latest.stat().st_mtime,
+                                }
+                            )
                             index[component]["total_files"] += len(files)
 
         return index
@@ -265,7 +275,11 @@ class ProductionCollector:
             else:
                 teams_data = client.get_ncaaf_teams()
 
-            teams_list = teams_data.get("sports", [{}])[0].get("leagues", [{}])[0].get("teams", [])
+            teams_list = (
+                teams_data.get("sports", [{}])[0]
+                .get("leagues", [{}])[0]
+                .get("teams", [])
+            )
             total_teams = len(teams_list)
 
             self.logger.info(f"[{component}] Found {total_teams} teams")
@@ -281,13 +295,19 @@ class ProductionCollector:
             success_count = 0
             error_list = []
 
+            # Map league to ESPN API format
+            league_map = {"nfl": "nfl", "ncaaf": "college-football"}
+            api_league = league_map.get(self.league, self.league)
+
             for i, team_item in enumerate(teams_list, 1):
                 try:
                     team = team_item.get("team", {})
                     team_id = team.get("id")
                     team_name = team.get("displayName")
 
-                    metrics_obj = client.extract_power_rating_metrics(team_id, self.league)
+                    metrics_obj = client.extract_power_rating_metrics(
+                        team_id, api_league
+                    )
                     all_stats.append(metrics_obj)
                     success_count += 1
 
@@ -313,8 +333,14 @@ class ProductionCollector:
             }
 
             metrics.records_collected = len(all_stats)
-            metrics.status = ComponentStatus.SUCCESS if success_count == total_teams else ComponentStatus.PARTIAL
-            metrics.success_rate = (success_count / total_teams * 100) if total_teams > 0 else 0
+            metrics.status = (
+                ComponentStatus.SUCCESS
+                if success_count == total_teams
+                else ComponentStatus.PARTIAL
+            )
+            metrics.success_rate = (
+                (success_count / total_teams * 100) if total_teams > 0 else 0
+            )
             metrics.errors = error_list
 
             self.logger.info(
@@ -329,7 +355,9 @@ class ProductionCollector:
 
         finally:
             metrics.end_time = datetime.now()
-            metrics.duration_seconds = (metrics.end_time - metrics.start_time).total_seconds()
+            metrics.duration_seconds = (
+                metrics.end_time - metrics.start_time
+            ).total_seconds()
 
         return metrics
 
@@ -351,7 +379,20 @@ class ProductionCollector:
 
         try:
             scraper = ESPNInjuryScraper()
-            injury_data = await scraper.get_injuries_for_league(self.league)
+
+            # Call the appropriate scraper method based on league
+            if self.league == "nfl":
+                injury_data_list = scraper.scrape_nfl_injuries()
+            else:
+                injury_data_list = scraper.scrape_ncaaf_injuries()
+
+            # Convert list of injuries to the format expected by archive
+            # Wrap in expected structure for consistency with other data
+            injury_data = {
+                "league": self.league,
+                "timestamp": datetime.now().isoformat(),
+                "injuries": injury_data_list,
+            }
 
             # Archive raw injury data
             archive_path = self.archive.archive_raw_data(
@@ -360,9 +401,7 @@ class ProductionCollector:
             metrics.raw_file_path = str(archive_path)
 
             # Count injured players
-            total_injuries = sum(
-                len(team.get("injuries", [])) for team in injury_data.get("teams", [])
-            )
+            total_injuries = len(injury_data_list)
 
             metrics.records_collected = total_injuries
             metrics.status = ComponentStatus.SUCCESS
@@ -377,7 +416,9 @@ class ProductionCollector:
 
         finally:
             metrics.end_time = datetime.now()
-            metrics.duration_seconds = (metrics.end_time - metrics.start_time).total_seconds()
+            metrics.duration_seconds = (
+                metrics.end_time - metrics.start_time
+            ).total_seconds()
 
         return metrics
 
@@ -425,7 +466,9 @@ class ProductionCollector:
 
         finally:
             metrics.end_time = datetime.now()
-            metrics.duration_seconds = (metrics.end_time - metrics.start_time).total_seconds()
+            metrics.duration_seconds = (
+                metrics.end_time - metrics.start_time
+            ).total_seconds()
 
         return metrics
 
@@ -483,9 +526,7 @@ class ProductionCollector:
 
     def _save_session_metrics(self):
         """Save session metrics to file"""
-        metrics_file = (
-            self.metrics_dir / f"session_{self.session.session_id}.json"
-        )
+        metrics_file = self.metrics_dir / f"session_{self.session.session_id}.json"
 
         # Serialize metrics
         session_dict = {
@@ -493,7 +534,9 @@ class ProductionCollector:
             "league": self.session.league,
             "week": self.session.week,
             "start_time": self.session.start_time.isoformat(),
-            "end_time": self.session.end_time.isoformat() if self.session.end_time else None,
+            "end_time": self.session.end_time.isoformat()
+            if self.session.end_time
+            else None,
             "duration_seconds": self.session.duration_seconds,
             "overall_success": self.session.overall_success,
             "success_rate": self.session.success_rate,
@@ -527,7 +570,9 @@ async def main():
     """Main entry point"""
     import argparse
 
-    parser = argparse.ArgumentParser(description="ESPN Data Collection Production Orchestrator")
+    parser = argparse.ArgumentParser(
+        description="ESPN Data Collection Production Orchestrator"
+    )
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf"],
