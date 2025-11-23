@@ -37,15 +37,21 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
 
 ### Project Status
 - **CI/CD**: Fully operational with GitHub Actions
-- **Tests**: 146 tests passing (multi-platform, multi-version)
+- **Tests**: 146+ tests passing (multi-platform, multi-version) + 18 results checker tests
 - **Code Quality**: Automated linting and type checking
 - **Security**: Automated vulnerability scanning and secret detection
 - **Documentation**: Complete development guidelines and lessons learned
 - **Legacy Code**: Pragmatic configuration allows CI while incrementally improving code quality
 - **NEW: API Scraper**: Overtime.ag direct API access (primary - validated 2025-11-12)
 - **Hybrid Scraper**: Optional for live game monitoring (SignalR WebSocket)
+- **NEW: Results Checker**: Production-ready betting results validation system (2025-11-23)
+  - ✅ ESPN API integration (NFL & NCAAF scores)
+  - ✅ Edge detection prediction parsing
+  - ✅ ATS/ROI calculation and reporting
+  - ✅ 18/18 tests passing (100% coverage)
+  - ✅ Ready for weekly workflow integration
 - **Last Data Collection**: 2025-11-12 - NFL Week 10 (13 games), NCAAF (56 games) via API
-- **Last Session**: 2025-11-12 - Dynamic week detection + NCAAF MACtion weather analysis
+- **Last Session**: 2025-11-23 - Built production-ready Betting Results Checker + documentation
 
 ## How to Use This Document
 
@@ -302,6 +308,67 @@ The walters_autonomous_agent.py provides automated analysis capabilities:
 - Monitor sharp action indicators
 - Calculate implied probability vs true probability
 - Identify value opportunities (positive expected value)
+
+### 5. Betting Results Checking ✅ NEW (2025-11-23)
+
+**System**: Complete production-ready system for evaluating betting predictions against actual game results.
+
+**Purpose**: Validate edge detection accuracy, calculate performance metrics (ATS, ROI, CLV), and generate comprehensive reports for continuous improvement.
+
+**Architecture**: Keep NFL and NCAAF separate due to different schedules, spreads, and data sources.
+
+**Key Components**:
+- **ESPN API Integration**: Fetch actual game scores (NFL & NCAAF)
+- **Edge Detection Parser**: Load predictions from JSONL files
+- **ATS Calculation**: Determine WIN/LOSS/PUSH for each bet
+- **ROI Computation**: Standard -110 vig (Win pays 0.909 to 1)
+- **Report Generation**: Markdown reports with game-by-game analysis
+
+**Quick Start**:
+```bash
+# Check current week NFL results (auto-detects week)
+uv run python scripts/analysis/check_betting_results.py --league nfl
+
+# Check specific NCAAF week
+uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
+
+# Skip saving report to file
+uv run python scripts/analysis/check_betting_results.py --league nfl --no-save
+```
+
+**Weekly Integration**:
+1. **Tuesday-Wednesday**: Run edge detection, place bets
+2. **Sunday Evening**: Run results checker after games finish
+3. **Monday**: Review report, document lessons learned
+
+**File Structure**:
+- **Input**: `output/edge_detection/nfl_edges_detected_week_12.jsonl` (predictions)
+- **Input**: ESPN API (actual game scores)
+- **Output**: `docs/performance_reports/REPORT_NFL_WEEK12_20251123_150452.md` (results)
+
+**Report Contents**:
+- Executive Summary (total games, ATS wins, ROI)
+- Edge Strength Analysis (70+, 50-70, <50 confidence levels)
+- Game-by-Game Results (matchup, prediction, actual, ATS result, profit/loss)
+- Methodology Notes (calculation explanations)
+
+**Success Metrics** (Billy Walters Approach):
+- **Primary**: ROI (return on investment, not win percentage)
+- **Secondary**: ATS win rate
+- **Tertiary**: Closing Line Value (CLV) - Professional target: +1.5 average
+
+**Testing**: 18/18 tests passing (100% coverage)
+- Unit tests for all data models and calculations
+- Integration tests for file loading and report generation
+- Error handling for missing/invalid data
+
+**Documentation**:
+- [Betting Results Checker](docs/BETTING_RESULTS_CHECKER.md) - Complete user guide
+- [Results Checker Implementation](docs/RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview
+- [Weekly Results Workflow](docs/WEEKLY_RESULTS_WORKFLOW.md) - Billy Walters integration guide
+- See [docs/_INDEX.md](docs/_INDEX.md) § "Performance & Results Checking" for full references
+
+**Reference**: CLAUDE.md § "Betting Results Checker Integration" (this section)
 
 ## API Integration Guidelines
 

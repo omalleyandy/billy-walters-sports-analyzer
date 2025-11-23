@@ -23,7 +23,8 @@ This index provides quick navigation to all project documentation organized by t
 - **See Also**: CLAUDE.md § "Football Analytics Best Practices" for weekly workflow
 
 ### Analysis Tools
-- [Edge Detection](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges
+- [Edge Detection](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges (NFL)
+- [NCAAF Edge Detection Design](NCAAF_EDGE_DETECTION_DESIGN.md) - **NEW** ✨ Architecture and implementation plan for college football edges (separate from NFL)
 - [Power Ratings](guides/README_POWER_RATINGS.md) - Power rating system
 - [Feature Coverage](FEATURE_COVERAGE.md) - Available analysis features
 - **Reference**: CLAUDE.md § "Billy Walters Workflow Commands & Hooks" for all commands
@@ -37,6 +38,37 @@ This index provides quick navigation to all project documentation organized by t
 - [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
 - **Reference**: CLAUDE.md § "API Integration Guidelines" for all API details
+
+## Performance & Results Checking
+
+### Betting Results Checker ✅ NEW (2025-11-23)
+The complete system for evaluating betting predictions against actual game results, calculating performance metrics, and generating comprehensive reports.
+
+**Documentation:**
+- [Betting Results Checker](BETTING_RESULTS_CHECKER.md) - **START HERE** - Complete user guide with examples, calculation details, troubleshooting
+- [Results Checker Implementation Summary](RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview of architecture and components
+- [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md) - Integration guide for Billy Walters workflow (Tuesday-Sunday schedule)
+
+**Key Features:**
+- ✅ ESPN API integration (NFL & NCAAF scores)
+- ✅ Edge detection prediction parsing (JSONL format)
+- ✅ ATS calculation (WIN/LOSS/PUSH)
+- ✅ ROI computation (standard -110 vig)
+- ✅ Margin error tracking (prediction accuracy)
+- ✅ Comprehensive markdown reports (saved to `docs/performance_reports/`)
+
+**Quick Start:**
+```bash
+# Check current week NFL results (auto-detects week)
+uv run python scripts/analysis/check_betting_results.py --league nfl
+
+# Check specific NCAAF week
+uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
+```
+
+**Test Status:** 18/18 tests passing (100% coverage)
+**Integration:** Ready for production weekly workflow
+**Reference**: CLAUDE.md § "Betting Results Checker Integration" for usage details
 
 ### Data Sources
 - [NFL Injuries](data_sources/injuries_nfl.md) - NFL injury data schema
@@ -171,6 +203,11 @@ billy-walters-sports-analyzer/
 1. [Billy Walters Methodology](guides/BILLY_WALTERS_METHODOLOGY.md)
 2. [CLI Reference](guides/CLI_REFERENCE.md) - `/edge-detector`, `/betting-card`
 3. [Power Ratings](guides/README_POWER_RATINGS.md)
+
+### I want to check betting results
+1. [Betting Results Checker](BETTING_RESULTS_CHECKER.md) - Complete guide with examples
+2. [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md) - Integration with Billy Walters workflow
+3. [Results Checker Implementation](RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview
 
 ### I want to understand the system
 1. [Development Guidelines](../CLAUDE.md)
