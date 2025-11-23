@@ -392,7 +392,7 @@ def test_process_response_without_citations(client):
 # =============================================================================
 
 
-@patch("web_fetch_client.anthropic.Anthropic")
+@patch("src.data.web_fetch_client.anthropic.Anthropic")
 def test_fetch_content_success(mock_anthropic_class, client, mock_response):
     """Test successful content fetching."""
     mock_client = Mock()
@@ -409,7 +409,7 @@ def test_fetch_content_success(mock_anthropic_class, client, mock_response):
     mock_client.messages.create.assert_called_once()
 
 
-@patch("web_fetch_client.anthropic.Anthropic")
+@patch("src.data.web_fetch_client.anthropic.Anthropic")
 def test_fetch_content_with_cache(mock_anthropic_class, client, mock_response):
     """Test fetch content uses cache."""
     mock_client = Mock()
@@ -522,7 +522,7 @@ def test_save_result(client, tmp_path):
 # =============================================================================
 
 
-@patch("web_fetch_client.WebFetchClient")
+@patch("src.data.web_fetch_client.WebFetchClient")
 def test_fetch_nfl_schedule(mock_client_class):
     """Test NFL schedule fetching convenience function."""
     mock_client = Mock()
@@ -538,7 +538,7 @@ def test_fetch_nfl_schedule(mock_client_class):
     assert "week/11" in call_args[0][0]
 
 
-@patch("web_fetch_client.WebFetchClient")
+@patch("src.data.web_fetch_client.WebFetchClient")
 def test_fetch_vegas_lines(mock_client_class):
     """Test Vegas lines fetching convenience function."""
     mock_client = Mock()
@@ -552,7 +552,7 @@ def test_fetch_vegas_lines(mock_client_class):
     mock_client.fetch_content.assert_called_once()
 
 
-@patch("web_fetch_client.WebFetchClient")
+@patch("src.data.web_fetch_client.WebFetchClient")
 def test_fetch_weather_forecast(mock_client_class):
     """Test weather forecast fetching convenience function."""
     mock_client = Mock()
@@ -566,7 +566,7 @@ def test_fetch_weather_forecast(mock_client_class):
     mock_client.fetch_content.assert_called_once()
 
 
-@patch("web_fetch_client.WebFetchClient")
+@patch("src.data.web_fetch_client.WebFetchClient")
 def test_fetch_massey_ratings(mock_client_class):
     """Test Massey ratings fetching convenience function."""
     mock_client = Mock()

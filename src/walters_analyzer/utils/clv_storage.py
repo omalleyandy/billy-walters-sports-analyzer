@@ -24,7 +24,7 @@ import csv
 from datetime import datetime, date
 import logging
 
-from src.walters_analyzer.models.clv_tracking_module import (
+from walters_analyzer.models.clv_tracking_module import (
     CLVTracking,
     CLVSummary,
     CLVOutcome,
