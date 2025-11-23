@@ -191,18 +191,14 @@ def convert_overtime_to_games_data(overtime_odds: dict) -> dict:
                 total_data.get("points")
             )
 
-    # Second pass: pick median values
+    # Second pass: pick first (primary) values
+    # Overtime API returns entries in order: primary market first, then other books
+    # We want the first entry which represents the main consensus line
     for game_key, game_info in games_by_matchup.items():
-        spreads = sorted(game_info["spreads"])
-        totals = sorted(game_info["totals"])
-
-        # Use median (middle value) to avoid outliers
-        median_spread = (
-            spreads[len(spreads) // 2] if spreads else 0.0
-        )
-        median_total = (
-            totals[len(totals) // 2] if totals else 47.0
-        )
+        # Use FIRST entry (primary market) not median
+        # API orders by primary market first
+        primary_spread = game_info["spreads"][0] if game_info["spreads"] else 0.0
+        primary_total = game_info["totals"][0] if game_info["totals"] else 47.0
 
         games_data[game_key] = {
             "id": game_info["game_id"],
@@ -213,13 +209,13 @@ def convert_overtime_to_games_data(overtime_odds: dict) -> dict:
                     "event": {
                         "spread": [
                             {
-                                "value": median_spread,
+                                "value": primary_spread,
                                 "odds": -110,
                             }
                         ],
                         "total": [
                             {
-                                "value": median_total,
+                                "value": primary_total,
                                 "odds": -110,
                             }
                         ],
