@@ -32,7 +32,7 @@ class AccuWeatherClient:
         "Arizona": {"city": "Glendale", "state": "AZ", "indoor": True},
         "Atlanta": {"city": "Atlanta", "state": "GA", "indoor": True},
         "Baltimore": {"city": "Baltimore", "state": "MD", "indoor": False},
-        "Buffalo": {"city": "Buffalo", "state": "NY", "indoor": False},
+        "Buffalo": {"city": "Buffalo", "state": "NY", "indoor": True},
         "Carolina": {"city": "Charlotte", "state": "NC", "indoor": False},
         "Chicago": {"city": "Chicago", "state": "IL", "indoor": False},
         "Cincinnati": {"city": "Cincinnati", "state": "OH", "indoor": False},

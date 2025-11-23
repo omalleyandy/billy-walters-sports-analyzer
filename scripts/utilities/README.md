@@ -20,7 +20,7 @@ Extract all URLs from gzipped sitemaps (e.g., footballdb.com).
 
 ```bash
 # Ensure proxy configured in .env
-echo 'PROXY_URL=http://user:pass@rp.scrapegw.com:6060' >> .env
+echo 'PROXY_URLhttp://5iwdzupyp3mzyv6-country-us:29eplg6c8ctwjrs@rp.scrapegw.com:6060' >> .env
 
 # Run extractor
 uv run python scripts/utilities/extract_sitemap_urls.py
@@ -68,7 +68,7 @@ Edit script to customize:
 
 ```python
 # Line 260: Change sitemap URL
-SITEMAP_INDEX_URL = "https://example.com/sitemap_index.xml"
+SITEMAP_INDEX_URL = "https://www.footballdb.com/sitemap_index.xml"
 
 # Line 261: Change output file
 OUTPUT_FILE = Path("output/custom_urls.txt")
