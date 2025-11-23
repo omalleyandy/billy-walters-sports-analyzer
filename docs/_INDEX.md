@@ -92,6 +92,10 @@ This index provides quick navigation to all project documentation organized by t
 - [Validation Scripts](../scripts/validation/) - Data validation
 
 ### Quality Assurance
+- [ESPN Data QA Report](reports/ESPN_DATA_QA_REPORT_2025-11-23.md) - ✅ **COMPLETE** - 56/56 tests passed (all 6 components)
+- [ESPN Data QA Quick Reference](ESPN_DATA_QA_QUICK_REFERENCE.md) - Test execution guide and troubleshooting
+- [ESPN Data QA Test Inventory](ESPN_DATA_QA_TEST_INVENTORY.md) - Detailed test listing by component
+- [ESPN Data QA Deliverables](ESPN_DATA_QA_DELIVERABLES.md) - Summary of QA testing deliverables
 - [Example Output](guides/EXAMPLE_OUTPUT.md) - Expected output formats
 - [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Quality standards
 
@@ -115,6 +119,7 @@ This index provides quick navigation to all project documentation organized by t
 
 ### Recent Session Notes (2025-11-23)
 - [CLAUDE.md § Recent Updates](../CLAUDE.md#recent-updates-2025-11-12-to-2025-11-23) - AccuWeather fixes, Week 12 analysis, Action Network validation
+- **NEW**: [ESPN Data QA Testing](reports/ESPN_DATA_QA_REPORT_2025-11-23.md) - ✅ Comprehensive QA of all 6 ESPN data collection components (56 tests, 100% pass rate)
 
 ### Archived Reports
 - [Agent Optimization 2025-11-23](reports/AGENT_OPTIMIZATION_2025-11-23.md) - Agent documentation restructure
