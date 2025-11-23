@@ -31,6 +31,10 @@ from data.openweather_client import OpenWeatherClient
 from walters_analyzer.valuation.weather_alert_mapper import WeatherAlertMapper
 from walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
 from walters_analyzer.valuation.player_values import PlayerValuation
+from walters_analyzer.valuation.espn_integration import (
+    ESPNDataLoader,
+    PowerRatingEnhancer,
+)
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -254,6 +258,13 @@ class BillyWaltersEdgeDetector:
         self.weather_data: Dict[str, WeatherImpact] = {}
         self.injury_data: Dict[str, List[Dict]] = {}  # team -> list of injuries
 
+        # ESPN integration
+        self.espn_loader = ESPNDataLoader()
+        self.espn_enhancer_nfl = PowerRatingEnhancer(league="nfl")
+        self.espn_enhancer_ncaaf = PowerRatingEnhancer(league="ncaaf")
+        self.espn_team_stats: Dict[str, Dict] = {}
+        self.espn_metrics_loaded = False
+
         # Injury and player valuation calculators
         self.injury_calculator = InjuryImpactCalculator()
         self.player_valuation = PlayerValuation(sport="NFL")
@@ -400,6 +411,87 @@ class BillyWaltersEdgeDetector:
             f"System: 90/10 formula, "
             f"{data.get('games_processed_total', 'N/A')} games processed"
         )
+
+    def load_espn_team_stats(self, league: str = "ncaaf") -> bool:
+        """
+        Load ESPN team statistics from archived data
+
+        Args:
+            league: "nfl" or "ncaaf"
+
+        Returns:
+            True if successful, False otherwise
+        """
+        logger.info(f"Loading ESPN team statistics for {league.upper()}")
+
+        try:
+            self.espn_team_stats = self.espn_loader.load_team_stats_by_league(league)
+
+            if not self.espn_team_stats:
+                logger.warning(f"No ESPN team stats loaded for {league}")
+                return False
+
+            self.espn_metrics_loaded = True
+            logger.info(f"Loaded ESPN data for {len(self.espn_team_stats)} teams")
+            return True
+
+        except Exception as e:
+            logger.error(f"Error loading ESPN team stats: {e}")
+            return False
+
+    def enhance_power_ratings_with_espn(
+        self, league: str = "ncaaf", weight_espn: float = 0.1
+    ) -> int:
+        """
+        Enhance existing power ratings with ESPN team statistics
+        Uses Billy Walters' 90/10 formula
+
+        Args:
+            league: "nfl" or "ncaaf"
+            weight_espn: Weight for ESPN data (default 0.1 for 90/10)
+
+        Returns:
+            Number of ratings enhanced
+        """
+        if not self.espn_metrics_loaded:
+            logger.warning("ESPN metrics not loaded. Load them first.")
+            return 0
+
+        enhancer = (
+            self.espn_enhancer_ncaaf if league == "ncaaf" else self.espn_enhancer_nfl
+        )
+
+        enhanced_count = 0
+
+        for team_name, rating in list(self.power_ratings.items()):
+            try:
+                # Get ESPN metrics for this team
+                espn_metrics = self.espn_team_stats.get(team_name)
+
+                if not espn_metrics:
+                    # Try with abbreviation or alternative names
+                    logger.debug(f"No ESPN stats found for {team_name}, skipping")
+                    continue
+
+                # Enhance the rating
+                enhanced_rating, adjustment = enhancer.enhance_power_rating(
+                    team_name,
+                    rating.rating,
+                    espn_metrics,
+                    weight_espn,
+                )
+
+                # Update the rating
+                self.power_ratings[team_name].rating = enhanced_rating
+                enhanced_count += 1
+
+            except Exception as e:
+                logger.error(f"Error enhancing {team_name}: {e}")
+
+        logger.info(
+            f"Enhanced {enhanced_count} power ratings with ESPN data ({league.upper()})"
+        )
+        return enhanced_count
 
     def load_action_network_odds(self, filepath: str):
         """
