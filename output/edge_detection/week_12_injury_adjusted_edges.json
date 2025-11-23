@@ -1,0 +1,38 @@
+[
+  {
+    "matchup": "Carolina Panthers @ San Francisco 49ers",
+    "edge": 4.4,
+    "type": "STRONG",
+    "away_impact": 0.0,
+    "home_impact": 0.0,
+    "net_injury_impact": 0.0,
+    "adjusted_edge": 4.4
+  },
+  {
+    "matchup": "Tampa Bay Buccaneers @ Los Angeles Rams",
+    "edge": 4.3,
+    "type": "STRONG",
+    "away_impact": 2.6,
+    "home_impact": 0.0,
+    "net_injury_impact": 2.6,
+    "adjusted_edge": 1.6999999999999997
+  },
+  {
+    "matchup": "Philadelphia Eagles @ Dallas Cowboys",
+    "edge": -2.4,
+    "type": "MODERATE",
+    "away_impact": 0.0,
+    "home_impact": 0.0,
+    "net_injury_impact": 0.0,
+    "adjusted_edge": -2.4
+  },
+  {
+    "matchup": "Cleveland Browns @ Las Vegas Raiders",
+    "edge": 1.5,
+    "type": "LEAN",
+    "away_impact": 5.0,
+    "home_impact": 0.0,
+    "net_injury_impact": 5.0,
+    "adjusted_edge": -3.5
+  }
+]
