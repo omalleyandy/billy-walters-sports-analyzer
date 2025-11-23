@@ -1293,6 +1293,39 @@ uv run python -m walters_analyzer.season_calendar
 
 ### Troubleshooting
 
+**"CI workflow is failing" - Interpreting CI failures correctly:**
+
+⚠️ **IMPORTANT:** Before assuming "dependencies are failing to install", read this first!
+
+**📖 See:** [docs/CI_DEPENDENCY_FIX_2025-11-23.md](docs/CI_DEPENDENCY_FIX_2025-11-23.md) for complete guide
+
+**Quick Check:**
+1. Which CI job actually failed? (Lint and Format, Type Check, Tests, Security Scan)
+2. Did "Install dependencies" step show ✓ or X?
+3. Are test failures pre-existing? (See "Next Steps & Priorities" section)
+
+**Common Misunderstandings:**
+- ❌ "CI is failing on dependency installation" → Usually false, check which step failed
+- ✅ "CI formatting check failed" → Run `uv run ruff format .` locally first
+- ✅ "Tests failed but dependencies installed" → Check if failures are pre-existing (36 tests documented)
+
+**Quick Fix (90% of CI failures):**
+```bash
+# Run local validation before pushing
+uv run ruff format .
+uv run ruff check . --fix
+uv run pyright
+git add . && git commit -m "fix: apply code quality checks"
+git push
+```
+
+**When uv.lock is modified:**
+- Always commit it with your changes
+- It's the dependency lockfile and MUST be in sync
+- Platform-specific markers (like `sys_platform == 'win32'`) are important
+
+---
+
 **"ModuleNotFoundError" when running scripts:**
 ```bash
 # Option 1: Reinstall package
@@ -1496,11 +1529,12 @@ uv run python -m walters_analyzer.bet_tracker --bet-id BET123 --update-score 24 
 
 ### Getting Help
 
-1. Check `LESSONS_LEARNED.md` for similar issues
-2. Check `.github/CI_CD.md` for CI/CD questions
-3. Review relevant section in this file
-4. Check GitHub Issues for known problems
-5. Use `/document-lesson` to add new lessons learned
+1. **CI failures?** Check `docs/CI_DEPENDENCY_FIX_2025-11-23.md` first (common misunderstandings)
+2. Check `LESSONS_LEARNED.md` for similar issues
+3. Check `.github/CI_CD.md` for CI/CD technical questions
+4. Review relevant section in this file (CLAUDE.md)
+5. Check GitHub Issues for known problems
+6. Use `/document-lesson` to add new lessons learned
 
 ## Development Session Best Practices
 
