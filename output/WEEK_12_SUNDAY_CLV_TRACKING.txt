@@ -1,0 +1,383 @@
+================================================================================
+WEEK 12 SUNDAY GAME MONITORING & CLV TRACKING
+Real-Time Data Collection Template
+================================================================================
+
+DATE: 2025-11-23 (Sunday)
+BETTING CARD: WEEK_12_BETTING_CARD_2025_11_23.txt
+CONFIDENCE LEVEL: Professional (CLV focus, not win/loss %)
+
+================================================================================
+EARLY WINDOW - 13:00 ET KICKOFFS
+================================================================================
+
+GAME 1: MINNESOTA @ GREEN BAY
+--------
+Kickoff: 2025-11-23 13:00 ET (LIVE - Games in progress)
+Our Pick: Green Bay -6.5
+Edge: 9.1 points (VERY_STRONG)
+Confidence: 91/100
+Kelly Sizing: 25.0%
+$10k Bankroll (50% Kelly): $1,250 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  9:00 AM ET: ___________________
+  10:00 AM ET: ___________________
+  11:00 AM ET: ___________________
+  12:30 PM ET: ___________________
+Closing Line (12:55 ET): ___________________
+
+Game Result:
+  Final Score: Minnesota ___ Green Bay ___
+  Spread Winner: [Specify: GB by X, MN by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: GB -6.5
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+  Interpretation: [Favorable/Unfavorable movement]
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Public Betting %: [If available]
+  Line Movement Direction: [Moved in our favor? Against us?]
+  Key Observations: ___________________________________________
+
+--------
+
+GAME 2: NEW ENGLAND @ CINCINNATI
+--------
+Kickoff: 2025-11-23 13:00 ET (LIVE - Games in progress)
+Our Pick: New England +7.5
+Edge: 7.2 points (VERY_STRONG)
+Confidence: 72/100
+Kelly Sizing: 25.0%
+$10k Bankroll (50% Kelly): $1,250 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  9:00 AM ET: ___________________
+  10:00 AM ET: ___________________
+  11:00 AM ET: ___________________
+  12:30 PM ET: ___________________
+Closing Line (12:55 ET): ___________________
+
+Game Result:
+  Final Score: New England ___ Cincinnati ___
+  Spread Winner: [Specify: NE by X, CIN by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: NE +7.5
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+  Key Number Analysis: Does closing cross key number 3? _____
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Public Betting %: [If available]
+  Crosses Key Number 3?: [Yes/No - significant]
+  Key Observations: ___________________________________________
+
+--------
+
+GAME 3: PITTSBURGH @ CHICAGO
+--------
+Kickoff: 2025-11-23 13:00 ET (LIVE - Games in progress)
+Our Pick: Chicago -2.5
+Edge: 4.8 points (MEDIUM)
+Confidence: 48/100
+Kelly Sizing: 17.3%
+$10k Bankroll (50% Kelly): $865 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  9:00 AM ET: ___________________
+  10:00 AM ET: ___________________
+  11:00 AM ET: ___________________
+  12:30 PM ET: ___________________
+Closing Line (12:55 ET): ___________________
+
+Game Result:
+  Final Score: Pittsburgh ___ Chicago ___
+  Spread Winner: [Specify: PIT by X, CHI by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: CHI -2.5
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Even Matchup Dynamics: [Which team looking stronger early?]
+  Key Observations: ___________________________________________
+
+--------
+
+GAME 4: INDIANAPOLIS @ KANSAS CITY
+--------
+Kickoff: 2025-11-23 13:00 ET (LIVE - Games in progress)
+Our Pick: Kansas City -3.5
+Edge: 5.6 points (STRONG)
+Confidence: 56/100
+Kelly Sizing: 20.1%
+$10k Bankroll (50% Kelly): $1,005 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  9:00 AM ET: ___________________
+  10:00 AM ET: ___________________
+  11:00 AM ET: ___________________
+  12:30 PM ET: ___________________
+Closing Line (12:55 ET): ___________________
+
+Game Result:
+  Final Score: Indianapolis ___ Kansas City ___
+  Spread Winner: [Specify: IND by X, KC by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: KC -3.5
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Public Fade?: [Did line move opposite of public percentage?]
+  Key Observations: ___________________________________________
+
+================================================================================
+AFTERNOON WINDOW - 16:05+ ET KICKOFFS
+================================================================================
+
+SPECIAL GAME: CLEVELAND @ LAS VEGAS (16:05 ET)
+--------
+STATUS: MONITORING ONLY (PASS - QB adjusted below threshold)
+Our Pick: PASS (DTR starting)
+QB Adjustment: -3.0 points (Watson -> Thompson-Robinson)
+Original Edge: 5.8 points (STRONG)
+Adjusted Edge: 2.8 points (WEAK - below 4.0 threshold)
+Confidence: 34/100
+
+Opening Line: [RECORD NOW] ___________________
+Line Repricing Hypothesis: Expected -2.5 to -3.0 (from -3.5 Watson assumption)
+
+Line Movement Log:
+  10:00 AM ET: ___________________
+  12:00 PM ET: ___________________
+  15:00 ET: ___________________
+  15:45 ET (Closing): ___________________
+
+Analysis:
+  Did Vegas reprice for DTR? [Yes/No - describe repricing]
+  Final Market Line: ___________________
+  Fair Value (Our Prediction): CLE +2.3 (unadjusted) / CLE -0.2 (DTR adj)
+  Market Efficiency: [Was repricing sufficient? Too much? Missed it?]
+  Learning: ___________________________________________
+
+Notes:
+  This is a LEARNING trade, not a placed bet
+  Monitor to validate QB adjustment methodology
+  Use result to refine future backup QB edge calculations
+
+--------
+
+GAME 5: ATLANTA @ NEW ORLEANS (16:25 ET)
+--------
+Kickoff: 2025-11-23 16:25 ET
+Our Pick: New Orleans -2.0
+Edge: 4.1 points (MEDIUM)
+Confidence: 41/100
+Kelly Sizing: 14.6%
+$10k Bankroll (50% Kelly): $730 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  1:00 PM ET: ___________________
+  2:00 PM ET: ___________________
+  3:00 PM ET: ___________________
+  4:15 PM ET: ___________________
+Closing Line (4:20 ET): ___________________
+
+Game Result:
+  Final Score: Atlanta ___ New Orleans ___
+  Spread Winner: [Specify: ATL by X, NO by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: NO -2.0
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Lowest Confidence Edge: [Lower than others - why selected?]
+  Key Observations: ___________________________________________
+
+--------
+
+GAME 6: TAMPA BAY @ LA RAMS (20:20 ET)
+--------
+Kickoff: 2025-11-23 20:20 ET
+Our Pick: LA Rams -7.0
+Edge: 9.6 points (VERY_STRONG)
+Confidence: 96/100
+Kelly Sizing: 25.0%
+$10k Bankroll (50% Kelly): $1,250 bet
+
+Opening Line: [RECORD NOW] ___________________
+Line Movement Log:
+  3:00 PM ET: ___________________
+  5:00 PM ET: ___________________
+  6:00 PM ET: ___________________
+  8:15 PM ET: ___________________
+Closing Line (8:15 ET): ___________________
+
+Game Result:
+  Final Score: Tampa Bay ___ LA Rams ___
+  Spread Winner: [Specify: TB by X, LAR by X, or Push]
+  Result: [WIN / LOSS / PUSH]
+
+CLV Calculation:
+  Our Pick: LAR -7.0
+  Opening Line: _____ (from above)
+  Closing Line: _____ (from above)
+  CLV = Closing - Opening = _____ + _____ = _____
+
+Notes/Analysis:
+  Sharp Action Observed: [Yes/No - describe]
+  Very High Confidence: [Highest edge of the day - validated?]
+  Key Observations: ___________________________________________
+
+================================================================================
+SUNDAY SUMMARY & CLV ANALYSIS
+================================================================================
+
+GAMES COMPLETED: ___/7 (1 monitoring only, 6 actual bets)
+
+RESULTS SUMMARY:
+  Wins: ___ (Should target 3-4 wins minimum)
+  Losses: ___
+  Pushes: ___
+
+OVERALL PERFORMANCE:
+
+Game Results Table:
+  MIN@GB: [Result] | CLV: _____ | Notes
+  NE@CIN: [Result] | CLV: _____ | Notes
+  PIT@CHI: [Result] | CLV: _____ | Notes
+  IND@KC: [Result] | CLV: _____ | Notes
+  ATL@NO: [Result] | CLV: _____ | Notes
+  TB@LAR: [Result] | CLV: _____ | Notes
+  CLE@LV: [Monitor] | Learning: _____
+
+CLV CALCULATION:
+
+  Total CLV Sum: ___________
+  Average CLV: ___________ / 6 games = ___________
+
+  Performance vs Target:
+  - Professional Target: +1.5 CLV average
+  - Your Result: ___________ CLV average
+  - Assessment: [Exceeded / Met / Below target]
+
+CONFIDENCE VALIDATION:
+
+  Games with 90%+ Confidence (MIN@GB, TB@LAR):
+    Result: ___________
+    CLV: ___________
+    Validation: [Strong picks held up?]
+
+  Games with Lower Confidence (PIT@CHI, ATL@NO):
+    Result: ___________
+    CLV: ___________
+    Assessment: [Still profitable despite lower edge?]
+
+SHARP ACTION OBSERVATIONS:
+
+  Which games showed most dramatic sharp action?
+  Did sharps agree or disagree with your analysis?
+  Examples: _____________________________________________________
+
+LEARNING & ADJUSTMENTS:
+
+  Surprising results: _____________________________________________________
+  QB methodology validation (Cleveland): _____________________________
+  Edge detection accuracy: [Which models predicted well?]
+  Next week adjustments: __________________________________________________
+
+================================================================================
+MONDAY FOLLOW-UP ACTIONS
+================================================================================
+
+1. [ ] Calculate all CLV values (right after games end)
+2. [ ] Record opening and closing lines for all 7 games
+3. [ ] Compare your CLV average vs +1.5 professional target
+4. [ ] Identify which game had best/worst CLV outcome
+5. [ ] Review sharp action observations
+6. [ ] Validate QB adjustment accuracy (Cleveland game)
+7. [ ] Document lessons learned in LESSONS_LEARNED.md
+8. [ ] Prepare for Monday night game: CAR @ SF (20:15 ET)
+9. [ ] Update power rating model if needed
+10. [ ] Review early week prep for Week 13 (NCAAF - 56 games)
+
+================================================================================
+MONDAY NIGHT GAME (Not Sunday, but tracked together)
+================================================================================
+
+GAME 7: CAROLINA @ SAN FRANCISCO (Monday 20:15 ET)
+--------
+(Track Monday night - same CLV template as above)
+
+Kickoff: 2025-11-24 20:15 ET
+Our Pick: San Francisco -7.0
+Edge: 9.8 points (VERY_STRONG - HIGHEST)
+Confidence: 98/100
+Kelly Sizing: 25.0%
+$10k Bankroll (50% Kelly): $1,250 bet
+
+[Use same tracking template as above games]
+[Record closing line Monday at 8:10 PM ET]
+[Results Tuesday morning]
+
+================================================================================
+
+IMPORTANT REMINDERS:
+
+1. CLV is what matters, not win/loss percentage
+   - Professional bettors track CLV, not win rate
+   - You can be 45% winners and +2.0 CLV/game profitable
+   - You can be 55% winners and -1.0 CLV/game unprofitable
+
+2. Closing line is CRITICAL - set phone reminders
+   - Early games: 12:55 PM ET reminder
+   - Afternoon: 4:00 PM ET reminder
+   - Night game: 8:10 PM ET reminder
+
+3. Sharp action vs public action
+   - Sharp books move against public losing action
+   - Reverse line movement = smart money fading public
+   - Steam moves = sharp action copying sharp action
+
+4. Bankroll management
+   - Never exceed Kelly sizing limits
+   - 50% Kelly is optimal for most bettors
+   - This limits risk while maintaining profitability
+
+5. Next week (Week 13)
+   - NCAAF slate: 56 games
+   - Run same analysis process
+   - Different power rating system (college game)
+   - Expected edges may be smaller (fewer data points)
+
+================================================================================
+Generated: 2025-11-23 06:15 UTC
+Template Version: 2.0 (CLV-focused tracking)

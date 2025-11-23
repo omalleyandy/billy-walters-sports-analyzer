@@ -1,0 +1,221 @@
+================================================================================
+WEEK 12 SUNDAY MONITORING CHECKLIST
+Quick Reference for 2025-11-23
+================================================================================
+
+TIME: Now (2025-11-23 06:15 UTC / Friday evening PST)
+
+IMMEDIATE ACTION - NEXT 24 HOURS:
+[ ] Review betting card one more time
+[ ] Ensure you understand all 6 bets (excluding PASS on Cleveland)
+[ ] Review QB adjustment analysis for Cleveland (to understand why PASS)
+[ ] Check weather forecast for outdoor stadiums (Green Bay, etc.)
+[ ] Monitor for any late-breaking injury news
+
+================================================================================
+SUNDAY MORNING (Before 1:00 PM ET / 10:00 AM PST) - 3 HOURS BEFORE EARLY KICKOFF
+================================================================================
+
+OPENING LINES CAPTURE:
+[ ] Check Overnight.ag for all 7 Sunday games
+[ ] Record opening lines in WEEK_12_SUNDAY_CLV_TRACKING.txt:
+    [ ] MIN @ GB: Green Bay _____
+    [ ] NE @ CIN: Cincinnati _____
+    [ ] PIT @ CHI: Chicago _____
+    [ ] IND @ KC: Kansas City _____
+    [ ] CLE @ LV: Las Vegas _____
+    [ ] ATL @ NO: New Orleans _____
+    [ ] TB @ LAR: LA Rams _____
+
+LINE MOVEMENT MONITORING:
+[ ] Set phone reminder for 12:55 PM ET (5 min before early games)
+[ ] Set phone reminder for 4:00 PM ET (15 min before afternoon games)
+[ ] Set phone reminder for 8:10 PM ET (10 min before night game)
+
+WEATHER CHECK:
+[ ] Verify AccuWeather forecast for:
+    [ ] Green Bay (Minnesota @ GB - potentially windy)
+    [ ] Chicago (Pittsburgh @ CHI - outdoor)
+    [ ] Kansas City (Indianapolis @ KC - outdoor)
+    [ ] Las Vegas (Cleveland @ LV - desert, dry conditions)
+[ ] Note any significant weather changes from forecast
+
+INJURY CHECK:
+[ ] Final injury reports released Friday evening
+[ ] Check ESPN/Action Network for any last-minute changes
+[ ] Focus on key position players for your 6 bets
+
+================================================================================
+12:55 PM ET (CRITICAL - 5 MINUTES BEFORE EARLY GAMES)
+================================================================================
+
+CLOSING LINES FOR EARLY WINDOW:
+[ ] Check Overnight.ag closing lines for:
+    [ ] MIN @ GB: Green Bay _____
+    [ ] NE @ CIN: Cincinnati _____
+    [ ] PIT @ CHI: Chicago _____
+    [ ] IND @ KC: Kansas City _____
+
+RECORD IMMEDIATELY:
+[ ] Update WEEK_12_SUNDAY_CLV_TRACKING.txt with closing lines
+[ ] Calculate CLV for each game:
+    CLV = Closing Line - Opening Line
+    Example: If opened GB -6.5, closing GB -4.5: CLV = -4.5 - (-6.5) = +2.0
+
+OBSERVATIONS DURING 1:00-4:00 PM WINDOW:
+[ ] Monitor game flow (halftime scores, momentum shifts)
+[ ] Note any weather impacts on gameplay
+[ ] Watch for reverse line movements (sharp vs public action)
+
+================================================================================
+4:00 PM ET (CRITICAL - 15 MINUTES BEFORE AFTERNOON GAMES)
+================================================================================
+
+CLOSING LINES FOR AFTERNOON GAMES:
+[ ] Check Overnight.ag closing lines for:
+    [ ] CLE @ LV: Las Vegas _____
+    [ ] ATL @ NO: New Orleans _____
+
+RECORD IMMEDIATELY:
+[ ] Update WEEK_12_SUNDAY_CLV_TRACKING.txt with closing lines
+[ ] Calculate CLV for each game (same formula as above)
+
+CLEVELAND SPECIAL MONITORING:
+[ ] Record final repricing for CLE @ LV
+[ ] Compare to your DTR prediction (-2.5 to -3.0 fair value)
+[ ] Note market efficiency: Did Vegas fully adjust for Watson absence?
+[ ] This validates your QB adjustment methodology for future games
+
+EARLY GAME RESULTS:
+[ ] By 4:00 PM, early games are ending (13:00 kickoffs)
+[ ] Note halftime vs final scores
+[ ] Early CLV calculations begin
+
+================================================================================
+6:00-8:00 PM ET (NIGHT GAME FINAL HOURS)
+================================================================================
+
+MONITOR TB @ LAR (20:20 ET):
+[ ] Track any last-minute line movement
+[ ] Your highest confidence edge (9.6 pts, 96% confidence)
+[ ] Watch for sharp action (should be heavily backed)
+[ ] Note weather conditions if any (LA usually clear)
+
+8:10 PM ET (CRITICAL - 10 MINUTES BEFORE NIGHT GAME):
+[ ] Final closing line for TB @ LAR: LA Rams _____
+[ ] Calculate CLV
+[ ] This is your last recording of the Sunday slate
+
+================================================================================
+SUNDAY NIGHT (After 10:30 PM ET)
+================================================================================
+
+GAME RESULTS COMPILATION:
+[ ] Final scores for all 6 games:
+    [ ] MIN @ GB: _____ - _____ (Result: W/L/P for GB -6.5)
+    [ ] NE @ CIN: _____ - _____ (Result: W/L/P for NE +7.5)
+    [ ] PIT @ CHI: _____ - _____ (Result: W/L/P for CHI -2.5)
+    [ ] IND @ KC: _____ - _____ (Result: W/L/P for KC -3.5)
+    [ ] ATL @ NO: _____ - _____ (Result: W/L/P for NO -2.0)
+    [ ] TB @ LAR: _____ - _____ (Result: W/L/P for LAR -7.0)
+
+CLV FINAL CALCULATIONS:
+[ ] Complete all CLV calculations in tracking sheet:
+    [ ] MIN @ GB: CLV = _____
+    [ ] NE @ CIN: CLV = _____
+    [ ] PIT @ CHI: CLV = _____
+    [ ] IND @ KC: CLV = _____
+    [ ] ATL @ NO: CLV = _____
+    [ ] TB @ LAR: CLV = _____
+
+SUMMARY STATISTICS:
+[ ] Count wins: ___ out of 6 (target: 3+ wins)
+[ ] Sum total CLV: _____ (target: +1.5 average = +9.0 total)
+[ ] Calculate average CLV: _____ / 6 = _____
+[ ] Performance assessment: [Professional / Above average / Below average]
+
+================================================================================
+MONDAY FOLLOW-UP
+================================================================================
+
+MONDAY MORNING:
+[ ] Review all CLV data collected Sunday
+[ ] Identify best and worst performing picks
+[ ] Note sharp action patterns observed
+[ ] Validate QB adjustment methodology (Cleveland game observations)
+
+MONDAY BEFORE 8:10 PM:
+[ ] Final preparation for Monday night game (CAR @ SF)
+[ ] Check weather forecast for San Francisco
+[ ] Review any late-breaking news
+[ ] Set reminder for 8:10 PM ET closing line capture
+
+MONDAY AFTER GAME:
+[ ] Record final score: CAR ___ @ SF ___
+[ ] Record closing line and calculate final CLV
+[ ] Update overall Week 12 performance (7 games total)
+
+================================================================================
+CRITICAL SUCCESS FACTORS
+================================================================================
+
+1. OPENING LINES
+   - Must capture NOW or tomorrow morning
+   - Use consensus market (Overnight.ag primary)
+   - Record exact line to nearest 0.5
+
+2. CLOSING LINES (Most Important)
+   - Set phone alarms - DON'T MISS THESE
+   - Record 5-10 minutes before kickoff
+   - These determine your actual CLV
+   - This is the difference between +2.0 and -1.0 CLV
+
+3. CLV CALCULATION
+   - CLV = Closing - Opening (for your predicted side)
+   - This is the ONLY metric that matters
+   - Win/loss is secondary to CLV
+   - Track it religiously
+
+4. DISCIPLINE
+   - Only track the 6 bets you made
+   - Monitor Cleveland to validate QB methodology (not a bet)
+   - Stick to your Kelly sizing
+   - Don't "hedge" or second-guess
+
+5. DOCUMENTATION
+   - Fill in WEEK_12_SUNDAY_CLV_TRACKING.txt completely
+   - Record observations about sharp action
+   - Note any unexpected results
+   - This builds your database for future seasons
+
+================================================================================
+EMERGENCY CONTACTS / RESOURCES
+================================================================================
+
+Overnight.ag Live Odds: https://overnight.ag/sports#/
+AccuWeather Forecast: https://weather.com/
+ESPN Injury Reports: https://www.espn.com/nfl/injuries/
+Sharp Action Signals: Monitor line movement vs public %
+
+===
+
+QUESTIONS BEFORE SUNDAY?
+
+Review files:
+- output/WEEK_12_BETTING_CARD_2025_11_23.txt (Your picks)
+- docs/reports/WEEK_12_QB_ADJUSTMENT_ANALYSIS.md (Why PASS on Cleveland)
+- output/WEEK_12_SUNDAY_CLV_TRACKING.txt (Fill this in during games)
+- This checklist (Follow this timing)
+
+===
+
+FINAL REMINDER:
+
+This is about CLV, not winning percentage.
+Billy Walters targets +1.5 CLV average.
+Six bets + one monitor = Professional approach.
+Execute with discipline.
+
+Good luck Sunday.
+
+Generated: 2025-11-23 06:15 UTC
