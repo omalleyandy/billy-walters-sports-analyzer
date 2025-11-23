@@ -18,9 +18,7 @@ from src.data.action_network_sitemap_scraper import (
 @pytest.fixture
 def scraper():
     """Create scraper instance for testing."""
-    return ActionNetworkSitemapScraper(
-        output_base="/tmp/action_network_test"
-    )
+    return ActionNetworkSitemapScraper(output_base="/tmp/action_network_test")
 
 
 @pytest.fixture
@@ -108,22 +106,14 @@ class TestURLCategorization:
 
     def test_nfl_game_detection(self, scraper):
         """Test NFL game URL detection."""
-        assert scraper.nfl_game_pattern.search(
-            "/nfl-game/chiefs-vs-bills"
-        )
-        assert scraper.nfl_game_pattern.search(
-            "/NFL-GAME/chiefs-vs-bills"
-        )
+        assert scraper.nfl_game_pattern.search("/nfl-game/chiefs-vs-bills")
+        assert scraper.nfl_game_pattern.search("/NFL-GAME/chiefs-vs-bills")
         assert not scraper.nfl_game_pattern.search("/nfl/odds")
 
     def test_ncaaf_game_detection(self, scraper):
         """Test NCAAF game URL detection."""
-        assert scraper.ncaaf_game_pattern.search(
-            "/ncaaf-game/ohio-state-vs-michigan"
-        )
-        assert scraper.ncaaf_game_pattern.search(
-            "/NCAAF-GAME/ohio-state-vs-michigan"
-        )
+        assert scraper.ncaaf_game_pattern.search("/ncaaf-game/ohio-state-vs-michigan")
+        assert scraper.ncaaf_game_pattern.search("/NCAAF-GAME/ohio-state-vs-michigan")
         assert not scraper.ncaaf_game_pattern.search("/ncaaf/odds")
 
     def test_nfl_futures_categorization(self, scraper):
@@ -135,9 +125,7 @@ class TestURLCategorization:
 
     def test_nfl_odds_categorization(self, scraper):
         """Test NFL odds categorization."""
-        category = scraper.categorize_nfl_url(
-            "https://www.actionnetwork.com/nfl/odds"
-        )
+        category = scraper.categorize_nfl_url("https://www.actionnetwork.com/nfl/odds")
         assert category == "odds"
 
     def test_nfl_teaser_categorization(self, scraper):
@@ -145,19 +133,14 @@ class TestURLCategorization:
         category = scraper.categorize_nfl_url(
             "https://www.actionnetwork.com/nfl-betting-tips-over-under-total"
         )
-        assert (
-            category == "teasers-nfl-betting-tips-over-under-total"
-        )
+        assert category == "teasers-nfl-betting-tips-over-under-total"
 
     def test_nfl_strategy_categorization(self, scraper):
         """Test NFL strategy categorization."""
         category = scraper.categorize_nfl_url(
             "https://www.actionnetwork.com/sports-betting-dfs-strategy-nfl-nba"
         )
-        assert (
-            category
-            == "sports-betting-dfs-strategy-nfl-nba-information-news"
-        )
+        assert category == "sports-betting-dfs-strategy-nfl-nba-information-news"
 
     def test_ncaaf_futures_categorization(self, scraper):
         """Test NCAAF futures categorization."""
@@ -318,15 +301,9 @@ class TestPatternMatching:
 
     def test_case_insensitive_matching(self, scraper):
         """Test case-insensitive pattern matching."""
-        assert scraper.nfl_game_pattern.search(
-            "/NFL-GAME/test"
-        )
-        assert scraper.nfl_game_pattern.search(
-            "/nfl-game/test"
-        )
-        assert scraper.nfl_game_pattern.search(
-            "/Nfl-Game/test"
-        )
+        assert scraper.nfl_game_pattern.search("/NFL-GAME/test")
+        assert scraper.nfl_game_pattern.search("/nfl-game/test")
+        assert scraper.nfl_game_pattern.search("/Nfl-Game/test")
 
     def test_nested_path_matching(self, scraper):
         """Test matching in nested paths."""
@@ -352,8 +329,7 @@ class TestPatternMatching:
         for url, expected_category in urls.items():
             category = scraper.categorize_nfl_url(url)
             assert category == expected_category, (
-                f"URL {url} categorized as "
-                f"{category}, expected {expected_category}"
+                f"URL {url} categorized as {category}, expected {expected_category}"
             )
 
 

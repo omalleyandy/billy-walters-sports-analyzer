@@ -184,9 +184,7 @@ class NFLComClient:
                         game_type=season_type,
                         away_team=game_data.get("awayTeam", {}).get("abbr", ""),
                         home_team=game_data.get("homeTeam", {}).get("abbr", ""),
-                        game_time=datetime.fromisoformat(
-                            game_data.get("gameTime", "")
-                        ),
+                        game_time=datetime.fromisoformat(game_data.get("gameTime", "")),
                         stadium=game_data.get("venue", {}).get("name", ""),
                         network=game_data.get("network", {}).get("name"),
                         away_score=game_data.get("awayScore"),
@@ -330,9 +328,7 @@ class NFLComClient:
             logger.error(f"Error fetching player stats: {e}")
             return None
 
-    async def save_schedule(
-        self, games: List[NFLGame], season: int, week: int
-    ) -> Path:
+    async def save_schedule(self, games: List[NFLGame], season: int, week: int) -> Path:
         """Save schedule to JSON file"""
         filename = f"schedule_{season}_week_{week}.json"
         filepath = self.output_dir / filename

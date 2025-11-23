@@ -73,9 +73,7 @@ class ActionNetworkSitemapScraper:
                 re.IGNORECASE,
             ),
             "odds": re.compile(r"/nfl/odds", re.IGNORECASE),
-            "public-betting": re.compile(
-                r"/nfl.*public|/nfl.*betting", re.IGNORECASE
-            ),
+            "public-betting": re.compile(r"/nfl.*public|/nfl.*betting", re.IGNORECASE),
         }
 
         self.ncaaf_categories = {
@@ -199,8 +197,7 @@ class ActionNetworkSitemapScraper:
             ns_url = "http://www.sitemaps.org/schemas/sitemap/0.9"
             ns = {"sm": ns_url}
             sitemap_urls = [
-                elem.text for elem in root.findall(".//sm:loc", ns)
-                if elem.text
+                elem.text for elem in root.findall(".//sm:loc", ns) if elem.text
             ]
 
             logger.info(f"Found {len(sitemap_urls)} sitemaps in index")
@@ -225,10 +222,7 @@ class ActionNetworkSitemapScraper:
             # Handle namespace
             ns_url = "http://www.sitemaps.org/schemas/sitemap/0.9"
             ns = {"sm": ns_url}
-            urls = [
-                elem.text for elem in root.findall(".//sm:loc", ns)
-                if elem.text
-            ]
+            urls = [elem.text for elem in root.findall(".//sm:loc", ns) if elem.text]
 
             logger.info(f"Found {len(urls)} URLs in sitemap")
             return urls
@@ -379,60 +373,42 @@ class ActionNetworkSitemapScraper:
 
         # Save NFL games
         if self.nfl_games:
-            nfl_games_file = (
-                f"{self.output_base}/nfl/games_{timestamp}.jsonl"
-            )
+            nfl_games_file = f"{self.output_base}/nfl/games_{timestamp}.jsonl"
             with open(nfl_games_file, "w") as f:
                 for url in sorted(self.nfl_games):
-                    record = self._build_jsonl_record(
-                        url, "nfl", "game", None
-                    )
+                    record = self._build_jsonl_record(url, "nfl", "game", None)
                     f.write(json.dumps(record) + "\n")
             logger.info(
-                f"[OK] Saved {len(self.nfl_games)} NFL games to "
-                f"{nfl_games_file}"
+                f"[OK] Saved {len(self.nfl_games)} NFL games to {nfl_games_file}"
             )
 
         # Save NCAAF games
         if self.ncaaf_games:
-            ncaaf_games_file = (
-                f"{self.output_base}/ncaaf/games_{timestamp}.jsonl"
-            )
+            ncaaf_games_file = f"{self.output_base}/ncaaf/games_{timestamp}.jsonl"
             with open(ncaaf_games_file, "w") as f:
                 for url in sorted(self.ncaaf_games):
-                    record = self._build_jsonl_record(
-                        url, "ncaaf", "game", None
-                    )
+                    record = self._build_jsonl_record(url, "ncaaf", "game", None)
                     f.write(json.dumps(record) + "\n")
             logger.info(
-                f"[OK] Saved {len(self.ncaaf_games)} NCAAF games to "
-                f"{ncaaf_games_file}"
+                f"[OK] Saved {len(self.ncaaf_games)} NCAAF games to {ncaaf_games_file}"
             )
 
         # Save NFL category pages
         for category, urls in self.nfl_category_pages.items():
             if urls:
-                category_file = (
-                    f"{self.output_base}/nfl/{category}_{timestamp}.jsonl"
-                )
+                category_file = f"{self.output_base}/nfl/{category}_{timestamp}.jsonl"
                 with open(category_file, "w") as f:
                     for url in sorted(urls):
                         record = self._build_jsonl_record(
                             url, "nfl", "category", category
                         )
                         f.write(json.dumps(record) + "\n")
-                logger.info(
-                    f"[OK] Saved {len(urls)} NFL {category} to "
-                    f"{category_file}"
-                )
+                logger.info(f"[OK] Saved {len(urls)} NFL {category} to {category_file}")
 
         # Save NCAAF category pages
         for category, urls in self.ncaaf_category_pages.items():
             if urls:
-                category_file = (
-                    f"{self.output_base}/ncaaf/"
-                    f"{category}_{timestamp}.jsonl"
-                )
+                category_file = f"{self.output_base}/ncaaf/{category}_{timestamp}.jsonl"
                 with open(category_file, "w") as f:
                     for url in sorted(urls):
                         record = self._build_jsonl_record(
@@ -440,8 +416,7 @@ class ActionNetworkSitemapScraper:
                         )
                         f.write(json.dumps(record) + "\n")
                 logger.info(
-                    f"[OK] Saved {len(urls)} NCAAF {category} to "
-                    f"{category_file}"
+                    f"[OK] Saved {len(urls)} NCAAF {category} to {category_file}"
                 )
 
         # Save summary
