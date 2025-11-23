@@ -1221,15 +1221,19 @@ uv run python -m walters_analyzer.season_calendar
 ### Next Steps & Priorities
 
 **Immediate (This Week)**:
-1. ✅ **Verify Week Transition** (Thursday, Nov 13)
-   - Check `/current-week` shows Week 11
-   - StatusLine updates to Week 11 automatically
-   - All hooks detect Week 11 without manual changes
+1. ✅ **CI Dependencies Fixed** (2025-11-23)
+   - pywin32 now Windows-only (fixed Linux CI failures)
+   - ⚠️ **TODO**: Fix failing tests (36 failures, pre-existing)
+     - `test_sfactor_integration.py` - Method name mismatches
+     - `test_clv_system.py` - Legacy test issues
+     - `test_web_fetch_client.py` - API changes
+     - `test_workflows.py` - Workflow refactoring needed
+   - Dependencies install successfully, tests need cleanup
 
-2. 📋 **Week 11 Data Collection** (Use PR workflow!)
-   - Create branch: `feat/week-11-data-collection`
+2. 📋 **Week 12 Data Collection** (Current Week)
+   - NFL Week 12 (Nov 20-26)
+   - NCAAF Week 13 (Nov 22-28)
    - Run `/collect-all-data`
-   - Create PR, squash and merge
 
 3. 🧹 **Branch Cleanup**
    - Review 18 remaining legacy branches
