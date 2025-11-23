@@ -338,7 +338,6 @@ class TestOutputDirectories:
 
     def test_output_dirs_created(self, scraper):
         """Test output directories are created."""
-        from pathlib import Path
 
         assert Path(scraper.output_base).exists()
         assert Path(f"{scraper.output_base}/nfl").exists()
