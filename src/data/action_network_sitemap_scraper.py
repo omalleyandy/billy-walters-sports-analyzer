@@ -136,22 +136,23 @@ class ActionNetworkSitemapScraper:
                 "Upgrade-Insecure-Requests": "1",
             }
 
-            proxies = None
+            client_kwargs = {
+                "headers": headers,
+                "timeout": 30,
+                "verify": False,
+            }
+
             if self.proxy_url:
-                proxies = self.proxy_url
+                proxy_url = self.proxy_url
                 if self.proxy_auth:
                     user, password = self.proxy_auth
                     # httpx format: http://user:pass@host:port
-                    proxies = self.proxy_url.replace(
+                    proxy_url = self.proxy_url.replace(
                         "://", f"://{user}:{password}@", 1
                     )
+                client_kwargs["proxy"] = proxy_url
 
-            self.client = httpx.AsyncClient(
-                headers=headers,
-                timeout=30,
-                proxies=proxies,
-                verify=False,
-            )
+            self.client = httpx.AsyncClient(**client_kwargs)
 
         return self.client
 
