@@ -55,8 +55,9 @@ This index provides quick navigation to all project documentation organized by t
 - [CI/CD Documentation](../.github/CI_CD.md) - Continuous integration setup
 
 ### CI/CD Troubleshooting
+- [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md) - ✅ **Comprehensive** - Prevent CI failures (formatting, types, tests)
 - [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ **RESOLVED** - How to interpret CI failures correctly
-- [Local Validation Checklist](CI_DEPENDENCY_FIX_2025-11-23.md#prevention-checklist) - Run before every commit
+- [Local Validation Checklist](guides/ci_cd_prevention_guide.md#prevention-checklist) - Run before every commit
 
 ### MCP Architecture (NEW) 🆕
 - [MCP Quick Start](MCP_QUICK_START.md) - **START HERE** - 5-minute overview
@@ -154,10 +155,11 @@ billy-walters-sports-analyzer/
 3. [Feature Coverage](FEATURE_COVERAGE.md)
 
 ### I need to troubleshoot
-1. [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ How to interpret CI failures
-2. [Lessons Learned](../LESSONS_LEARNED.md) - Historical troubleshooting
-3. [CI/CD Troubleshooting](../.github/CI_CD.md) - Technical CI/CD details
-4. [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Data quality issues
+1. [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md) - Prevent failures before they happen
+2. [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ How to interpret CI failures
+3. [Lessons Learned](../LESSONS_LEARNED.md) - Historical troubleshooting
+4. [CI/CD Troubleshooting](../.github/CI_CD.md) - Technical CI/CD details
+5. [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Data quality issues
 
 ### I want to contribute
 1. [Development Guidelines](../CLAUDE.md)

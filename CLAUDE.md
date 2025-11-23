@@ -751,11 +751,20 @@ The `main` branch is protected with the following requirements:
 
 ### CI/CD Documentation
 
-See `.github/CI_CD.md` for comprehensive CI/CD documentation including:
-- Workflow configuration details
-- Troubleshooting guide
-- Adding new CI checks
-- Dependabot configuration
+**Prevention First Approach:**
+- **[docs/guides/ci_cd_prevention_guide.md](docs/guides/ci_cd_prevention_guide.md)** - **START HERE** 🎯
+  - Prevention checklist (5-minute validation)
+  - Common CI/CD failures and fixes
+  - How to debug CI failures locally
+  - Pre-commit hook template
+  - Quick reference table for common issues
+
+**Technical Details:**
+- See `.github/CI_CD.md` for comprehensive documentation including:
+  - Workflow configuration details
+  - Advanced troubleshooting guide
+  - Adding new CI checks
+  - Dependabot configuration
 
 ## Git Workflow
 
