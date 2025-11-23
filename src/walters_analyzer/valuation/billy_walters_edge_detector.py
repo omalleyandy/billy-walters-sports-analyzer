@@ -24,13 +24,13 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import logging
 
-from src.data.accuweather_client import AccuWeatherClient
-from src.data.openweather_client import OpenWeatherClient
+from data.accuweather_client import AccuWeatherClient
+from data.openweather_client import OpenWeatherClient
 
 # Import weather alert mapper and injury/player valuation modules
-from src.walters_analyzer.valuation.weather_alert_mapper import WeatherAlertMapper
-from src.walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
-from src.walters_analyzer.valuation.player_values import PlayerValuation
+from walters_analyzer.valuation.weather_alert_mapper import WeatherAlertMapper
+from walters_analyzer.valuation.injury_impacts import InjuryImpactCalculator
+from walters_analyzer.valuation.player_values import PlayerValuation
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s"
@@ -1103,11 +1103,11 @@ def main():
     if not weather_client.api_key:
         logger.warning("No AccuWeather API key - weather analysis will be skipped")
 
-    # Load proprietary 90/10 power ratings (Week 11 is latest with real data)
+    # Load proprietary 90/10 power ratings (Week 12 is current)
     logger.info("=" * 80)
     logger.info("USING BILLY WALTERS PROPRIETARY 90/10 POWER RATINGS FOR SPREADS")
     logger.info("=" * 80)
-    detector.load_proprietary_ratings(week=11)  # Latest week with actual game results
+    detector.load_proprietary_ratings(week=12)  # Current week ratings
 
     # Load Massey ratings for Offensive/Defensive data (needed for totals)
     logger.info("=" * 80)

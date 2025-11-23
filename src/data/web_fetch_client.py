@@ -99,6 +99,8 @@ class WebFetchClient:
         "www.vegasinsider.com",
         "accuweather.com",
         "www.accuweather.com",
+        "footballdb.com",
+        "www.footballdb.com",
     ]
 
     def __init__(
