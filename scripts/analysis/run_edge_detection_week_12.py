@@ -151,12 +151,8 @@ def convert_overtime_to_games_data(overtime_odds: dict) -> dict:
 
     # First pass: group games by matchup
     for game in overtime_odds.get("games", []):
-        away_team = normalize_team_name_for_massey(
-            game.get("away_team", "")
-        )
-        home_team = normalize_team_name_for_massey(
-            game.get("home_team", "")
-        )
+        away_team = normalize_team_name_for_massey(game.get("away_team", ""))
+        home_team = normalize_team_name_for_massey(game.get("home_team", ""))
 
         if not away_team or not home_team:
             continue
@@ -183,13 +179,9 @@ def convert_overtime_to_games_data(overtime_odds: dict) -> dict:
         total_data = game.get("total", {})
 
         if spread_data.get("home") is not None:
-            games_by_matchup[game_key]["spreads"].append(
-                spread_data.get("home")
-            )
+            games_by_matchup[game_key]["spreads"].append(spread_data.get("home"))
         if total_data.get("points") is not None:
-            games_by_matchup[game_key]["totals"].append(
-                total_data.get("points")
-            )
+            games_by_matchup[game_key]["totals"].append(total_data.get("points"))
 
     # Second pass: pick first (primary) values
     # Overtime API returns entries in order: primary market first, then other books
@@ -251,9 +243,7 @@ def main():
 
     # Load proprietary 90/10 power ratings
     logger.info("=" * 80)
-    logger.info(
-        "USING BILLY WALTERS PROPRIETARY 90/10 POWER RATINGS FOR SPREADS"
-    )
+    logger.info("USING BILLY WALTERS PROPRIETARY 90/10 POWER RATINGS FOR SPREADS")
     logger.info("=" * 80)
     detector.load_proprietary_ratings(week=11)
 
@@ -287,9 +277,7 @@ def main():
     # Initialize weather client
     weather_client = AccuWeatherClient()
     if not weather_client.api_key:
-        logger.warning(
-            "No AccuWeather API key - weather analysis will be skipped"
-        )
+        logger.warning("No AccuWeather API key - weather analysis will be skipped")
 
     # Analyze each game
     edges = []
@@ -317,9 +305,7 @@ def main():
 
         market_spread = spread_data[0].get("value", 0)
         total_data = event_markets.get("total", [])
-        market_total = (
-            total_data[0].get("value", 47.0) if total_data else 47.0
-        )
+        market_total = total_data[0].get("value", 47.0) if total_data else 47.0
 
         sharp = None
 
@@ -328,26 +314,20 @@ def main():
         game_time_str = game.get("start_time", "")
         if weather_client.api_key and game_time_str:
             try:
-                game_time = datetime.fromisoformat(
-                    game_time_str.replace("Z", "+00:00")
-                )
+                game_time = datetime.fromisoformat(game_time_str.replace("Z", "+00:00"))
 
                 async def fetch_weather():
                     await weather_client.connect()
-                    return await weather_client.get_game_weather(
-                        home_team, game_time
-                    )
+                    return await weather_client.get_game_weather(home_team, game_time)
 
                 weather_data = asyncio.run(fetch_weather())
 
                 if weather_data:
-                    weather_impact = (
-                        detector.calculate_weather_impact(
-                            temperature=weather_data.get("temperature"),
-                            wind_speed=weather_data.get("wind_speed"),
-                            precipitation=weather_data.get("precipitation"),
-                            indoor=weather_data.get("indoor", False),
-                        )
+                    weather_impact = detector.calculate_weather_impact(
+                        temperature=weather_data.get("temperature"),
+                        wind_speed=weather_data.get("wind_speed"),
+                        precipitation=weather_data.get("precipitation"),
+                        indoor=weather_data.get("indoor", False),
                     )
 
                     logger.info(
@@ -380,13 +360,9 @@ def main():
             away_team=away_team,
             home_team=home_team,
             market_total=market_total,
-            market_over_odds=(
-                total_data[0].get("odds", -110) if total_data else -110
-            ),
+            market_over_odds=(total_data[0].get("odds", -110) if total_data else -110),
             market_under_odds=(
-                total_data[1].get("odds", -110)
-                if len(total_data) > 1
-                else -110
+                total_data[1].get("odds", -110) if len(total_data) > 1 else -110
             ),
             week=12,
             game_time=game_time_str,
@@ -405,9 +381,7 @@ def main():
         report = detector.generate_report(edges)
         print("\n" + report)
 
-        with open(
-            f"{detector.output_dir}/edge_report_week_12.txt", "w"
-        ) as f:
+        with open(f"{detector.output_dir}/edge_report_week_12.txt", "w") as f:
             f.write(report)
         logger.info(f"[OK] Saved {len(edges)} spread edges")
     else:
@@ -422,10 +396,7 @@ def main():
         try:
             print("\n" + totals_report)
         except UnicodeEncodeError:
-            print(
-                "\n"
-                + totals_report.encode("ascii", "replace").decode("ascii")
-            )
+            print("\n" + totals_report.encode("ascii", "replace").decode("ascii"))
 
         with open(
             f"{totals_detector.output_dir}/totals_report_week_12.txt",
@@ -439,8 +410,7 @@ def main():
 
     logger.info("=" * 80)
     logger.info(
-        f"Edge detection complete: {len(edges)} spread, "
-        f"{len(totals_edges)} totals"
+        f"Edge detection complete: {len(edges)} spread, {len(totals_edges)} totals"
     )
     logger.info("=" * 80)
 

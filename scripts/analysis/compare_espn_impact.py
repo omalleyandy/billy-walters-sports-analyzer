@@ -173,9 +173,7 @@ class ESPNImpactAnalyzer:
         """
         logger.info("Loading game schedules...")
 
-        schedule_path = (
-            Path("data/current") / f"game_schedule_{self.league}.json"
-        )
+        schedule_path = Path("data/current") / f"game_schedule_{self.league}.json"
 
         if not schedule_path.exists():
             return False, f"Schedule not found: {schedule_path}"
@@ -200,9 +198,7 @@ class ESPNImpactAnalyzer:
         self.comparisons = []
 
         # Get games from detector (power ratings)
-        for team_name, power_rating in (
-            self.detector_baseline.power_ratings.items()
-        ):
+        for team_name, power_rating in self.detector_baseline.power_ratings.items():
             if not hasattr(power_rating, "game_id"):
                 continue
 
@@ -215,9 +211,7 @@ class ESPNImpactAnalyzer:
             enhanced_rating = self.detector_enhanced.power_ratings[team_name]
 
             # Calculate spread difference
-            spread_delta = (
-                enhanced_rating.rating - baseline_rating.rating
-            )
+            spread_delta = enhanced_rating.rating - baseline_rating.rating
 
             # Create comparison (you'll need to extract actual game data)
             # For now, this is a template
@@ -265,14 +259,10 @@ class ESPNImpactAnalyzer:
             1 for c in self.comparisons if c.edge_improvement > 0
         )
         avg_edge_improvement = (
-            sum(edge_improvements) / len(edge_improvements)
-            if edge_improvements
-            else 0
+            sum(edge_improvements) / len(edge_improvements) if edge_improvements else 0
         )
         largest_improvement = max(edge_improvements) if edge_improvements else 0
-        largest_degradation = (
-            min(edge_improvements) if edge_improvements else 0
-        )
+        largest_degradation = min(edge_improvements) if edge_improvements else 0
 
         summary = AnalysisSummary(
             league=self.league.upper(),
@@ -307,9 +297,7 @@ class ESPNImpactAnalyzer:
         }
 
         # Handle datetime serialization
-        results["summary"]["timestamp"] = (
-            summary.timestamp.isoformat()
-        )
+        results["summary"]["timestamp"] = summary.timestamp.isoformat()
 
         with open(output_file, "w") as f:
             json.dump(results, f, indent=2, default=str)
@@ -328,22 +316,12 @@ class ESPNImpactAnalyzer:
         print("=" * 70)
         print(f"League:                    {summary.league}")
         print(f"Games Analyzed:            {summary.games_analyzed}")
-        print(
-            f"Average Spread Delta:      {summary.avg_spread_delta:+.2f} points"
-        )
+        print(f"Average Spread Delta:      {summary.avg_spread_delta:+.2f} points")
         print(f"Max Spread Delta:          {summary.max_spread_delta:+.2f} points")
-        print(
-            f"Games with Edge Improvement: {summary.games_with_edge_improvement}"
-        )
-        print(
-            f"Average Edge Improvement:  {summary.avg_edge_improvement:+.2f} points"
-        )
-        print(
-            f"Largest Improvement:       {summary.largest_improvement:+.2f} points"
-        )
-        print(
-            f"Largest Degradation:       {summary.largest_degradation:+.2f} points"
-        )
+        print(f"Games with Edge Improvement: {summary.games_with_edge_improvement}")
+        print(f"Average Edge Improvement:  {summary.avg_edge_improvement:+.2f} points")
+        print(f"Largest Improvement:       {summary.largest_improvement:+.2f} points")
+        print(f"Largest Degradation:       {summary.largest_degradation:+.2f} points")
         print(f"Timestamp:                 {summary.timestamp.isoformat()}")
         print("=" * 70 + "\n")
 
@@ -408,8 +386,7 @@ def main():
             print("\nTop 10 Spread Changes:")
             print("-" * 70)
             sorted_comparisons = sorted(
-                analyzer.comparisons, key=lambda c: abs(c.spread_delta),
-                reverse=True
+                analyzer.comparisons, key=lambda c: abs(c.spread_delta), reverse=True
             )
             for comp in sorted_comparisons[:10]:
                 print(comp)

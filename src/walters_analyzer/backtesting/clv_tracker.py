@@ -243,17 +243,13 @@ class CLVTracker:
         logger.info(f"Saved {len(self.bets)} bets to {bets_file}")
         return bets_file
 
-    def get_clv_summary(
-        self, league: Optional[str] = None
-    ) -> CLVSummary:
+    def get_clv_summary(self, league: Optional[str] = None) -> CLVSummary:
         """Calculate CLV summary statistics"""
 
         # Filter bets
         bets_to_analyze = list(self.bets.values())
         if league:
-            bets_to_analyze = [
-                b for b in bets_to_analyze if b.league == league.lower()
-            ]
+            bets_to_analyze = [b for b in bets_to_analyze if b.league == league.lower()]
 
         if not bets_to_analyze:
             logger.warning("No bets to analyze")
@@ -271,9 +267,7 @@ class CLVTracker:
 
         # CLV analysis
         clv_values = [
-            b.closing_line_value
-            for b in settled
-            if b.closing_line_value is not None
+            b.closing_line_value for b in settled if b.closing_line_value is not None
         ]
         avg_clv = sum(clv_values) / len(clv_values) if clv_values else 0
         positive_clv = [c for c in clv_values if c > 0]
@@ -282,16 +276,11 @@ class CLVTracker:
         clv_with_espn = sum(
             b.closing_line_value
             for b in settled
-            if b.closing_line_value
-            and b.predicted_with_espn
+            if b.closing_line_value and b.predicted_with_espn
         )
 
-        avg_positive_clv = (
-            sum(positive_clv) / len(positive_clv) if positive_clv else 0
-        )
-        avg_negative_clv = (
-            sum(negative_clv) / len(negative_clv) if negative_clv else 0
-        )
+        avg_positive_clv = sum(positive_clv) / len(positive_clv) if positive_clv else 0
+        avg_negative_clv = sum(negative_clv) / len(negative_clv) if negative_clv else 0
 
         summary = CLVSummary(
             league=league.upper() if league else "ALL",
@@ -326,8 +315,10 @@ class CLVTracker:
         print("=" * 70)
         print(f"Total Bets:                {summary.total_bets}")
         print(f"Settled Bets:              {summary.settled_bets}")
-        print(f"Winning Bets:              {summary.winning_bets} "
-              f"({summary.win_rate:.1%})")
+        print(
+            f"Winning Bets:              {summary.winning_bets} "
+            f"({summary.win_rate:.1%})"
+        )
         print(f"Total Wagered:             ${summary.total_wagered:.2f}")
         print(f"Total Won:                 ${summary.total_won:.2f}")
         print(f"Net Profit:                ${summary.net_profit:+.2f}")
@@ -415,9 +406,7 @@ def main():
         tracker.save_bets()
 
     elif args.command == "update-line":
-        tracker.update_closing_line(
-            bet_id=args.bet_id, closing_line=args.closing_line
-        )
+        tracker.update_closing_line(bet_id=args.bet_id, closing_line=args.closing_line)
         tracker.save_bets()
 
     elif args.command == "summary":

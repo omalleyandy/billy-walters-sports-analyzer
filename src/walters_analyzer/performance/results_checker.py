@@ -402,9 +402,7 @@ class BettingResultsChecker:
         if league.lower() == "nfl":
             # Try week-specific file first
             if week:
-                week_file = (
-                    edge_dir / f"nfl_edges_detected_week_{week}.jsonl"
-                )
+                week_file = edge_dir / f"nfl_edges_detected_week_{week}.jsonl"
                 if week_file.exists():
                     edge_file = week_file
                 else:
@@ -414,9 +412,7 @@ class BettingResultsChecker:
         else:
             # Try week-specific file first
             if week:
-                week_file = (
-                    edge_dir / f"ncaaf_edges_detected_week_{week}.jsonl"
-                )
+                week_file = edge_dir / f"ncaaf_edges_detected_week_{week}.jsonl"
                 if week_file.exists():
                     edge_file = week_file
                 else:

@@ -129,9 +129,13 @@ def print_early_games_section() -> None:
 
     for game in early_games:
         print(f"\n{game['matchup'].upper()}")
-        print(f"  Kickoff: {game['kickoff']} ({format_time_remaining(game['kickoff'])} remaining)")
+        print(
+            f"  Kickoff: {game['kickoff']} ({format_time_remaining(game['kickoff'])} remaining)"
+        )
         print(f"  Our Pick: {game['our_pick']}")
-        print(f"  Edge: {game['edge']:.1f} pts | Kelly: {game['kelly']:.1f}% | Confidence: {game['confidence']}/100")
+        print(
+            f"  Edge: {game['edge']:.1f} pts | Kelly: {game['kelly']:.1f}% | Confidence: {game['confidence']}/100"
+        )
 
         # Status section
         if "note" in game:
@@ -149,13 +153,19 @@ def print_afternoon_games_section() -> None:
     print("\n[AFTERNOON WINDOW] 16:05+ ET Kickoffs")
     print("-" * 100)
 
-    afternoon_games = [g for g in SUNDAY_GAMES if "16:05" in g["kickoff"] or "20:20" in g["kickoff"]]
+    afternoon_games = [
+        g for g in SUNDAY_GAMES if "16:05" in g["kickoff"] or "20:20" in g["kickoff"]
+    ]
 
     for game in afternoon_games:
         print(f"\n{game['matchup'].upper()}")
-        print(f"  Kickoff: {game['kickoff']} ({format_time_remaining(game['kickoff'])} remaining)")
+        print(
+            f"  Kickoff: {game['kickoff']} ({format_time_remaining(game['kickoff'])} remaining)"
+        )
         print(f"  Our Pick: {game['our_pick']}")
-        print(f"  Edge: {game['edge']:.1f} pts | Kelly: {game['kelly']:.1f}% | Confidence: {game['confidence']}/100")
+        print(
+            f"  Edge: {game['edge']:.1f} pts | Kelly: {game['kelly']:.1f}% | Confidence: {game['confidence']}/100"
+        )
 
         if "note" in game:
             print(f"  [NOTE] {game['note']}")

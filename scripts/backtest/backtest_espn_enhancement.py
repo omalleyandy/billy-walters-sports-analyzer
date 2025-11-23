@@ -127,9 +127,7 @@ class ESPNBacktester:
 
         # This would load from a historical database or archive
         # For now, returning placeholder
-        logger.info(
-            f"Loading games from {start_date.date()} to {end_date.date()}"
-        )
+        logger.info(f"Loading games from {start_date.date()} to {end_date.date()}")
 
         games_dir = Path("data/archive/games") / self.league
         if not games_dir.exists():
@@ -151,18 +149,14 @@ class ESPNBacktester:
         logger.info(f"Loaded {len(games)} historical games")
         return games
 
-    def predict_spread_baseline(
-        self, away_team: str, home_team: str
-    ) -> float:
+    def predict_spread_baseline(self, away_team: str, home_team: str) -> float:
         """Predict spread without ESPN enhancement"""
 
         # Would use baseline power ratings
         # For now, returning placeholder
         return 0.0
 
-    def predict_spread_enhanced(
-        self, away_team: str, home_team: str
-    ) -> float:
+    def predict_spread_enhanced(self, away_team: str, home_team: str) -> float:
         """Predict spread with ESPN enhancement"""
 
         # Would use enhanced power ratings
@@ -181,15 +175,11 @@ class ESPNBacktester:
     ) -> Optional[BacktestSummary]:
         """Run backtest for date range"""
 
-        logger.info(
-            f"Running backtest from {start_date.date()} to {end_date.date()}"
-        )
+        logger.info(f"Running backtest from {start_date.date()} to {end_date.date()}")
 
         games = self.load_historical_games(start_date, end_date)
         if len(games) < min_games:
-            logger.error(
-                f"Insufficient games ({len(games)} < {min_games} required)"
-            )
+            logger.error(f"Insufficient games ({len(games)} < {min_games} required)")
             return None
 
         self.results = []
@@ -204,19 +194,13 @@ class ESPNBacktester:
                 home_team = game.get("home_team", "")
 
                 # Get predictions
-                baseline_spread = self.predict_spread_baseline(
-                    away_team, home_team
-                )
-                enhanced_spread = self.predict_spread_enhanced(
-                    away_team, home_team
-                )
+                baseline_spread = self.predict_spread_baseline(away_team, home_team)
+                enhanced_spread = self.predict_spread_enhanced(away_team, home_team)
 
                 # Get actual result
                 away_score = game.get("away_score", 0)
                 home_score = game.get("home_score", 0)
-                actual_spread = self.calculate_actual_spread(
-                    away_score, home_score
-                )
+                actual_spread = self.calculate_actual_spread(away_score, home_score)
 
                 # Calculate accuracy
                 baseline_error = abs(baseline_spread - actual_spread)
@@ -240,9 +224,7 @@ class ESPNBacktester:
                     if enhanced_spread < 0
                     else home_team,
                     actual_spread=actual_spread,
-                    actual_winner=away_team
-                    if actual_spread < 0
-                    else home_team,
+                    actual_winner=away_team if actual_spread < 0 else home_team,
                     baseline_accuracy=baseline_error,
                     enhanced_accuracy=enhanced_error,
                     accuracy_improvement=accuracy_improvement,
@@ -289,12 +271,8 @@ class ESPNBacktester:
             ),
             avg_accuracy_improvement=statistics.mean(accuracy_improvements),
             games_with_improvement=improved_games,
-            avg_baseline_edge=statistics.mean(
-                [r.baseline_edge for r in self.results]
-            ),
-            avg_enhanced_edge=statistics.mean(
-                [r.enhanced_edge for r in self.results]
-            ),
+            avg_baseline_edge=statistics.mean([r.baseline_edge for r in self.results]),
+            avg_enhanced_edge=statistics.mean([r.enhanced_edge for r in self.results]),
             avg_edge_improvement=statistics.mean(edge_improvements),
             improvement_stdev=statistics.stdev(accuracy_improvements)
             if len(accuracy_improvements) > 1
@@ -354,26 +332,20 @@ class ESPNBacktester:
         print(f"Games Analyzed:            {summary.games_analyzed}")
         print()
         print("ACCURACY METRICS:")
-        print(
-            f"  Baseline avg error:      {summary.avg_baseline_error:+.2f} points"
-        )
-        print(
-            f"  Enhanced avg error:      {summary.avg_enhanced_error:+.2f} points"
-        )
+        print(f"  Baseline avg error:      {summary.avg_baseline_error:+.2f} points")
+        print(f"  Enhanced avg error:      {summary.avg_enhanced_error:+.2f} points")
         print(
             f"  Improvement:             {summary.avg_accuracy_improvement:+.2f} points"
         )
         print(
             f"  Games improved:          {summary.games_with_improvement} "
-            f"({summary.games_with_improvement/summary.games_analyzed:.1%})"
+            f"({summary.games_with_improvement / summary.games_analyzed:.1%})"
         )
         print()
         print("EDGE METRICS:")
         print(f"  Baseline avg edge:       {summary.avg_baseline_edge:+.2f} points")
         print(f"  Enhanced avg edge:       {summary.avg_enhanced_edge:+.2f} points")
-        print(
-            f"  Edge improvement:        {summary.avg_edge_improvement:+.2f} points"
-        )
+        print(f"  Edge improvement:        {summary.avg_edge_improvement:+.2f} points")
         print()
         print("CONSISTENCY:")
         print(f"  Improvement stdev:       {summary.improvement_stdev:.2f}")
@@ -386,9 +358,7 @@ def main():
 
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Backtest ESPN enhancement impact"
-    )
+    parser = argparse.ArgumentParser(description="Backtest ESPN enhancement impact")
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf"],

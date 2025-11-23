@@ -400,6 +400,7 @@ class TestBettingResultsChecker:
         """Test saving report to file"""
         # Mock the project root
         import walters_analyzer.performance.results_checker as checker_module
+
         original_file = checker_module.Path(__file__)
 
         report_content = "Test Report\n\nThis is a test."

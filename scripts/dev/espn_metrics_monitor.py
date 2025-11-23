@@ -22,6 +22,7 @@ import statistics
 @dataclass
 class MetricsSnapshot:
     """Single point in time metrics"""
+
     timestamp: datetime
     league: str
     success_rate: float
@@ -80,7 +81,9 @@ class MetricsMonitor:
             "success_rate": {
                 "current": success_rates[-1] if success_rates else 0,
                 "average": statistics.mean(success_rates) if success_rates else 0,
-                "trend": "improving" if success_rates[-1] > statistics.mean(success_rates[:-1]) else "declining",
+                "trend": "improving"
+                if success_rates[-1] > statistics.mean(success_rates[:-1])
+                else "declining",
             },
             "processing_time": {
                 "current": durations[-1] if durations else 0,
@@ -153,7 +156,9 @@ class MetricsMonitor:
             status = comp_metrics.get("status", "unknown").upper()
             records = comp_metrics.get("records_collected", 0)
             duration = comp_metrics.get("duration_seconds", 0)
-            report.append(f"  {comp_name}: {status} - {records} records, {duration:.1f}s")
+            report.append(
+                f"  {comp_name}: {status} - {records} records, {duration:.1f}s"
+            )
 
         if comp_metrics.get("errors"):
             report.append("    Errors:")
