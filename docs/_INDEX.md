@@ -20,19 +20,23 @@ This index provides quick navigation to all project documentation organized by t
 - [Billy Walters Methodology](guides/BILLY_WALTERS_METHODOLOGY.md) - Core betting principles
 - [Billy Walters PRD v1.5](guides/billy_walters_analytics_prd_v1.5.md) - Product requirements
 - [Advanced Master Class Sections](advanced-master-class-section-1.md) - Deep dive tutorials (5 sections)
+- **See Also**: CLAUDE.md § "Football Analytics Best Practices" for weekly workflow
 
 ### Analysis Tools
 - [Edge Detection](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges
 - [Power Ratings](guides/README_POWER_RATINGS.md) - Power rating system
 - [Feature Coverage](FEATURE_COVERAGE.md) - Available analysis features
+- **Reference**: CLAUDE.md § "Billy Walters Workflow Commands & Hooks" for all commands
 
 ## Data Collection
 
 ### Scrapers & APIs
 - [Overtime.ag Hybrid Scraper](OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
 - [ESPN NCAAF Scoreboard](ESPN_NCAAF_SCOREBOARD.md) - College football scores
-- [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Action Network integration
+- [Action Network Quality Report](ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ Data assurance (512 records, 100% quality)
+- [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
+- **Reference**: CLAUDE.md § "API Integration Guidelines" for all API details
 
 ### Data Sources
 - [NFL Injuries](data_sources/injuries_nfl.md) - NFL injury data schema
@@ -91,17 +95,31 @@ This index provides quick navigation to all project documentation organized by t
 - [Example Output](guides/EXAMPLE_OUTPUT.md) - Expected output formats
 - [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Quality standards
 
+## Week 12 Analysis (Current)
+
+### Active Analysis
+- [Week 12 Edge Detection](../output/edge_detection/week_12_edge_analysis.json) - 4 edges identified
+- [Week 12 Injury-Adjusted Analysis](../output/edge_detection/week_12_injury_adjusted_edges.json) - Position-specific impacts
+- **Final Plays**: CAR+4.0 (STRONG), DAL-1.5 (STRONG), TB+4.0 (MODERATE), CLE removed (QB out)
+- **Reference**: CLAUDE.md § "Recent Updates (2025-11-23)" for complete session notes
+
+### Weather Analysis (Week 12)
+- [Week 12 Weather Data](../data/current/nfl_week_12_weather_corrected.json) - 7 outdoor stadiums (no extreme conditions)
+
 ## Reports & History
 
 ### Active Reports
 - [Feature Coverage](FEATURE_COVERAGE.md) - Current feature status
 - [API Integration Complete](API_INTEGRATION_COMPLETE.md) - Integration milestones
+- [Action Network Quality Assurance](ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ 100% data quality validation
+
+### Recent Session Notes (2025-11-23)
+- [CLAUDE.md § Recent Updates](../CLAUDE.md#recent-updates-2025-11-12-to-2025-11-23) - AccuWeather fixes, Week 12 analysis, Action Network validation
 
 ### Archived Reports
-- [Agent Optimization 2025-11-23](reports/AGENT_OPTIMIZATION_2025-11-23.md) - Agent documentation restructure & performance optimization
+- [Agent Optimization 2025-11-23](reports/AGENT_OPTIMIZATION_2025-11-23.md) - Agent documentation restructure
 - [Sessions Archive](reports/archive/sessions/) - Development session notes
 - [Week Archives](reports/archive/) - Week-by-week analysis history
-- [Development Phases](reports/archive/) - Historical development reports
 
 ## Project Organization
 
