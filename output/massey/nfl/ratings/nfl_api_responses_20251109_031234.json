@@ -1,0 +1,125 @@
+[
+  {
+    "url": "https://masseyratings.com/json/lgland.php?argv=4d0z3k4TZr-mLmyt6priNyi-LdMX0DNH0WLJayxmuFNOwdtLPMW_Ne43l_-ibqmH&task=json",
+    "data": {
+      "TI": {
+        "dohead": 1,
+        "dotail": 0,
+        "dotits": 0,
+        "dosort": 0,
+        "rowsingroup": 20
+      },
+      "CI": [
+        {
+          "title": "Link",
+          "style": "flandlink almond",
+          "sort": 9,
+          "gfac": 0
+        }
+      ],
+      "RI": [],
+      "DI": [
+        [
+          [
+            "Ratings",
+            "",
+            "/nfl/ratings"
+          ]
+        ],
+        [
+          [
+            "Games",
+            "",
+            "/nfl/games"
+          ]
+        ],
+        [
+          [
+            "#1 Los Angeles Rams",
+            "cWin",
+            "/nfl2025/16337"
+          ]
+        ],
+        [
+          [
+            "#2 Philadelphia Eagles",
+            "cWin",
+            "/nfl2025/16156"
+          ]
+        ],
+        [
+          [
+            "Conferences",
+            "",
+            "/nfl/ratings?c=1"
+          ]
+        ],
+        [
+          [
+            "Matchup Tool",
+            "",
+            "/game.php?s=nfl2025"
+          ]
+        ],
+        [
+          [
+            "Previous Season (2024)",
+            "",
+            "/nfl2024"
+          ]
+        ],
+        [
+          [
+            "Rating Archive",
+            "",
+            "nfl/archive"
+          ]
+        ],
+        [
+          [
+            "Top Teams All-time",
+            "",
+            "/top?lg=nfl&y0=1945&y1=2099"
+          ]
+        ],
+        [
+          [
+            "Map",
+            "",
+            "/map.php?s=632620&t=632620"
+          ]
+        ],
+        [
+          [
+            "Transitive Path",
+            "",
+            "/path?s=nfl2025"
+          ]
+        ],
+        [
+          [
+            "Scoring Distribution",
+            "",
+            "/scoredist?s=nfl2025&x=s"
+          ]
+        ],
+        [
+          [
+            "Biggest Upsets",
+            "",
+            "/extgms?s=nfl2025&x=U"
+          ]
+        ],
+        [
+          [
+            "Scores/Schedule Data",
+            "",
+            "scores.php?s=nfl2025"
+          ]
+        ]
+      ],
+      "timestamp": 1762686530000
+    },
+    "timestamp": "2025-11-09T03:12:34.677400"
+  }
+]

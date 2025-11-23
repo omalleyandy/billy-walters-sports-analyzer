@@ -1,0 +1,21 @@
+{
+  "margins": [],
+  "totals": [],
+  "full_data": [],
+  "errors": [
+    {
+      "visitor_team": "Northwestern Wildcats",
+      "home_team": "USC Trojans",
+      "error": "Team IDs not available"
+    },
+    {
+      "visitor_team": "Ohio State Buckeyes",
+      "home_team": "Purdue Boilermakers",
+      "error": "Team IDs not available"
+    }
+  ],
+  "scraped_at": "2025-11-21T05:23:30.375733",
+  "total_games": 2,
+  "cache_hits": 0,
+  "cache_misses": 2
+}
