@@ -1823,6 +1823,57 @@ python .claude/hooks/auto_edge_detector.py
 
 ## Recent Updates (2025-11-12 to 2025-11-23)
 
+### Action Network Integration ✅ NEW (2025-11-23)
+
+**What Changed:**
+- Integrated Action Network as new data source for sharp action monitoring
+- Committed fresh Week 12 NFL + Week 13 NCAAF scraping results (767 records)
+- Created data loader module for Billy Walters pipeline integration
+- Added to `/collect-all-data` workflow
+
+**Data Collected:**
+- **NFL**: 18 games, 1 futures, 1 odds, 170 public betting articles
+- **NCAAF**: 120 games, 1 futures, 1 odds
+- **Total**: 767 URLs with full metadata (path, category, timestamps)
+
+**Key Features:**
+- **Sitemap Scraper**: `src/data/action_network_sitemap_scraper.py`
+- **Data Loader**: `src/data/action_network_loader.py` (NEW)
+- **JSONL Output**: Structured data ready for pipeline consumption
+- **Categories**: futures, odds, public-betting, strategy/DFS, teasers/tips
+
+**Integration Points:**
+```python
+from data.action_network_loader import load_nfl_games, find_game_url
+
+# Load games
+nfl_games = load_nfl_games()  # 18 Week 12 games
+ncaaf_games = load_ncaaf_games()  # 120 Week 13 games
+
+# Find specific matchup URL
+url = find_game_url("Buffalo Bills", "Kansas City Chiefs")
+```
+
+**Files Created:**
+- `src/data/action_network_loader.py` - Data loader with Pydantic models
+- `scripts/utilities/test_action_network_loader.py` - Validation script
+- `output/action_network/nfl/*.jsonl` - 6 data files (646 records)
+- `output/action_network/ncaaf/*.jsonl` - 3 data files (121 records)
+- `docs/ACTION_NETWORK_SITEMAP_DELIVERY.md` - Integration guide
+
+**Use Cases:**
+1. Sharp action monitoring (public betting percentages)
+2. Line movement tracking (futures, odds pages)
+3. Expert analysis aggregation (strategy articles)
+4. Betting insights (teasers, tips, totals)
+
+**Next Steps:**
+1. Add Action Network odds scraping (from URLs to actual lines)
+2. Integrate public betting percentages into edge detection
+3. Add to MCP server tools
+
+---
+
 ### Agent Documentation Optimization ✅ NEW (2025-11-23)
 
 **What Changed:**

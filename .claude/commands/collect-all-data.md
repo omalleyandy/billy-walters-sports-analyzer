@@ -38,7 +38,7 @@ Step 5: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
 - Uses your ACCUWEATHER_API_KEY from .env
 - ~8-10 API calls per run (only outdoor stadiums)
 
-Step 6: Odds Data (Market Lines) - **UPDATED 2025-11-12: API Client Validated**
+Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-23**
 - Overtime.ag API (primary) - Direct API access, no browser required
   - Method: scrape_overtime_api.py
   - Speed: ~5 seconds for NFL + NCAAF
@@ -46,7 +46,15 @@ Step 6: Odds Data (Market Lines) - **UPDATED 2025-11-12: API Client Validated**
   - No CloudFlare/proxy issues
   - 100% data quality verified
   - Recommended: docs/overtime_devtools_analysis_results.md
-- Action Network scraper (sharp action monitoring)
+
+- Action Network Sitemap (NEW 2025-11-23) - Game URLs & Sharp Action
+  - Method: scrape_action_network_sitemap.py
+  - Output: 18 NFL games, 120 NCAAF games
+  - Categories: futures, odds, public-betting, strategy, teasers
+  - Format: JSONL with full URL metadata
+  - Data loader: src/data/action_network_loader.py
+  - Integration: Ready for Billy Walters pipeline
+
 - Hybrid scraper (optional, for live games only)
   - Method: scrape_overtime_hybrid.py
   - Use case: Sunday live monitoring
