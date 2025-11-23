@@ -229,9 +229,7 @@ class TestEndToEndPipeline:
             assert context.total_injury_impact <= 0  # Injuries are negative
             assert context.key_injuries_count == len(team_data["injuries"])
 
-    def test_calculate_real_games(
-        self, schedule_calculator, real_schedule_data
-    ):
+    def test_calculate_real_games(self, schedule_calculator, real_schedule_data):
         """
         Test: Calculate schedule history for real games
 
