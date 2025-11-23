@@ -66,6 +66,9 @@ class DocumentationIndexUpdater:
         """
         if scan_dir is None:
             scan_dir = self.docs_dir / "reports"
+        else:
+            # Convert to absolute path if relative
+            scan_dir = Path(scan_dir).resolve()
 
         reports = []
         if not scan_dir.exists():
@@ -95,10 +98,17 @@ class DocumentationIndexUpdater:
             except Exception as e:
                 logger.debug(f"Could not read {file_path}: {e}")
 
+            # Calculate relative path from docs_dir if possible, otherwise use as-is
+            try:
+                rel_path = str(file_path.relative_to(self.docs_dir))
+            except ValueError:
+                # File is outside docs_dir, use relative path from project root
+                rel_path = str(file_path.relative_to(self.project_root))
+
             reports.append(
                 {
                     "title": title,
-                    "path": str(file_path.relative_to(self.docs_dir)),
+                    "path": rel_path,
                     "description": description or "Report",
                     "file_path": str(file_path),
                     "date": datetime.fromtimestamp(file_path.stat().st_mtime).strftime(
