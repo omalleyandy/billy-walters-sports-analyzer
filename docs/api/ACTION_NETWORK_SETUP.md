@@ -17,8 +17,8 @@ uv run playwright install chromium
 Add to your `.env` file:
 
 ```bash
-ACTION_USERNAME=your_email@example.com
-ACTION_PASSWORD=your_password
+ACTION_USERNAME=streetbroker102@gmail.com
+ACTION_PASSWORD=idaho@208775
 ```
 
 ### 3. File Structure
@@ -102,21 +102,25 @@ client = ActionNetworkClient(
 ## Features
 
 ### Rate Limiting
+
 - Automatic rate limiting between requests (default: 2 seconds)
 - Configurable delay via `rate_limit_delay` parameter
 - Prevents API throttling and bans
 
 ### Retry Logic
+
 - Automatic retries on failure (default: 3 attempts)
 - Exponential backoff: 1s, 2s, 4s
 - Configurable via `max_retries` parameter
 
 ### Error Handling
+
 - Graceful handling of network errors
 - Login failure detection
 - Invalid data skipping with logging
 
 ### Data Validation
+
 - Validates odds ranges (spread, total, moneyline)
 - Checks for missing critical fields
 - NFL/NCAAF specific validation rules
@@ -125,12 +129,14 @@ client = ActionNetworkClient(
 ## Validation Modes
 
 ### Strict Mode (Recommended for Production)
+
 ```python
 # Raises ValueError if any validation fails
 response = await client.fetch_nfl_odds(strict=True)
 ```
 
 ### Non-Strict Mode (For Development)
+
 ```python
 # Logs warnings but continues with invalid data
 response = await client.fetch_nfl_odds(strict=False)
@@ -139,18 +145,21 @@ response = await client.fetch_nfl_odds(strict=False)
 ## Troubleshooting
 
 ### Login Failures
+
 ```python
 # Run in non-headless mode to see browser
 client = ActionNetworkClient(headless=False)
 ```
 
 ### Rate Limiting Issues
+
 ```python
 # Increase delay between requests
 client = ActionNetworkClient(rate_limit_delay=5.0)
 ```
 
 ### Selector Changes
+
 If Action Network updates their HTML structure:
 
 1. Inspect the page with browser DevTools
@@ -160,6 +169,7 @@ If Action Network updates their HTML structure:
 ## Data Format
 
 ### Game Dictionary Structure
+
 ```python
 {
     "league": "NFL",                      # or "NCAAF"
