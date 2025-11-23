@@ -49,6 +49,7 @@ This index provides quick navigation to all project documentation organized by t
 
 ### Core Documentation
 - [Development Guidelines](../CLAUDE.md) - **PRIMARY** development guide
+- [Agent Workflows](../.claude/AGENT_WORKFLOWS.md) - **NEW** ✨ Autonomous agent automation guide
 - [Lessons Learned](../LESSONS_LEARNED.md) - Troubleshooting and solutions
 - [Architecture](ARCHITECTURE.md) - System architecture overview
 - [CI/CD Documentation](../.github/CI_CD.md) - Continuous integration setup
@@ -92,6 +93,7 @@ This index provides quick navigation to all project documentation organized by t
 - [API Integration Complete](API_INTEGRATION_COMPLETE.md) - Integration milestones
 
 ### Archived Reports
+- [Agent Optimization 2025-11-23](reports/AGENT_OPTIMIZATION_2025-11-23.md) - Agent documentation restructure & performance optimization
 - [Sessions Archive](reports/archive/sessions/) - Development session notes
 - [Week Archives](reports/archive/) - Week-by-week analysis history
 - [Development Phases](reports/archive/) - Historical development reports
@@ -180,8 +182,8 @@ billy-walters-sports-analyzer/
 
 ---
 
-**Last Updated**: 2025-11-21
+**Last Updated**: 2025-11-23
 **Project Status**: Production-ready with active development
-**New**: MCP Architecture documentation added (4 comprehensive guides)
+**New**: Agent automation workflows guide added (.claude/AGENT_WORKFLOWS.md)
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
