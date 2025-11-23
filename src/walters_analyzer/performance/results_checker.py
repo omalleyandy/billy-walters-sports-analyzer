@@ -510,8 +510,8 @@ class BettingResultsChecker:
         # Performance Metrics
         report.append("### Performance Metrics")
         report.append("")
-        report.append(f"| Metric | Value |")
-        report.append(f"|--------|-------|")
+        report.append("| Metric | Value |")
+        report.append("|--------|-------|")
         report.append(f"| Total Games | {total_games} |")
         report.append(f"| ATS Wins | {wins} |")
         report.append(f"| ATS Losses | {losses} |")
@@ -532,8 +532,8 @@ class BettingResultsChecker:
 
         report.append("### Edge Strength Analysis")
         report.append("")
-        report.append(f"| Category | Count | Win % |")
-        report.append(f"|----------|-------|-------|")
+        report.append("| Category | Count | Win % |")
+        report.append("|----------|-------|-------|")
 
         strong_wins = sum(
             1

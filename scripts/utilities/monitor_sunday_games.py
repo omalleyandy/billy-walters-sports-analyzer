@@ -142,10 +142,10 @@ def print_early_games_section() -> None:
             print(f"  [NOTE] {game['note']}")
 
         # Line tracking template
-        print(f"  Opening Line: [TO BE RECORDED]")
-        print(f"  Current Line: [MONITORING...]")
-        print(f"  Closing Line: [UPDATED 5 MIN BEFORE KICKOFF]")
-        print(f"  CLV: [CALCULATED AFTER GAME]")
+        print("  Opening Line: [TO BE RECORDED]")
+        print("  Current Line: [MONITORING...]")
+        print("  Closing Line: [UPDATED 5 MIN BEFORE KICKOFF]")
+        print("  CLV: [CALCULATED AFTER GAME]")
 
 
 def print_afternoon_games_section() -> None:
@@ -170,10 +170,10 @@ def print_afternoon_games_section() -> None:
         if "note" in game:
             print(f"  [NOTE] {game['note']}")
 
-        print(f"  Opening Line: [TO BE RECORDED]")
-        print(f"  Current Line: [MONITORING...]")
-        print(f"  Closing Line: [UPDATED 5 MIN BEFORE KICKOFF]")
-        print(f"  CLV: [CALCULATED AFTER GAME]")
+        print("  Opening Line: [TO BE RECORDED]")
+        print("  Current Line: [MONITORING...]")
+        print("  Closing Line: [UPDATED 5 MIN BEFORE KICKOFF]")
+        print("  CLV: [CALCULATED AFTER GAME]")
 
 
 def print_monitoring_guide() -> None:
@@ -334,7 +334,7 @@ def main() -> None:
     print(f"Total Games Monitored: {len(SUNDAY_GAMES)}")
     print(f"Active Bets (Recommended): {active_bets}")
     print(f"Total Kelly Allocation: {total_kelly:.1f}%")
-    print(f"Bankroll Suggested: $10,000 minimum (at 50% Kelly = $3,250 in bets)")
+    print("Bankroll Suggested: $10,000 minimum (at 50% Kelly = $3,250 in bets)")
     print("\n" + "=" * 100)
 
 
