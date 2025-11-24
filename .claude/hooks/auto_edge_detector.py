@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Auto Edge Detector Hook
-Automatically runs edge detection when new odds data is available.
+Automatically runs edge detection for both NFL and NCAAF when new odds data
+is available.
 """
 
 import json
@@ -12,22 +13,22 @@ from pathlib import Path
 
 # Add src to path for season calendar import
 sys.path.insert(0, "src")
-from walters_analyzer.season_calendar import get_nfl_week
+from walters_analyzer.season_calendar import get_nfl_week, get_ncaaf_week
 
 
-def check_for_new_odds() -> tuple[bool, dict]:
-    """Check if new odds data is available."""
-    output_dir = Path("output")
+def check_for_new_nfl_odds() -> tuple[bool, dict]:
+    """Check if new NFL odds data is available."""
+    output_dir = Path("output/overtime/nfl/pregame")
 
-    # Find most recent Overtime odds file
+    # Find most recent NFL odds file
     overtime_files = sorted(
-        output_dir.glob("overtime_nfl_walters_*.json"),
+        output_dir.glob("api_walters_*.json"),
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )
 
     if not overtime_files:
-        return (False, {"message": "No Overtime odds files found"})
+        return (False, {"message": "No NFL odds files found"})
 
     latest_file = overtime_files[0]
     last_modified = datetime.fromtimestamp(latest_file.stat().st_mtime)
@@ -36,60 +37,50 @@ def check_for_new_odds() -> tuple[bool, dict]:
     # Consider odds "new" if less than 5 minutes old
     is_new = age_minutes < 5
 
-    # Load game count
-    try:
-        with open(latest_file, "r") as f:
-            data = json.load(f)
-            game_count = len(data.get("games", []))
-    except Exception as e:
-        return (False, {"message": f"Error reading odds file: {e}"})
-
     return (
         is_new,
         {
             "file": latest_file.name,
-            "games": game_count,
             "age_minutes": age_minutes,
             "last_modified": last_modified.isoformat(),
         },
     )
 
 
-def check_edge_detection_status() -> dict:
-    """Check if edge detection was recently run."""
-    edge_dir = Path("data/current")
-    edge_files = sorted(
-        edge_dir.glob("edge_detection_week_*.json"),
+def check_for_new_ncaaf_odds() -> tuple[bool, dict]:
+    """Check if new NCAAF odds data is available."""
+    output_dir = Path("output/overtime/ncaaf/pregame")
+
+    # Find most recent NCAAF odds file
+    overtime_files = sorted(
+        output_dir.glob("api_walters_*.json"),
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )
 
-    if not edge_files:
-        return {"exists": False, "message": "No edge detection results found"}
+    if not overtime_files:
+        return (False, {"message": "No NCAAF odds files found"})
 
-    latest_file = edge_files[0]
+    latest_file = overtime_files[0]
     last_modified = datetime.fromtimestamp(latest_file.stat().st_mtime)
     age_minutes = (datetime.now() - last_modified).total_seconds() / 60
 
-    try:
-        with open(latest_file, "r") as f:
-            data = json.load(f)
-            edge_count = len(data.get("edges", []))
+    # Consider odds "new" if less than 5 minutes old
+    is_new = age_minutes < 5
 
-        return {
-            "exists": True,
+    return (
+        is_new,
+        {
             "file": latest_file.name,
-            "edges": edge_count,
             "age_minutes": age_minutes,
             "last_modified": last_modified.isoformat(),
-        }
-    except Exception as e:
-        return {"exists": False, "message": f"Error reading edge file: {e}"}
+        },
+    )
 
 
-def run_edge_detector(week: int) -> bool:
-    """Run edge detection analysis."""
-    print(f"\n[SEARCH] Running edge detection for week {week}...")
+def run_nfl_edge_detector(week: int) -> bool:
+    """Run NFL edge detection analysis."""
+    print(f"\n[SEARCH] Running NFL edge detection for week {week}...")
     print("-" * 70)
 
     try:
@@ -108,106 +99,130 @@ def run_edge_detector(week: int) -> bool:
         )
 
         if result.returncode == 0:
-            print("[OK] Edge detection completed successfully")
-            print()
-            print("Output:")
-            print(result.stdout)
+            print("[OK] NFL edge detection completed successfully")
             return True
         else:
-            print("[ERROR] Edge detection failed")
+            print("[ERROR] NFL edge detection failed")
             print("Error:", result.stderr)
             return False
 
     except subprocess.TimeoutExpired:
-        print("[ERROR] Edge detection timed out")
+        print("[ERROR] NFL edge detection timed out")
         return False
     except Exception as e:
-        print(f"[ERROR] Error running edge detector: {e}")
+        print(f"[ERROR] Error running NFL edge detector: {e}")
+        return False
+
+
+def run_ncaaf_edge_detector(week: int) -> bool:
+    """Run NCAAF edge detection analysis."""
+    print(f"\n[SEARCH] Running NCAAF edge detection for week {week}...")
+    print("-" * 70)
+
+    try:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "walters_analyzer.valuation.ncaaf_edge_detector",
+                "--week",
+                str(week),
+            ],
+            cwd=Path.cwd(),
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+
+        if result.returncode == 0:
+            print("[OK] NCAAF edge detection completed successfully")
+            return True
+        else:
+            print("[ERROR] NCAAF edge detection failed")
+            print("Error:", result.stderr)
+            return False
+
+    except subprocess.TimeoutExpired:
+        print("[ERROR] NCAAF edge detection timed out")
+        return False
+    except Exception as e:
+        print(f"[ERROR] Error running NCAAF edge detector: {e}")
         return False
 
 
 def main():
     """Main hook execution."""
     print("=" * 70)
-    print("AUTO EDGE DETECTION HOOK")
+    print("AUTO EDGE DETECTION HOOK (NFL + NCAAF)")
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     print()
 
-    # Check for new odds
-    print("1. Checking for new odds data...")
-    has_new_odds, odds_info = check_for_new_odds()
+    nfl_success = False
+    ncaaf_success = False
 
-    if not has_new_odds:
-        message = odds_info.get("message", "No new odds available")
-        print(f"   No new odds data: {message}")
-        print()
-        print("   Recommendation: Run /scrape-overtime to collect odds")
-        sys.exit(0)
+    # Check for new NFL odds
+    print("1. Checking for new NFL odds data...")
+    has_new_nfl_odds, nfl_odds_info = check_for_new_nfl_odds()
 
-    print(f"   [OK] New odds detected: {odds_info['games']} games")
-    print(f"   Age: {odds_info['age_minutes']:.1f} minutes")
-    print()
-
-    # Check edge detection status
-    print("2. Checking edge detection status...")
-    edge_status = check_edge_detection_status()
-
-    if edge_status["exists"]:
-        age_diff = edge_status["age_minutes"] - odds_info["age_minutes"]
-
-        if age_diff > -10:  # Edge detection is recent enough
-            print(
-                f"   [OK] Edge detection already run {edge_status['age_minutes']:.1f} minutes ago"
-            )
-            print(f"   Found {edge_status['edges']} edges")
+    if has_new_nfl_odds:
+        nfl_week = get_nfl_week()
+        if nfl_week is not None:
+            print(f"   [OK] New NFL odds detected")
+            print(f"   Age: {nfl_odds_info['age_minutes']:.1f} minutes")
             print()
-            print("   No need to re-run edge detection")
-            sys.exit(0)
+            nfl_success = run_nfl_edge_detector(nfl_week)
+        else:
+            print("   [WARNING] NFL offseason - skipping NFL edge detection")
+    else:
+        message = nfl_odds_info.get("message", "No new NFL odds available")
+        print(f"   No new NFL odds: {message}")
 
-    print("   Edge detection needed")
     print()
 
-    # Determine week from odds data or season calendar
-    week = None
-    try:
-        with open(Path("output") / odds_info["file"], "r") as f:
-            data = json.load(f)
-            week = data.get("week")
-    except:
-        pass
+    # Check for new NCAAF odds
+    print("2. Checking for new NCAAF odds data...")
+    has_new_ncaaf_odds, ncaaf_odds_info = check_for_new_ncaaf_odds()
 
-    # Fall back to current week from season calendar
-    if week is None:
-        week = get_nfl_week()
-        if week is None:
-            print("[ERROR] Could not determine current week (offseason/playoffs?)")
-            sys.exit(1)
-
-    # Run edge detector
-    print(f"3. Running edge detector for week {week}...")
-    success = run_edge_detector(week)
+    if has_new_ncaaf_odds:
+        ncaaf_week = get_ncaaf_week()
+        if ncaaf_week is not None:
+            print(f"   [OK] New NCAAF odds detected")
+            print(f"   Age: {ncaaf_odds_info['age_minutes']:.1f} minutes")
+            print()
+            ncaaf_success = run_ncaaf_edge_detector(ncaaf_week)
+        else:
+            print("   [WARNING] NCAAF offseason - skipping NCAAF edge detection")
+    else:
+        message = ncaaf_odds_info.get("message", "No new NCAAF odds available")
+        print(f"   No new NCAAF odds: {message}")
 
     print()
     print("=" * 70)
-    if success:
+
+    # Summary
+    if nfl_success or ncaaf_success:
         print("[OK] AUTO EDGE DETECTION COMPLETE")
+        print()
+        if nfl_success:
+            print("  -> NFL edges generated")
+        if ncaaf_success:
+            print("  -> NCAAF edges generated")
         print()
         print("Next steps:")
         print("  -> Review edge detection results")
         print("  -> Run: /betting-card to generate picks")
         print("  -> Run: /clv-tracker to track performance")
     else:
-        print("[ERROR] AUTO EDGE DETECTION FAILED")
+        print("[INFO] NO EDGE DETECTION NEEDED")
         print()
-        print("Troubleshooting:")
-        print("  -> Check data/current for required input files")
-        print("  -> Run: /validate-data to check data quality")
-        print("  -> Manually run: /edge-detector")
+        print("Recommendations:")
+        print("  -> Run: /scrape-overtime to collect fresh odds")
+        print("  -> Or manually run: /edge-detector")
 
     print("=" * 70)
 
-    sys.exit(0 if success else 1)
+    sys.exit(0)
 
 
 if __name__ == "__main__":

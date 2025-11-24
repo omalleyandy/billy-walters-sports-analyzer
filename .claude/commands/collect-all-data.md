@@ -1,13 +1,15 @@
-Complete data collection for current NFL week - all sources in correct order.
+Complete data collection for current NFL + NCAAF week - all sources in correct order.
 
-Usage: /collect-all-data [week]
+Usage: /collect-all-data [options]
 
 Examples:
-- /collect-all-data (auto-detect current week)
-- /collect-all-data 11
-- /collect-all-data 11 --no-odds (skip odds if APIs down)
+- /collect-all-data (auto-detect current week for both leagues)
+- /collect-all-data --league nfl (NFL only)
+- /collect-all-data --league ncaaf (NCAAF only)
+- /collect-all-data --week 11 (explicit week for both leagues)
+- /collect-all-data --week 13 --league ncaaf (explicit NCAAF week)
 
-This command executes the complete Billy Walters data collection workflow:
+This command executes the complete Billy Walters data collection workflow for both NFL and NCAAF:
 
 Step 1: Power Ratings (Foundation)
 - Massey Ratings scraper
@@ -61,11 +63,12 @@ Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-23**
   - Not needed for pre-game workflow
 
 Step 7: Billy Walters Analysis
-- Edge detection (spreads)
-- Edge detection (totals)
-- Injury impact calculations
-- Weather adjustments
-- Value opportunity identification
+- NFL edge detection (spreads) - uses billy_walters_edge_detector.py
+- NFL edge detection (totals) - separate totals analysis
+- NCAAF edge detection (NEW 2025-11-23) - uses ncaaf_edge_detector.py
+- Injury impact calculations (position-specific for each league)
+- Weather adjustments (league-specific thresholds)
+- Value opportunity identification (both NFL and NCAAF)
 
 Billy Walters Methodology Order:
 1. Foundation (Power Ratings) → establish baseline
@@ -89,12 +92,23 @@ Output:
 - Next steps recommendations
 
 Saved Data Locations:
+
+NFL:
 - data/current/nfl_week_N_games.json
 - data/current/nfl_week_N_teams.json
 - data/current/nfl_week_N_injuries.json
 - data/current/nfl_week_N_weather.json
 - data/current/nfl_week_N_odds_action.json
-- output/overtime_nfl_walters_TIMESTAMP.json
+- output/overtime/nfl/pregame/api_walters_TIMESTAMP.json
+- output/edge_detection/nfl_edges_detected_week_N.jsonl
+
+NCAAF:
+- data/current/ncaaf_week_N_games.json
+- data/current/ncaaf_week_N_teams.json
+- data/current/ncaaf_week_N_injuries.json
+- data/current/ncaaf_week_N_weather.json
+- output/overtime/ncaaf/pregame/api_walters_TIMESTAMP.json
+- output/edge_detection/ncaaf_edges_detected_week_N.jsonl
 
 Recommended Timing (Manual Execution):
 Run this command Tuesday-Wednesday for best results:

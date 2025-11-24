@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Add src to path for season calendar import
 sys.path.insert(0, "src")
-from walters_analyzer.season_calendar import get_nfl_week
+from walters_analyzer.season_calendar import get_nfl_week, get_ncaaf_week
 
 
 def load_collection_report(week: int) -> dict:

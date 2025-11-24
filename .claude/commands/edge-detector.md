@@ -1,20 +1,24 @@
-Run Billy Walters edge detection analysis to identify betting value.
+Run Billy Walters edge detection analysis for NFL and NCAAF to identify betting value.
 
-Usage: /edge-detector [game_id] [type]
+Usage: /edge-detector [options]
 
 Examples:
-- /edge-detector (all games, spreads and totals)
-- /edge-detector BUF_KC spread
-- /edge-detector all totals
-- /edge-detector 11 (week 11, all games)
+- /edge-detector (both NFL and NCAAF, auto-detect weeks)
+- /edge-detector --league nfl (NFL only)
+- /edge-detector --league ncaaf (NCAAF only)
+- /edge-detector --league nfl --week 11 (NFL week 11)
+- /edge-detector --league ncaaf --week 13 (NCAAF week 13)
+- /edge-detector BUF_KC spread (specific NFL game)
 
 This command will:
-1. Load current power ratings
-2. Calculate predicted spread/total for each game
+1. Load current power ratings (NFL 70-100 scale, NCAAF 60-105 scale)
+2. Calculate predicted spread/total for each game (league-specific)
 3. Compare predictions to market lines
 4. Identify edges (your line vs market line)
-5. Apply Billy Walters betting thresholds
+5. Apply Billy Walters betting thresholds (same thresholds, league-specific edges)
 6. Generate betting recommendations with confidence
+7. Apply league-specific situational factors
+8. Calculate position-specific injury impacts
 
 Billy Walters Edge Detection Process:
 
@@ -69,6 +73,24 @@ Edge Types Detected:
 - Injury underpriced
 - Weather not factored
 - Line movement against public
+
+
+NCAAF Edge Detection (NEW - 2025-11-23)
+- Power rating scale: 60-105 (vs NFL 70-100)
+- Home field advantage: +3.5 pts (vs NFL +3.0)
+- QB injury impact: 5.0 pts (vs NFL 4.5)
+- RB injury impact: 3.5 pts (vs NFL 2.5)
+- Weather thresholds: Larger than NFL (6.0 for high wind vs 5.0)
+- Situational factors: 30+ rivalries, conference games, playoff implications
+- Position-specific injury values: 8 positions with depth-based values
+- Output: output/edge_detection/ncaaf_edges_detected_week_N.jsonl
+
+NFL vs NCAAF Adjustments:
+- Roster depth: NCAAF has lower depth, backups worse quality
+- Conference strength: More variation in NCAAF
+- Travel impacts: Higher for NCAAF due to student-athlete restrictions
+- Bowl eligibility: Drives emotional plays in NCAAF
+- Transfer portal: Affects team composition in NCAAF
 
 Output Includes:
 - All games with calculated edges
