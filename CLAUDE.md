@@ -37,7 +37,7 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
 
 ### Project Status
 - **CI/CD**: Fully operational with GitHub Actions
-- **Tests**: 146+ tests passing (multi-platform, multi-version) + 18 results checker tests
+- **Tests**: 146+ tests passing (multi-platform, multi-version) + 18 results checker tests + 35 NCAAF edge detector tests
 - **Code Quality**: Automated linting and type checking
 - **Security**: Automated vulnerability scanning and secret detection
 - **Documentation**: Complete development guidelines and lessons learned
@@ -50,8 +50,16 @@ This is a **football-focused sports analytics and betting analysis system** (NFL
   - ✅ ATS/ROI calculation and reporting
   - ✅ 18/18 tests passing (100% coverage)
   - ✅ Ready for weekly workflow integration
+- **NEW: NCAAF Edge Detector**: Production-ready college football edge detection (2025-11-23)
+  - ✅ NCAAF-specific power rating calculation (60-105 scale, +3.5 home field bonus)
+  - ✅ College-specific injury impact values (QB elite: 5.0 pts, RB: 3.5 pts, WR: 2.5 pts)
+  - ✅ Situational factor adjustments (rest, travel, rivalries, playoff implications)
+  - ✅ Weather impact analysis (wind, temperature, precipitation)
+  - ✅ 35/35 tests passing (100% coverage), backward compatible with NFL system
+  - ✅ JSONL output format compatible with Results Checker
+  - ✅ Ready for weekly NCAAF workflow integration
 - **Last Data Collection**: 2025-11-12 - NFL Week 10 (13 games), NCAAF (56 games) via API
-- **Last Session**: 2025-11-23 - Built production-ready Betting Results Checker + documentation
+- **Last Session**: 2025-11-23 - Built NCAAF edge detector + documentation integration
 
 ## How to Use This Document
 
@@ -1873,24 +1881,142 @@ python .claude/hooks/auto_edge_detector.py
 
 #### Billy Walters Edge Detection Methodology
 
-**Edge Thresholds:**
+**Edge Thresholds (NFL & NCAAF)**:
 - **7+ points**: MAX BET (5% Kelly, 77% win rate)
 - **4-7 points**: STRONG (3% Kelly, 64% win rate)
 - **2-4 points**: MODERATE (2% Kelly, 58% win rate)
 - **1-2 points**: LEAN (1% Kelly, 54% win rate)
 - **<1 point**: NO PLAY
 
-**Position-Specific Injury Values:**
+**Position-Specific Injury Values - NFL**:
 - QB Elite: 4.5 points
 - RB Elite: 2.5 points
 - WR1 Elite: 1.8 points
 - LT/RT Elite: 1.5 points
 - CB Elite: 1.2 points
 
+**Position-Specific Injury Values - NCAAF** (Higher due to roster depth):
+- QB Elite: 5.0 points (vs NFL 4.5)
+- RB Elite: 3.5 points (vs NFL 2.5)
+- WR Elite: 2.5 points (vs NFL 1.8)
+- TE Elite: 2.0 points
+- OL Elite: 1.5 points
+- DL Elite: 2.0 points
+- LB Elite: 1.8 points
+- DB Elite: 1.5 points
+
 **Success Metric:**
 - **CLV (Closing Line Value)**: Not win/loss percentage
 - Professional target: +1.5 CLV average
 - Elite target: +2.0 CLV average
+
+#### NCAAF Edge Detection System ✅ NEW (2025-11-23)
+
+**Overview**: Complete college football edge detection system following Billy Walters methodology with NCAAF-specific parameters.
+
+**Files**:
+- `src/walters_analyzer/valuation/ncaaf_edge_detector.py` (380 lines) - Main edge detector
+- `src/walters_analyzer/valuation/ncaaf_situational_factors.py` (220 lines) - College-specific adjustments
+- `src/walters_analyzer/valuation/ncaaf_injury_impacts.py` (250 lines) - Injury impact calculations
+- `tests/test_ncaaf_edge_detector.py` (415 lines, 35 tests) - Comprehensive test suite
+
+**Quick Start**:
+```bash
+# Run NCAAF edge detection for current week
+uv run python -m walters_analyzer.valuation.ncaaf_edge_detector
+
+# Or with explicit week
+uv run python -m walters_analyzer.valuation.ncaaf_edge_detector --week 13
+
+# Or from slash command
+/edge-detector --league ncaaf
+```
+
+**Key Features**:
+- ✅ NCAAF-specific power rating scale (60-105 vs NFL 70-100)
+- ✅ Higher home field bonus (+3.5 pts vs NFL +3.0)
+- ✅ Higher QB injury impact (5.0 pts vs NFL 4.5)
+- ✅ College-specific situational factors (30+ rivalries, playoff implications)
+- ✅ NCAAF-specific weather impacts (larger thresholds than NFL)
+- ✅ 35/35 tests passing (100% coverage)
+- ✅ JSONL output format compatible with Results Checker
+- ✅ No modifications needed to NFL system (parallel architecture)
+
+**Power Rating Calculation (NCAAF)**:
+```python
+# Formula: away_rating - home_rating - home_field_bonus
+predicted_spread = 92.5 - 94.2 - 3.5 = -5.2
+# Michigan favored by 5.2 points
+
+# If market spread is -2.5:
+edge = |-5.2 - (-2.5)| = 2.7 points
+```
+
+**Data Requirements**:
+- Massey power ratings (60-105 scale for NCAAF)
+- Overtime.ag odds (pregame lines)
+- Game schedule (ESPN API)
+- Injury data (optional, ESPN scrapers)
+- Weather data (game-time only, AccuWeather)
+
+**Output Format**:
+- Weekly: `output/edge_detection/ncaaf_edges_detected_week_13.jsonl`
+- Generic: `output/edge_detection/ncaaf_edges_detected.jsonl`
+- Fields: BettingEdge dataclass with all analysis components
+
+**Situational Factors**:
+- **Rest**: Extra rest (+1.5 pts), short rest (-2.0 pts)
+- **Travel**: Long distance >1500mi (-1.5 pts), medium 500-1500mi (-0.8 pts), short (-0.3 pts)
+- **Rivalries**: 30+ registered college rivalries (+1.5 pts)
+- **Conference**: Conference game bonus (+1.0 pts)
+- **Playoff implications**: +1.5 to +2.0 pts for elimination games
+
+**Weather Impact (NCAAF-Specific)**:
+- **Wind**: >20mph (-6.0 pts), 15-20mph (-4.0 pts), 10-15mph (-2.0 pts)
+- **Temperature**: <20°F (-4.0 pts), 20-25°F (-3.0 pts), 25-32°F (-2.0 pts), 32-40°F (-1.0 pts)
+- **Precipitation**: Heavy snow (-5.0 pts), heavy rain (-3.0 pts)
+- **Indoor stadiums**: Duke, Syracuse, Miami, San Jose State, South Florida (no adjustment)
+
+**Injury Impact Methodology**:
+- Separates away team impact from home team impact
+- Net impact calculated as: (away_injured - home_injured)
+- Positive = away team hurt more (favors home)
+- Negative = home team hurt more (favors away)
+- Position values reflect backup quality differential in college football
+
+**Integration with Results Checker**:
+```python
+# Results Checker automatically processes NCAAF edges
+from walters_analyzer.betting_results_checker import BettingResultsChecker
+
+checker = BettingResultsChecker()
+results = await checker.check_week(week=13, league='ncaaf')
+# Returns ATS records, ROI%, CLV averages
+```
+
+**Test Coverage**:
+- Power rating calculation: 100% (multiple scenarios)
+- Edge strength classification: Edge types (very_strong, strong, medium, weak)
+- Weather adjustments: All conditions (wind, temp, precipitation)
+- Situational factors: Rest, travel, rivalries, emotions
+- Injury impacts: Multiple positions and severities
+- Integration: Data loading, file I/O, JSONL output
+
+**Differences from NFL**:
+| Feature | NFL | NCAAF |
+|---------|-----|-------|
+| Power Rating Scale | 70-100 | 60-105 |
+| Home Field Bonus | +3.0 | +3.5 |
+| QB Injury (Elite) | 4.5 | 5.0 |
+| RB Injury (Elite) | 2.5 | 3.5 |
+| Wind >20mph | -5.0 | -6.0 |
+| Roster Depth | 53 players | Limited (walk-ons) |
+| Backup Quality | High (NFL-level) | Low (FCS players) |
+| Conference Strength | More uniform | Highly variable |
+
+**Documentation**:
+- Implementation guide: `docs/NCAAF_EDGE_DETECTION_IMPLEMENTATION_2025-11-23.md`
+- Directory structure: `docs/OVERTIME_DIRECTORY_STRUCTURE.md`
 
 #### Command Usage Examples
 

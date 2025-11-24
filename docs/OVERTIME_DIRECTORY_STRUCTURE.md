@@ -16,7 +16,9 @@ output/overtime/
 │   └── live/             # Live in-game NFL betting lines
 │       └── overtime_nfl_live_YYYYMMDD_HHMMSS.json
 └── ncaaf/
-    ├── pregame/          # Pre-game NCAAF betting lines (future)
+    ├── pregame/          # Pre-game NCAAF betting lines
+    │   ├── api_walters_YYYY-MM-DDTHH-MM-SS-mmmmmm.json
+    │   └── overtime_ncaaf_walters_YYYY-MM-DDTHH-MM-SS-mmmmmm.json
     └── live/             # Live in-game NCAAF betting lines
         └── overtime_ncaaf_live_YYYYMMDD_HHMMSS.json
 ```
@@ -39,6 +41,21 @@ output/overtime/
 - Pattern: `overtime_nfl_walters_YYYY-MM-DDTHH-MM-SS-mmmmmm.json`
 - Example: `overtime_nfl_walters_2025-11-10T19-49-54-569103.json`
 - Contains: Converted data ready for edge detection
+
+### Pre-Game NCAAF Files
+
+**API Client Format (Primary)**:
+- Pattern: `api_walters_YYYY-MM-DDTHH-MM-SS-mmmmmm.json`
+- Example: `api_walters_2025-11-23T00-08-15-234567.json`
+- Contains: NCAAF odds from Overtime.ag API in Billy Walters format
+- Source: Direct HTTP POST to Overtime.ag API endpoint
+- Speed: ~5 seconds for full NCAAF slate
+
+**Hybrid Scraper Format (Optional - Live Games)**:
+- Pattern: `overtime_ncaaf_walters_YYYY-MM-DDTHH-MM-SS-mmmmmm.json`
+- Example: `overtime_ncaaf_walters_2025-11-23T13-30-00-123456.json`
+- Contains: NCAAF odds with live updates via SignalR WebSocket
+- Use Case: Real-time line movement tracking during games
 
 ### Live Betting Files
 
@@ -78,6 +95,38 @@ uv run python scripts/scrape_overtime_live.py
 ```
 
 **Code Reference**: [scripts/scrape_overtime_live.py:36](../scripts/scrape_overtime_live.py#L36)
+
+### Pre-Game NCAAF Scraper (API Client - Primary)
+
+**Default Output Directory**: `output/overtime/ncaaf/pregame`
+
+```bash
+# Scrape NCAAF pre-game odds (RECOMMENDED - Fast & Simple)
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+
+# Scrape both NFL and NCAAF
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
+```
+
+**Speed**: ~5 seconds for full NCAAF slate
+**Authentication**: Not required
+**Dependencies**: No browser automation needed
+
+**Code Reference**: [src/data/overtime_api_client.py](../src/data/overtime_api_client.py)
+
+### Pre-Game NCAAF Scraper (Hybrid - Optional)
+
+**For Live Game Monitoring** (SignalR WebSocket):
+
+```bash
+# Monitor NCAAF games for 3 hours (live line movement)
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --ncaaf --duration 10800 --headless
+```
+
+**Use Case**: Real-time line movement tracking during games
+**Output**: `output/overtime/ncaaf/pregame/overtime_ncaaf_walters_*.json`
+
+**Code Reference**: [src/data/overtime_hybrid_scraper.py](../src/data/overtime_hybrid_scraper.py)
 
 ### Live Scrapy Spider (NCAAF/NFL)
 
@@ -161,35 +210,56 @@ find output/overtime -name "*.json" -mtime +7 -delete
 
 ## Integration with Billy Walters Workflow
 
-### Automated Collection
+### Automated Collection (NFL + NCAAF)
 
 The `/collect-all-data` command uses these directories:
 
 ```bash
 # 1. Scrape pre-game NFL odds
 output_dir: output/overtime/nfl/pregame
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
 
-# 2. Auto-detect latest file for edge detection
-latest_odds=$(ls -t output/overtime/nfl/pregame/overtime_nfl_walters_*.json | head -1)
+# 2. Scrape pre-game NCAAF odds (NEW)
+output_dir: output/overtime/ncaaf/pregame
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
 
-# 3. Run edge detector on latest data
-uv run python -m walters_analyzer.valuation.billy_walters_edge_detector --odds-file "$latest_odds"
+# 3. Auto-detect latest NFL odds for edge detection
+latest_nfl=$(ls -t output/overtime/nfl/pregame/api_walters_*.json | head -1)
+uv run python -m walters_analyzer.valuation.billy_walters_edge_detector --odds-file "$latest_nfl" --league nfl
+
+# 4. Auto-detect latest NCAAF odds for edge detection (NEW)
+latest_ncaaf=$(ls -t output/overtime/ncaaf/pregame/api_walters_*.json | head -1)
+uv run python -m walters_analyzer.valuation.ncaaf_edge_detector --odds-file "$latest_ncaaf" --league ncaaf
 ```
 
-### Manual Workflow
+### Manual Workflow (NFL + NCAAF)
 
 ```bash
-# 1. Scrape (creates files in output/overtime/nfl/pregame/)
-uv run python scripts/scrape_overtime_nfl.py --headless --convert
+# 1. Scrape both leagues
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
 
-# 2. Validate
+# 2. Validate data quality
 /validate-data
 
-# 3. Edge detect (uses latest file from directory)
+# 3. Detect edges (both NFL and NCAAF)
 /edge-detector
 
-# 4. Generate card
+# 4. Generate betting card
 /betting-card
+```
+
+### League-Specific Workflows
+
+**NFL Only**:
+```bash
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+/edge-detector --league nfl
+```
+
+**NCAAF Only**:
+```bash
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+/edge-detector --league ncaaf
 ```
 
 ## Migration from Old Structure
