@@ -179,7 +179,7 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 ### Core Documentation
 - [Development Guidelines](../CLAUDE.md) - **PRIMARY** development guide
 - [Agent Workflows](../.claude/AGENT_WORKFLOWS.md) - **NEW** ✨ Autonomous agent automation guide
-- [Lessons Learned](../LESSONS_LEARNED.md) - Troubleshooting and solutions
+- [Troubleshooting Guide](../TROUBLESHOOTING.md) - Error resolution and solutions
 - [Architecture](ARCHITECTURE.md) - System architecture overview
 - [CI/CD Documentation](../.github/CI_CD.md) - Continuous integration setup
 
@@ -330,7 +330,7 @@ billy-walters-sports-analyzer/
 ### I need to troubleshoot
 1. [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md) - Prevent failures before they happen
 2. [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ How to interpret CI failures
-3. [Lessons Learned](../LESSONS_LEARNED.md) - Historical troubleshooting
+3. [Troubleshooting Guide](../TROUBLESHOOTING.md) - Error resolution and solutions
 4. [CI/CD Troubleshooting](../.github/CI_CD.md) - Technical CI/CD details
 5. [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Data quality issues
 

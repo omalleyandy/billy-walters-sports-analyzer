@@ -294,7 +294,7 @@ billy-walters-sports-analyzer/
 ├── .env.example
 ├── pyproject.toml               # Package config, ruff/pyright settings
 ├── CLAUDE.md                    # This file
-├── LESSONS_LEARNED.md           # Troubleshooting guide
+├── TROUBLESHOOTING.md           # Error resolution guide
 └── README.md                    # Project overview
 ```
 
@@ -444,8 +444,8 @@ uv run python scripts/analysis/check_betting_results.py --league nfl
 - `/weather [team] [time]` - Weather impact
 - `/injury-report [team] [league]` - Injury analysis
 - `/current-week` - Show current NFL week
-- `/document-lesson` - Add to LESSONS_LEARNED.md
-- `/lessons` - View lessons learned
+- `/document-lesson` - Add to TROUBLESHOOTING.md
+- `/lessons` - View troubleshooting guide
 
 **📖 Complete command reference**: [.claude/commands/README.md](.claude/commands/README.md)
 
@@ -486,7 +486,7 @@ uv run python scripts/analysis/check_betting_results.py --league nfl
 
 ### Common Issues and Quick Fixes
 
-**📖 Comprehensive troubleshooting**: [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
+**📖 Comprehensive troubleshooting**: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
 
 **CI Failures - Check This First:**
 1. Which job failed? (Lint/Format, Type Check, Tests, Security)
@@ -559,7 +559,7 @@ gh run view <run-id> --log-failed
 
 **📖 For detailed troubleshooting procedures, see**:
 - [docs/guides/ci_cd_prevention_guide.md](docs/guides/ci_cd_prevention_guide.md) - CI/CD prevention
-- [LESSONS_LEARNED.md](LESSONS_LEARNED.md) - Historical solutions
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Error resolution and solutions
 - [.github/CI_CD.md](.github/CI_CD.md) - CI/CD technical details
 
 ---
