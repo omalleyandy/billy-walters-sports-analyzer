@@ -33,13 +33,13 @@ This document contains critical information about working with the Billy Walters
 
 ### Project Status
 - **CI/CD**: Fully operational (GitHub Actions)
-- **Tests**: 146+ tests passing (multi-platform) + 18 results checker + 35 NCAAF edge detector
+- **Tests**: 379 tests passing, 40 skipped (multi-platform)
 - **Code Quality**: Automated linting and type checking
 - **Security**: Vulnerability scanning and secret detection
 - **Data Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather
 - **Edge Detection**: Production-ready for NFL & NCAAF
 - **Results Validation**: Complete betting results checker system
-- **Last Session**: 2025-11-24 - Documentation reorganization (125+ files migrated)
+- **Last Session**: 2025-11-24 - Docs reorganization + system validation
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -580,9 +580,24 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-23)**: ESPN Data QA Testing - 56/56 tests passed (100%), APPROVED FOR PRODUCTION
+**Latest Session (2025-11-24)**:
+- Documentation reorganization: 125+ files migrated to categorized subdirectories
+- System validation: 379 tests passing, all hooks operational
+- Fixed broken doc references across critical files
+- Updated pre_commit_check.py for standalone execution
 
 **Previous Sessions**: See [docs/reports/archive/sessions/](docs/reports/archive/sessions/) for complete history
+
+---
+
+## Session Maintenance
+
+> **Keep CLAUDE.md Updated**: At the end of each session, update the "Last Session" line in Project Status and the Recent Updates section. This keeps the project state clear for future sessions.
+
+**End-of-Session Checklist:**
+1. Update "Last Session" date and summary in Project Status
+2. Update Recent Updates section with key accomplishments
+3. Commit and push: `git add CLAUDE.md && git commit -m "docs: update session status" && git push`
 
 ---
 
