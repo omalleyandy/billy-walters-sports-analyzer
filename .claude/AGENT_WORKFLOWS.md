@@ -565,9 +565,10 @@ else:
 
 ---
 
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-11-24
 **Maintained By**: Claude Code autonomous agent system
 **Related Docs**:
 - Development guidelines: `CLAUDE.md`
-- Troubleshooting: `LESSONS_LEARNED.md`
-- Codex automation: `.codex/AGENTS.md`
+- Complete documentation: `docs/_INDEX.md`
+- Troubleshooting: `TROUBLESHOOTING.md`
+- Hooks reference: `.claude/hooks/README.md`
