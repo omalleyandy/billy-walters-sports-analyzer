@@ -32,12 +32,13 @@ This index provides quick navigation to all project documentation organized by t
 ## Data Collection
 
 ### Scrapers & APIs
+- [API Integration Details](api/API_INTEGRATION_DETAILS.md) - **COMPREHENSIVE** - All API technical details (Weather, ESPN, Overtime, Action Network)
 - [Overtime.ag Hybrid Scraper](OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
 - [ESPN NCAAF Scoreboard](ESPN_NCAAF_SCOREBOARD.md) - College football scores
 - [Action Network Quality Report](ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ Data assurance (512 records, 100% quality)
 - [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
-- **Reference**: CLAUDE.md § "API Integration Guidelines" for all API details
+- **Quick Reference**: CLAUDE.md § "Environment Variables & API Keys" for credentials setup
 
 ## Performance & Results Checking
 
