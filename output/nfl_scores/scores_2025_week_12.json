@@ -1,0 +1,156 @@
+[
+  {
+    "event_id": "401772820",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "CAR",
+    "home_team": "SF",
+    "away_score": 9,
+    "home_score": 20,
+    "game_time": "2025-11-25T01:15Z",
+    "venue": "Levi's Stadium"
+  },
+  {
+    "event_id": "401772946",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "BUF",
+    "home_team": "HOU",
+    "away_score": 19,
+    "home_score": 23,
+    "game_time": "2025-11-21T01:15Z",
+    "venue": "NRG Stadium"
+  },
+  {
+    "event_id": "401772780",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "PIT",
+    "home_team": "CHI",
+    "away_score": 28,
+    "home_score": 31,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "Soldier Field"
+  },
+  {
+    "event_id": "401772781",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "NE",
+    "home_team": "CIN",
+    "away_score": 26,
+    "home_score": 20,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "Paycor Stadium"
+  },
+  {
+    "event_id": "401772888",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "NYG",
+    "home_team": "DET",
+    "away_score": 27,
+    "home_score": 34,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "Ford Field"
+  },
+  {
+    "event_id": "401772887",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "MIN",
+    "home_team": "GB",
+    "away_score": 6,
+    "home_score": 23,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "Lambeau Field"
+  },
+  {
+    "event_id": "401772886",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "SEA",
+    "home_team": "TEN",
+    "away_score": 30,
+    "home_score": 24,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "Nissan Stadium"
+  },
+  {
+    "event_id": "401772779",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "IND",
+    "home_team": "KC",
+    "away_score": 20,
+    "home_score": 23,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "GEHA Field at Arrowhead Stadium"
+  },
+  {
+    "event_id": "401772782",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "NYJ",
+    "home_team": "BAL",
+    "away_score": 10,
+    "home_score": 23,
+    "game_time": "2025-11-23T18:00Z",
+    "venue": "M&T Bank Stadium"
+  },
+  {
+    "event_id": "401772784",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "CLE",
+    "home_team": "LV",
+    "away_score": 24,
+    "home_score": 10,
+    "game_time": "2025-11-23T21:05Z",
+    "venue": "Allegiant Stadium"
+  },
+  {
+    "event_id": "401772783",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "JAX",
+    "home_team": "ARI",
+    "away_score": 27,
+    "home_score": 24,
+    "game_time": "2025-11-23T21:05Z",
+    "venue": "State Farm Stadium"
+  },
+  {
+    "event_id": "401772890",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "PHI",
+    "home_team": "DAL",
+    "away_score": 21,
+    "home_score": 24,
+    "game_time": "2025-11-23T21:25Z",
+    "venue": "AT&T Stadium"
+  },
+  {
+    "event_id": "401772889",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "ATL",
+    "home_team": "NO",
+    "away_score": 24,
+    "home_score": 10,
+    "game_time": "2025-11-23T21:25Z",
+    "venue": "Caesars Superdome"
+  },
+  {
+    "event_id": "401772929",
+    "week": 12,
+    "game_status": "post",
+    "away_team": "TB",
+    "home_team": "LAR",
+    "away_score": 7,
+    "home_score": 34,
+    "game_time": "2025-11-24T01:20Z",
+    "venue": "SoFi Stadium"
+  }
+]
