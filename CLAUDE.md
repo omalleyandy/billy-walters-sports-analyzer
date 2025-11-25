@@ -124,36 +124,20 @@ GITHUB_TOKEN=ghp_...
 
 ## Football Analytics Best Practices
 
-### NFL-Specific Considerations
-- Week numbering with bye weeks
-- Playoff structure vs regular season
-- Home field advantage: +3.0 points
-- Weather impact critical for outdoor stadiums
-
-### NCAAF-Specific Considerations
-- Conference alignments and rivalries
-- Higher talent disparity between teams
-- Home field advantage: +3.5 points (larger than NFL)
-- Higher roster turnover (graduations/transfers)
-
-### Weather Impact (Billy Walters Rules)
-- **Temperature**: <20°F = -4pts, 20-25°F = -3pts, 25-32°F = -2pts, 32-40°F = -1pt
-- **Wind**: >20mph = -5pts, 15-20mph = -3pts, 10-15mph = -1pt
-- **Precipitation**: Snow >60% = -5pts, Rain >60% = -3pts
-
-### Edge Thresholds
+**Edge Thresholds (Billy Walters Methodology)**:
 - **7+ points**: MAX BET (5% Kelly, 77% win rate)
 - **4-7 points**: STRONG (3% Kelly, 64% win rate)
 - **2-4 points**: MODERATE (2% Kelly, 58% win rate)
 - **1-2 points**: LEAN (1% Kelly, 54% win rate)
 - **<1 point**: NO PLAY
 
-### Success Metrics
-- **Primary**: ROI (not win percentage)
-- **Secondary**: ATS win rate
-- **Tertiary**: Closing Line Value (CLV) - Professional target: +1.5 average
+**Key Insight**: Track ROI and Closing Line Value (CLV), not win percentage.
 
-**📖 For complete methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
+**📖 For detailed methodology**: See [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
+- Weather impact rules (temperature, wind, precipitation)
+- NFL vs NCAAF differences (power ratings, injuries, home field bonus)
+- Success metrics: ROI (primary), ATS (secondary), CLV (tertiary)
+- Situational factors: rest, travel, rivalries, playoff implications
 
 ---
 
@@ -320,177 +304,28 @@ billy-walters-sports-analyzer/
 
 ## Automation Hooks
 
-The project includes 14 automation hooks in `.claude/hooks/` for peak performance and robustness.
+The project includes 14 automation hooks in `.claude/hooks/` for validation and automation.
 
-### Session Management Hooks
+**Core Hooks:**
+- `pre_data_collection.py` - Validates environment before data collection
+- `post_data_collection.py` - Validates data quality after collection (EXCELLENT/GOOD/FAIR/POOR)
+- `pre_edge_detection.py` - Validates required data before edge detection
+- `auto_edge_detector.py` - Auto-triggers edge detection when new odds detected
+- `pre_commit_check.py` - Validates code for security (no exposed API keys)
 
-**session_start.py** - Runs at session start
+**Usage:**
 ```bash
-python .claude/hooks/session_start.py
-
-# Shows:
-# - Git status (ahead/behind, uncommitted changes)
-# - Data freshness (odds, weather, injuries)
-# - Opportunities (new edges, stale data to refresh)
-```
-
-**session_end.py** - Runs at session end
-```bash
-python .claude/hooks/session_end.py
-
-# Shows:
-# - Uncommitted changes summary
-# - Pending tasks and next steps
-# - Recommended actions before closing
-```
-
-### Data Collection Hooks
-
-**pre_data_collection.py** - Validates environment before data collection
-```bash
+# Before data collection
 python .claude/hooks/pre_data_collection.py
+/collect-all-data
+python .claude/hooks/post_data_collection.py
 
-# Checks:
-# - API keys present (AccuWeather, Overtime, etc.)
-# - Output directories exist
-# - Current NFL week detected
-# - Last data collection timestamp
-```
-
-**post_data_collection.py** - Validates data quality after collection
-```bash
-python .claude/hooks/post_data_collection.py [week]
-
-# Validates:
-# - Required files present (5 minimum)
-# - Data freshness (<24 hours)
-# - Generates quality score (EXCELLENT/GOOD/FAIR/POOR)
-# - Provides actionable next steps
-```
-
-### Edge Detection Hooks
-
-**pre_edge_detection.py** - Validates required data before edge detection
-```bash
-python .claude/hooks/pre_edge_detection.py
-
-# Checks:
-# - Power ratings exist
-# - Game schedule present
-# - Odds data available
-# - Prevents wasted computation on missing data
-```
-
-**auto_edge_detector.py** - Auto-triggers edge detection on new odds
-```bash
-python .claude/hooks/auto_edge_detector.py
-
-# Monitors:
-# - Odds freshness (<5 minutes = trigger)
-# - Checks if already processed
-# - Auto-runs edge detection when conditions met
-```
-
-**auto_odds_monitor.py** - Continuous odds monitoring
-```bash
-python .claude/hooks/auto_odds_monitor.py
-
-# Features:
-# - Database-backed odds tracking
-# - Detects new odds automatically
-# - Triggers edge detection pipeline
-# - Maintains processing cache
-```
-
-### Code Quality Hooks
-
-**pre_commit_check.py** - Validates code before commits
-```bash
+# Before committing code
 python .claude/hooks/pre_commit_check.py
-
-# Validates:
-# - No exposed API keys (sk-ant-, sk-, ghp-)
-# - Python files have proper structure
-# - JSON files are valid
-# - Critical security check!
+git add . && git commit -m "feat: description"
 ```
 
-### Documentation Hooks
-
-**auto_index_updater.py** - Auto-updates documentation index
-```bash
-# Auto-detect and update all docs
-python .claude/hooks/auto_index_updater.py --auto
-
-# Scan specific directory
-python .claude/hooks/auto_index_updater.py --scan-dir docs/reports
-
-# Add entry to _INDEX.md
-python .claude/hooks/auto_index_updater.py --add-index "Title" "path/to/file.md"
-
-# Updates:
-# - docs/_INDEX.md with new documentation links
-# - CLAUDE.md Recent Updates section
-# - Maintains cross-references
-```
-
-### Data Validation Hooks
-
-**validate_data.py** - Core data validation logic
-```bash
-python .claude/hooks/validate_data.py < data.json
-
-# Validates:
-# - Odds data format and completeness
-# - Weather data structure
-# - Game schedule integrity
-```
-
-**mcp_validation.py** - MCP server validation integration
-```python
-# Used by autonomous agent and MCP server
-from .claude.hooks.mcp_validation import validate_data
-
-result = await validate_data('odds', odds_data)
-# Returns: {'valid': True/False, 'errors': [], 'message': '...'}
-```
-
-**validation_logger.py** - Validation logging utilities
-```python
-# Provides structured logging for all validation hooks
-from .claude.hooks.validation_logger import get_logger
-
-logger = get_logger()
-logger.info("Validation started")
-```
-
-### Hook Integration Best Practices
-
-**Use in Git Workflow:**
-```bash
-# Before committing
-python .claude/hooks/pre_commit_check.py
-git add . && git commit -m "feat: add feature"
-
-# After session
-python .claude/hooks/session_end.py
-```
-
-**Use in Data Collection Workflow:**
-```bash
-# Tuesday/Wednesday workflow
-python .claude/hooks/pre_data_collection.py  # Pre-flight check
-/collect-all-data                            # Collect data
-python .claude/hooks/post_data_collection.py # Post-flight validation
-python .claude/hooks/auto_edge_detector.py   # Auto-trigger edges
-```
-
-**Use in Continuous Monitoring:**
-```bash
-# Set up continuous odds monitoring (optional)
-# Can be scheduled or run manually
-python .claude/hooks/auto_odds_monitor.py
-```
+**Complete Documentation**: See [.claude/hooks/README.md](.claude/hooks/README.md) for full details on all 14 hooks, integration patterns, and error recovery procedures.
 
 **Use in Documentation Updates:**
 ```bash
@@ -541,15 +376,25 @@ git push origin main
 
 **Adding a New Dependency:**
 ```bash
-# Production
-uv add package-name
-
-# Development
-uv add --dev package-name
-
-# Sync after manual edits
-uv sync
+uv add package-name              # Production
+uv add --dev package-name        # Development
+uv sync                          # Sync after manual edits
 ```
+
+### Command Quick Reference
+
+| Task | Command | Time | Frequency |
+|------|---------|------|-----------|
+| Collect all data | `/collect-all-data` | 5 min | Weekly (Tue/Wed) |
+| Find betting edges | `/edge-detector` | 2 min | After collection |
+| Generate picks | `/betting-card` | 1 min | Weekly (Wed) |
+| Check results | `/check-results --league nfl` | 1 min | Weekly (Mon) |
+| Current NFL week | `/current-week` | 5 sec | As needed |
+| Weather impact | `/weather [team] [datetime]` | 30 sec | Per game |
+| Injury analysis | `/injury-report [team] [league]` | 30 sec | Per team |
+| Validate data | `/validate-data` | 30 sec | After collection |
+
+**See**: [docs/_INDEX.md](docs/_INDEX.md) for complete command reference
 
 ### Claude Code Flags
 
@@ -721,93 +566,10 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-### Latest Session: ESPN Data QA Testing (2025-11-23)
+**Latest Session (2025-11-23)**: ESPN Data QA Testing - 56/56 tests passed (100%), APPROVED FOR PRODUCTION
 
-**What Changed:**
-- Created comprehensive QA test suite for all 6 ESPN data collection components
-- 56 test cases: unit, integration, performance, error handling
-- 100% pass rate (~22 second execution time)
-- Complete documentation package (4 files, 45 KB)
-
-**Test Results:**
-- ✅ 56/56 tests passed (100%)
-- ✅ Components tested: ESPNAPIClient, ESPNClient, ESPNInjuryScraper, ESPNNCAAFNormalizer, ESPNNCAAFScoreboardClient, ESPNNcaafTeamScraper
-- ✅ Data quality: 16 power rating metrics, 10 injury fields, 14 event columns validated
-- ✅ Reliability: Retry logic, circuit breaker, rate limiting tested
-
-**Production Status:** ✅ APPROVED FOR PRODUCTION
-
-**Files:**
-- `tests/test_espn_data_qa.py` (1,181 lines)
-- `docs/reports/ESPN_DATA_QA_REPORT_2025-11-23.md`
-- `docs/ESPN_DATA_QA_QUICK_REFERENCE.md`
-- `docs/ESPN_DATA_QA_TEST_INVENTORY.md`
-
-**📖 Complete session history**: [docs/reports/archive/sessions/](docs/reports/archive/sessions/)
-
-### Previous Major Updates
-
-**Action Network Integration (2025-11-23)**
-- Integrated Action Network as data source for sharp action monitoring
-- 767 records (18 NFL games, 120 NCAAF games)
-- Data loader module for Billy Walters pipeline
-- **📖 See**: [docs/ACTION_NETWORK_SITEMAP_DELIVERY.md](docs/ACTION_NETWORK_SITEMAP_DELIVERY.md)
-
-**NCAAF Edge Detection System (2025-11-23)**
-- Production-ready college football edge detection
-- 35/35 tests passing, JSONL output format
-- NCAAF-specific: 60-105 scale, +3.5 HFA, higher injury impacts
-- **📖 See**: [docs/NCAAF_EDGE_DETECTION_IMPLEMENTATION_2025-11-23.md](docs/NCAAF_EDGE_DETECTION_IMPLEMENTATION_2025-11-23.md)
-
-**Betting Results Checker (2025-11-23)**
-- Complete production-ready system for evaluating predictions
-- ESPN API integration, ATS/ROI calculation
-- 18/18 tests passing
-- **📖 See**: [docs/BETTING_RESULTS_CHECKER.md](docs/BETTING_RESULTS_CHECKER.md)
-
-**Dynamic NFL Week Detection (2025-11-12)**
-- Eliminated hard-coded week numbers
-- Automatic week detection based on NFL 2025 schedule
-- **📖 See**: [src/walters_analyzer/season_calendar.py](src/walters_analyzer/season_calendar.py)
-
-**Overtime.ag API Client (2025-11-12)**
-- Direct API access (no browser required)
-- 10x faster than browser automation
-- Now primary scraper
-- **📖 See**: [docs/overtime_devtools_analysis_results.md](docs/overtime_devtools_analysis_results.md)
+**Previous Sessions**: See [docs/reports/archive/sessions/](docs/reports/archive/sessions/) for complete history
 
 ---
 
-## Documentation Index
-
-**📖 For complete navigation to all documentation, see**: [docs/_INDEX.md](docs/_INDEX.md)
-
-### Essential Documentation
-- **This File**: Development guidelines and quick reference
-- **[docs/_INDEX.md](docs/_INDEX.md)**: Complete documentation index
-- **[LESSONS_LEARNED.md](LESSONS_LEARNED.md)**: Troubleshooting and solutions
-- **[README.md](README.md)**: Project overview and installation
-- **[.claude/AGENT_WORKFLOWS.md](.claude/AGENT_WORKFLOWS.md)**: Automation guide
-
-### Quick Links by Task
-- **Collect odds**: [docs/OVERTIME_HYBRID_SCRAPER.md](docs/OVERTIME_HYBRID_SCRAPER.md)
-- **Analyze games**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
-- **Check results**: [docs/BETTING_RESULTS_CHECKER.md](docs/BETTING_RESULTS_CHECKER.md)
-- **Troubleshoot CI**: [docs/guides/ci_cd_prevention_guide.md](docs/guides/ci_cd_prevention_guide.md)
-- **Understand system**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-
----
-
-## Getting Help
-
-1. **CI failures?** Check [docs/guides/ci_cd_prevention_guide.md](docs/guides/ci_cd_prevention_guide.md) first
-2. **Similar issues?** Check [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
-3. **CI/CD technical?** Check [.github/CI_CD.md](.github/CI_CD.md)
-4. **Need clarification?** Review relevant section in [docs/_INDEX.md](docs/_INDEX.md)
-5. **Found new issue?** Use `/document-lesson` to add to LESSONS_LEARNED.md
-
----
-
-**Last Updated**: 2025-11-23
-**Project Status**: Production-ready with active development
-**Documentation**: See [docs/_INDEX.md](docs/_INDEX.md) for complete navigation
+**📚 Complete Documentation**: See [docs/_INDEX.md](docs/_INDEX.md) for full navigation

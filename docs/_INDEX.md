@@ -2,6 +2,96 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
+---
+
+## Quick Start - Choose Your Path
+
+### New User? Start Here (5 minutes)
+**Goal**: Get the system running and collect your first week of data
+
+1. **Setup** (2 min)
+   - Install: `uv sync --all-extras --dev`
+   - Configure: Copy `.env.example` to `.env`, add API keys
+   - Verify: `uv run python -c "import src; print('OK')"`
+
+2. **First Data Collection** (3 min)
+   - Run: `/collect-all-data`
+   - Validates: Power ratings, schedules, odds, weather, injuries
+   - Output: `data/current/` and `output/edge_detection/`
+
+**Next**: See [Weekly Workflow](#weekly-workflow) below
+
+### Weekly Bettor? Use This (30 min/week)
+**Goal**: Tuesday-Sunday workflow for finding betting edges
+
+- **Tuesday (10 min)**: `/collect-all-data` - Complete data collection
+- **Wednesday (10 min)**: `/edge-detector` + `/betting-card` - Find value
+- **Thursday (5 min)**: `/scrape-overtime` - Refresh odds before TNF
+- **Sunday (5 min)**: `/check-results` - Track performance
+
+**Details**: See [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md)
+
+### Developer? Start Here
+**Goal**: Understand system architecture and contribute code
+
+1. **Read**: [CLAUDE.md](../CLAUDE.md) - Core development rules
+2. **Review**: [Architecture](ARCHITECTURE.md) - System design
+3. **Setup**: [CI/CD Prevention](guides/ci_cd_prevention_guide.md)
+4. **Contribute**: [Git Workflow](../.github/GIT_WORKFLOW_GUIDE.md)
+
+**Next**: [Testing & Quality](#testing--quality) section below
+
+### Agent/Automation? Start Here
+**Goal**: Automate data collection and edge detection
+
+1. **Read**: [Agent Workflows](../.claude/AGENT_WORKFLOWS.md)
+2. **Setup**: Configure hooks (`.claude/hooks/`)
+3. **Test**: Run `/collect-all-data` with validation
+4. **Monitor**: Track data quality scores
+
+**Next**: [Billy Walters Workflow Commands](#commands) section below
+
+---
+
+## Command Quick Reference
+
+| Task | Command | Time | Frequency |
+|------|---------|------|-----------|
+| Collect all data | `/collect-all-data` | 5 min | Weekly (Tue/Wed) |
+| Find betting edges | `/edge-detector` | 2 min | After collection |
+| Generate picks | `/betting-card` | 1 min | Weekly (Wed) |
+| Check results | `/check-results --league nfl` | 1 min | Weekly (Mon) |
+| Current NFL week | `/current-week` | 5 sec | As needed |
+| Weather impact | `/weather [team] [datetime]` | 30 sec | Per game |
+| Injury analysis | `/injury-report [team] [league]` | 30 sec | Per team |
+| Validate data | `/validate-data` | 30 sec | After collection |
+
+**Optimal Schedule**: Tuesday (collect) → Wednesday (analyze) → Thursday (refresh) → Sunday (results)
+
+---
+
+## Most Common Questions
+
+**Q: How do I get started quickly?**
+→ See [Quick Start - Choose Your Path](#quick-start---choose-your-path) above
+
+**Q: What's the optimal weekly schedule?**
+→ Tue (collect) → Wed (analyze) → Thu (refresh) → Sun (results)
+
+**Q: How do I check my betting performance?**
+→ `/check-results --league nfl` (see [Betting Results Checker](BETTING_RESULTS_CHECKER.md))
+
+**Q: Why did my CI check fail?**
+→ See [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md#prevention-checklist)
+
+**Q: Where is the database documentation?**
+→ [Database Setup Guide](DATABASE_SETUP_GUIDE.md) and [Quick Start Database](QUICK_START_DATABASE.md)
+
+**Q: How do I interpret edge detection results?**
+→ 7+ pts = MAX BET, 4-7 = STRONG, 2-4 = MODERATE, 1-2 = LEAN, <1 = NO PLAY
+
+---
+
 ## Getting Started
 
 ### Quick Start
