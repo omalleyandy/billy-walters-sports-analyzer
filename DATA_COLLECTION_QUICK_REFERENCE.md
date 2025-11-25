@@ -49,26 +49,34 @@
 ### Data Collection By Day/Time
 
 ```
-TUESDAY/WEDNESDAY (Scheduled Collection)
-├─ 2:00 PM: scrape_overtime_api.py --nfl --ncaaf         ⚡ <5 sec
-├─ 2:05 PM: scrape_espn_team_stats.py --league ncaaf     📊 2 min
-├─ 2:10 PM: scrape_massey_games.py                       📊 1 min
-├─ 2:15 PM: weather for all stadiums                     🌤️ <1 sec
-└─ 2:20 PM: scrape_action_network_sitemap.py             📱 2 min
-Total time: ~7 minutes for complete data set
+TUESDAY/WEDNESDAY (Scheduled Collection - NFL)
+├─ 2:00 PM: scrape_overtime_api.py --nfl                ⚡ <5 sec
+├─ 2:05 PM: scrape_espn_team_stats.py --league nfl      📊 2 min
+├─ 2:10 PM: scrape_massey_games.py                      📊 1 min
+├─ 2:15 PM: weather_client.py --league nfl              🌤️ <1 sec
+└─ 2:20 PM: scrape_action_network_sitemap.py --nfl      📱 2 min
+Total time: ~7 minutes
+
+TUESDAY/WEDNESDAY (Scheduled Collection - NCAAF)
+├─ 2:30 PM: scrape_overtime_api.py --ncaaf              ⚡ <5 sec
+├─ 2:35 PM: scrape_espn_team_stats.py --league ncaaf    📊 2 min
+├─ 2:40 PM: scrape_massey_games.py --league college     📊 1 min
+├─ 2:45 PM: weather_client.py --league ncaaf            🌤️ <1 sec
+└─ 2:50 PM: scrape_action_network_sitemap.py --ncaaf    📱 2 min
+Total time: ~7 minutes
 
 SUNDAY (NFL Game Day)
 ├─ 12:00 PM: scrape_overtime_api.py --nfl               ⚡ Pregame odds
-├─ 1:00 PM: scrape_overtime_hybrid.py --duration 10800   📊 For 3 hours
-└─ After games: Run edge detection                       🎯
+├─ 1:00 PM: scrape_overtime_hybrid.py --nfl --duration 10800  📊 For 3 hours
+└─ After games: Run edge detection                      🎯
 
 SATURDAY (NCAAF Game Day)
 ├─ 11:00 AM: scrape_overtime_api.py --ncaaf             ⚡ Pregame odds
 ├─ 12:00 PM: scrape_overtime_hybrid.py --ncaaf --duration 14400  📊 For 4 hours
-└─ After games: Run edge detection                       🎯
+└─ After games: Run edge detection                      🎯
 
 CI/CD AUTOMATION
-└─ Always use: scrape_overtime_api.py                    ✅ Reliable, no browser
+└─ Always use: scrape_overtime_api.py (--nfl or --ncaaf) ✅ Reliable, no browser
 ```
 
 ---
@@ -112,21 +120,40 @@ CI/CD AUTOMATION
 
 ## Common Workflows
 
-### Quick Pregame Odds (Tuesday/Wednesday)
+### Quick Pregame Odds - NFL (Tuesday/Wednesday)
 
 ```bash
-# 5 seconds - get all odds
-uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
+# 5 seconds - NFL odds only
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
 ```
 
-### Complete Weekly Collection
+### Quick Pregame Odds - NCAAF (Tuesday/Wednesday)
 
 ```bash
-# Tuesday 2:00 PM - comprehensive data prep
-uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
-uv run python scripts/scrapers/scrape_espn_team_stats.py --league ncaaf
+# 5 seconds - NCAAF odds only
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+```
+
+### Complete Weekly Collection - NFL
+
+```bash
+# Tuesday 2:00 PM - comprehensive NFL data prep
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+uv run python scripts/scrapers/scrape_espn_team_stats.py --league nfl
 uv run python scripts/scrapers/scrape_massey_games.py
-uv run python scripts/scrapers/scrape_action_network_sitemap.py
+python src/data/weather_client.py --league nfl
+uv run python scripts/scrapers/scrape_action_network_sitemap.py --nfl
+```
+
+### Complete Weekly Collection - NCAAF
+
+```bash
+# Wednesday 2:00 PM - comprehensive NCAAF data prep
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+uv run python scripts/scrapers/scrape_espn_team_stats.py --league ncaaf
+uv run python scripts/scrapers/scrape_massey_games.py --league college
+python src/data/weather_client.py --league ncaaf
+uv run python scripts/scrapers/scrape_action_network_sitemap.py --ncaaf
 ```
 
 ### Live Game Monitoring (NFL Sunday)
@@ -136,14 +163,28 @@ uv run python scripts/scrapers/scrape_action_network_sitemap.py
 uv run python scripts/scrapers/scrape_overtime_api.py --nfl
 
 # Then monitor for 3 hours during games
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --nfl --duration 10800
+```
+
+### Live Game Monitoring (NCAAF Saturday)
+
+```bash
+# Get pregame odds first
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+
+# Then monitor for 4 hours during games
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --ncaaf --duration 14400
 ```
 
 ### CI/CD Pipeline
 
 ```bash
 # Reliable, no browser needed, works on all platforms
-uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
+# Collect NFL only
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+
+# Then collect NCAAF only
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
 ```
 
 ---
@@ -196,27 +237,62 @@ Switching is simple - both have similar APIs!
 
 ## TL;DR - Just Tell Me What To Do
 
-**Tuesday/Wednesday (weekly collection):**
+**IMPORTANT: Keep NFL and NCAAF Separate! See [LEAGUE_SEPARATION_GUIDE.md](docs/guides/LEAGUE_SEPARATION_GUIDE.md)**
+
+### Tuesday (NFL Weekly Collection):
 ```bash
-uv run python scripts/scrapers/scrape_overtime_api.py --nfl --ncaaf
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+uv run python scripts/scrapers/scrape_espn_team_stats.py --league nfl
+python src/data/weather_client.py --league nfl
+uv run python scripts/scrapers/scrape_action_network_sitemap.py --nfl
 ```
 
-**Sunday/Saturday (during games):**
+### Wednesday (NCAAF Weekly Collection):
 ```bash
-uv run python scripts/scrapers/scrape_overtime_hybrid.py --duration 10800
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+uv run python scripts/scrapers/scrape_espn_team_stats.py --league ncaaf
+python src/data/weather_client.py --league ncaaf
+uv run python scripts/scrapers/scrape_action_network_sitemap.py --ncaaf
 ```
 
-**After collection:**
+### Sunday (NFL Game Day - 3 hour monitoring):
+```bash
+uv run python scripts/scrapers/scrape_overtime_api.py --nfl
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --nfl --duration 10800
+```
+
+### Saturday (NCAAF Game Day - 4 hour monitoring):
+```bash
+uv run python scripts/scrapers/scrape_overtime_api.py --ncaaf
+uv run python scripts/scrapers/scrape_overtime_hybrid.py --ncaaf --duration 14400
+```
+
+### After collection:
 ```bash
 /edge-detector
 ```
 
-**Everything else:**
+### Everything else:
 - ESPN data? Use `AsyncESPNClient` from `src.data`
 - Weather? Use `WeatherClient` (just works)
-- Action Network? Use `action_network_sitemap_scraper.py`
+- Action Network? Use `action_network_sitemap_scraper.py` with `--nfl` or `--ncaaf`
 
 ---
 
-**Last Updated:** 2025-11-24
-**Status:** COMPLETE - System is healthy and well-documented
+**Last Updated:** 2025-11-25
+**Status:** UPDATED - Now enforces strict NFL/NCAAF separation
+
+---
+
+## Updates (2025-11-25)
+
+**Major Changes:**
+- Fixed all commands to enforce league separation (never use --nfl --ncaaf together)
+- Added separate NFL and NCAAF workflows to TL;DR section
+- Added weather collection to all workflows
+- Added ESPN stats collection for both leagues in complete workflows
+- Updated common workflows with explicit league parameters
+- Added monitoring duration guidance (3 hrs NFL, 4 hrs NCAAF)
+- Aligned all examples with LEAGUE_SEPARATION_GUIDE.md
+
+**Why?** The quick reference was created before the league separation guide. These updates ensure all examples properly separate NFL and NCAAF data to prevent contamination.
