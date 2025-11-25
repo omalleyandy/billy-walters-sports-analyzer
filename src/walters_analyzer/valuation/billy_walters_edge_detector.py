@@ -1211,6 +1211,31 @@ class BillyWaltersEdgeDetector:
 
 def main():
     """Demo: Run edge detection on real data"""
+    # Pre-flight schedule validation
+    from walters_analyzer.utils.schedule_validator import ScheduleValidator
+
+    validator = ScheduleValidator()
+    nfl_report = validator.get_pre_flight_report(league="nfl")
+
+    if not nfl_report["schedule_validation"]["is_match"]:
+        logger.warning(
+            f"SCHEDULE WARNING: You are analyzing Week "
+            f"{nfl_report['schedule_validation']['schedule_week']} games, "
+            f"but the current date indicates Week "
+            f"{nfl_report['detected_week']}. Ensure this is intentional."
+        )
+
+    if not nfl_report["odds_validation"]["is_match"]:
+        logger.warning(
+            f"ODDS WARNING: Odds are for Week "
+            f"{nfl_report['odds_validation']['odds_week']}, "
+            f"but detected week is {nfl_report['detected_week']}. "
+            f"This mismatch may indicate stale data."
+        )
+
+    # Confirm proceeding
+    logger.info("\n[PROCEEDING] Starting edge detection with validated schedule...\n")
+
     detector = BillyWaltersEdgeDetector()
 
     # Initialize weather client
