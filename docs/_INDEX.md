@@ -93,7 +93,8 @@ This index provides quick navigation to all project documentation organized by t
 → See [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md#prevention-checklist)
 
 **Q: Where is the database documentation?**
-→ [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) and [Quick Start Database](technical/database/QUICK_START_DATABASE.md)
+→ **Start here**: [PostgreSQL Data Loading Workflow](technical/database/POSTGRES_DATA_LOADING_WORKFLOW.md) (NEW - 2025-11-24)
+→ Also see: [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) and [Quick Start Database](technical/database/QUICK_START_DATABASE.md)
 
 **Q: How do I interpret edge detection results?**
 → 7+ pts = MAX BET, 4-7 = STRONG, 2-4 = MODERATE, 1-2 = LEAN, <1 = NO PLAY
@@ -254,6 +255,43 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 ### Weather Integration
 - [Weather Alerts](features/weather_alerts.md) - Weather impact analysis
 - [W-Factor Calibration](../src/walters_analyzer/valuation/weather_impact.py) - Weather adjustment calculations
+
+## Database & Data Storage
+
+### PostgreSQL Data Loading (NEW - 2025-11-24) ✨
+**Complete end-to-end data loading pipeline from collection to database**
+
+- **[PostgreSQL Data Loading Workflow](technical/database/POSTGRES_DATA_LOADING_WORKFLOW.md)** - **START HERE** - Complete guide covering:
+  - GameIDMapper: Intelligent game ID mapping between Overtime.ag and ESPN
+  - Data flow: Collection → JSON → Database insertion
+  - Table schemas: espn_schedules, games, odds, team_stats
+  - Week-by-week workflow: Tuesday collection → Wednesday analysis
+  - Verification queries and error handling
+  - Performance benchmarks and next steps
+
+- [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) - PostgreSQL installation and schema creation
+- [Quick Start Database](technical/database/QUICK_START_DATABASE.md) - 5-minute database setup
+- [PostgreSQL Implementation Complete](technical/database/POSTGRES_IMPLEMENTATION_COMPLETE.md) - Technical implementation details
+
+**Key Features (NEW):**
+- ✅ **GameIDMapper**: Maps Overtime.ag game IDs to ESPN IDs with 2-day fuzzy matching
+  - Handles timezone differences (Thursday/Sunday/Monday night games)
+  - 100% success rate on NFL Week 13 (15/15 games)
+  - Fast cached lookup (~100K games in memory)
+- ✅ **Full Odds Loading**: Extracts nested dict odds format and stores with valid FK references
+  - Handles spread: {home: -2.5, away: 2.5}
+  - Handles moneyline: {home: -145, away: 125}
+  - Handles total: {points: 49.0}
+- ✅ **Games Table Population**: Copies schedules with league column for FK constraints
+- ✅ **Data Verification**: ON CONFLICT DO NOTHING handles duplicates gracefully
+- ✅ **Complete Pipeline**: Collection → Load → Validation in < 10 seconds
+
+**Example Results (Week 13 NFL):**
+- Schedules: 16 records
+- Games table: 16 records
+- Team stats: 32 records
+- Odds: 15 records with complete betting data
+- Errors: 0
 
 ## Development
 
