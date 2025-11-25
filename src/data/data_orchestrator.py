@@ -5,6 +5,14 @@ Coordinates parallel data collection from multiple sources with health monitorin
 automatic fallbacks, and comprehensive error handling.
 """
 
+if __name__ == "__main__" and __package__ is None:
+    # Allow running as a standalone script (python src/data/data_orchestrator.py)
+    import sys
+    from pathlib import Path
+
+    sys.path.append(str(Path(__file__).resolve().parents[2]))
+    __package__ = "src.data"
+
 import asyncio
 import logging
 from dataclasses import dataclass, field
@@ -14,6 +22,8 @@ from typing import Any, Callable, Literal
 
 from .action_network_client import ActionNetworkClient
 from .espn_client import ESPNClient
+from .massey_ratings_scraper import MasseyRatingsScraper
+from .nfl_com_client import NFLComClient
 from .overtime_api_client import (
     OvertimeApiClient as OvertimeAPIClient,
 )  # Updated to use new API client
@@ -21,7 +31,7 @@ from .validated_espn import DataQualityReport, ESPNDataValidator
 from .weather_client import WeatherClient
 
 logger = logging.getLogger(__name__)
-
+action_network_client = ActionNetworkClient(headless=False)
 
 class DataSource(str, Enum):
     """Available data sources."""
@@ -29,6 +39,8 @@ class DataSource(str, Enum):
     ESPN = "espn"
     ACTION_NETWORK = "action_network"
     OVERTIME = "overtime"
+    NFL_COM = "nfl_com"
+    MASSEY = "massey"
     WEATHER = "weather"
 
 
@@ -136,14 +148,24 @@ class DataOrchestrator:
     async def collect_all_nfl_data(
         self,
         week: int | None = None,
+        season: int | None = None,
         include_weather: bool = False,
+        include_nfl_com: bool = False,
+        include_massey: bool = False,
+        include_action_network: bool = True,
+        include_overtime: bool = True,
     ) -> CollectionReport:
         """
         Collect all available NFL data from all sources.
 
         Args:
             week: Week number (optional)
+            season: Season year (optional, used for NFL.com schedule)
             include_weather: Include weather data for games
+            include_nfl_com: Include NFL.com official schedule
+            include_massey: Include Massey Ratings power numbers
+            include_action_network: Include Action Network odds
+            include_overtime: Include Overtime.ag odds
 
         Returns:
             Collection report with results and quality metrics
@@ -153,12 +175,16 @@ class DataOrchestrator:
         self._tasks = []
         report = CollectionReport(start_time=datetime.now())
 
+        resolved_week, resolved_season = await self._resolve_week_and_season(
+            "NFL", week, season
+        )
+
         # Add ESPN tasks
         self._add_task(
             CollectionTask(
                 source=DataSource.ESPN,
-                description=f"ESPN NFL scoreboard week {week}",
-                function=lambda: self._collect_espn_scoreboard("NFL", week),
+                description=f"ESPN NFL scoreboard week {resolved_week or week}",
+                function=lambda: self._collect_espn_scoreboard("NFL", resolved_week),
                 priority=1,
             )
         )
@@ -173,24 +199,54 @@ class DataOrchestrator:
         )
 
         # Add Action Network task
-        self._add_task(
-            CollectionTask(
-                source=DataSource.ACTION_NETWORK,
-                description="Action Network NFL odds",
-                function=lambda: self._collect_action_network_odds("NFL"),
-                priority=1,
+        if include_action_network:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.ACTION_NETWORK,
+                    description="Action Network NFL odds",
+                    function=lambda: self._collect_action_network_odds("NFL"),
+                    priority=1,
+                )
             )
-        )
 
         # Add Overtime task
-        self._add_task(
-            CollectionTask(
-                source=DataSource.OVERTIME,
-                description=f"Overtime NFL games week {week}",
-                function=lambda: self._collect_overtime_games("NFL", week),
-                priority=1,
+        if include_overtime:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.OVERTIME,
+                    description=f"Overtime NFL games week {resolved_week or week}",
+                    function=lambda: self._collect_overtime_games("NFL", resolved_week),
+                    priority=1,
+                )
             )
-        )
+
+        # Add NFL.com schedule task
+        if include_nfl_com and resolved_week is not None and resolved_season is not None:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.NFL_COM,
+                    description=f"NFL.com schedule week {resolved_week}",
+                    function=lambda: self._collect_nfl_com_schedule(
+                        resolved_week, resolved_season
+                    ),
+                    priority=2,
+                )
+            )
+        elif include_nfl_com:
+            logger.warning(
+                "NFL.com schedule requested but week/season could not be resolved"
+            )
+
+        # Add Massey Ratings
+        if include_massey:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.MASSEY,
+                    description="Massey Ratings NFL power numbers",
+                    function=lambda: self._collect_massey_ratings("NFL"),
+                    priority=2,
+                )
+            )
 
         # Execute all tasks
         await self._execute_tasks()
@@ -215,12 +271,20 @@ class DataOrchestrator:
     async def collect_all_ncaaf_data(
         self,
         week: int | None = None,
+        season: int | None = None,
+        include_massey: bool = False,
+        include_action_network: bool = True,
+        include_overtime: bool = True,
     ) -> CollectionReport:
         """
         Collect all available NCAAF data from all sources.
 
         Args:
             week: Week number (optional)
+            season: Season year (optional, currently used for ESPN inference)
+            include_massey: Include Massey Ratings power numbers
+            include_action_network: Include Action Network odds
+            include_overtime: Include Overtime.ag odds
 
         Returns:
             Collection report with results and quality metrics
@@ -230,12 +294,18 @@ class DataOrchestrator:
         self._tasks = []
         report = CollectionReport(start_time=datetime.now())
 
+        resolved_week, resolved_season = await self._resolve_week_and_season(
+            "NCAAF", week, season
+        )
+
         # Add ESPN tasks
         self._add_task(
             CollectionTask(
                 source=DataSource.ESPN,
-                description=f"ESPN NCAAF scoreboard week {week}",
-                function=lambda: self._collect_espn_scoreboard("NCAAF", week),
+                description=f"ESPN NCAAF scoreboard week {resolved_week or week}",
+                function=lambda: self._collect_espn_scoreboard(
+                    "NCAAF", resolved_week
+                ),
                 priority=1,
             )
         )
@@ -250,24 +320,39 @@ class DataOrchestrator:
         )
 
         # Add Action Network task
-        self._add_task(
-            CollectionTask(
-                source=DataSource.ACTION_NETWORK,
-                description="Action Network NCAAF odds",
-                function=lambda: self._collect_action_network_odds("NCAAF"),
-                priority=1,
+        if include_action_network:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.ACTION_NETWORK,
+                    description="Action Network NCAAF odds",
+                    function=lambda: self._collect_action_network_odds("NCAAF"),
+                    priority=1,
+                )
             )
-        )
 
         # Add Overtime task
-        self._add_task(
-            CollectionTask(
-                source=DataSource.OVERTIME,
-                description=f"Overtime NCAAF games week {week}",
-                function=lambda: self._collect_overtime_games("NCAAF", week),
-                priority=1,
+        if include_overtime:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.OVERTIME,
+                    description=f"Overtime NCAAF games week {resolved_week or week}",
+                    function=lambda: self._collect_overtime_games(
+                        "NCAAF", resolved_week
+                    ),
+                    priority=1,
+                )
             )
-        )
+
+        # Add Massey Ratings
+        if include_massey:
+            self._add_task(
+                CollectionTask(
+                    source=DataSource.MASSEY,
+                    description="Massey Ratings NCAAF power numbers",
+                    function=lambda: self._collect_massey_ratings("NCAAF"),
+                    priority=2,
+                )
+            )
 
         # Execute all tasks
         await self._execute_tasks()
@@ -499,6 +584,38 @@ class DataOrchestrator:
 
         return games
 
+    async def _resolve_week_and_season(
+        self,
+        league: Literal["NFL", "NCAAF"],
+        week: int | None,
+        season: int | None,
+    ) -> tuple[int | None, int | None]:
+        """
+        Resolve week/season using ESPN when not provided.
+
+        Falls back to provided values if inference fails.
+        """
+        resolved_week = week
+        resolved_season = season
+
+        if week is not None and season is not None:
+            return resolved_week, resolved_season
+
+        try:
+            async with ESPNClient() as client:
+                scoreboard = await client.get_scoreboard(
+                    league, week=week, season=season
+                )
+
+            resolved_week = resolved_week or scoreboard.get("week", {}).get("number")
+            resolved_season = resolved_season or scoreboard.get("season", {}).get("year")
+        except Exception as exc:
+            logger.warning(
+                f"Could not infer {league} week/season from ESPN: {exc}"
+            )
+
+        return resolved_week, resolved_season
+
     async def _collect_espn_scoreboard(
         self, league: Literal["NFL", "NCAAF"], week: int | None
     ) -> dict[str, Any]:
@@ -524,8 +641,32 @@ class DataOrchestrator:
         self, league: Literal["NFL", "NCAAF"], week: int | None
     ) -> list[dict[str, Any]]:
         """Collect Overtime games data."""
-        async with OvertimeAPIClient() as client:
-            return await client.fetch_games(league, week=week)
+        client = OvertimeAPIClient()
+        sport_sub_type = "NFL" if league == "NFL" else "College Football"
+        return await client.fetch_games(
+            sport_type="Football",
+            sport_sub_type=sport_sub_type,
+        )
+
+    async def _collect_nfl_com_schedule(
+        self, week: int, season: int
+    ) -> list[dict[str, Any]]:
+        """Collect NFL.com official schedule."""
+        client = NFLComClient()
+        try:
+            games = await client.get_schedule(season=season, week=week)
+            return [game.model_dump(mode="json") for game in games]
+        finally:
+            await client.close()
+
+    async def _collect_massey_ratings(
+        self, league: Literal["NFL", "NCAAF"]
+    ) -> dict[str, Any]:
+        """Collect Massey Ratings power numbers."""
+        scraper = MasseyRatingsScraper()
+        if league == "NFL":
+            return await scraper.scrape_nfl_ratings(save=False)
+        return await scraper.scrape_ncaaf_ratings(save=False)
 
     async def _collect_weather(
         self, city: str, state: str, game_time: datetime

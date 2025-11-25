@@ -1,0 +1,194 @@
+[
+  {
+    "team": "Arizona",
+    "stadium": "University of Phoenix Stadium",
+    "lat": 33.7317,
+    "lng": -112.2627
+  },
+  {
+    "team": "Atlanta",
+    "stadium": "Georgia Dome",
+    "lat": 33.7348,
+    "lng": -84.3887
+  },
+  {
+    "team": "Baltimore",
+    "stadium": "Ravens Stadium",
+    "lat": 39.2782,
+    "lng": -76.6222
+  },
+  {
+    "team": "Buffalo",
+    "stadium": "Ralph Wilson Stadium",
+    "lat": 42.7739,
+    "lng": -78.7877
+  },
+  {
+    "team": "Carolina",
+    "stadium": "Bank of America Stadium",
+    "lat": 35.1358,
+    "lng": -80.8531
+  },
+  {
+    "team": "Chicago",
+    "stadium": "Soldier Field",
+    "lat": 41.8623,
+    "lng": -87.6166
+  },
+  {
+    "team": "Cincinnati",
+    "stadium": "Paul Brown Stadium",
+    "lat": 39.0954,
+    "lng": -84.5162
+  },
+  {
+    "team": "Cleveland",
+    "stadium": "Cleveland Browns Stadium",
+    "lat": 41.5051,
+    "lng": -81.6993
+  },
+  {
+    "team": "Dallas",
+    "stadium": "Cowboys Stadium",
+    "lat": 32.8975,
+    "lng": -97.0029
+  },
+  {
+    "team": "Denver",
+    "stadium": "Field at Mile High",
+    "lat": 39.7439,
+    "lng": -104.9849
+  },
+  {
+    "team": "Detroit",
+    "stadium": "Ford Field",
+    "lat": 42.3399,
+    "lng": -83.0455
+  },
+  {
+    "team": "Green Bay",
+    "stadium": "Lambeau Field",
+    "lat": 44.5013,
+    "lng": -88.0621
+  },
+  {
+    "team": "Houston",
+    "stadium": "Reliant Stadium",
+    "lat": 29.6846,
+    "lng": -95.411
+  },
+  {
+    "team": "Indianapolis",
+    "stadium": "Lucas Oil Stadium",
+    "lat": 39.764,
+    "lng": -86.1612
+  },
+  {
+    "team": "Jacksonville",
+    "stadium": "Jacksonville Municipal Stadium",
+    "lat": 30.3241,
+    "lng": -81.6372
+  },
+  {
+    "team": "Kansas City",
+    "stadium": "Arrowhead Stadium",
+    "lat": 39.0489,
+    "lng": -94.4849
+  },
+  {
+    "team": "Miami",
+    "stadium": "Sun Life Stadium",
+    "lat": 26.0119,
+    "lng": -80.2389
+  },
+  {
+    "team": "Minnesota",
+    "stadium": "Metrodome",
+    "lat": 44.9735,
+    "lng": -93.2566
+  },
+  {
+    "team": "New England",
+    "stadium": "Gillette Stadium",
+    "lat": 42.0909,
+    "lng": -71.2642
+  },
+  {
+    "team": "New Orleans",
+    "stadium": "Louisiana Superdome",
+    "lat": 29.9451,
+    "lng": -90.0809
+  },
+  {
+    "team": "NY Giants",
+    "stadium": "MetLife Stadium",
+    "lat": 40.8135,
+    "lng": -74.0739
+  },
+  {
+    "team": "NY Jets",
+    "stadium": "MetLife Stadium",
+    "lat": 40.8135,
+    "lng": -74.0739
+  },
+  {
+    "team": "Las Vegas",
+    "stadium": "Allegiant Stadium",
+    "lat": 36.0899,
+    "lng": -115.1832
+  },
+  {
+    "team": "Philadelphia",
+    "stadium": "Lincoln Financial Field",
+    "lat": 39.9012,
+    "lng": -75.1672
+  },
+  {
+    "team": "Pittsburgh",
+    "stadium": "Heinz Field",
+    "lat": 40.4464,
+    "lng": -80.0159
+  },
+  {
+    "team": "LA Rams",
+    "stadium": "Los Angeles Memorial Coliseum",
+    "lat": 34.0141,
+    "lng": -118.2873
+  },
+  {
+    "team": "LA Chargers",
+    "stadium": "SoFi Stadium",
+    "lat": 33.9533,
+    "lng": -118.3392
+  },
+  {
+    "team": "San Francisco",
+    "stadium": "Levi's Stadium",
+    "lat": 37.4051,
+    "lng": -122.0654
+  },
+  {
+    "team": "Seattle",
+    "stadium": "CenturyLink Field",
+    "lat": 47.5952,
+    "lng": -122.3315
+  },
+  {
+    "team": "Tampa Bay",
+    "stadium": "Raymond James Stadium",
+    "lat": 27.7757,
+    "lng": -82.5033
+  },
+  {
+    "team": "Tennessee",
+    "stadium": "LP Field",
+    "lat": 36.1627,
+    "lng": -86.7815
+  },
+  {
+    "team": "Washington",
+    "stadium": "FedEx Field",
+    "lat": 38.9076,
+    "lng": -77.1204
+  }
+]

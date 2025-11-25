@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Update**: 2025-11-24 - Added NFL Scoreboard Client & Results Validator with Week 12 validation results
+**Last Update**: 2025-11-25 - Action Network Phase 3: Complete totals (O/U) extraction via dropdown switching
 
 ---
 
@@ -167,6 +167,57 @@ This index provides quick navigation to all project documentation organized by t
 - [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
 - **Quick Reference**: CLAUDE.md § "Environment Variables & API Keys" for credentials setup
+
+### Action Network Live Odds Scraper ✨ NEW (2025-11-25)
+**Complete live odds extraction with spread, totals (O/U), and moneyline data.**
+
+**Components:**
+- **ActionNetworkClient** (`src/data/action_network_client.py`)
+  - Playwright-based browser automation with login
+  - Multi-selector fallback for CSS resilience
+  - Dropdown switching for totals extraction
+  - Rate limiting and retry logic
+
+- **CLI Wrapper** (`scripts/scrapers/scrape_action_network_live.py`)
+  - `--nfl`, `--ncaaf` flags for league selection
+  - `--no-headless` for debugging
+  - JSON output with timestamps
+
+**Phase 3: Totals Extraction (NEW)**
+- Automatic dropdown switching from "Spread" to "Total" view
+- Parses over/under format: `o48.5\n-110\nu48.5\n-110`
+- Merges totals back into game data
+- 16/16 NFL games with complete O/U data
+
+**Sample Output:**
+```json
+{
+  "away_team": "Packers",
+  "home_team": "Lions",
+  "spread": 2.5,
+  "spread_odds": -105,
+  "over_under": 48.5,
+  "total_odds": -110,
+  "moneyline_away": -108,
+  "moneyline_home": -112
+}
+```
+
+**Usage:**
+```bash
+# Scrape NFL with visible browser (debugging)
+uv run python scripts/scrapers/scrape_action_network_live.py --nfl --no-headless
+
+# Scrape both leagues silently
+uv run python scripts/scrapers/scrape_action_network_live.py --nfl --ncaaf --quiet
+```
+
+**Key Features:**
+- ✅ Complete odds: spread + totals + moneyline
+- ✅ Multi-selector fallback for UI resilience
+- ✅ Dropdown switching for totals view
+- ✅ 20/20 selector validation tests passing
+- ✅ Production-ready with proper exit codes
 
 ## Performance & Results Checking
 
@@ -517,7 +568,7 @@ Historical documentation is organized in `docs/archive/`:
 
 ---
 
-**Last Updated**: 2025-11-24
+**Last Updated**: 2025-11-25
 **Project Status**: Production-ready with active development
 **Documentation Reorganization**: Phase 4 complete! 125+ files migrated from docs root to categorized subdirectories. Root directory now contains only `_INDEX.md` and `README.md`.
 

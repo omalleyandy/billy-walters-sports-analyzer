@@ -20,6 +20,7 @@ Billy Walters Integration:
 
 import asyncio
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -99,12 +100,16 @@ class NFLComClient:
     engineering. Provides schedules, news, and player statistics.
     """
 
-    def __init__(self, output_dir: Optional[Path] = None):
+    def __init__(
+        self, output_dir: Optional[Path] = None, auth_token: Optional[str] = None
+    ):
         """
         Initialize NFL.com client.
 
         Args:
             output_dir: Directory for saved data (default: output/nfl_com/)
+            auth_token: Bearer token for authenticated endpoints (optional).
+                        If omitted, will use env var NFL_COM_AUTH_TOKEN or NFL_COM_BEARER_TOKEN.
         """
         if output_dir is None:
             project_root = Path(__file__).parent.parent.parent
@@ -115,6 +120,19 @@ class NFLComClient:
 
         # Official NFL API base URL (discovered via DevTools)
         self.base_url = "https://api.nfl.com"
+
+        raw_token = (
+            auth_token
+            or os.getenv("NFL_COM_AUTH_TOKEN")
+            or os.getenv("NFL_COM_BEARER_TOKEN")
+        )
+        token = None
+        if raw_token:
+            cleaned = raw_token.strip()
+            # Accept tokens passed with or without "Bearer " prefix
+            if cleaned.lower().startswith("bearer "):
+                cleaned = cleaned.split(" ", 1)[1].strip()
+            token = cleaned
 
         # Stealth headers (mimic browser)
         self.headers = {
@@ -128,6 +146,14 @@ class NFLComClient:
             "Referer": "https://www.nfl.com/",
             "Origin": "https://www.nfl.com",
         }
+
+        if token:
+            self.headers["Authorization"] = f"Bearer {token}"
+        else:
+            logger.warning(
+                "NFL.com client initialized without Authorization token. "
+                "Set NFL_COM_AUTH_TOKEN or provide auth_token to avoid 401 responses."
+            )
 
         self.client: Optional[httpx.AsyncClient] = None
 
@@ -170,6 +196,28 @@ class NFLComClient:
 
         try:
             response = await self.client.get(endpoint)
+
+            # Check for authentication errors
+            if response.status_code == 401:
+                error_detail = "Unauthorized"
+                try:
+                    error_data = response.json()
+                    error_detail = error_data.get(
+                        "message", error_data.get("error", "Unauthorized")
+                    )
+                except Exception:
+                    pass
+
+                logger.error(
+                    f"HTTP 401 Unauthorized: {error_detail}\n"
+                    f"To fix this:\n"
+                    f"1. Set NFL_COM_AUTH_TOKEN environment variable with a valid Bearer token\n"
+                    f"2. Or pass auth_token parameter to NFLComClient()\n"
+                    f"3. Token may need to be refreshed (NFL.com tokens expire)\n"
+                    f"4. Check if token format is correct (should be just the token, not 'Bearer <token>')"
+                )
+                return []
+
             response.raise_for_status()
             data = response.json()
 
@@ -177,21 +225,32 @@ class NFLComClient:
             # Parse response (structure from DevTools inspection)
             if "data" in data and "games" in data["data"]:
                 for game_data in data["data"]["games"]:
-                    game = NFLGame(
-                        game_id=game_data.get("id", ""),
-                        season=season,
-                        week=week,
-                        game_type=season_type,
-                        away_team=game_data.get("awayTeam", {}).get("abbr", ""),
-                        home_team=game_data.get("homeTeam", {}).get("abbr", ""),
-                        game_time=datetime.fromisoformat(game_data.get("gameTime", "")),
-                        stadium=game_data.get("venue", {}).get("name", ""),
-                        network=game_data.get("network", {}).get("name"),
-                        away_score=game_data.get("awayScore"),
-                        home_score=game_data.get("homeScore"),
-                        game_status=game_data.get("gameStatus", "scheduled"),
-                    )
-                    games.append(game)
+                    try:
+                        game_time_str = game_data.get("gameTime", "")
+                        game_time = (
+                            datetime.fromisoformat(game_time_str.replace("Z", "+00:00"))
+                            if game_time_str
+                            else datetime.now()
+                        )
+
+                        game = NFLGame(
+                            game_id=game_data.get("id", ""),
+                            season=season,
+                            week=week,
+                            game_type=season_type,
+                            away_team=game_data.get("awayTeam", {}).get("abbr", ""),
+                            home_team=game_data.get("homeTeam", {}).get("abbr", ""),
+                            game_time=game_time,
+                            stadium=game_data.get("venue", {}).get("name", ""),
+                            network=game_data.get("network", {}).get("name"),
+                            away_score=game_data.get("awayScore"),
+                            home_score=game_data.get("homeScore"),
+                            game_status=game_data.get("gameStatus", "scheduled"),
+                        )
+                        games.append(game)
+                    except Exception as e:
+                        logger.warning(f"Failed to parse game data: {e}, skipping game")
+                        continue
 
             logger.info(
                 f"Fetched {len(games)} games for {season} Week {week} ({season_type})"
@@ -199,7 +258,11 @@ class NFLComClient:
             return games
 
         except httpx.HTTPStatusError as e:
-            logger.error(f"HTTP error fetching schedule: {e}")
+            if e.response.status_code == 401:
+                # Already logged above
+                pass
+            else:
+                logger.error(f"HTTP error fetching schedule: {e}")
             return []
         except Exception as e:
             logger.error(f"Error fetching schedule: {e}")

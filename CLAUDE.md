@@ -64,6 +64,12 @@ This document contains critical information about working with the Billy Walters
   - Cascading selector strategy: specific CSS → generic wildcards → fallbacks
   - Prevents silent failures from Action Network CSS-in-JS class changes
   - Automatic fallback logging for early detection of UI changes
+- **Action Network Totals Extraction**: ✨ Phase 3 complete odds extraction (NEW 2025-11-25)
+  - Dropdown switching from "Spread" to "Total" view
+  - Parses O/U format: `o48.5\n-110\nu48.5\n-110`
+  - Merges totals into game data automatically
+  - 16/16 NFL games now have complete spread + O/U + moneyline
+  - Previously `over_under` and `total_odds` were null - now fully populated
 - **Action Network Integrated in Data Workflow**: ✨ Workflow documentation updated (NEW 2025-11-25)
   - Added to .claude/commands/collect-all-data.md Step 6
   - Integrated as optional real-time odds alternative
@@ -71,7 +77,7 @@ This document contains critical information about working with the Billy Walters
 - **NFL.com API Wrapper**: ✨ CLI created for official NFL data (NEW 2025-11-25)
   - scrape_nfl_com.py with schedule and news support
   - Note: API endpoints return 401 (authentication required)
-- **Last Session**: 2025-11-25 - Action Network Phase 1+2 complete, Multi-selector fallbacks, Selector validation tests, Type checking (0 errors)
+- **Last Session**: 2025-11-25 - Action Network Phase 3 complete: Totals (O/U) extraction via dropdown switching, 16/16 games with complete odds data
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -883,9 +889,47 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 - Action Network Phase 1+2 Complete)**:
+**Latest Session (2025-11-25 - Action Network Phase 3: Totals Extraction)**:
 
-#### NEW: Action Network Live Odds & Selector Resilience Complete ✨ (2025-11-25)
+#### NEW: Action Network Totals (O/U) Extraction Complete ✨ (2025-11-25)
+
+**Phase 3: Totals Extraction via Dropdown Switching**
+- **Problem**: Previous extractions returned `over_under: null` and `total_odds: null`
+- **Root Cause**: Action Network uses a dropdown selector to switch between Spread/Total/Moneyline views
+- **Solution**: Implemented `_extract_with_odds_type()` method with dropdown switching
+
+**Technical Implementation:**
+- **`_fetch_odds_impl`** - Now performs multi-step extraction:
+  1. Extracts spreads from default view
+  2. Switches dropdown to "Total" view (`select_option(value="total")`)
+  3. Extracts over/under values
+  4. Merges totals back into games list
+
+- **`_extract_with_odds_type`** - New method:
+  - Finds odds dropdown: `select:has(option[value='total'])`
+  - Waits for table to update after selection
+  - Returns dict keyed by game for merging
+
+- **`_extract_table_row`** - Updated to handle `odds_type` parameter:
+  - `odds_type="spread"`: parses `+2.5\n-105\n-2.5\n-115`
+  - `odds_type="total"`: parses `o48.5\n-110\nu48.5\n-110`
+
+**Results:**
+- **Before**: 16 games with `over_under: null`, `total_odds: null`
+- **After**: 16/16 NFL games with complete O/U data
+- Sample: Packers @ Lions - O/U: 48.5 (-110)
+
+**Code Quality:**
+- ✅ 0 ruff errors
+- ✅ 0 pyright errors
+- ✅ 20/20 selector tests passing
+- ✅ No breaking changes
+
+---
+
+**Previous Session (2025-11-25 - Action Network Phase 1+2 Complete)**:
+
+#### Action Network Live Odds & Selector Resilience Complete ✨ (2025-11-25)
 
 **Phase 1: CLI Wrapper - Unlocked Unused Functionality**
 - **New File**: `scripts/scrapers/scrape_action_network_live.py` (239 lines)

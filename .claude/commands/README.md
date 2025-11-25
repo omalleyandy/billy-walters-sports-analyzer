@@ -193,6 +193,18 @@ Calculate Billy Walters weather adjustments.
 
 ### 3. Market Data (Odds & Lines)
 
+#### Data Sources Overview ✨ UPDATED 2025-11-25
+Two primary odds sources with different strengths:
+
+| Source | Method | Speed | Data | Best For |
+|--------|--------|-------|------|----------|
+| Overtime.ag | API | ~5 sec | Spread, ML, Total | Fast bulk collection |
+| Action Network | Browser | ~15 sec | Spread, ML, **Total (O/U)** | Complete odds, real-time |
+
+**Action Network Phase 3** (NEW): Now extracts complete over/under via dropdown switching.
+
+---
+
 #### `/scrape-overtime` - Overtime.ag Odds Scraper
 Scrape live odds from Overtime.ag.
 ```bash
@@ -658,8 +670,8 @@ PROXY_URL=http://user:pass@host:port
 
 ---
 
-**Last Updated:** 2025-11-24 (Validator Integration - 2.2)
-**Version:** 2.2
+**Last Updated:** 2025-11-25 (Action Network Phase 3: Totals Extraction - 2.3)
+**Version:** 2.3
 
 ---
 

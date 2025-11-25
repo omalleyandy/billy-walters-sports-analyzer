@@ -65,19 +65,24 @@ Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-25**
   - 100% data quality verified
   - Recommended: docs/overtime_devtools_analysis_results.md
 
-- Action Network Live Odds (NEW 2025-11-25) - Real-time odds with fallback resilience ✨
+- Action Network Live Odds (UPDATED 2025-11-25) - Complete odds with totals extraction ✨
   - Method: scrape_action_network_live.py
-  - Speed: ~10-15 seconds per league (includes Playwright startup)
+  - Speed: ~10-15 seconds per league (includes Playwright startup + dropdown switching)
   - Authentication: ACTION_USERNAME + ACTION_PASSWORD from .env
+  - **Complete Odds Data** (Phase 3 - NEW):
+    - Spreads: away/home spread with juice (-110)
+    - Totals (O/U): over_under value + total_odds via dropdown switching
+    - Moneylines: away/home moneyline odds
   - Features:
     - Multi-selector fallback pattern (handles CSS changes gracefully)
+    - Dropdown switching for totals extraction (Spread → Total view)
     - Login validation + retry logic
     - Rate limiting (configurable)
     - League separation (NFL/NCAAF isolated)
     - Timestamped JSON output
   - Usage: `uv run python scripts/scrapers/scrape_action_network_live.py --nfl --ncaaf`
   - Output: output/action_network/{nfl,ncaaf}/games/odds_*.json
-  - Note: Optional alternative to sitemap scraper for real-time odds
+  - Data quality: 16/16 NFL games with complete spread + O/U + moneyline
   - Integration: Ready for edge detection pipeline
 
 - Action Network Sitemap (2025-11-23) - Game URLs & Sharp Action (legacy)

@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "last_validated": "2025-11-25",
   "description": "CSS/XPath selectors for Action Network scraping with multi-selector fallback support",
   "selectors": {
@@ -46,18 +46,29 @@
       "a[class*='subNav__navLink']:has-text('Odds')",
       "nav a:has-text('Odds')"
     ],
+    "game_container": [
+      "div.best-odds__game-info",
+      "div[class*='best-odds__game']",
+      "div[class*='game-info']",
+      "div[class*='odds'][class*='game']"
+    ],
     "odds_table": [
-      "table.odds-table",
+      "table.css-7xtuz9",
+      "table[class*='css-']",
       "table[class*='odds']",
-      "table[class*='game']",
+      "div.best-odds__game-info + table",
       "table"
     ],
     "game_row": [
       "tr.game-row",
       "tr[class*='game-row']",
+      "div.best-odds__game-info",
       "table tbody tr"
     ],
     "team_name": [
+      "div.game-info__teams",
+      ".game-info__teams",
+      "[class*='game-info__teams']",
       ".team-name",
       "[class*='team-name']",
       "td[class*='team']"
@@ -69,33 +80,44 @@
     ],
     "rotation_number": [
       ".rotation-number",
-      "[class*='rotation']"
+      "[class*='rotation']",
+      "div.game-info__teams"
     ],
     "best_odds_spread": [
       ".spread-cell .best-odds",
       "[class*='spread'] [class*='best']",
-      "[class*='spread'] span"
+      "[class*='spread'] span",
+      "td[class*='spread']"
     ],
     "best_odds_total": [
       ".total-cell .best-odds",
       "[class*='total'] [class*='best']",
-      "[class*='total'] span"
+      "[class*='total'] span",
+      "td[class*='total']"
     ],
     "best_odds_moneyline": [
       ".moneyline-cell .best-odds",
       "[class*='moneyline'] [class*='best']",
-      "[class*='moneyline'] span"
+      "[class*='moneyline'] span",
+      "td[class*='moneyline']"
     ],
     "sportsbook_name": [
       ".sportsbook-name",
       "[class*='sportsbook']",
       "[class*='book']"
+    ],
+    "betting_line": [
+      "span[class*='odds']",
+      "div[class*='odds'] span",
+      "td span"
     ]
   },
   "notes": {
-    "auto_generated_classes": "Selectors include both specific CSS-in-JS classes (e.g., css-1wwjzac) and fallback patterns for when class names change",
+    "auto_generated_classes": "Selectors include both specific CSS-in-JS classes (e.g., css-7xtuz9) and fallback patterns for when class names change",
     "xpath_selectors": "Some selectors use XPath for more robust element matching. Prefix with 'xpath=' when using with Playwright",
     "maintenance": "Update this file when Action Network UI changes detected. Run selector validation tests to verify changes.",
-    "fallback_strategy": "Client tries each selector in order. First match is used. Warnings logged when fallbacks are needed."
+    "fallback_strategy": "Client tries each selector in order. First match is used. Warnings logged when fallbacks are needed.",
+    "validated_selectors_2025_11_25": "Found div.best-odds__game-info (stable), div.game-info__teams (stable), table.css-7xtuz9 (CSS-in-JS hash - will change)",
+    "page_structure": "8 tables on odds page, 518 div[class*='odds'] elements, betting lines format: '+2.5', '-105', etc."
   }
 }

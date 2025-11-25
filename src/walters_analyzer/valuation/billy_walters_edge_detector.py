@@ -210,9 +210,9 @@ class BillyWaltersEdgeDetector:
     POWER_RATING_WEIGHT_OLD = 0.9
     POWER_RATING_WEIGHT_NEW = 0.1
 
-    # Team name mapping: Action Network -> Massey Ratings
+    # Team name mapping: Action Network nicknames -> Massey short names
     TEAM_NAME_MAP = {
-        # NFL Teams
+        # NFL Teams (nickname -> city/region)
         "Cardinals": "Arizona",
         "Falcons": "Atlanta",
         "Ravens": "Baltimore",
@@ -245,6 +245,46 @@ class BillyWaltersEdgeDetector:
         "Buccaneers": "Tampa Bay",
         "Titans": "Tennessee",
         "Commanders": "Washington",
+    }
+
+    # Full NFL team names -> Massey short names (for dict-format Massey files)
+    NFL_FULL_NAME_MAP = {
+        "Arizona Cardinals": "Arizona",
+        "Atlanta Falcons": "Atlanta",
+        "Baltimore Ravens": "Baltimore",
+        "Buffalo Bills": "Buffalo",
+        "Carolina Panthers": "Carolina",
+        "Chicago Bears": "Chicago",
+        "Cincinnati Bengals": "Cincinnati",
+        "Cleveland Browns": "Cleveland",
+        "Dallas Cowboys": "Dallas",
+        "Denver Broncos": "Denver",
+        "Detroit Lions": "Detroit",
+        "Green Bay Packers": "Green Bay",
+        "Houston Texans": "Houston",
+        "Indianapolis Colts": "Indianapolis",
+        "Jacksonville Jaguars": "Jacksonville",
+        "Kansas City Chiefs": "Kansas City",
+        "Las Vegas Raiders": "Las Vegas",
+        "Los Angeles Chargers": "LA Chargers",
+        "Los Angeles Rams": "LA Rams",
+        "LA Chargers": "LA Chargers",
+        "LA Rams": "LA Rams",
+        "Miami Dolphins": "Miami",
+        "Minnesota Vikings": "Minnesota",
+        "New England Patriots": "New England",
+        "New Orleans Saints": "New Orleans",
+        "New York Giants": "NY Giants",
+        "New York Jets": "NY Jets",
+        "NY Giants": "NY Giants",
+        "NY Jets": "NY Jets",
+        "Philadelphia Eagles": "Philadelphia",
+        "Pittsburgh Steelers": "Pittsburgh",
+        "San Francisco 49ers": "San Francisco",
+        "Seattle Seahawks": "Seattle",
+        "Tampa Bay Buccaneers": "Tampa Bay",
+        "Tennessee Titans": "Tennessee",
+        "Washington Commanders": "Washington",
     }
 
     def __init__(self, output_dir: str = "output/edge_detection"):
@@ -312,7 +352,15 @@ class BillyWaltersEdgeDetector:
             data = json.load(f)
 
         for team in data.get("teams", []):
-            team_name = team["team"]
+            raw_team_name = team["team"]
+
+            # Normalize team name for consistent lookups
+            # Try full name map first (e.g., "Buffalo Bills" -> "Buffalo")
+            # Then keep as-is for short names (e.g., "Philadelphia" stays "Philadelphia")
+            if league == "nfl" and raw_team_name in self.NFL_FULL_NAME_MAP:
+                team_name = self.NFL_FULL_NAME_MAP[raw_team_name]
+            else:
+                team_name = raw_team_name
 
             # Massey already uses appropriate scale for each league
             # NFL: ~7-10 rating scale
@@ -325,18 +373,23 @@ class BillyWaltersEdgeDetector:
                 rating = rating * 10  # 7.0 -> 70, 9.0 -> 90
 
             # Extract offensive and defensive ratings from rawData
+            # Supports both dict format {"off": 20.5, "def": -18.0} and
+            # legacy array format ["rank\nrating", ...]
             offensive_rating = 0.0
             defensive_rating = 0.0
 
-            raw_data = team.get("rawData", [])
-            if len(raw_data) > 6:
+            raw_data = team.get("rawData", {})
+            if isinstance(raw_data, dict):
+                # New dict format: {"wins": 10, "losses": 2, "off": 20.5, "def": -18.0}
+                offensive_rating = float(raw_data.get("off", 0.0))
+                defensive_rating = float(raw_data.get("def", 0.0))
+            elif isinstance(raw_data, list) and len(raw_data) > 6:
+                # Legacy array format: rawData[5] = "12\n25.59" (rank\nrating)
                 try:
-                    # rawData[5] = "12\n25.59" -> offensive (rank\nrating)
                     off_parts = raw_data[5].split("\n")
                     if len(off_parts) > 1:
                         offensive_rating = float(off_parts[1])
 
-                    # rawData[6] = "2\n4.67" -> defensive (rank\nrating)
                     def_parts = raw_data[6].split("\n")
                     if len(def_parts) > 1:
                         defensive_rating = float(def_parts[1])
@@ -759,7 +812,11 @@ class BillyWaltersEdgeDetector:
             injuries_list = data.get("injuries", [])
 
             for injury in injuries_list:
-                team = injury.get("team", "Unknown")
+                # Get raw team name from injury file (e.g., "Bills", "Bears")
+                raw_team = injury.get("team", "Unknown")
+                # Normalize to city/region format using TEAM_NAME_MAP
+                # e.g., "Bills" -> "Buffalo", "Bears" -> "Chicago"
+                team = self.TEAM_NAME_MAP.get(raw_team, raw_team)
                 if team not in injuries_by_team:
                     injuries_by_team[team] = []
                 injuries_by_team[team].append(injury)

@@ -1,0 +1,104 @@
+{
+  "teams": [
+    {
+      "team": "Buffalo Bills",
+      "rating": 9.25,
+      "rawData": {
+        "wins": 10,
+        "losses": 2,
+        "off": 20.5,
+        "def": -18.0
+      }
+    },
+    {
+      "team": "Kansas City Chiefs",
+      "rating": 9.4,
+      "rawData": {
+        "wins": 10,
+        "losses": 2,
+        "off": 22.0,
+        "def": -20.5
+      }
+    },
+    {
+      "team": "Detroit Lions",
+      "rating": 9.15,
+      "rawData": {
+        "wins": 9,
+        "losses": 3,
+        "off": 19.5,
+        "def": -17.5
+      }
+    },
+    {
+      "team": "Chicago Bears",
+      "rating": 8.0,
+      "rawData": {
+        "wins": 4,
+        "losses": 8,
+        "off": 5.0,
+        "def": -25.0
+      }
+    },
+    {
+      "team": "Denver Broncos",
+      "rating": 8.85,
+      "rawData": {
+        "wins": 8,
+        "losses": 4,
+        "off": 16.5,
+        "def": -19.0
+      }
+    },
+    {
+      "team": "New England Patriots",
+      "rating": 8.2,
+      "rawData": {
+        "wins": 5,
+        "losses": 7,
+        "off": 7.0,
+        "def": -23.0
+      }
+    },
+    {
+      "team": "Dallas Cowboys",
+      "rating": 8.95,
+      "rawData": {
+        "wins": 9,
+        "losses": 3,
+        "off": 17.5,
+        "def": -18.0
+      }
+    },
+    {
+      "team": "Washington Commanders",
+      "rating": 8.5,
+      "rawData": {
+        "wins": 7,
+        "losses": 5,
+        "off": 12.0,
+        "def": -21.0
+      }
+    },
+    {
+      "team": "Green Bay Packers",
+      "rating": 9.05,
+      "rawData": {
+        "wins": 9,
+        "losses": 3,
+        "off": 18.5,
+        "def": -17.5
+      }
+    },
+    {
+      "team": "Minnesota Vikings",
+      "rating": 8.75,
+      "rawData": {
+        "wins": 8,
+        "losses": 4,
+        "off": 15.5,
+        "def": -20.0
+      }
+    }
+  ]
+}
