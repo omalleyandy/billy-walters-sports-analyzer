@@ -322,38 +322,119 @@ billy-walters-sports-analyzer/
 
 ## Automation Hooks
 
-The project includes 14 automation hooks in `.claude/hooks/` for validation and automation.
+The project includes validation hooks in `.claude/hooks/` that automatically integrate with slash commands for peak safety and ease of use.
 
-**Core Hooks:**
-- `pre_data_collection.py` - Validates environment before data collection
-- `post_data_collection.py` - Validates data quality after collection (EXCELLENT/GOOD/FAIR/POOR)
-- `pre_edge_detection.py` - Validates required data before edge detection
-- `auto_edge_detector.py` - Auto-triggers edge detection when new odds detected
-- `pre_commit_check.py` - Validates code for security (no exposed API keys)
+### Hook Integration Architecture ✨ NEW (2025-11-24)
 
-**Usage:**
-```bash
-# Before data collection
-python .claude/hooks/pre_data_collection.py
+Hooks are **automatically invoked by slash commands** - no manual steps needed:
+
+```
 /collect-all-data
-python .claude/hooks/post_data_collection.py
+├─ Automatic Pre-Flight: pre_data_collection_validator.py
+├─ Core Operation: 7-step data collection
+├─ Automatic Post-Flight: post_data_collection_validator.py
+└─ Result: Data validated and ready
 
-# Before committing code
-python .claude/hooks/pre_commit_check.py
-git add . && git commit -m "feat: description"
+/edge-detector
+├─ Automatic Pre-Flight: pre_edge_detection.py
+├─ Core Operation: Edge detection analysis
+└─ Result: Betting edges with confidence scores
 ```
 
-**Complete Documentation**: See [.claude/hooks/README.md](.claude/hooks/README.md) for full details on all 14 hooks, integration patterns, and error recovery procedures.
+**Three Ways to Invoke Hooks:**
 
-**Use in Documentation Updates:**
+1. **Automatic (Recommended)** - Built into commands
+   - `/collect-all-data` → Auto pre/post validation
+   - `/edge-detector` → Auto pre-flight validation
+   - No extra steps needed
+
+2. **Slash Commands (Quick Check)** - Manual when needed
+   - `/pre-validate` → Check environment
+   - `/post-validate` → Check data quality
+   - Useful for independent verification
+
+3. **Direct Python (Advanced)** - Debugging/integration
+   - `python .claude/hooks/pre_data_collection_validator.py`
+   - `python .claude/hooks/post_data_collection_validator.py --league nfl`
+   - Use when troubleshooting
+
+### Core Validators
+
+**Data Collection Validators:**
+- `pre_data_collection_validator.py` - Environment check before collection
+  - Verifies API keys, database, directories
+  - Detects current week automatically
+  - Exit code 0 = safe to proceed
+
+- `post_data_collection_validator.py` - Quality check after collection
+  - Scores all data sources (0-100%)
+  - Validates completeness and consistency
+  - Exit code 0 = ready for analysis
+
+**Edge Detection Validators:**
+- `pre_edge_detection.py` - Data availability check before analysis
+  - Ensures power ratings, schedules, odds exist
+  - Prevents wasted computation
+  - Exit code 0 = safe to analyze
+
+**Code Quality Validators:**
+- `pre_commit_check.py` - Security check before commits
+  - Prevents exposed API keys from reaching git
+  - Validates JSON/Python file structure
+  - Exit code 0 = safe to commit
+
+### Weekly Workflow with Hooks
+
 ```bash
-# After creating new reports/docs
-python .claude/hooks/auto_index_updater.py --auto
-git add docs/_INDEX.md CLAUDE.md
-git commit -m "docs: update index with new reports"
+# TUESDAY - Data Collection (hooks run automatically)
+/current-week                    # Verify week
+/pre-validate                    # (Optional) Manual environment check
+/collect-all-data                # Runs: pre-flight → collect → post-flight
+  # If pre-flight fails: ✅ Collection prevented
+  # If post-flight fails: ⚠️ Alert on quality issues
+  # If both pass: ✅ Ready for analysis
+
+# WEDNESDAY - Edge Detection (pre-flight automatic)
+/edge-detector                   # Runs: pre-flight → detect → complete
+  # If pre-flight fails: ✅ Detection prevented (missing data)
+  # If successful: ✅ Edges ready for betting-card
+/betting-card                    # Generate picks
 ```
 
-**📖 For complete hook reference, see**: [.claude/hooks/](.claude/hooks/)
+### Exit Codes (Standard Across All)
+
+All validators use consistent exit codes for scripting:
+- **0** = Success ✅ (proceed with next step)
+- **1** = Failure ❌ (stop, address issues)
+
+### Performance & Safety
+
+**What validators prevent:**
+- ❌ Running data collection without API keys
+- ❌ Analyzing data when files are missing
+- ❌ Committing code with exposed secrets
+- ❌ Mixing NFL/NCAAF data
+- ❌ Concurrent data collection (data corruption)
+
+**What validators detect:**
+- ✅ Data quality issues early (before analysis wastes time)
+- ✅ Missing or incomplete files automatically
+- ✅ NFL vs NCAAF separation violations
+- ✅ Environment configuration problems
+- ✅ API/database connectivity issues
+
+**Complete Documentation**: See [.claude/hooks/README.md](.claude/hooks/README.md) for full details including:
+- Detailed hook system architecture
+- Integration patterns with commands
+- Error recovery procedures
+- When each hook runs
+- How to troubleshoot
+
+**New Slash Commands:**
+- `/pre-validate` - Manual pre-flight check
+- `/post-validate` - Manual post-flight quality assessment
+
+**📖 For complete hook reference, see**: [.claude/hooks/README.md](.claude/hooks/README.md)
 
 ---
 
@@ -774,9 +855,44 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-24)**:
+**Latest Session (2025-11-24 - Continued)**:
 
-#### New: NFL Scoreboard Client & Results Validator ✨
+#### New: Hook System Integration with Slash Commands ✨
+- **Integrated Validators into Slash Commands**
+  - `/collect-all-data` now runs automatic pre/post-flight validation
+  - `/edge-detector` now runs automatic pre-flight validation
+  - Validators prevent unsafe operations (missing API keys, data, etc.)
+  - Exit codes standardized: 0 = success, 1 = failure
+
+- **New Slash Commands for Manual Checks**
+  - `/pre-validate` - Check environment before data collection
+  - `/post-validate` - Check data quality after collection
+  - Useful for independent verification or troubleshooting
+
+- **Hook System Documentation**
+  - `.claude/hooks/README.md` - Updated with system architecture diagram
+  - Shows how hooks integrate with commands automatically
+  - Explains three invocation methods (automatic, manual slash commands, direct Python)
+  - Entry points clearly documented
+
+- **Commands Reference Updated**
+  - `.claude/commands/README.md` - Version 2.2 with validator integration
+  - Updated `/collect-all-data`, `/edge-detector` with pre/post-flight details
+  - Added `/pre-validate`, `/post-validate` to Quick Start table
+  - Updated recommended weekly workflow to show validation points
+
+- **CLAUDE.md Updated**
+  - New "Hook Integration Architecture" section
+  - Shows automatic validation workflow clearly
+  - Documents three ways to invoke hooks
+  - Weekly workflow timeline with validation points
+  - Exit codes explained for scripting
+
+**Key Result:** Validators now transparent to user - validation happens automatically in background without extra commands needed.
+
+---
+
+#### Earlier: NFL Scoreboard Client & Results Validator ✨
 - **NFL Scoreboard Client** (`src/data/espn_nfl_scoreboard_client.py`)
   - Fetches actual game scores from ESPN API for any week (1-18)
   - Auto-detects current week from system date

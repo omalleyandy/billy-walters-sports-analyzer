@@ -1,6 +1,6 @@
 # Billy Walters Automation Hooks
 
-Complete documentation for all 14 automation hooks in `.claude/hooks/`.
+Complete documentation for all automation hooks in `.claude/hooks/`.
 
 ## Overview
 
@@ -8,6 +8,92 @@ The project includes automation hooks for peak performance and robustness. These
 
 **Location**: `.claude/hooks/`
 **Quick Start**: See [Billy Walters Weekly Workflow](#billy-walters-weekly-workflow) below
+
+---
+
+## Hook System Architecture ✨ NEW (2025-11-24)
+
+### How Hooks Integrate with Slash Commands
+
+The validation hooks are **automatically invoked** by slash commands at specific points in the workflow:
+
+```
+User Input:           /collect-all-data
+                              ↓
+Automatic:            pre_data_collection_validator.py (pre-flight check)
+                              ↓
+Core Operation:       7-step data collection process
+                              ↓
+Automatic:            post_data_collection_validator.py (post-flight check)
+                              ↓
+Result:               Data validated and ready for analysis
+```
+
+### Hook Types & Invocation
+
+**Hooks are invoked in three ways:**
+
+1. **Automatic (Built into Commands)** ← Recommended
+   - `/collect-all-data` automatically runs pre/post validators
+   - `/edge-detector` automatically runs pre-flight validator
+   - No extra steps needed - validation happens transparently
+
+2. **Manual (Slash Commands)** ← Quick checks
+   - `/pre-validate` → runs pre_data_collection_validator.py
+   - `/post-validate` → runs post_data_collection_validator.py
+   - Use when you want to check status independently
+
+3. **Direct (Python Scripts)** ← Advanced/debugging
+   - `python .claude/hooks/pre_data_collection_validator.py`
+   - `python .claude/hooks/post_data_collection_validator.py --league nfl`
+   - Use when troubleshooting or integrating with other tools
+
+### Exit Codes (Consistent Across All Validators)
+
+All hooks follow standard exit code conventions:
+
+- **Exit Code 0** = Success ✅
+  - All checks passed
+  - Safe to proceed with next step
+  - Example: `/collect-all-data` proceeds with data collection
+
+- **Exit Code 1** = Failure ❌
+  - Critical issue detected
+  - Next step aborted/halted
+  - Detailed error message provided
+  - Example: `/collect-all-data` stops before collecting data
+
+### When Validators Run (Timeline)
+
+```
+WORKFLOW TIMELINE
+
+Tuesday 2:00 PM
+├─ /current-week              Check week number
+├─ /pre-validate              (OPTIONAL) Manual environment check
+└─ /collect-all-data
+   ├─ [AUTO] pre_data_collection_validator.py    ← Automatic check
+   ├─ [7 STEPS] Data collection
+   ├─ [AUTO] post_data_collection_validator.py   ← Automatic check
+   └─ Result: Data validated, ready for analysis
+
+Wednesday 2:00 PM
+├─ /power-ratings             Update team ratings
+├─ /edge-detector
+│  ├─ [AUTO] pre_edge_detection.py               ← Automatic check
+│  ├─ Edge detection analysis
+│  └─ Output: Betting edges
+└─ /betting-card              Generate picks
+```
+
+### Quick Reference Table
+
+| Command | Pre-Flight | Core Operation | Post-Flight | When |
+|---------|-----------|-----------------|-------------|------|
+| `/pre-validate` | ✅ Runs | - | - | Before collection |
+| `/collect-all-data` | ✅ Auto | Data collection | ✅ Auto | Tuesday |
+| `/post-validate` | - | Quality check | - | After collection |
+| `/edge-detector` | ✅ Auto | Edge analysis | - | Wednesday |
 
 ---
 

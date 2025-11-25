@@ -7,8 +7,10 @@ Complete reference for all slash commands organized by Billy Walters methodology
 | Command | Description | Usage |
 |---------|-------------|-------|
 | `/current-week` | Show current NFL week | `/current-week` |
-| `/collect-all-data` | Complete data collection workflow | `/collect-all-data` |
-| `/edge-detector` | Find betting value | `/edge-detector` |
+| `/pre-validate` | ✨ NEW: Check environment before collection | `/pre-validate` |
+| `/collect-all-data` | Complete data collection with auto-validation | `/collect-all-data` |
+| `/post-validate` | ✨ NEW: Check data quality after collection | `/post-validate` |
+| `/edge-detector` | Find betting value with auto-validation | `/edge-detector` |
 | `/betting-card` | Generate weekly picks | `/betting-card` |
 
 ## Billy Walters Workflow Commands
@@ -388,7 +390,57 @@ Update individual data sources.
 
 ---
 
-#### `/validate-data` - Data Quality Checks
+#### `/pre-validate` - Pre-Flight Environment Check ✨ NEW
+Quick check before data collection to verify environment is ready.
+```bash
+/pre-validate                       # Quick environment check
+```
+
+**What it does:**
+- Verifies all API keys present
+- Tests database connection
+- Checks output directories exist
+- Detects current week from system date
+- Ensures no concurrent data collection
+
+**When to run:**
+- Before `/collect-all-data` (recommended)
+- If you're unsure environment is ready
+
+**Exit codes:**
+- 0 = Ready to proceed
+- 1 = Critical issue found
+
+---
+
+#### `/post-validate` - Post-Flight Data Quality Check ✨ NEW
+Comprehensive validation after data collection completes.
+```bash
+/post-validate                      # All sources, current week
+/post-validate nfl                  # NFL only
+/post-validate ncaaf 13             # NCAAF week 13
+/post-validate nfl --detailed       # Detailed quality report
+```
+
+**What it does:**
+- Checks all required files collected
+- Quality scores each data source (0-100%)
+- Cross-validates consistency
+- League separation verification
+- Ready for analysis assessment
+
+**When to run:**
+- After data collection (automated)
+- Before edge detection
+- If you want detailed quality report
+
+**Exit codes:**
+- 0 = Ready for analysis
+- 1 = Quality issues found, review needed
+
+---
+
+#### `/validate-data` - Data Quality Checks (Legacy)
 Validate all data sources for quality and completeness.
 ```bash
 /validate-data                      # All sources
@@ -408,6 +460,8 @@ Validate all data sources for quality and completeness.
 - After data collection (automated)
 - Before edge detection (pre-flight check)
 - Daily at 10 AM (scheduled)
+
+**Note:** `/pre-validate` and `/post-validate` are newer, more focused alternatives
 
 ---
 
@@ -467,14 +521,15 @@ Display current NFL week and schedule status.
 ### Tuesday (Data Collection Day)
 ```bash
 /current-week                    # Verify week number
-/collect-all-data                # Complete data collection
-/validate-data                   # Check data quality
+/pre-validate                    # Check environment ready (optional)
+/collect-all-data                # Complete data collection (with auto-validation)
+/post-validate                   # Check data quality (automatic after collection)
 ```
 
 ### Wednesday (Analysis Day)
 ```bash
 /power-ratings                   # Update team ratings
-/edge-detector                   # Find betting edges
+/edge-detector                   # Find betting edges (with auto-validation)
 /betting-card                    # Generate weekly picks
 ```
 
@@ -603,5 +658,38 @@ PROXY_URL=http://user:pass@host:port
 
 ---
 
-**Last Updated:** 2025-11-24
-**Version:** 2.1
+**Last Updated:** 2025-11-24 (Validator Integration - 2.2)
+**Version:** 2.2
+
+---
+
+## Validator Integration ✨ NEW (2025-11-24)
+
+This update integrates the validation hooks directly into the workflow:
+
+### What Changed
+- `/collect-all-data` now includes automatic pre-flight validation
+- `/collect-all-data` now includes automatic post-flight validation
+- `/edge-detector` now includes automatic pre-flight validation
+- New `/pre-validate` command for manual environment checks
+- New `/post-validate` command for detailed quality reports
+
+### How It Works
+1. **Pre-Flight** (automatic): Runs before operations to ensure readiness
+2. **Operation**: Collects data or detects edges
+3. **Post-Flight** (automatic): Validates success and data quality
+
+### Exit Codes
+All validators use consistent exit codes:
+- `0` = Success, ready to proceed
+- `1` = Issues found, action required
+
+### Manual Alternative
+If you prefer manual control, you can run validators directly:
+```bash
+python .claude/hooks/pre_data_collection_validator.py
+python .claude/hooks/post_data_collection_validator.py --league nfl
+python .claude/hooks/pre_edge_detection.py
+```
+
+See [.claude/hooks/README.md](./../hooks/README.md) for complete hook documentation.

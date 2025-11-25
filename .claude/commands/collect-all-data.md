@@ -1,4 +1,4 @@
-Complete data collection for current NFL + NCAAF week - all sources in correct order.
+Complete data collection for current NFL + NCAAF week - all sources in correct order with automatic validation.
 
 Usage: /collect-all-data [options]
 
@@ -9,7 +9,23 @@ Examples:
 - /collect-all-data --week 11 (explicit week for both leagues)
 - /collect-all-data --week 13 --league ncaaf (explicit NCAAF week)
 
-This command executes the complete Billy Walters data collection workflow for both NFL and NCAAF:
+This command executes the complete Billy Walters data collection workflow for both NFL and NCAAF with integrated validation:
+
+**Pre-Flight Validation (Automatic)** ✨ NEW
+Before data collection begins, automatic validation ensures:
+- ✅ All required API keys present (ACCUWEATHER, OV_CUSTOMER_ID, ACTION credentials)
+- ✅ Database connectivity verified
+- ✅ Output directories exist and are writable
+- ✅ Current NFL/NCAAF week auto-detected from system date
+- ✅ No data collection already in progress (process locking)
+- ✅ Exit code 0 = Safe to proceed
+- ❌ Exit code 1 = Critical issue found, collection aborted
+
+If pre-flight validation fails, the command stops with detailed error messages. Run:
+```bash
+python .claude/hooks/pre_data_collection_validator.py
+```
+To manually check environment before running this command.
 
 Step 1: Power Ratings (Foundation)
 - Massey Ratings scraper
@@ -110,6 +126,27 @@ NCAAF:
 - output/overtime/ncaaf/pregame/api_walters_TIMESTAMP.json
 - output/edge_detection/ncaaf_edges_detected_week_N.jsonl
 
+**Post-Flight Validation (Automatic)** ✨ NEW
+After data collection completes, automatic validation ensures:
+- ✅ All required data files collected (schedules, odds, weather, injuries, team stats)
+- ✅ Data quality scoring (EXCELLENT/GOOD/FAIR/POOR)
+- ✅ Database integrity verified
+- ✅ League-specific validation (NFL ≠ NCAAF, no mixing)
+- ✅ Files ready for edge detection
+- ✅ Exit code 0 = Data validated, ready to proceed
+- ❌ Exit code 1 = Data quality issues found, manual review needed
+
+If post-flight validation finds issues, detailed quality report shows:
+- Which data sources passed/failed
+- Quality score for each source (0-100%)
+- Specific missing files or data
+- Recommendations for remediation
+
+Run manually to check data quality:
+```bash
+python .claude/hooks/post_data_collection_validator.py --league nfl
+```
+
 Recommended Timing (Manual Execution):
 Run this command Tuesday-Wednesday for best results:
 - New week lines post after Monday Night Football
@@ -117,3 +154,5 @@ Run this command Tuesday-Wednesday for best results:
 - Weather forecasts available
 - Optimal for weekly analysis
 - NOTE: No scheduled automation - run manually on-demand when ready
+- Pre-flight validation runs automatically - collection fails safely if issues detected
+- Post-flight validation runs automatically - alerts if data quality is poor

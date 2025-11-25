@@ -1,4 +1,4 @@
-Run Billy Walters edge detection analysis for NFL and NCAAF to identify betting value.
+Run Billy Walters edge detection analysis for NFL and NCAAF to identify betting value with automatic pre-flight validation.
 
 Usage: /edge-detector [options]
 
@@ -9,6 +9,17 @@ Examples:
 - /edge-detector --league nfl --week 11 (NFL week 11)
 - /edge-detector --league ncaaf --week 13 (NCAAF week 13)
 - /edge-detector BUF_KC spread (specific NFL game)
+
+**Pre-Flight Validation (Automatic)** ✨ NEW
+Before edge detection begins, automatic validation ensures:
+- ✅ Power ratings exist (foundation required)
+- ✅ Game schedule present for detected/specified week
+- ✅ Odds data available (Overtime.ag)
+- ✅ All required data sources collected
+- ✅ Exit code 0 = Safe to proceed with analysis
+- ❌ Exit code 1 = Missing required data, analysis halted with details
+
+If validation fails, detailed error shows which data is missing and how to fix it.
 
 This command will:
 1. Load current power ratings (NFL 70-100 scale, NCAAF 60-105 scale)
@@ -137,8 +148,16 @@ Confidence: HIGH (85%)
 [Additional games...]
 ```
 
+Manual Pre-Flight Check:
+If you want to verify required data before running edge detection:
+```bash
+python .claude/hooks/pre_edge_detection.py
+```
+This shows which data is available and ready for analysis.
+
 Integration:
-- Automatically runs after /collect-all-data
-- Saves results to data/current/edge_detection_week_N.json
-- Exports Excel report with betting card
-- Logs to CLV tracking spreadsheet
+- Can run automatically after /collect-all-data (if post-flight validation passes)
+- Runs pre-flight validation automatically before analysis begins
+- Saves results to output/edge_detection/nfl_edges_detected_week_N.jsonl
+- Exports markdown report with betting recommendations
+- Logs performance to tracking database for CLV calculation
