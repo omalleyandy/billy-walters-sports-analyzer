@@ -6,7 +6,7 @@ API clients for fetching odds, game data, and weather information.
 
 from .action_network_client import ActionNetworkClient
 from .validated_action_network import ValidatedActionNetworkClient
-from .espn_client import AsyncESPNClient
+from .espn_client import ESPNClient
 from .accuweather_client import AccuWeatherClient
 from .openweather_client import OpenWeatherClient
 from .weather_client import WeatherClient
@@ -24,7 +24,7 @@ from .models import (
 
 __all__ = [
     # ESPN
-    "AsyncESPNClient",
+    "ESPNClient",
     # Action Network
     "ActionNetworkClient",
     "ValidatedActionNetworkClient",
