@@ -125,6 +125,18 @@ This index provides quick navigation to all project documentation organized by t
 
 ## Data Collection
 
+### League-Specific Workflows (NEW - 2025-11-25)
+
+**CRITICAL**: NFL and NCAAF data are collected separately and never mixed.
+
+- [LEAGUE SEPARATION GUIDE](guides/LEAGUE_SEPARATION_GUIDE.md) - **START HERE** - Master reference for keeping NFL/NCAAF data isolated
+- [NFL Data Collection Workflow](guides/NFL_DATA_COLLECTION_WORKFLOW.md) - Complete Tuesday workflow for NFL (7 minutes, ~7 components)
+- [NCAAF Data Collection Workflow](guides/NCAAF_DATA_COLLECTION_WORKFLOW.md) - Complete Wednesday workflow for NCAAF (7 minutes, ~7 components)
+- [Data Collection Quick Reference](../DATA_COLLECTION_QUICK_REFERENCE.md) - Quick lookup guide with examples
+- [Data Collection Architecture](guides/DATA_COLLECTION_ARCHITECTURE.md) - System design and method selection
+- [Output Structure Verification](guides/DATA_OUTPUT_STRUCTURE_VERIFICATION.md) - Validation tools to ensure data integrity
+- **Performance**: NFL ~7min, NCAAF ~7min (both tuned for optimal speed)
+
 ### Scrapers & APIs
 - [API Integration Details](api/API_INTEGRATION_DETAILS.md) - **COMPREHENSIVE** - All API technical details (Weather, ESPN, Overtime, Action Network)
 - [Overtime.ag Hybrid Scraper](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
