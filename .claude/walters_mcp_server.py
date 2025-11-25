@@ -496,6 +496,144 @@ async def get_injury_report(ctx: Context, team: str) -> Dict:
 
 
 # ============================================================================
+# NFL Game Stats Tool
+# ============================================================================
+
+
+@mcp.tool()
+async def get_nfl_game_stats(
+    year: int = 2025,
+    week: str = "reg-12",
+    headless: bool = True,
+) -> dict:
+    """
+    Fetch NFL game statistics from NFL.com for a specific week.
+
+    Navigates NFL.com schedule pages, extracts game links, and scrapes
+    detailed team stats from the STATS tab for each matchup.
+
+    Args:
+        year: NFL season year (default: 2025)
+        week: Week identifier (reg-12, reg-13, post-1, etc.)
+        headless: Run browser in headless mode (default: True)
+
+    Returns:
+        Dictionary with all games and team statistics for the week
+
+    Example:
+        stats = await get_nfl_game_stats(year=2025, week="reg-12")
+    """
+    try:
+        logger.info(f"Fetching NFL game stats for {year} week {week}")
+
+        # Import client
+        try:
+            from data.nfl_game_stats_client import NFLGameStatsClient
+        except ImportError:
+            # Try alternate import path
+            import sys
+            from pathlib import Path
+
+            project_root = Path(__file__).parent.parent
+            if (project_root / "src").exists():
+                sys.path.insert(0, str(project_root / "src"))
+
+            from data.nfl_game_stats_client import NFLGameStatsClient
+
+        # Fetch stats
+        client = NFLGameStatsClient(headless=headless)
+
+        try:
+            await client.connect()
+            stats = await client.get_week_stats(year=year, week=week)
+
+            return {
+                "success": True,
+                "year": year,
+                "week": week,
+                "games_count": len(stats.get("games", [])),
+                "games": stats.get("games", []),
+                "timestamp": stats.get("timestamp"),
+            }
+
+        finally:
+            await client.close()
+
+    except Exception as e:
+        logger.error(f"Error fetching NFL game stats: {e}", exc_info=True)
+        return {
+            "success": False,
+            "error": str(e),
+            "year": year,
+            "week": week,
+        }
+
+
+@mcp.tool()
+async def get_nfl_game_stats_for_matchup(
+    game_url: str,
+    headless: bool = True,
+) -> dict:
+    """
+    Fetch statistics for a specific NFL game.
+
+    Args:
+        game_url: Full URL to NFL.com game page
+                  (e.g., https://www.nfl.com/games/bills-at-texans-2025-reg-12)
+        headless: Run browser in headless mode (default: True)
+
+    Returns:
+        Dictionary with game info and team statistics
+
+    Example:
+        stats = await get_nfl_game_stats_for_matchup(
+            game_url="https://www.nfl.com/games/bills-at-texans-2025-reg-12"
+        )
+    """
+    try:
+        logger.info(f"Fetching stats for game: {game_url}")
+
+        # Import client
+        try:
+            from data.nfl_game_stats_client import NFLGameStatsClient
+        except ImportError:
+            # Try alternate import path
+            import sys
+            from pathlib import Path
+
+            project_root = Path(__file__).parent.parent
+            if (project_root / "src").exists():
+                sys.path.insert(0, str(project_root / "src"))
+
+            from data.nfl_game_stats_client import NFLGameStatsClient
+
+        # Fetch stats
+        client = NFLGameStatsClient(headless=headless)
+
+        try:
+            await client.connect()
+            stats = await client.get_game_stats(game_url)
+
+            return {
+                "success": True,
+                "game_url": game_url,
+                "game_data": stats,
+                "timestamp": stats.get("timestamp"),
+            }
+
+        finally:
+            await client.close()
+
+    except Exception as e:
+        logger.error(f"Error fetching game stats: {e}", exc_info=True)
+        return {
+            "success": False,
+            "error": str(e),
+            "game_url": game_url,
+        }
+
+
+# ============================================================================
 # MCP Resources
 # ============================================================================
 
