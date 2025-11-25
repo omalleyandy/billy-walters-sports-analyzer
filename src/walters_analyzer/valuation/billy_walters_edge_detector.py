@@ -525,6 +525,29 @@ class BillyWaltersEdgeDetector:
         logger.info(f"Loaded {len(games_data)} games from Action Network")
         return games_data
 
+    def load_overtime_odds(self, filepath: str):
+        """
+        Load Overtime.ag API odds data
+
+        Args:
+            filepath: Path to Overtime.ag API JSON file
+        """
+        logger.info(f"Loading Overtime.ag data from {filepath}")
+
+        with open(filepath, "r") as f:
+            data = json.load(f)
+
+        games_data = {}
+        for game in data.get("games", []):
+            game_id = str(game.get("game_id", ""))
+            if game_id:
+                # Avoid duplicate game IDs (1st half/full game)
+                if game_id not in games_data:
+                    games_data[game_id] = game
+
+        logger.info(f"Loaded {len(games_data)} games from Overtime.ag")
+        return games_data
+
     # =================================================================
     # SITUATIONAL ANALYSIS
     # =================================================================
@@ -1195,11 +1218,17 @@ def main():
     if not weather_client.api_key:
         logger.warning("No AccuWeather API key - weather analysis will be skipped")
 
-    # Load proprietary 90/10 power ratings (Week 12 is current)
+    # Load proprietary 90/10 power ratings (use master file for current ratings)
     logger.info("=" * 80)
     logger.info("USING BILLY WALTERS PROPRIETARY 90/10 POWER RATINGS FOR SPREADS")
     logger.info("=" * 80)
-    detector.load_proprietary_ratings(week=12)  # Current week ratings
+    try:
+        detector.load_proprietary_ratings()  # Master file with current ratings
+    except FileNotFoundError:
+        # Fallback: use Massey ratings instead
+        logger.warning(
+            "Proprietary ratings not available, will use Massey for analysis"
+        )
 
     # Load Massey ratings for Offensive/Defensive data (needed for totals)
     logger.info("=" * 80)
@@ -1238,63 +1267,56 @@ def main():
     detector.load_injury_data()
     totals_detector.injury_data = detector.injury_data  # Share with totals detector
 
-    # Load Action Network odds (latest)
-    action_file = "output/action_network/nfl_api_responses_week_11.json"
-    if os.path.exists(action_file):
-        games_data = detector.load_action_network_odds(action_file)
+    # Load Overtime.ag odds (latest - correct current week data)
+    from pathlib import Path
+
+    overtime_dir = Path("output/overtime/nfl/pregame")
+    overtime_files = sorted(overtime_dir.glob("api_walters_*.json"))
+
+    if overtime_files:
+        # Use latest Overtime.ag file
+        overtime_file = str(overtime_files[-1])
+        logger.info(f"Loading Overtime.ag data from {overtime_file}")
+        games_data = detector.load_overtime_odds(overtime_file)
 
         # Analyze each game
         edges = []
         totals_edges = []
         for game_id, game in games_data.items():
-            # Extract teams
-            teams = game.get("teams", [])
-            if len(teams) < 2:
+            # Extract teams from Overtime.ag format
+            away_team_raw = game.get("away_team", "")
+            home_team_raw = game.get("home_team", "")
+
+            if not away_team_raw or not home_team_raw:
                 continue
 
             # Normalize team names for Massey lookup
-            home_team = detector.normalize_team_name(teams[0]["display_name"])
-            away_team = detector.normalize_team_name(teams[1]["display_name"])
+            away_team = detector.normalize_team_name(away_team_raw)
+            home_team = detector.normalize_team_name(home_team_raw)
 
-            # Extract market data
-            markets = game.get("markets", {})
-            if not markets:
-                continue
-
-            # Get first sportsbook's odds
-            first_book = list(markets.values())[0]
-            event_markets = first_book.get("event", {})
-
-            # Extract spread
-            spread_data = event_markets.get("spread", [])
+            # Extract market data from Overtime.ag format
+            spread_data = game.get("spread", {})
             if not spread_data:
                 continue
 
-            market_spread = spread_data[0].get("value", 0)
+            # Overtime.ag spread is for away team (negative = away favored)
+            market_spread = spread_data.get("home", 0)
 
             # Extract total
-            total_data = event_markets.get("total", [])
-            market_total = total_data[0].get("value", 47.0) if total_data else 47.0
+            total_data = game.get("total", {})
+            market_total = total_data.get("points", 47.0) if total_data else 47.0
 
-            # Extract sharp action
-            if spread_data and "bet_info" in spread_data[0]:
-                bet_info = spread_data[0]["bet_info"]
-                money_pct = bet_info.get("money", {}).get("percent", 50)
-                tickets_pct = bet_info.get("tickets", {}).get("percent", 50)
-
-                sharp = detector.analyze_sharp_action(money_pct, tickets_pct)
-            else:
-                sharp = None
+            # Sharp action analysis (limited data in Overtime.ag)
+            # Would need to compare multiple books for true sharp detection
+            sharp = None
 
             # Fetch weather data for the game
             weather_impact = None
-            game_time_str = game.get("start_time", "")
+            game_time_str = game.get("game_time", "")
             if weather_client.api_key and game_time_str:
                 try:
-                    # Parse game time (format: "2025-11-09T18:00:00.000Z")
-                    game_time = datetime.fromisoformat(
-                        game_time_str.replace("Z", "+00:00")
-                    )
+                    # Parse game time (Overtime.ag format: "11/27/2025 13:00")
+                    game_time = datetime.strptime(game_time_str, "%m/%d/%Y %H:%M")
 
                     # Get weather for home team's location
                     # (async call - run synchronously)
@@ -1378,15 +1400,15 @@ def main():
                 except Exception as e:
                     logger.warning(f"Could not fetch weather for {home_team}: {e}")
 
-            # Detect edge
+            # Detect edge (using Week 13 for Overtime.ag current data)
             edge = detector.detect_edge(
                 game_id=game_id,
                 away_team=away_team,
                 home_team=home_team,
                 market_spread=market_spread,
                 market_total=market_total,
-                week=game.get("week", 10),
-                game_time=game.get("start_time", ""),
+                week=13,  # Current NFL week from Overtime.ag
+                game_time=game_time_str,
                 weather=weather_impact,
                 sharp_action=sharp,
             )
@@ -1395,19 +1417,19 @@ def main():
                 edges.append(edge)
 
             # Detect totals edge
+            # Extract over/under odds from Overtime.ag format
+            over_odds = total_data.get("over_odds", -110) if total_data else -110
+            under_odds = total_data.get("under_odds", -110) if total_data else -110
+
             totals_edge = totals_detector.detect_totals_edge(
                 game_id=game_id,
                 away_team=away_team,
                 home_team=home_team,
                 market_total=market_total,
-                market_over_odds=total_data[0].get("odds", -110)
-                if total_data
-                else -110,
-                market_under_odds=total_data[1].get("odds", -110)
-                if len(total_data) > 1
-                else -110,
-                week=game.get("week", 10),
-                game_time=game.get("start_time", ""),
+                market_over_odds=over_odds,
+                market_under_odds=under_odds,
+                week=13,  # Current NFL week from Overtime.ag
+                game_time=game_time_str,
                 weather=weather_impact,
                 sharp_action=sharp,
                 away_injuries=detector.calculate_team_injury_impact(away_team),
