@@ -204,6 +204,17 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 - [Monitoring Reference](guides/monitoring_reference.md) - Monitoring best practices
 - [Web Fetch Client](api/web_fetch_client.md) - HTTP client documentation
 
+### Architecture & Technical Design
+- [HTML Structure Analysis](technical/HTML_STRUCTURE_ANALYSIS.md) - overtime.ag HTML parsing reference
+- [Dynamic Week Tracking](technical/DYNAMIC_WEEK_TRACKING.md) - Week detection system design
+- [ESPN Roadmap](technical/ESPN_ROADMAP_CHECKLIST.md) - ESPN data integration implementation plan
+
+### Developer Utilities
+- [PowerShell Commands](utilities/powershell_commands.md) - Windows system commands reference
+
+### Example Output
+- [Example Edge Detection Output](guides/EXAMPLE_OUTPUT.md) - Sample output showing what users will see
+
 ### Legacy Technical References
 - [Scraper Quick Reference](SCRAPER_QUICK_REFERENCE.md) - All scrapers at a glance
 - [Overtime Scraping Schedule](OVERTIME_SCRAPING_SCHEDULE.md) - Optimal scraping times
@@ -347,12 +358,18 @@ billy-walters-sports-analyzer/
 Historical documentation is organized in `docs/archive/`:
 
 - **Sessions**: `archive/sessions/` - Development session summaries (8 archived)
-- **Week-Specific**: `archive/week_specific/` - Week 12/13 analysis & guides (7 archived)
+- **Week-Specific**: `archive/week_specific/` - Week 12/13 analysis & guides (9 archived, includes Phase 3 additions)
 - **Phases**: `archive/phases/` - Completed phase implementations (4 archived)
 - **Old Quick Start Variants**: `archive/old_quickstart_variants/` - Superseded by unified guides (2 archived)
-- **Other Archives**: `archive/{fixes,reviews,status,setup,versions,q_and_a}/` - Reference materials
+- **Versions**: `archive/versions/` - Old configuration files and instruction versions (3 archived)
+- **Setup**: `archive/setup/` - Completed setup tasks (1 archived)
+- **Status**: `archive/status/` - Historical status reports (2 archived)
+- **Fixes**: `archive/fixes/` - Bug fix documentation (2 archived)
+- **Reviews**: `archive/reviews/` - Code review notes (1 archived)
+- **Q&A**: `archive/q_and_a/` - Historical questions and answers (1 archived)
+- **Unclear**: `archive/unclear/` - Files with uncertain purpose (1 archived)
 
-**Note**: All currently-active documentation is at root level or in `docs/guides/`, `docs/api/`, etc.
+**Note**: All currently-active documentation is at root level or in `docs/guides/`, `docs/api/`, `docs/technical/`, `docs/utilities/`, etc.
 
 ## Document Status Legend
 
@@ -365,6 +382,6 @@ Historical documentation is organized in `docs/archive/`:
 
 **Last Updated**: 2025-11-24
 **Project Status**: Production-ready with active development
-**Documentation Reorganization**: Phase 2 complete - Technical guides moved to `docs/guides/`, phase files archived, Quick Start variants consolidated (30% root directory reduction)
+**Documentation Reorganization**: Phase 3 complete! Technical docs moved to `docs/technical/`, utilities organized, archives complete. Root directory: 60 → 7 files (88% reduction)
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
