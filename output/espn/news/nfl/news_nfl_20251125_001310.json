@@ -1,0 +1,55 @@
+{
+  "buf": {
+    "team_abbr": "buf",
+    "team_name": "Buffalo Bills",
+    "articles": [
+      {
+        "title": "Playoff Picture Playoff Picture",
+        "url": "https://www.espn.com/nfl/story/_/id/46139564/2025-nfl-playoff-picture-afc-nfc-seed-predictions-odds-super-bowl",
+        "author": null,
+        "published_date": "Week 12\n                    \n\t\n\t\t\n\t\t\tWeek 11\n\t\t\n\t\n\n\t\n\t\t\n\t\t\tWeek 12\n\t\t\n\t\n\n\t\n\t\t\n\t\t\tWeek 13",
+        "summary": "Damien Woody and Rex Ryan react to the Cowboys' comeback victory over the Eagles. (1:55)",
+        "content": "",
+        "category": "Game Analysis"
+      },
+      {
+        "title": "Win Rates Win Rates",
+        "url": "https://www.espn.com/nfl/story/_/id/46138675/2025-nfl-win-rates-top-teams-players-rankings-pass-run-block",
+        "author": null,
+        "published_date": "Week 12\n                    \n\t\n\t\t\n\t\t\tWeek 11\n\t\t\n\t\n\n\t\n\t\t\n\t\t\tWeek 12\n\t\t\n\t\n\n\t\n\t\t\n\t\t\tWeek 13",
+        "summary": "ESPN Analytics created revolutionary metrics to measure performance in the trenches -- in both the run and pass game -- using player tracking data from NFL Next Gen Stats.",
+        "content": "",
+        "category": "Game Analysis"
+      },
+      {
+        "title": "Power Rankings Power Rankings",
+        "url": "https://www.espn.com/nfl/story/_/id/46999579/nfl-week-12-power-rankings-poll-32-teams-2025-pressure-players-coaches-executives",
+        "author": null,
+        "published_date": "",
+        "summary": "Dan Orlovsky joins \"Get Up\" to explain why the Eagles' lack of separation in the pass game might eventually come back to hurt them. (1:06)",
+        "content": "",
+        "category": "Game Analysis"
+      },
+      {
+        "title": "Depth Charts Depth Charts",
+        "url": "https://www.espn.com/nfl/story/_/id/29098001/nfl-depth-charts-all-32-teams",
+        "author": null,
+        "published_date": "",
+        "summary": "ESPN's NFL depth charts for the 2025 season are updated throughout the year with the latest news, updates and intel from across the league.",
+        "content": "",
+        "category": "Injury News"
+      },
+      {
+        "title": "NBA Power Rankings NBA Power Rankings",
+        "url": "https://www.espn.com/nba/story/_/id/47013116/nba-power-rankings-all-30-teams-rank-important-bench-role-player",
+        "author": null,
+        "published_date": "Nov 24\n                    \n\t\n\t\tNov 23\n\t\n\n\t\n\t\tNov 24\n\t\n\n\t\n\t\tNov 25",
+        "summary": "Shams Charania explains why the Thunder might be in the best position of any sports franchise. (0:56)",
+        "content": "",
+        "category": "Team News"
+      }
+    ],
+    "article_count": 5,
+    "fetched_at": "2025-11-25T00:13:10.292633"
+  }
+}
