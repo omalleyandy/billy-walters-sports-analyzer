@@ -1,0 +1,2525 @@
+{
+  "buf": {
+    "team_abbr": "buf",
+    "team_name": "Buffalo Bills",
+    "transactions": [
+      {
+        "team_abbr": "buf",
+        "player_name": "Mecole Hardman",
+        "transaction_type": "Injured Reserve",
+        "date": "November 20, 2025",
+        "raw_text": "Placed WR Mecole Hardman on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Brandon Codrington",
+        "transaction_type": "Signed",
+        "date": "November 18, 2025",
+        "raw_text": "Signed CB Brandon Codrington to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Mecole Hardman",
+        "transaction_type": "Signed",
+        "date": "November 15, 2025",
+        "raw_text": "Signed WR Mecole Hardman from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Sanders",
+        "transaction_type": "Injured Reserve",
+        "date": "November 15, 2025",
+        "raw_text": "Sanders from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Brandon Codrington",
+        "transaction_type": "Released",
+        "date": "November 15, 2025",
+        "raw_text": "Released CB Brandon Codrington."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Morgan Fox",
+        "transaction_type": "Signed",
+        "date": "November 12, 2025",
+        "raw_text": "Signed DE Morgan Fox to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Cam Johnston",
+        "transaction_type": "Injured Reserve",
+        "date": "November 12, 2025",
+        "raw_text": "Released P Cam Johnston from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Mecole Hardman",
+        "transaction_type": "Signed",
+        "date": "November 11, 2025",
+        "raw_text": "Signed WR Mecole Hardman to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Sanders",
+        "transaction_type": "Injured Reserve",
+        "date": "November 11, 2025",
+        "raw_text": "Sanders to return from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Landon Jackson",
+        "transaction_type": "Injured Reserve",
+        "date": "November 11, 2025",
+        "raw_text": "Placed DE Landon Jackson on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kingsley Jonathan",
+        "transaction_type": "Released",
+        "date": "November 11, 2025",
+        "raw_text": "Released DE Kingsley Jonathan and WR Kristian Wilkerson from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Mecole Hardman",
+        "transaction_type": "Signed",
+        "date": "November 10, 2025",
+        "raw_text": "Signed WR Mecole Hardman to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Phidarian Mathis",
+        "transaction_type": "Signed",
+        "date": "November 5, 2025",
+        "raw_text": "Signed DT Phidarian Mathis to the active roster."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kingsley Jonathan",
+        "transaction_type": "Signed",
+        "date": "November 5, 2025",
+        "raw_text": "Signed DE Kingsley Jonathan and DB Te'Cory Couch to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jimmy Ciarlo",
+        "transaction_type": "Released",
+        "date": "November 5, 2025",
+        "raw_text": "Released LB Jimmy Ciarlo from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Michael Hoecht",
+        "transaction_type": "Injured Reserve",
+        "date": "November 3, 2025",
+        "raw_text": "Placed DL Michael Hoecht on injured reserve.October"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Gabe Davis",
+        "transaction_type": "Signed",
+        "date": "October 29, 2025",
+        "raw_text": "Signed WR Gabe Davis to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Ed Oliver",
+        "transaction_type": "Injured Reserve",
+        "date": "October 28, 2025",
+        "raw_text": "Placed DT Ed Oliver on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jordan Phillips",
+        "transaction_type": "Signed",
+        "date": "October 28, 2025",
+        "raw_text": "Signed DT Jordan Phillips and S Jordan Poyer to the active roster."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Max Hairston",
+        "transaction_type": "Injured Reserve",
+        "date": "October 25, 2025",
+        "raw_text": "Activated WR Max Hairston from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Taylor Rapp",
+        "transaction_type": "Injured Reserve",
+        "date": "October 24, 2025",
+        "raw_text": "Placed S Taylor Rapp on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Maxwell Hairston",
+        "transaction_type": "Injured Reserve",
+        "date": "October 20, 2025",
+        "raw_text": "Designated CB Maxwell Hairston to return from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jimmy Ciarlo",
+        "transaction_type": "Signed",
+        "date": "October 16, 2025",
+        "raw_text": "Signed LB Jimmy Ciarlo to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jimmy Ciarlo",
+        "transaction_type": "Released",
+        "date": "October 14, 2025",
+        "raw_text": "Released LB Jimmy Ciarlo from the active roster and CB Jalen Kimber from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Sanders",
+        "transaction_type": "Injured Reserve",
+        "date": "October 11, 2025",
+        "raw_text": "Sanders on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Baylon Spector",
+        "transaction_type": "Signed",
+        "date": "October 7, 2025",
+        "raw_text": "Signed LB Baylon Spector and CB Jalen Kimber to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Otis Reese IV",
+        "transaction_type": "Released",
+        "date": "October 7, 2025",
+        "raw_text": "Released LB Otis Reese IV from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Dorian Strong",
+        "transaction_type": "Injured Reserve",
+        "date": "October 4, 2025",
+        "raw_text": "Placed CB Dorian Strong on the injured reserve list.September"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Mitch Wishnowsky",
+        "transaction_type": "Signed",
+        "date": "September 30, 2025",
+        "raw_text": "Signed P Mitch Wishnowsky to the active roster."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Cameron Johnston",
+        "transaction_type": "Injured Reserve",
+        "date": "September 30, 2025",
+        "raw_text": "Placed P Cameron Johnston on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Nick Broeker",
+        "transaction_type": "Signed",
+        "date": "September 22, 2025",
+        "raw_text": "Signed OL Nick Broeker to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Phidarian Mathis",
+        "transaction_type": "Signed",
+        "date": "September 10, 2025",
+        "raw_text": "Signed DT Phidarian Mathis to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Cameron Johnston",
+        "transaction_type": "Signed",
+        "date": "September 9, 2025",
+        "raw_text": "Signed P Cameron Johnston and K Matt Prater from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Brad Robbins",
+        "transaction_type": "Waived",
+        "date": "September 9, 2025",
+        "raw_text": "Waived P Brad Robbins."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Tyler Bass",
+        "transaction_type": "Injured Reserve",
+        "date": "September 5, 2025",
+        "raw_text": "Placed K Tyler Bass on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Sam Franklin",
+        "transaction_type": "Signed",
+        "date": "September 4, 2025",
+        "raw_text": "Signed S Sam Franklin from the practice squad to the active roster."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "DeWayne Carter",
+        "transaction_type": "Injured Reserve",
+        "date": "September 4, 2025",
+        "raw_text": "Placed DT DeWayne Carter on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Matt Prater",
+        "transaction_type": "Signed",
+        "date": "September 4, 2025",
+        "raw_text": "Signed K Matt Prater to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jordan Poyer",
+        "transaction_type": "Released",
+        "date": "September 3, 2025",
+        "raw_text": "Released S Jordan Poyer from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Gabriel Davis",
+        "transaction_type": "Signed",
+        "date": "September 3, 2025",
+        "raw_text": "Signed WR Gabriel Davis to a contract.August"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jalen Kimber",
+        "transaction_type": "Signed",
+        "date": "August 28, 2025",
+        "raw_text": "Signed CB Jalen Kimber and DE Andre Jones Jr. to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Daequan Hardy",
+        "transaction_type": "Released",
+        "date": "August 28, 2025",
+        "raw_text": "Released CB Daequan Hardy to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Shane Buechele,",
+        "transaction_type": "Signed",
+        "date": "August 27, 2025",
+        "raw_text": "Signed QB Shane Buechele, RB Frank Gore Jr., WRs Stephen Gosnell and Kristian Wilkerson, TE Keleki Latu, OL Travis Clayton, Dan Feeney and Kendrick Green, DL Zion Logue and Jordan Phillips, LBs Jimmy Ciarlo and Keonta Jenkins, CBs Daequan Hardy and Dane Jackson and Ss Jordan Poyer and Sam Franklin the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "QBs Shane Buechel",
+        "transaction_type": "Released",
+        "date": "August 26, 2025",
+        "raw_text": "Released QBs Shane Buechel and Miike White, RB Frank Gore Jr., WRs Deon Canin, Stephen Gosnell, K.J."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Maxwell Hairston",
+        "transaction_type": "Injured Reserve",
+        "date": "August 26, 2025",
+        "raw_text": "Placed CB Maxwell Hairston and OL Tylan Grable on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jordan Phillips",
+        "transaction_type": "Signed",
+        "date": "August 25, 2025",
+        "raw_text": "Signed DT Jordan Phillips to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "DBs Zy Alexander,",
+        "transaction_type": "Released",
+        "date": "August 24, 2025",
+        "raw_text": "Released DBs Zy Alexander, Tre Herndon and Garnett Hollis Jr., DE Nelson Ceaser, OL Rush Reimer, TE Matt Sokol and RB Elijah Young."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 24, 2025",
+        "raw_text": "Waived/injured WR Grant DuBose."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Garnett Hollis Jr",
+        "transaction_type": "Signed",
+        "date": "August 23, 2025",
+        "raw_text": "Signed DB Garnett Hollis Jr.."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Wande Owens",
+        "transaction_type": "Waived",
+        "date": "August 23, 2025",
+        "raw_text": "Waived DB Wande Owens with an injury settlement."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jarveon Howard",
+        "transaction_type": "Injured Reserve",
+        "date": "August 23, 2025",
+        "raw_text": "Waived RB Jarveon Howard from Injured reserve after a failed physical disclosure."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jalen Virgil",
+        "transaction_type": "Injured Reserve",
+        "date": "August 22, 2025",
+        "raw_text": "Released WR Jalen Virgil from injured reserve with an injury settlement."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jarveon Howard",
+        "transaction_type": "Injured Reserve",
+        "date": "August 21, 2025",
+        "raw_text": "Reverted RB Jarveon Howard to injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Zy Alexander,",
+        "transaction_type": "Signed",
+        "date": "August 20, 2025",
+        "raw_text": "Signed CB Zy Alexander, OL Elijah Young and OL Rush Reimer to contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Caden Davis",
+        "transaction_type": "Released",
+        "date": "August 20, 2025",
+        "raw_text": "Released K Caden Davis."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 20, 2025",
+        "raw_text": "Waived/injured RB Jarveon Howard."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Te'Cory Couch",
+        "transaction_type": "Injured Reserve",
+        "date": "August 20, 2025",
+        "raw_text": "Reverted DB Te'Cory Couch and WR Kaden Prather to injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jarveon Howard",
+        "transaction_type": "Signed",
+        "date": "August 19, 2025",
+        "raw_text": "Signed RB Jarveon Howard and WR Grant DuBose to contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Darrynton Evans",
+        "transaction_type": "Injured Reserve",
+        "date": "August 19, 2025",
+        "raw_text": "Placed RB Darrynton Evans on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 19, 2025",
+        "raw_text": "Waived/injured CB Te'Cory Couch and WR Kaden Prather."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "August 15, 2025",
+        "raw_text": "Re-signed TE Matt Sokol."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Nelson Ceaser",
+        "transaction_type": "Signed",
+        "date": "August 14, 2025",
+        "raw_text": "Signed DE Nelson Ceaser to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 14, 2025",
+        "raw_text": "Waived/injured WR Jalen Virgil."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Justin Hollins",
+        "transaction_type": "Injured Reserve",
+        "date": "August 14, 2025",
+        "raw_text": "Placed DE Justin Hollins on injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "August 13, 2025",
+        "raw_text": "Re-signed RB James Cook to a four-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Tre Herndon",
+        "transaction_type": "Signed",
+        "date": "August 12, 2025",
+        "raw_text": "Signed DB Tre Herndon."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Matt Sokol",
+        "transaction_type": "Waived",
+        "date": "August 12, 2025",
+        "raw_text": "Waived TE Matt Sokol."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Baylon Spector",
+        "transaction_type": "Waived",
+        "date": "August 10, 2025",
+        "raw_text": "Waived LB Baylon Spector with an injury settlement."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Hayden Harris",
+        "transaction_type": "Waived",
+        "date": "August 9, 2025",
+        "raw_text": "Waived DE Hayden Harris with an injury settlement."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Caden Davis",
+        "transaction_type": "Signed",
+        "date": "August 8, 2025",
+        "raw_text": "Signed K Caden Davis to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kelly Akharaiyi",
+        "transaction_type": "Released",
+        "date": "August 8, 2025",
+        "raw_text": "Released WR Kelly Akharaiyi."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Braylon Spector",
+        "transaction_type": "Injured Reserve",
+        "date": "August 7, 2025",
+        "raw_text": "Reverted LB Braylon Spector to injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jimmy Ciarlo",
+        "transaction_type": "Signed",
+        "date": "August 6, 2025",
+        "raw_text": "Signed LB Jimmy Ciarlo to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 6, 2025",
+        "raw_text": "Waived/injured LB Baylon Spector."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Justin Hollins",
+        "transaction_type": "Signed",
+        "date": "August 5, 2025",
+        "raw_text": "Signed DE Justin Hollins to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Dan Feeney",
+        "transaction_type": "Signed",
+        "date": "August 4, 2025",
+        "raw_text": "Signed OL Dan Feeney to a contract.July"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kameron Cline",
+        "transaction_type": "Signed",
+        "date": "July 31, 2025",
+        "raw_text": "Signed DE Kameron Cline to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "July 31, 2025",
+        "raw_text": "Waived/injured DE Hayden Harris."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Deon Cain",
+        "transaction_type": "Signed",
+        "date": "July 28, 2025",
+        "raw_text": "Signed WR Deon Cain to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Daryl Porter",
+        "transaction_type": "Waived",
+        "date": "July 28, 2025",
+        "raw_text": "Waived DB Daryl Porter."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kelly Akharaiyi",
+        "transaction_type": "Signed",
+        "date": "July 27, 2025",
+        "raw_text": "Signed WR Kelly Akharaiyi to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kelly Akharaiyi",
+        "transaction_type": "Signed",
+        "date": "July 26, 2025",
+        "raw_text": "Signed WR Kelly Akharaiyi to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "David White",
+        "transaction_type": "Signed",
+        "date": "July 22, 2025",
+        "raw_text": "Signed WR David White and TE Matt Sokol to contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jake Camarda",
+        "transaction_type": "Released",
+        "date": "July 22, 2025",
+        "raw_text": "Released P Jake Camarda and WR Kelly Akharaiyi."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Maxwell Hairston",
+        "transaction_type": "Signed",
+        "date": "June 13, 2025",
+        "raw_text": "Signed CB Maxwell Hairston and DT Deone Walker to rookie contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Shaq Thompson",
+        "transaction_type": "Signed",
+        "date": "June 10, 2025",
+        "raw_text": "Signed LB Shaq Thompson to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Marcus Harris",
+        "transaction_type": "Signed",
+        "date": "June 6, 2025",
+        "raw_text": "Signed DT Marcus Harris."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Devin Brandt-Epps.May",
+        "transaction_type": "Released",
+        "date": "June 6, 2025",
+        "raw_text": "Released DT Devin Brandt-Epps.May"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Hal Presley",
+        "transaction_type": "Waived",
+        "date": "May 21, 2025",
+        "raw_text": "Waived WR Hal Presley."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kristian Wilkerson",
+        "transaction_type": "Signed",
+        "date": "May 20, 2025",
+        "raw_text": "Signed WR Kristian Wilkerson to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Hal Presley III",
+        "transaction_type": "Released",
+        "date": "May 20, 2025",
+        "raw_text": "Released WR Hal Presley III."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kristian Wilkerson",
+        "transaction_type": "Signed",
+        "date": "May 19, 2025",
+        "raw_text": "Signed WR Kristian Wilkerson to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kelly Akharaiyi,",
+        "transaction_type": "Signed",
+        "date": "May 9, 2025",
+        "raw_text": "Signed WR Kelly Akharaiyi, WR Stephen Gosnell, WR Hal Presley, TE Keleki Latu, C Jacob Bayer, G Rush Reimer, S Wande Owens, CB Daryl Porter, LB Keonta Jenkins, DE Paris Shand, DE Hayden Harris, and DT Devin Brandt to rookie contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Elijah Moore",
+        "transaction_type": "Signed",
+        "date": "May 5, 2025",
+        "raw_text": "Signed WR Elijah Moore to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Paris Shand",
+        "transaction_type": "Signed",
+        "date": "May 5, 2025",
+        "raw_text": "Signed DE Paris Shand to a contract.April"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Tre'Davious White",
+        "transaction_type": "Signed",
+        "date": "April 21, 2025",
+        "raw_text": "Signed DB Tre'Davious White to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Branson Deen",
+        "transaction_type": "Released",
+        "date": "April 17, 2025",
+        "raw_text": "Released DT Branson Deen."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Armani Rogers",
+        "transaction_type": "Waived",
+        "date": "April 17, 2025",
+        "raw_text": "Waived TE Armani Rogers with a non-football injury.March"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Brad Robbins",
+        "transaction_type": "Signed",
+        "date": "March 31, 2025",
+        "raw_text": "Signed P Brad Robbins to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Reggie Gilliam,",
+        "transaction_type": "Signed",
+        "date": "March 17, 2025",
+        "raw_text": "Signed FB Reggie Gilliam, G Kendrick Green, CB Dane Jackson and RB Ty Johnson to contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Michael Hoecht,",
+        "transaction_type": "Signed",
+        "date": "March 15, 2025",
+        "raw_text": "Signed ILB Michael Hoecht, WR Laviska Shenault Jr. and DE Larry Ogunjobi."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Dane Jackson",
+        "transaction_type": "Signed",
+        "date": "March 14, 2025",
+        "raw_text": "Signed CB Dane Jackson to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kendrick Green",
+        "transaction_type": "Signed",
+        "date": "March 14, 2025",
+        "raw_text": "Signed G Kendrick Green to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Laviska Shenault",
+        "transaction_type": "Signed",
+        "date": "March 13, 2025",
+        "raw_text": "Signed WR Laviska Shenault to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "March 12, 2025",
+        "raw_text": "Re-signed S Damar Hamlin to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Kaiir Elam",
+        "transaction_type": "Traded",
+        "date": "March 12, 2025",
+        "raw_text": "Traded CB Kaiir Elam and 2025 sixth-round pick to the Dallas Cowboys in exchange for a 2025 fifth-round pick and a 2026 seventh-round pick."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Michael Hoecht",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed DE Michael Hoecht to a three-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Palmer",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed WR josh Palmer to a three-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Joey Bosa",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed DE Joey Bosa to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Larry Ogunjobi",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed DT Larry Ogunjobi to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Darrick Forrest",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed S Darrick Forrest to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "March 11, 2025",
+        "raw_text": "Re-signed FB Reggie Gilliam to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Von Miller",
+        "transaction_type": "Released",
+        "date": "March 9, 2025",
+        "raw_text": "Released DE Von Miller."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Greg Rousseau",
+        "transaction_type": "Signed",
+        "date": "March 8, 2025",
+        "raw_text": "Signed DL Greg Rousseau to a four-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Reid Ferguson",
+        "transaction_type": "Signed",
+        "date": "March 8, 2025",
+        "raw_text": "Signed LS Reid Ferguson to a four-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Terrel Bernard",
+        "transaction_type": "Signed",
+        "date": "March 7, 2025",
+        "raw_text": "Signed LB Terrel Bernard to a four-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Sam Martin.February",
+        "transaction_type": "Released",
+        "date": "March 6, 2025",
+        "raw_text": "Released P Sam Martin.February"
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "February 25, 2025",
+        "raw_text": "Re-signed WR Khalil Shakir to a four-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Alec Anderson",
+        "transaction_type": "Signed",
+        "date": "February 12, 2025",
+        "raw_text": "Signed OL Alec Anderson to an exclusive rights tender contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Branson Deen",
+        "transaction_type": "Signed",
+        "date": "January 30, 2025",
+        "raw_text": "Signed DL Branson Deen to a reserve/futures contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "January 29, 2025",
+        "raw_text": "Re-signed QB Shane Buechele to a one-year contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Zach Davidson",
+        "transaction_type": "Signed",
+        "date": "January 29, 2025",
+        "raw_text": "Signed TE Zach Davidson to a reserve/futures contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Tyrell Shavers",
+        "transaction_type": "Signed",
+        "date": "January 28, 2025",
+        "raw_text": "Signed WR Tyrell Shavers & WR Jalen Virgil to reserve/futures contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "January 27, 2025",
+        "raw_text": "Re-signed OT Ryan Van Demark to a contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "CBs Te'Cory Couch",
+        "transaction_type": "Signed",
+        "date": "January 27, 2025",
+        "raw_text": "Signed CBs Te'Cory Couch and Daequan Hardy, OL Mike Edwards, RB Frank Gore Jr., OT Richard Gouraige, WR KJ Hamler and DT Zion Logue to reserve/futures contracts."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Eli Ankou",
+        "transaction_type": "Signed",
+        "date": "January 22, 2025",
+        "raw_text": "Signed DL Eli Ankou to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Anthony Brown",
+        "transaction_type": "Released",
+        "date": "January 22, 2025",
+        "raw_text": "Released QB Anthony Brown from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Baylon Spector",
+        "transaction_type": "Injured Reserve",
+        "date": "January 22, 2025",
+        "raw_text": "Designated LB Baylon Spector to return from injured reserve."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Anthony Brown",
+        "transaction_type": "Released",
+        "date": "January 21, 2025",
+        "raw_text": "Released QB Anthony Brown from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Armani Rogers",
+        "transaction_type": "Signed",
+        "date": "January 17, 2025",
+        "raw_text": "Signed TE Armani Rogers to a reserve/futures contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Anthony Brown",
+        "transaction_type": "Signed",
+        "date": "January 15, 2025",
+        "raw_text": "Signed QB Anthony Brown to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Eli Ankou",
+        "transaction_type": "Released",
+        "date": "January 15, 2025",
+        "raw_text": "Released DT Eli Ankou from the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Eli Ankou",
+        "transaction_type": "Signed",
+        "date": "January 8, 2025",
+        "raw_text": "Signed DL Eli Ankou and LB Tyreek Maddox-Williams to the practice squad."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Jake Camarda",
+        "transaction_type": "Signed",
+        "date": "January 7, 2025",
+        "raw_text": "Signed P Jake Camarda to a reserve/future contract."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Mike White",
+        "transaction_type": "Signed",
+        "date": "January 3, 2025",
+        "raw_text": "Signed QB Mike White to the active roster from the practice squad and signed him to a one-year contract extension."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Nicholas Morrow",
+        "transaction_type": "Released",
+        "date": "January 3, 2025",
+        "raw_text": "Released LB Nicholas Morrow."
+      },
+      {
+        "team_abbr": "buf",
+        "player_name": "Nicholas Morrow.NFL News49ers'",
+        "transaction_type": "Waived",
+        "date": "January 2, 2025",
+        "raw_text": "Waived LB Nicholas Morrow.NFL News49ers' Jennings goes after Panthers' Moehrig over 'cheap shot'49ers wide receiver Jauan Jennings responded to a \"cheap shot\" from Tre'von Moehrig by throwing an open-handed right cross to the Panthers safety's face after the final whistle Monday night.26mNick WagonerSVP's 'Bad Beats' of the weekScott Van Pelt and Stanford Steve go over their \"Bad Beats\" of the week.3hNFL Week 12:"
+      }
+    ],
+    "transaction_count": 137,
+    "fetched_at": "2025-11-25T00:02:43.590885"
+  },
+  "nyj": {
+    "team_abbr": "nyj",
+    "team_name": "New York Jets",
+    "transactions": [
+      {
+        "team_abbr": "nyj",
+        "player_name": "Ja'Markis Weston",
+        "transaction_type": "Waived",
+        "date": "November 22, 2025",
+        "raw_text": "Waived WR Ja'Markis Weston."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Marcelino McCrary-Ball",
+        "transaction_type": "Injured Reserve",
+        "date": "November 22, 2025",
+        "raw_text": "Activated LB Marcelino McCrary-Ball from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Marcelino McCrary-Ball",
+        "transaction_type": "Injured Reserve",
+        "date": "November 17, 2025",
+        "raw_text": "Designated LB Marcelino McCrary-Ball to return from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Khalen Saunders",
+        "transaction_type": "Signed",
+        "date": "November 17, 2025",
+        "raw_text": "Signed DT Khalen Saunders to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Garrett Wilson",
+        "transaction_type": "Injured Reserve",
+        "date": "November 13, 2025",
+        "raw_text": "Placed WR Garrett Wilson on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Tre Brown",
+        "transaction_type": "Signed",
+        "date": "November 11, 2025",
+        "raw_text": "Signed CB Tre Brown to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "JT Woods",
+        "transaction_type": "Released",
+        "date": "November 11, 2025",
+        "raw_text": "Released DB JT Woods from the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Andre Cisco",
+        "transaction_type": "Injured Reserve",
+        "date": "November 5, 2025",
+        "raw_text": "Placed S Andre Cisco on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Dean Clark",
+        "transaction_type": "Signed",
+        "date": "November 5, 2025",
+        "raw_text": "Signed S Dean Clark to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jarius Monroe",
+        "transaction_type": "Signed",
+        "date": "November 5, 2025",
+        "raw_text": "Signed S Jarius Monroe to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Brandon Smith",
+        "transaction_type": "Waived",
+        "date": "October 28, 2025",
+        "raw_text": "Waived WR Brandon Smith."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Quincy Williams",
+        "transaction_type": "Injured Reserve",
+        "date": "October 25, 2025",
+        "raw_text": "Activated LB Quincy Williams from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Josh Reynolds",
+        "transaction_type": "Injured Reserve",
+        "date": "October 25, 2025",
+        "raw_text": "Placed WR Josh Reynolds and LB Cam Jones on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Brandon Smith",
+        "transaction_type": "Signed",
+        "date": "October 25, 2025",
+        "raw_text": "Signed LB Brandon Smith to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Esa Pole",
+        "transaction_type": "Waived",
+        "date": "October 23, 2025",
+        "raw_text": "Waived OT Esa Pole."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Reinstated",
+        "transaction_type": "Injured Reserve",
+        "date": "October 22, 2025",
+        "raw_text": "Reinstated LB Quincy Williams to return from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "J.T",
+        "transaction_type": "Signed",
+        "date": "October 22, 2025",
+        "raw_text": "Signed DB J.T."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Fatorma Mulbah",
+        "transaction_type": "Signed",
+        "date": "October 21, 2025",
+        "raw_text": "Signed DL Fatorma Mulbah to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Isaiah Williams",
+        "transaction_type": "Signed",
+        "date": "October 18, 2025",
+        "raw_text": "Signed WR Isaiah Williams to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Ja'Markis Weston",
+        "transaction_type": "Injured Reserve",
+        "date": "October 18, 2025",
+        "raw_text": "Activated LB Ja'Markis Weston from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Mark Robinson",
+        "transaction_type": "Waived",
+        "date": "October 18, 2025",
+        "raw_text": "Waived LB Mark Robinson."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Avery Williams",
+        "transaction_type": "Released",
+        "date": "October 14, 2025",
+        "raw_text": "Released RB Avery Williams from the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Trenton Irwin",
+        "transaction_type": "Signed",
+        "date": "October 14, 2025",
+        "raw_text": "Signed WR Trenton Irwin to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Leonard Taylor",
+        "transaction_type": "Waived",
+        "date": "October 14, 2025",
+        "raw_text": "Waived DT Leonard Taylor."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Mykal Walker",
+        "transaction_type": "Signed",
+        "date": "October 4, 2025",
+        "raw_text": "Signed LB Mykal Walker to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Isaiah Williams",
+        "transaction_type": "Waived",
+        "date": "October 4, 2025",
+        "raw_text": "Waived WR Isaiah Williams from the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Avery Williams",
+        "transaction_type": "Signed",
+        "date": "October 3, 2025",
+        "raw_text": "Signed RB Avery Williams to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Lawrance Toafili",
+        "transaction_type": "Released",
+        "date": "October 3, 2025",
+        "raw_text": "Released RB Lawrance Toafili from the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Braelon Allen",
+        "transaction_type": "Injured Reserve",
+        "date": "October 2, 2025",
+        "raw_text": "Placed RB Braelon Allen on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Khalil Herbert",
+        "transaction_type": "Signed",
+        "date": "October 2, 2025",
+        "raw_text": "Signed RB Khalil Herbert to the active roster.September"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Liam Fornadel",
+        "transaction_type": "Signed",
+        "date": "September 30, 2025",
+        "raw_text": "Signed OL Liam Fornadel to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Ben Niemann",
+        "transaction_type": "Released",
+        "date": "September 30, 2025",
+        "raw_text": "Released LB Ben Niemann from the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Lawrance Toafili",
+        "transaction_type": "Signed",
+        "date": "September 24, 2025",
+        "raw_text": "Signed RB Lawrance Toafili."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "LBs Quincy Williams",
+        "transaction_type": "Injured Reserve",
+        "date": "September 23, 2025",
+        "raw_text": "Placed LBs Quincy Williams and Marcelino McCrary-Ball on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Nik Needham",
+        "transaction_type": "Signed",
+        "date": "September 16, 2025",
+        "raw_text": "Signed DB Nik Needham to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Xavier Gipson",
+        "transaction_type": "Released",
+        "date": "September 10, 2025",
+        "raw_text": "Released WR Xavier Gipson."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Isaiah Williams",
+        "transaction_type": "Signed",
+        "date": "September 10, 2025",
+        "raw_text": "Signed WR Isaiah Williams to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Lawrance Toafili",
+        "transaction_type": "Released",
+        "date": "September 9, 2025",
+        "raw_text": "Released RB Lawrance Toafili."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Keilan Robinson",
+        "transaction_type": "Signed",
+        "date": "September 9, 2025",
+        "raw_text": "Signed RB Keilan Robinson."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Tyler Johnson",
+        "transaction_type": "Signed",
+        "date": "September 8, 2025",
+        "raw_text": "Signed WR Tyler Johnson to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Liam Fornadel",
+        "transaction_type": "Signed",
+        "date": "September 8, 2025",
+        "raw_text": "Signed OL Liam Fornadel to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Alijah Vera-Tucker",
+        "transaction_type": "Injured Reserve",
+        "date": "September 6, 2025",
+        "raw_text": "Placed G Alijah Vera-Tucker on injured reserve.August"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Korie Black",
+        "transaction_type": "Signed",
+        "date": "August 29, 2025",
+        "raw_text": "Signed CB Korie Black and G Marquis Hayes to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Marquis Hayes",
+        "transaction_type": "Signed",
+        "date": "August 28, 2025",
+        "raw_text": "Signed OL Marquis Hayes to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Tyler Johnson,",
+        "transaction_type": "Waived",
+        "date": "August 27, 2025",
+        "raw_text": "Waived WR Tyler Johnson, LB Zaire Barnes and G Marquis Hayes."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Dean Clark",
+        "transaction_type": "Signed",
+        "date": "August 27, 2025",
+        "raw_text": "Signed Ss Dean Clark and Jordan Clark, QB Brady Cook, WRs Tyler Johnson, Jamaal Pritchett, Quentin Skinner and Brandon Smith, Gs Kohl Levao and Leander Wiegand, K Harrison Mevis, DT Payton Page, LBs Jackson Sirmon and Boog Smith and DL Eric Watts to the practice squad."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Carter Warren,",
+        "transaction_type": "Released",
+        "date": "August 26, 2025",
+        "raw_text": "Released OT Carter Warren, WR Malachi Corley, DE Michael Fletcher, T Liam Fornadel, TE Zack Kuntz, QB Adrian Martinez, DB Tanner McCallister, RB Lawrence Toafili and LB Jamin Davis."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Rashad Weaver",
+        "transaction_type": "Injured Reserve",
+        "date": "August 25, 2025",
+        "raw_text": "Released LB Rashad Weaver from injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jamin Davis",
+        "transaction_type": "Released",
+        "date": "August 24, 2025",
+        "raw_text": "Released LB Jamin Davis."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Michael Fletcher,",
+        "transaction_type": "Waived",
+        "date": "August 24, 2025",
+        "raw_text": "Waived DE Michael Fletcher, OT Liam Fornadel, TE Zack Kuntz, QB Adrian Martinez, DB Tanner McCalister and RB Lawrance Toafili."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Mario Goodrich,",
+        "transaction_type": "Waived",
+        "date": "August 23, 2025",
+        "raw_text": "Waived DB Mario Goodrich, OL Samuel Jackson, TE Neal Johnson, DL Fatorma Mulbah and WRs Dymere Miller and Ontaria Wilson."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Ryan Cooper",
+        "transaction_type": "Injured Reserve",
+        "date": "August 22, 2025",
+        "raw_text": "Reverted DB Ryan Cooper to injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Phidarian Mathis",
+        "transaction_type": "Released",
+        "date": "August 21, 2025",
+        "raw_text": "Released DT Phidarian Mathis."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Rashad Weaver",
+        "transaction_type": "Injured Reserve",
+        "date": "August 21, 2025",
+        "raw_text": "Placed DL Rashad Weaver on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 21, 2025",
+        "raw_text": "Waived/injured DB Ryan Cooper."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Kris Boyd",
+        "transaction_type": "Injured Reserve",
+        "date": "August 18, 2025",
+        "raw_text": "Placed DB Kris Boyd on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jaylin Simpson",
+        "transaction_type": "Injured Reserve",
+        "date": "August 6, 2025",
+        "raw_text": "Waived DB Jaylin Simpson from injured reserve with a settlement."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jaylin Simpson",
+        "transaction_type": "Waived",
+        "date": "August 2, 2025",
+        "raw_text": "Waived S Jaylin Simpson with an injury designation.July"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Gus Hartwig",
+        "transaction_type": "Injured Reserve",
+        "date": "July 30, 2025",
+        "raw_text": "Reverted C Gus Hartwig to injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Lawrance Toafili",
+        "transaction_type": "Signed",
+        "date": "July 29, 2025",
+        "raw_text": "Signed RB Lawrance Toafili to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Caden Davis",
+        "transaction_type": "Waived",
+        "date": "July 29, 2025",
+        "raw_text": "Waived K Caden Davis."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Liam Fornadel",
+        "transaction_type": "Signed",
+        "date": "July 29, 2025",
+        "raw_text": "Signed OL Liam Fornadel to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "July 29, 2025",
+        "raw_text": "Waived/injured C Gus Hartwig."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Nick Folk",
+        "transaction_type": "Signed",
+        "date": "July 29, 2025",
+        "raw_text": "Signed K Nick Folk to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Kai Kroger",
+        "transaction_type": "Waived",
+        "date": "July 27, 2025",
+        "raw_text": "Waived P Kai Kroger."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Tanner McCalister",
+        "transaction_type": "Signed",
+        "date": "July 24, 2025",
+        "raw_text": "Signed DB Tanner McCalister to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jared Bartlett",
+        "transaction_type": "Released",
+        "date": "July 24, 2025",
+        "raw_text": "Released LB Jared Bartlett."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Samuel Jackson",
+        "transaction_type": "Signed",
+        "date": "July 23, 2025",
+        "raw_text": "Signed OL Samuel Jackson to the active roster."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Obinna Eze",
+        "transaction_type": "Waived",
+        "date": "July 22, 2025",
+        "raw_text": "Waived T Obinna Eze."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Sauce Gardner",
+        "transaction_type": "Signed",
+        "date": "July 15, 2025",
+        "raw_text": "Signed CB Sauce Gardner to a four-year contract extension."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "July 14, 2025",
+        "raw_text": "Re-signed WR Garrett Wilson to a four-year contract extension.June"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Anders Carlson",
+        "transaction_type": "Waived",
+        "date": "June 18, 2025",
+        "raw_text": "Waived K Anders Carlson."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Harrison Mevis",
+        "transaction_type": "Signed",
+        "date": "June 18, 2025",
+        "raw_text": "Signed K Harrison Mevis."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Harrison Mevis",
+        "transaction_type": "Signed",
+        "date": "June 17, 2025",
+        "raw_text": "Signed K Harrison Mevis to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Marquis Hayes",
+        "transaction_type": "Signed",
+        "date": "June 12, 2025",
+        "raw_text": "Signed G Marquis Hayes and DE Kingsley Jonathan to contracts."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Zach Bailey",
+        "transaction_type": "Waived",
+        "date": "June 12, 2025",
+        "raw_text": "Waived G Zach Bailey and CB Tre Swilling.May"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Michael Fletcher",
+        "transaction_type": "Signed",
+        "date": "May 16, 2025",
+        "raw_text": "Signed DE Michael Fletcher to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Greg Zuelein",
+        "transaction_type": "Released",
+        "date": "May 16, 2025",
+        "raw_text": "Released K Greg Zuelein."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Thomas Morstead",
+        "transaction_type": "Released",
+        "date": "May 13, 2025",
+        "raw_text": "Released P Thomas Morstead."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Kai Kroeger",
+        "transaction_type": "Signed",
+        "date": "May 13, 2025",
+        "raw_text": "Signed P Kai Kroeger to a rookie contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Arian Smith",
+        "transaction_type": "Signed",
+        "date": "May 12, 2025",
+        "raw_text": "Signed WR Arian Smith to a rookie contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Brady Cook,",
+        "transaction_type": "Signed",
+        "date": "May 9, 2025",
+        "raw_text": "Signed QB Brady Cook, WR Quentin Skinner, WR Jamaal Pritchett, WR Dymere Miller, RB Donovan Edwards, G Leander Wiegand, C Gus Hartwig, DT Payton Page, DT Fatorma Mulbah, LB Ja’Markis Weston, LB Aaron Smith, LB Jared Bartlett, DB Dean Clark, DB Jordan Clark, and K Caden Davis to rookie contracts."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jimmy Ciarlo",
+        "transaction_type": "Waived",
+        "date": "May 8, 2025",
+        "raw_text": "Waived LB Jimmy Ciarlo and WRs Marcus Riley and Easop Winston."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Armand Membou",
+        "transaction_type": "Signed",
+        "date": "May 8, 2025",
+        "raw_text": "Signed OT Armand Membou to a rookie contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Azareye'h Thomas",
+        "transaction_type": "Signed",
+        "date": "May 8, 2025",
+        "raw_text": "Signed CB Azareye'h Thomas to a rookie contract.April"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "April 4, 2025",
+        "raw_text": "Re-signed DB Tony Adams to a one-year restricted free agent tender."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Xavier Newman-Johnson",
+        "transaction_type": "Signed",
+        "date": "April 2, 2025",
+        "raw_text": "Signed G Xavier Newman-Johnson to a one-year, exclusive rights tender contract.March"
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Irvin Charles",
+        "transaction_type": "Signed",
+        "date": "March 28, 2025",
+        "raw_text": "Signed WR Irvin Charles to an exclusive rights contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "NT Derrick Nnadi",
+        "transaction_type": "Signed",
+        "date": "March 18, 2025",
+        "raw_text": "Signed NT Derrick Nnadi to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Jay Tufele,",
+        "transaction_type": "Signed",
+        "date": "March 17, 2025",
+        "raw_text": "Signed DT Jay Tufele, CB Isaiah Oliver, WR Tyler Johnson, DB Kris Boyd, TE Stone Smartt and LB Rashad Weaver to contracts."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Derrick Nnadi",
+        "transaction_type": "Signed",
+        "date": "March 16, 2025",
+        "raw_text": "Signed DT Derrick Nnadi to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Austin McNamara",
+        "transaction_type": "Signed",
+        "date": "March 14, 2025",
+        "raw_text": "Signed P Austin McNamara to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Re-signed RB/KR Kene",
+        "transaction_type": "Re-signed",
+        "date": "March 14, 2025",
+        "raw_text": "Re-signed RB/KR Kene Nwangwu to a one-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "March 13, 2025",
+        "raw_text": "Re-signed LB Jamin Davis to a one-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Stone Smartt",
+        "transaction_type": "Signed",
+        "date": "March 13, 2025",
+        "raw_text": "Signed TE Stone Smartt to a one-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Byton Cowart",
+        "transaction_type": "Signed",
+        "date": "March 13, 2025",
+        "raw_text": "Signed DT Byton Cowart to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Justin Fields",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed QB Justin Fields to a two-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Brandon Stephens",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed CB Brandon Stephens to a three-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Andre Cisco",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed S Andre Cisco to a one-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Rashad Weaver",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed DE Rashad Weaver to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Chukwuma Okorafor",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed OL Chukwuma Okorafor to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "March 12, 2025",
+        "raw_text": "Re-signed CB Isaiah Oliver to a contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Josh Myers",
+        "transaction_type": "Signed",
+        "date": "March 12, 2025",
+        "raw_text": "Signed C Josh Myers to a one-year contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "C.J",
+        "transaction_type": "Released",
+        "date": "March 12, 2025",
+        "raw_text": "Released LB C.J."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Andrew Beck",
+        "transaction_type": "Signed",
+        "date": "February 7, 2025",
+        "raw_text": "Signed FB Andrew Beck to a reserve/futures contract."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Anders Carlson",
+        "transaction_type": "Signed",
+        "date": "January 14, 2025",
+        "raw_text": "Signed K Anders Carlson and TE Neal Johnson to reserve/futures contracts."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "OLs Zack Bailey,",
+        "transaction_type": "Signed",
+        "date": "January 6, 2025",
+        "raw_text": "Signed OLs Zack Bailey, Obinna Eze and Kohl Levao, RB Zach Evans, TE Zack Kuntz, QB Adrian Martinez, LB Jackson Sirmon, DB Tre Swilling, WR Brandon Smith and Easop Winston to reserve/futures contracts."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Sauce Gardner",
+        "transaction_type": "Injured Reserve",
+        "date": "January 4, 2025",
+        "raw_text": "Placed CB Sauce Gardner on injured reserve."
+      },
+      {
+        "team_abbr": "nyj",
+        "player_name": "Bruce Hector",
+        "transaction_type": "Signed",
+        "date": "January 4, 2025",
+        "raw_text": "Signed DL Bruce Hector to the active roster from the practice squad.NFL News49ers' Jennings goes after Panthers' Moehrig over 'cheap shot'49ers wide receiver Jauan Jennings responded to a \"cheap shot\" from Tre'von Moehrig by throwing an open-handed right cross to the Panthers safety's face after the final whistle Monday night.27mNick WagonerSVP's 'Bad Beats' of the weekScott Van Pelt and Stanford Steve go over their \"Bad Beats\" of the week.3hNFL Week 12:"
+      }
+    ],
+    "transaction_count": 109,
+    "fetched_at": "2025-11-25T00:02:44.786197"
+  },
+  "ne": {
+    "team_abbr": "ne",
+    "team_name": "New England Patriots",
+    "transactions": [
+      {
+        "team_abbr": "ne",
+        "player_name": "John Saunders Jr",
+        "transaction_type": "Signed",
+        "date": "November 19, 2025",
+        "raw_text": "Signed S John Saunders Jr. to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Fabien Lovett Sr",
+        "transaction_type": "Signed",
+        "date": "November 18, 2025",
+        "raw_text": "Signed DL Fabien Lovett Sr. to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "C.J",
+        "transaction_type": "Signed",
+        "date": "November 17, 2025",
+        "raw_text": "Signed TE C.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "John Saunders",
+        "transaction_type": "Released",
+        "date": "November 17, 2025",
+        "raw_text": "Released S John Saunders."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Otis Reese",
+        "transaction_type": "Signed",
+        "date": "November 17, 2025",
+        "raw_text": "Signed LB Otis Reese to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Darius Harris",
+        "transaction_type": "Injured Reserve",
+        "date": "November 17, 2025",
+        "raw_text": "Placed LB Darius Harris on the practice squad injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Bradyn Swinson",
+        "transaction_type": "Signed",
+        "date": "November 15, 2025",
+        "raw_text": "Signed LB Bradyn Swinson to the active roster."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Milton Williams",
+        "transaction_type": "Injured Reserve",
+        "date": "November 15, 2025",
+        "raw_text": "Placed DT Milton Williams on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jonathan Ward",
+        "transaction_type": "Signed",
+        "date": "November 11, 2025",
+        "raw_text": "Signed RB Jonathan Ward to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Brenden Rice",
+        "transaction_type": "Released",
+        "date": "November 11, 2025",
+        "raw_text": "Released WR Brenden Rice from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Brenden Rice",
+        "transaction_type": "Signed",
+        "date": "November 4, 2025",
+        "raw_text": "Signed WR Brenden Rice to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jonathan Ward",
+        "transaction_type": "Released",
+        "date": "November 4, 2025",
+        "raw_text": "Released WR Jonathan Ward from the practice squad.October"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Kyle Dugger",
+        "transaction_type": "Traded",
+        "date": "October 30, 2025",
+        "raw_text": "Traded S Kyle Dugger to the Pittsburgh Steelers."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "John Saunders Jr",
+        "transaction_type": "Signed",
+        "date": "October 30, 2025",
+        "raw_text": "Signed S John Saunders Jr. to the active roster."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Keion White",
+        "transaction_type": "Traded",
+        "date": "October 29, 2025",
+        "raw_text": "Traded DE Keion White to San Francisco."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "RBs Terrell Jennings",
+        "transaction_type": "Signed",
+        "date": "October 29, 2025",
+        "raw_text": "Signed RBs Terrell Jennings to the active roster and D’Ernest Johnson to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "RBs Rushawn Baker",
+        "transaction_type": "Signed",
+        "date": "October 28, 2025",
+        "raw_text": "Signed RBs Rushawn Baker and Jonathan Ward to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jashaun Corbin",
+        "transaction_type": "Injured Reserve",
+        "date": "October 28, 2025",
+        "raw_text": "Placed RB Jashaun Corbin on the practice squad injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Lawrence Guy",
+        "transaction_type": "Signed",
+        "date": "October 24, 2025",
+        "raw_text": "Signed DT Lawrence Guy to a one-day contract to retire with team."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Thomas Odukoya",
+        "transaction_type": "Signed",
+        "date": "October 16, 2025",
+        "raw_text": "Signed TE Thomas Odukoya to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Leonard Taylor",
+        "transaction_type": "Signed",
+        "date": "October 16, 2025",
+        "raw_text": "Signed DL Leonard Taylor to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Marshall Land",
+        "transaction_type": "Released",
+        "date": "October 16, 2025",
+        "raw_text": "Released TE Marshall Land and DL David Olajiga from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Richie Grant",
+        "transaction_type": "Signed",
+        "date": "October 15, 2025",
+        "raw_text": "Signed S Richie Grant to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Marshall Lang",
+        "transaction_type": "Signed",
+        "date": "October 14, 2025",
+        "raw_text": "Signed TE Marshall Lang to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Tyron Herring",
+        "transaction_type": "Released",
+        "date": "October 14, 2025",
+        "raw_text": "Released DB Tyron Herring and TE Gee Scott Jr. from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Layden Robinson",
+        "transaction_type": "Injured Reserve",
+        "date": "October 13, 2025",
+        "raw_text": "Waived OL Layden Robinson from injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Antonio Gibson",
+        "transaction_type": "Injured Reserve",
+        "date": "October 10, 2025",
+        "raw_text": "Placed RB Antonio Gibson on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jashaun Corbin",
+        "transaction_type": "Signed",
+        "date": "October 7, 2025",
+        "raw_text": "Signed RB Jashaun Corbin to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Royce Newman",
+        "transaction_type": "Released",
+        "date": "October 7, 2025",
+        "raw_text": "Released OL Royce Newman from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jahlani Tavai",
+        "transaction_type": "Injured Reserve",
+        "date": "October 4, 2025",
+        "raw_text": "Activated LB Jahlani Tavai from the injured reserve list."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jahlani Tavai",
+        "transaction_type": "Injured Reserve",
+        "date": "October 1, 2025",
+        "raw_text": "Designated LB Jahlani Tavai to return from injured reserve.September"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Sebastian Gutierrez",
+        "transaction_type": "Signed",
+        "date": "September 30, 2025",
+        "raw_text": "Signed T Sebastian Gutierrez and G Andrew Rupcich to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jack Conley",
+        "transaction_type": "Released",
+        "date": "September 30, 2025",
+        "raw_text": "Released G Jack Conley and DL Fabien Lovett from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Royce Newman",
+        "transaction_type": "Signed",
+        "date": "September 24, 2025",
+        "raw_text": "Signed OL Royce Newman and TE Gee Scott to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Tyron Herring",
+        "transaction_type": "Signed",
+        "date": "September 23, 2025",
+        "raw_text": "Signed DB Tyron Herring to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Corey Ballentine",
+        "transaction_type": "Released",
+        "date": "September 23, 2025",
+        "raw_text": "Released DB Corey Ballentine from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jack Conley",
+        "transaction_type": "Signed",
+        "date": "September 11, 2025",
+        "raw_text": "Signed G Jack Conley to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Mehki Butler",
+        "transaction_type": "Released",
+        "date": "September 11, 2025",
+        "raw_text": "Released G Mehki Butler from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "D.J",
+        "transaction_type": "Waived",
+        "date": "September 9, 2025",
+        "raw_text": "Waived CB D.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jeremiah Pharms Jr",
+        "transaction_type": "Signed",
+        "date": "September 9, 2025",
+        "raw_text": "Signed DT Jeremiah Pharms Jr. to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Cory Durden",
+        "transaction_type": "Signed",
+        "date": "September 6, 2025",
+        "raw_text": "Signed DT Cory Durden to the active roster."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jeremiah Pharms Jr",
+        "transaction_type": "Released",
+        "date": "September 6, 2025",
+        "raw_text": "Released DT Jeremiah Pharms Jr."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Darius Harris",
+        "transaction_type": "Signed",
+        "date": "September 3, 2025",
+        "raw_text": "Signed LB Darius Harris to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jahvaree Ritzie",
+        "transaction_type": "Released",
+        "date": "September 2, 2025",
+        "raw_text": "Released DT Jahvaree Ritzie from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Brenden Jaimes",
+        "transaction_type": "Signed",
+        "date": "September 1, 2025",
+        "raw_text": "Signed OL Brenden Jaimes to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Alec Lindstrom",
+        "transaction_type": "Released",
+        "date": "September 1, 2025",
+        "raw_text": "Released C Alec Lindstrom from the practice squad.August"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jabrill Peppers",
+        "transaction_type": "Released",
+        "date": "August 29, 2025",
+        "raw_text": "Released S Jabrill Peppers."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jack Conley",
+        "transaction_type": "Released",
+        "date": "August 29, 2025",
+        "raw_text": "Released G Jack Conley from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Thayer Munford Jr",
+        "transaction_type": "Signed",
+        "date": "August 29, 2025",
+        "raw_text": "Signed T Thayer Munford Jr. to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Corey Ballentine,",
+        "transaction_type": "Signed",
+        "date": "August 28, 2025",
+        "raw_text": "Signed DB Corey Ballentine, DL Cory Durden and Fabien Lovett and LB Mark Robinson to the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Brandon Crossley,",
+        "transaction_type": "Released",
+        "date": "August 28, 2025",
+        "raw_text": "Released CB Brandon Crossley, LB Cam Riley and TE Gee Scott Jr. from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "WRs Javon Baker",
+        "transaction_type": "Released",
+        "date": "August 27, 2025",
+        "raw_text": "Released WRs Javon Baker and Kendrick Bourne."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "CBs Miles Battle",
+        "transaction_type": "Signed",
+        "date": "August 27, 2025",
+        "raw_text": "Signed CBs Miles Battle and Brandon Crossley, Gs Mehki Butler and Jack Conley, TEs C.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Ja'Lynn Polk",
+        "transaction_type": "Injured Reserve",
+        "date": "August 26, 2025",
+        "raw_text": "Placed WR Ja'Lynn Polk and LB Jahlani Tavai on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "CBs Brandon Crossley",
+        "transaction_type": "Released",
+        "date": "August 26, 2025",
+        "raw_text": "Released CBs Brandon Crossley and Miles Battle, Gs Mehki Butler, Cole Strange, Jack Conley and Brandon Crossley, TEs C.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Waived/injured Layden",
+        "transaction_type": "Waived",
+        "date": "August 24, 2025",
+        "raw_text": "Waived/injured G Layden Robinson."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "RJ Moten,",
+        "transaction_type": "Released",
+        "date": "August 22, 2025",
+        "raw_text": "Released LB RJ Moten, DT Kyle Peko, RB Shane Watts, DB Jordan Polk, TE Jaheim Bell, QB Ben Wooldridge, CB Isaiah Bolden, G Tyrese Robinson, TE Cole Fotheringham, RB Micah Bernard, WR Phil Lutz, LB Monty Rice, G Sidy Sow and DT Philip Blidi."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Micah Bernard",
+        "transaction_type": "Signed",
+        "date": "August 19, 2025",
+        "raw_text": "Signed RB Micah Bernard and DT Philip Blidi to contracts."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Tre Avery",
+        "transaction_type": "Released",
+        "date": "August 19, 2025",
+        "raw_text": "Released CB Tre Avery and DE Jereme Robinson."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Phil Lutz",
+        "transaction_type": "Signed",
+        "date": "August 18, 2025",
+        "raw_text": "Signed WR Phil Lutz to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Waived/injured",
+        "transaction_type": "Waived",
+        "date": "August 18, 2025",
+        "raw_text": "Waived/injured DT Isaiah Iton."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Deneric Prince",
+        "transaction_type": "Injured Reserve",
+        "date": "August 13, 2025",
+        "raw_text": "Placed RB Deneric Prince on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Shane Watts",
+        "transaction_type": "Signed",
+        "date": "August 12, 2025",
+        "raw_text": "Signed RB Shane Watts to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Deneric Prince",
+        "transaction_type": "Released",
+        "date": "August 12, 2025",
+        "raw_text": "Released RB Deneric Prince."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Kyle Peko",
+        "transaction_type": "Signed",
+        "date": "August 11, 2025",
+        "raw_text": "Signed DT Kyle Peko to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Bryce Ganious",
+        "transaction_type": "Released",
+        "date": "August 11, 2025",
+        "raw_text": "Released DT Bryce Ganious."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Deneric Prince",
+        "transaction_type": "Signed",
+        "date": "August 10, 2025",
+        "raw_text": "Signed RB Deneric Prince and DE Jereme Robinson."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Josh Minkins",
+        "transaction_type": "Waived",
+        "date": "August 10, 2025",
+        "raw_text": "Waived S Josh Minkins."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Lan Larison",
+        "transaction_type": "Injured Reserve",
+        "date": "August 10, 2025",
+        "raw_text": "Placed RB Lan Larison on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Marcellas Dial",
+        "transaction_type": "Injured Reserve",
+        "date": "August 5, 2025",
+        "raw_text": "Placed DB Marcellas Dial and NT Jaquelin Roy on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Tyler Davis",
+        "transaction_type": "Released",
+        "date": "August 5, 2025",
+        "raw_text": "Released TE Tyler Davis."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Bryce Ganious",
+        "transaction_type": "Signed",
+        "date": "August 5, 2025",
+        "raw_text": "Signed DT Bryce Ganious and RB JaMycal Hasty to contracts.July"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Yasir Durant",
+        "transaction_type": "Injured Reserve",
+        "date": "July 31, 2025",
+        "raw_text": "Reverted G Yasir Durant to injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "R.J",
+        "transaction_type": "Signed",
+        "date": "July 29, 2025",
+        "raw_text": "Signed LB R.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Brock Lampe",
+        "transaction_type": "Injured Reserve",
+        "date": "July 29, 2025",
+        "raw_text": "Placed FB Brock Lampe on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "David Olajiga",
+        "transaction_type": "Signed",
+        "date": "July 20, 2025",
+        "raw_text": "Signed DT David Olajiga to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Treveyon Henderson",
+        "transaction_type": "Signed",
+        "date": "July 19, 2025",
+        "raw_text": "Signed RB Treveyon Henderson."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Wilfried Pene",
+        "transaction_type": "Released",
+        "date": "June 26, 2025",
+        "raw_text": "Released DT Wilfried Pene."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Yasir Durant",
+        "transaction_type": "Signed",
+        "date": "June 24, 2025",
+        "raw_text": "Signed T Yasir Durant to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Craig Woodson",
+        "transaction_type": "Signed",
+        "date": "June 20, 2025",
+        "raw_text": "Signed S Craig Woodson to a rookie contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Will Campbell",
+        "transaction_type": "Signed",
+        "date": "June 3, 2025",
+        "raw_text": "Signed OL Will Campbell to a rookie contract.May"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Trayveon Williams",
+        "transaction_type": "Signed",
+        "date": "May 14, 2025",
+        "raw_text": "Signed RB Trayveon Williams."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Eric Johnson II",
+        "transaction_type": "Released",
+        "date": "May 14, 2025",
+        "raw_text": "Released DT Eric Johnson II."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Isaiah Iton",
+        "transaction_type": "Signed",
+        "date": "May 12, 2025",
+        "raw_text": "Signed DT Isaiah Iton to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Mekhi Butler",
+        "transaction_type": "Signed",
+        "date": "May 12, 2025",
+        "raw_text": "Signed G Mekhi Butler and DT Wilfried Pene to rookie contracts."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Cole Birdow,",
+        "transaction_type": "Signed",
+        "date": "May 9, 2025",
+        "raw_text": "Signed T Cole Birdow, WR Demeer Blankumsee, WR Efton Chism III, G Jack Conley, CB Brandon Crossley, TE C.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Joe Cardona",
+        "transaction_type": "Released",
+        "date": "April 29, 2025",
+        "raw_text": "Released LS Joe Cardona."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Jake Andrews,",
+        "transaction_type": "Released",
+        "date": "April 28, 2025",
+        "raw_text": "Released OL Jake Andrews, DL Marcus Harris, WR JaQuae Jackson, LB Titus Leo, S Mark Perry and TE Giovanni Ricci."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Ja'Whaun Bentley",
+        "transaction_type": "Released",
+        "date": "March 28, 2025",
+        "raw_text": "Released LB Ja'Whaun Bentley."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Stefon Diggs",
+        "transaction_type": "Signed",
+        "date": "March 28, 2025",
+        "raw_text": "Signed WR Stefon Diggs to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "March 25, 2025",
+        "raw_text": "Re-signed LB Christian Elliss as a restricted free agent after matching the offer sheet by Las Vegas."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Curtis Jacobs,",
+        "transaction_type": "Released",
+        "date": "March 21, 2025",
+        "raw_text": "Released LB Curtis Jacobs, T Caleb Jones, LB Andrew Parker Jr. and C Lecitus Smith."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Garrett Bradbury",
+        "transaction_type": "Signed",
+        "date": "March 19, 2025",
+        "raw_text": "Signed C Garrett Bradbury and LB Jack Gibbens to contracts."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Garrett Bradbury",
+        "transaction_type": "Signed",
+        "date": "March 18, 2025",
+        "raw_text": "Signed OL Garrett Bradbury to a two-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Joshua Dobbs",
+        "transaction_type": "Signed",
+        "date": "March 18, 2025",
+        "raw_text": "Signed QB Joshua Dobbs to a contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "K’Lavon Chaisson",
+        "transaction_type": "Signed",
+        "date": "March 17, 2025",
+        "raw_text": "Signed LB K’Lavon Chaisson and OL Wes Schweitzer to contracts."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Wes Schweitzer",
+        "transaction_type": "Signed",
+        "date": "March 14, 2025",
+        "raw_text": "Signed OL Wes Schweitzer to a one-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Marcus Epps",
+        "transaction_type": "Signed",
+        "date": "March 14, 2025",
+        "raw_text": "Signed S Marcus Epps to a one-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "David Andrews",
+        "transaction_type": "Released",
+        "date": "March 13, 2025",
+        "raw_text": "Released C David Andrews."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "EDGE K'Lavon Chaisson",
+        "transaction_type": "Signed",
+        "date": "March 13, 2025",
+        "raw_text": "Signed EDGE K'Lavon Chaisson to a one-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Davon Godchaux",
+        "transaction_type": "Traded",
+        "date": "March 12, 2025",
+        "raw_text": "Traded DT Davon Godchaux to New Orleans Saints for a 2026 seventh-round draft pick."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "February 20, 2025",
+        "raw_text": "Re-signed OL Ben Brown and Demontrey Jacobs to exclusive rights contracts."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Sione Takitaki",
+        "transaction_type": "Released",
+        "date": "February 19, 2025",
+        "raw_text": "Released LB Sione Takitaki."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "February 12, 2025",
+        "raw_text": "Re-signed WR JaQuae Jackson to a one-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Re-signed",
+        "transaction_type": "Re-signed",
+        "date": "February 11, 2025",
+        "raw_text": "Re-signed DT Jeremiah Pharms to a two-year contract."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Chukwuma Okorafor",
+        "transaction_type": "Released",
+        "date": "February 10, 2025",
+        "raw_text": "Released OT Chukwuma Okorafor."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Giovanni Ricci",
+        "transaction_type": "Signed",
+        "date": "February 3, 2025",
+        "raw_text": "Signed TE Giovanni Ricci to a reserve/futures contract.January"
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Marcus Harris,",
+        "transaction_type": "Signed",
+        "date": "January 6, 2025",
+        "raw_text": "Signed DT Marcus Harris, CB D.J."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Miles Battle,",
+        "transaction_type": "Signed",
+        "date": "January 4, 2025",
+        "raw_text": "Signed CB Miles Battle, DE Truman Jones, LB Monty Rice and TE Jack Westover to the active roster from the practice squad."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Ben Brown,",
+        "transaction_type": "Injured Reserve",
+        "date": "January 4, 2025",
+        "raw_text": "Placed C Ben Brown, S Jabrill Peppers and WR Ja’Lynn Polk on injured reserve."
+      },
+      {
+        "team_abbr": "ne",
+        "player_name": "Haggai Chisom Ndubuisi",
+        "transaction_type": "Waived",
+        "date": "January 2, 2025",
+        "raw_text": "Waived DT Haggai Chisom Ndubuisi with a non-football illness designation.NFL News49ers' Jennings goes after Panthers' Moehrig over 'cheap shot'49ers wide receiver Jauan Jennings responded to a \"cheap shot\" from Tre'von Moehrig by throwing an open-handed right cross to the Panthers safety's face after the final whistle Monday night.27mNick WagonerSVP's 'Bad Beats' of the weekScott Van Pelt and Stanford Steve go over their \"Bad Beats\" of the week.3hNFL Week 12:"
+      }
+    ],
+    "transaction_count": 111,
+    "fetched_at": "2025-11-25T00:02:45.962550"
+  }
+}
