@@ -56,7 +56,7 @@ Step 5: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
 - Uses your ACCUWEATHER_API_KEY from .env
 - ~8-10 API calls per run (only outdoor stadiums)
 
-Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-23**
+Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-25**
 - Overtime.ag API (primary) - Direct API access, no browser required
   - Method: scrape_overtime_api.py
   - Speed: ~5 seconds for NFL + NCAAF
@@ -65,13 +65,28 @@ Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-23**
   - 100% data quality verified
   - Recommended: docs/overtime_devtools_analysis_results.md
 
-- Action Network Sitemap (NEW 2025-11-23) - Game URLs & Sharp Action
+- Action Network Live Odds (NEW 2025-11-25) - Real-time odds with fallback resilience ✨
+  - Method: scrape_action_network_live.py
+  - Speed: ~10-15 seconds per league (includes Playwright startup)
+  - Authentication: ACTION_USERNAME + ACTION_PASSWORD from .env
+  - Features:
+    - Multi-selector fallback pattern (handles CSS changes gracefully)
+    - Login validation + retry logic
+    - Rate limiting (configurable)
+    - League separation (NFL/NCAAF isolated)
+    - Timestamped JSON output
+  - Usage: `uv run python scripts/scrapers/scrape_action_network_live.py --nfl --ncaaf`
+  - Output: output/action_network/{nfl,ncaaf}/games/odds_*.json
+  - Note: Optional alternative to sitemap scraper for real-time odds
+  - Integration: Ready for edge detection pipeline
+
+- Action Network Sitemap (2025-11-23) - Game URLs & Sharp Action (legacy)
   - Method: scrape_action_network_sitemap.py
   - Output: 18 NFL games, 120 NCAAF games
   - Categories: futures, odds, public-betting, strategy, teasers
   - Format: JSONL with full URL metadata
   - Data loader: src/data/action_network_loader.py
-  - Integration: Ready for Billy Walters pipeline
+  - Note: Use live scraper (above) for real-time odds, sitemap for URL cataloging
 
 - Hybrid scraper (optional, for live games only)
   - Method: scrape_overtime_hybrid.py
@@ -116,6 +131,7 @@ NFL:
 - data/current/nfl_week_N_weather.json
 - data/current/nfl_week_N_odds_action.json
 - output/overtime/nfl/pregame/api_walters_TIMESTAMP.json
+- output/action_network/nfl/games/odds_YYYYMMDD_HHMMSS.json (if Action Network scraper used)
 - output/edge_detection/nfl_edges_detected_week_N.jsonl
 
 NCAAF:
@@ -124,6 +140,7 @@ NCAAF:
 - data/current/ncaaf_week_N_injuries.json
 - data/current/ncaaf_week_N_weather.json
 - output/overtime/ncaaf/pregame/api_walters_TIMESTAMP.json
+- output/action_network/ncaaf/games/odds_YYYYMMDD_HHMMSS.json (if Action Network scraper used)
 - output/edge_detection/ncaaf_edges_detected_week_N.jsonl
 
 **Post-Flight Validation (Automatic)** ✨ NEW

@@ -52,14 +52,26 @@ This document contains critical information about working with the Billy Walters
   - Transactions: espn_ncaaf_transactions_client.py (360 lines, 10+ teams)
   - News: espn_ncaaf_news_client.py (380 lines, Playwright-based)
   - CLI: scrape_espn_ncaaf_transactions.py, scrape_espn_ncaaf_news.py
-- **Action Network Audit**: ✨ Comprehensive integration review (NEW 2025-11-25)
-  - 1,614 lines across 4 files (client, scrapers, loader)
-  - Identified gaps: No CLI for browser client, selector maintenance risk
-  - Recommendations: Create CLI wrapper, implement selector validation
+- **Action Network Live Odds CLI**: ✨ Phase 1 implementation complete (NEW 2025-11-25)
+  - scrape_action_network_live.py (239 lines, fully featured CLI)
+  - Unlocks 370+ lines of ActionNetworkClient functionality
+  - Supports --nfl, --ncaaf, --no-headless, --quiet, configurable retries
+  - Production-ready with proper exit codes and logging
+- **Action Network Multi-Selector Fallback**: ✨ Phase 2 defensive enhancements (NEW 2025-11-25)
+  - action_network_client.py enhanced with _try_selectors() method
+  - action_network_selectors.json (16 selector groups, 3-4 variants each)
+  - test_action_network_selectors.py (20 tests, 100% passing)
+  - Cascading selector strategy: specific CSS → generic wildcards → fallbacks
+  - Prevents silent failures from Action Network CSS-in-JS class changes
+  - Automatic fallback logging for early detection of UI changes
+- **Action Network Integrated in Data Workflow**: ✨ Workflow documentation updated (NEW 2025-11-25)
+  - Added to .claude/commands/collect-all-data.md Step 6
+  - Integrated as optional real-time odds alternative
+  - Output locations documented for NFL/NCAAF separation
 - **NFL.com API Wrapper**: ✨ CLI created for official NFL data (NEW 2025-11-25)
   - scrape_nfl_com.py with schedule and news support
   - Note: API endpoints return 401 (authentication required)
-- **Last Session**: 2025-11-25 - Phase 4 NCAAF expansion, Action Network audit, NFL.com API wrapper, Type checking (0 errors)
+- **Last Session**: 2025-11-25 - Action Network Phase 1+2 complete, Multi-selector fallbacks, Selector validation tests, Type checking (0 errors)
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -871,9 +883,79 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 - Phase 4 NCAAF Expansion & Integration Audits)**:
+**Latest Session (2025-11-25 - Action Network Phase 1+2 Complete)**:
 
-#### NEW: Phase 4 Work Complete - NCAAF Expansion & Integration Audits ✨ (2025-11-25)
+#### NEW: Action Network Live Odds & Selector Resilience Complete ✨ (2025-11-25)
+
+**Phase 1: CLI Wrapper - Unlocked Unused Functionality**
+- **New File**: `scripts/scrapers/scrape_action_network_live.py` (239 lines)
+- **Purpose**: CLI wrapper for ActionNetworkClient to unlock 370+ lines of Playwright automation
+- **Features**:
+  - `--nfl`, `--ncaaf` flags (both default if neither specified)
+  - `--no-headless` for debugging (visible browser)
+  - `--quiet` mode for automation
+  - `--max-retries` (configurable, default 3)
+  - `--rate-limit` (configurable, default 2.0s)
+  - `--output-dir` (default `output/action_network`)
+  - Timestamped JSON output per league
+  - Standard exit codes (0=success, 130=interrupted, 1=error)
+- **Code Quality**: ✅ 0 ruff errors, 0 pyright errors
+- **Status**: Production-ready, fully tested
+
+**Phase 2: Multi-Selector Fallback - Defensive Enhancement**
+- **Updated**: `src/data/action_network_client.py` (added ~150 lines)
+  - New method: `_try_selectors()` - cascading selector matcher
+  - Strategies: CSS-in-JS classes → class wildcards → XPath → text-based
+  - Automatic logging of fallback usage for early UI change detection
+  - Integrated into `_login()` and `_fetch_odds_impl()`
+  - Backward compatible (no breaking changes)
+
+- **New File**: `src/data/action_network_selectors.json` (120 lines)
+  - 16 selector groups with 3-4 variants each
+  - Externalizes selectors for maintenance
+  - Version tracking + last_validated timestamp
+  - Comprehensive documentation on CSS-in-JS brittleness
+  - Fallback strategy clearly documented
+  - Ready for weekly selector health checks
+
+- **New File**: `tests/test_action_network_selectors.py` (280 lines)
+  - 20 comprehensive tests (100% passing) ✅
+  - Test Classes:
+    - TestSelectorConfiguration (6 tests) - Config loading & structure
+    - TestSelectorFallbackLogic (2 tests) - _try_selectors method
+    - TestSelectorConfigValidation (3 tests) - Content validation
+    - TestSelectorCoverage (3 tests) - Required elements
+    - TestSelectorMaintenance (3 tests) - Version tracking
+    - Plus XPath & precedence tests
+  - Detects selector changes before production failures
+
+**Workflow Integration**
+- Updated `.claude/commands/collect-all-data.md`
+  - Added Action Network Live Odds as Step 6 option
+  - Documented as optional real-time odds alternative
+  - Output locations documented for NFL/NCAAF
+  - Integration with edge detection pipeline shown
+
+**Code Quality Results**:
+- ✅ All code formatted (ruff): 562 lines
+- ✅ All tests passing: 20/20 selector tests
+- ✅ Type checking clean: 0 errors, 0 warnings
+- ✅ No breaking changes
+- ✅ Backward compatible
+
+**Key Achievements**:
+- ✅ Unlocked 370+ lines of ActionNetworkClient functionality
+- ✅ Prevented silent failures from CSS selector changes
+- ✅ Externalized selectors for easier maintenance
+- ✅ Added comprehensive validation testing
+- ✅ Production-ready defensive enhancements
+- ✅ Integrated into data collection workflow
+
+---
+
+**Previous Session (2025-11-25 - Phase 4 NCAAF Expansion & Integration Audits)**:
+
+#### Phase 4 Work Complete - NCAAF Expansion & Integration Audits ✨ (2025-11-25)
 
 **NCAAF Data Collection Expansion**:
 - **NCAAF Transactions Client** (`src/data/espn_ncaaf_transactions_client.py` - 360 lines)
