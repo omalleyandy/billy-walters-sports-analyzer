@@ -16,9 +16,10 @@ This document contains critical information about working with the Billy Walters
 6. [Git Workflow](#git-workflow)
 7. [Code Formatting](#code-formatting)
 8. [Project Structure](#project-structure)
-9. [Quick Reference](#quick-reference)
-10. [Troubleshooting](#troubleshooting)
-11. [Recent Updates](#recent-updates)
+9. [Automation Hooks](#automation-hooks)
+10. [Quick Reference](#quick-reference)
+11. [Troubleshooting](#troubleshooting)
+12. [Recent Updates](#recent-updates)
 
 ---
 
@@ -305,7 +306,7 @@ billy-walters-sports-analyzer/
 │   └── _INDEX.md                # Complete documentation index
 ├── .claude/
 │   ├── commands/                # Custom slash commands (14 commands)
-│   └── hooks/                   # Automation hooks (3 hooks)
+│   └── hooks/                   # Automation hooks (14 hooks - see Automation Hooks section)
 ├── .env.example
 ├── pyproject.toml               # Package config, ruff/pyright settings
 ├── CLAUDE.md                    # This file
@@ -314,6 +315,192 @@ billy-walters-sports-analyzer/
 ```
 
 **📖 For complete structure and file organization, see**: [docs/_INDEX.md](docs/_INDEX.md)
+
+---
+
+## Automation Hooks
+
+The project includes 14 automation hooks in `.claude/hooks/` for peak performance and robustness.
+
+### Session Management Hooks
+
+**session_start.py** - Runs at session start
+```bash
+python .claude/hooks/session_start.py
+
+# Shows:
+# - Git status (ahead/behind, uncommitted changes)
+# - Data freshness (odds, weather, injuries)
+# - Opportunities (new edges, stale data to refresh)
+```
+
+**session_end.py** - Runs at session end
+```bash
+python .claude/hooks/session_end.py
+
+# Shows:
+# - Uncommitted changes summary
+# - Pending tasks and next steps
+# - Recommended actions before closing
+```
+
+### Data Collection Hooks
+
+**pre_data_collection.py** - Validates environment before data collection
+```bash
+python .claude/hooks/pre_data_collection.py
+
+# Checks:
+# - API keys present (AccuWeather, Overtime, etc.)
+# - Output directories exist
+# - Current NFL week detected
+# - Last data collection timestamp
+```
+
+**post_data_collection.py** - Validates data quality after collection
+```bash
+python .claude/hooks/post_data_collection.py [week]
+
+# Validates:
+# - Required files present (5 minimum)
+# - Data freshness (<24 hours)
+# - Generates quality score (EXCELLENT/GOOD/FAIR/POOR)
+# - Provides actionable next steps
+```
+
+### Edge Detection Hooks
+
+**pre_edge_detection.py** - Validates required data before edge detection
+```bash
+python .claude/hooks/pre_edge_detection.py
+
+# Checks:
+# - Power ratings exist
+# - Game schedule present
+# - Odds data available
+# - Prevents wasted computation on missing data
+```
+
+**auto_edge_detector.py** - Auto-triggers edge detection on new odds
+```bash
+python .claude/hooks/auto_edge_detector.py
+
+# Monitors:
+# - Odds freshness (<5 minutes = trigger)
+# - Checks if already processed
+# - Auto-runs edge detection when conditions met
+```
+
+**auto_odds_monitor.py** - Continuous odds monitoring
+```bash
+python .claude/hooks/auto_odds_monitor.py
+
+# Features:
+# - Database-backed odds tracking
+# - Detects new odds automatically
+# - Triggers edge detection pipeline
+# - Maintains processing cache
+```
+
+### Code Quality Hooks
+
+**pre_commit_check.py** - Validates code before commits
+```bash
+python .claude/hooks/pre_commit_check.py
+
+# Validates:
+# - No exposed API keys (sk-ant-, sk-, ghp-)
+# - Python files have proper structure
+# - JSON files are valid
+# - Critical security check!
+```
+
+### Documentation Hooks
+
+**auto_index_updater.py** - Auto-updates documentation index
+```bash
+# Auto-detect and update all docs
+python .claude/hooks/auto_index_updater.py --auto
+
+# Scan specific directory
+python .claude/hooks/auto_index_updater.py --scan-dir docs/reports
+
+# Add entry to _INDEX.md
+python .claude/hooks/auto_index_updater.py --add-index "Title" "path/to/file.md"
+
+# Updates:
+# - docs/_INDEX.md with new documentation links
+# - CLAUDE.md Recent Updates section
+# - Maintains cross-references
+```
+
+### Data Validation Hooks
+
+**validate_data.py** - Core data validation logic
+```bash
+python .claude/hooks/validate_data.py < data.json
+
+# Validates:
+# - Odds data format and completeness
+# - Weather data structure
+# - Game schedule integrity
+```
+
+**mcp_validation.py** - MCP server validation integration
+```python
+# Used by autonomous agent and MCP server
+from .claude.hooks.mcp_validation import validate_data
+
+result = await validate_data('odds', odds_data)
+# Returns: {'valid': True/False, 'errors': [], 'message': '...'}
+```
+
+**validation_logger.py** - Validation logging utilities
+```python
+# Provides structured logging for all validation hooks
+from .claude.hooks.validation_logger import get_logger
+
+logger = get_logger()
+logger.info("Validation started")
+```
+
+### Hook Integration Best Practices
+
+**Use in Git Workflow:**
+```bash
+# Before committing
+python .claude/hooks/pre_commit_check.py
+git add . && git commit -m "feat: add feature"
+
+# After session
+python .claude/hooks/session_end.py
+```
+
+**Use in Data Collection Workflow:**
+```bash
+# Tuesday/Wednesday workflow
+python .claude/hooks/pre_data_collection.py  # Pre-flight check
+/collect-all-data                            # Collect data
+python .claude/hooks/post_data_collection.py # Post-flight validation
+python .claude/hooks/auto_edge_detector.py   # Auto-trigger edges
+```
+
+**Use in Continuous Monitoring:**
+```bash
+# Set up continuous odds monitoring (optional)
+# Can be scheduled or run manually
+python .claude/hooks/auto_odds_monitor.py
+```
+
+**Use in Documentation Updates:**
+```bash
+# After creating new reports/docs
+python .claude/hooks/auto_index_updater.py --auto
+git add docs/_INDEX.md CLAUDE.md
+git commit -m "docs: update index with new reports"
+```
+
+**📖 For complete hook reference, see**: [.claude/hooks/](. claude/hooks/)
 
 ---
 
