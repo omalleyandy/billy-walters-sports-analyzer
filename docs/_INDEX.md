@@ -80,6 +80,12 @@ This index provides quick navigation to all project documentation organized by t
 **Q: What's the optimal weekly schedule?**
 → Tue (collect) → Wed (analyze) → Thu (refresh) → Sun (results)
 
+**Q: How do I ensure I'm analyzing the correct week's games?**
+→ See [Edge Detector Workflow](guides/EDGE_DETECTOR_WORKFLOW.md) - automatic pre-flight validation ensures correct week
+
+**Q: What does the edge detector pre-flight validation check?**
+→ Validates: (1) Current system date, (2) Schedule file week, (3) Odds file week, (4) Cross-validates all sources
+
 **Q: How do I check my betting performance?**
 → `/check-results --league nfl` (see [Betting Results Checker](features/results_checker/BETTING_RESULTS_CHECKER.md))
 
@@ -117,7 +123,22 @@ This index provides quick navigation to all project documentation organized by t
 - **See Also**: CLAUDE.md § "Football Analytics Best Practices" for weekly workflow
 
 ### Analysis Tools
-- [Edge Detection](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges (NFL)
+
+#### Edge Detection (NEW - 2025-11-25)
+**Automatic schedule validation ensures you're analyzing the correct week's games.**
+
+- **[Edge Detector Workflow](guides/EDGE_DETECTOR_WORKFLOW.md)** - **START HERE** - Complete guide to pre-flight checks, schedule validation, and workflow integration
+- [Edge Detection Implementation](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges (NFL & NCAAF)
+- [Schedule Validator System](../src/walters_analyzer/utils/schedule_validator.py) - Automatic week detection and cross-validation
+- **Key Features:**
+  - ✅ Automatic detection of current NFL/NCAAF week from system date
+  - ✅ Validates schedule files against detected week
+  - ✅ Validates odds files against detected week
+  - ✅ Cross-validates all data sources before analysis
+  - ✅ Clear warnings for week mismatches
+  - ✅ Prevents analyzing wrong week's games
+
+#### Other Analysis Tools
 - [NCAAF Edge Detection Design](features/ncaaf/NCAAF_EDGE_DETECTION_DESIGN.md) - Architecture and implementation plan for college football edges
 - [Power Ratings](features/power_ratings/) - Power rating system documentation
 - [Feature Coverage](technical/FEATURE_COVERAGE.md) - Available analysis features

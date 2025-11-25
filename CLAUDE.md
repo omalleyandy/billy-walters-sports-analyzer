@@ -37,11 +37,12 @@ This document contains critical information about working with the Billy Walters
 - **Code Quality**: Automated linting and type checking
 - **Security**: Vulnerability scanning and secret detection
 - **Data Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather
-- **Edge Detection**: Production-ready for NFL & NCAAF
+- **Edge Detection**: ✨ Production-ready with automatic schedule validation (NEW 2025-11-25)
+- **Pre-Flight Checks**: Automatic week detection & data source validation integrated (NEW 2025-11-25)
 - **Results Validation**: Complete betting results checker system
 - **League Separation**: Strict NFL/NCAAF isolation (never mixed)
 - **Data Collection**: Optimized for both NFL & NCAAF workflows
-- **Last Session**: 2025-11-25 - League separation enforcement + documentation alignment
+- **Last Session**: 2025-11-25 - Schedule validation system, edge detector integration, documentation updates
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -373,9 +374,11 @@ git commit -m "docs: update index with new reports"
 
 ### NFL Data Collection Workflow (Tuesday 2:00 PM)
 
-**Time Required:** ~7 minutes
+**Time Required:** ~7 minutes data + 2 min edge detection = 9 minutes total
 **Output:** `output/{source}/nfl/`
-**Complete Guide:** [docs/guides/NFL_DATA_COLLECTION_WORKFLOW.md](docs/guides/NFL_DATA_COLLECTION_WORKFLOW.md)
+**Complete Guides:**
+- Data Collection: [docs/guides/NFL_DATA_COLLECTION_WORKFLOW.md](docs/guides/NFL_DATA_COLLECTION_WORKFLOW.md)
+- Edge Detection: [docs/guides/EDGE_DETECTOR_WORKFLOW.md](docs/guides/EDGE_DETECTOR_WORKFLOW.md)
 
 **Step-by-step:**
 ```bash
@@ -394,8 +397,14 @@ python src/data/weather_client.py --league nfl
 # 5. Action Network betting lines (2 min)
 uv run python scripts/scrapers/scrape_action_network_sitemap.py --nfl
 
-# Then run edge detection
+# 6. Run edge detection with automatic pre-flight validation
 /edge-detector
+# System automatically:
+# - Detects current week from system date
+# - Validates schedule file against detected week
+# - Validates odds file against detected week
+# - Warns if any mismatches (expected when prepping for next week)
+# - Proceeds with analysis and generates edges
 ```
 
 **Data Points:**
@@ -407,9 +416,11 @@ uv run python scripts/scrapers/scrape_action_network_sitemap.py --nfl
 
 ### NCAAF Data Collection Workflow (Wednesday 2:00 PM)
 
-**Time Required:** ~7 minutes
+**Time Required:** ~7 minutes data + 2 min edge detection = 9 minutes total
 **Output:** `output/{source}/ncaaf/`
-**Complete Guide:** [docs/guides/NCAAF_DATA_COLLECTION_WORKFLOW.md](docs/guides/NCAAF_DATA_COLLECTION_WORKFLOW.md)
+**Complete Guides:**
+- Data Collection: [docs/guides/NCAAF_DATA_COLLECTION_WORKFLOW.md](docs/guides/NCAAF_DATA_COLLECTION_WORKFLOW.md)
+- Edge Detection: [docs/guides/EDGE_DETECTOR_WORKFLOW.md](docs/guides/EDGE_DETECTOR_WORKFLOW.md)
 
 **Step-by-step:**
 ```bash
@@ -428,8 +439,14 @@ python src/data/weather_client.py --league ncaaf
 # 5. Action Network betting lines (2 min)
 uv run python scripts/scrapers/scrape_action_network_sitemap.py --ncaaf
 
-# Then run edge detection
+# 6. Run edge detection with automatic pre-flight validation
 /edge-detector --league ncaaf
+# System automatically:
+# - Detects current NCAAF week from system date
+# - Validates schedule file against detected week
+# - Validates odds file against detected week
+# - Warns if any mismatches (expected when prepping for next week)
+# - Proceeds with analysis and generates edges
 ```
 
 **Data Points:**
@@ -565,18 +582,26 @@ uv sync                          # Sync after manual edits
 
 ### Command Quick Reference
 
-| Task | Command | Time | Frequency |
-|------|---------|------|-----------|
-| Collect all data | `/collect-all-data` | 5 min | Weekly (Tue/Wed) |
-| Find betting edges | `/edge-detector` | 2 min | After collection |
-| Generate picks | `/betting-card` | 1 min | Weekly (Wed) |
-| Check results | `/check-results --league nfl` | 1 min | Weekly (Mon) |
-| Current NFL week | `/current-week` | 5 sec | As needed |
-| Weather impact | `/weather [team] [datetime]` | 30 sec | Per game |
-| Injury analysis | `/injury-report [team] [league]` | 30 sec | Per team |
-| Validate data | `/validate-data` | 30 sec | After collection |
+| Task | Command | Time | Frequency | Notes |
+|------|---------|------|-----------|-------|
+| Collect all data | `/collect-all-data` | 7 min | Weekly (Tue/Wed) | Full workflow: power ratings → schedules → stats → weather → odds |
+| Find betting edges | `/edge-detector` | 2 min | After collection | ✨ NEW: Auto-detects week, validates data, shows pre-flight status |
+| Validate schedule/odds | `uv run python src/walters_analyzer/utils/schedule_validator.py` | 10 sec | Before edge-detector | Shows current week detection and file validation |
+| Generate picks | `/betting-card` | 1 min | Weekly (Wed) | After edge detection completes |
+| Check results | `/check-results --league nfl` | 1 min | Weekly (Mon) | Compare predictions vs actual results |
+| Current NFL week | `/current-week` | 5 sec | As needed | Quick check of system-detected week |
+| Weather impact | `/weather [team] [datetime]` | 30 sec | Per game | Analyze weather effects on matchup |
+| Injury analysis | `/injury-report [team] [league]` | 30 sec | Per team | Check player availability impact |
+| Validate data | `/validate-data` | 30 sec | After collection | Quality check on collected data |
 
-**See**: [docs/_INDEX.md](docs/_INDEX.md) for complete command reference
+**Key Improvement (2025-11-25)**: `/edge-detector` now includes automatic pre-flight checks that:
+- Detect current NFL/NCAAF week from system date
+- Validate schedule files match detected week
+- Validate odds files match detected week
+- Warn if mismatches detected (expected when prepping for next week)
+- Proceed with analysis once user is informed
+
+**See**: [docs/_INDEX.md](docs/_INDEX.md) for complete command reference and [Edge Detector Workflow](docs/guides/EDGE_DETECTOR_WORKFLOW.md) for detailed guide
 
 ### Claude Code Flags
 
@@ -748,7 +773,38 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25)**:
+**Latest Session (2025-11-25 - Continued)**:
+
+#### New: Schedule Validation System & Edge Detector Integration ✨
+- **ScheduleValidator Class**: Automatic week detection from system date with NFL/NCAAF support
+  - `src/walters_analyzer/utils/schedule_validator.py` - 430+ lines of robust validation
+  - Detects current week based on hardcoded season week date ranges
+  - Validates schedule files against detected week
+  - Validates odds files against detected week
+  - Cross-validates all three sources (date, schedule, odds)
+  - Provides detailed pre-flight validation reports
+
+- **Edge Detector Enhancement**: Integrated pre-flight checks into main workflow
+  - Loads Overtime.ag odds (more reliable than Action Network)
+  - Automatic pre-flight validation before analysis
+  - Clear warnings when week mismatches detected
+  - Graceful fallback for missing power ratings
+  - Corrects critical bug: wrong games being analyzed (Week 12 instead of Week 13)
+
+- **Comprehensive Documentation Created**:
+  - `docs/guides/EDGE_DETECTOR_WORKFLOW.md` - Complete 400+ line operator guide
+  - Pre-flight check explanations with example output
+  - Troubleshooting guide for common scenarios
+  - Weekly workflow procedures
+  - Week date reference for 2025 season
+
+- **Documentation Integration Updated**:
+  - `docs/_INDEX.md` - Added edge detector workflow section with feature highlights
+  - `CLAUDE.md` - Updated with NFL/NCAAF workflow details mentioning pre-flight checks
+  - Command Quick Reference - Added pre-flight check command and key improvements
+  - Data Collection Workflows - Integrated edge detector with automatic validation
+
+#### Earlier This Session (2025-11-25 - First Part):
 - **ESPN Client Archived**: Deprecated espn_api_client.py → archive/espn_clients/ with migration guide
 - **League Separation Enforced**: NFL/NCAAF data strictly separated across all workflows
 - **Comprehensive Guides Created**: 6 new documentation guides (3,021+ lines)
@@ -760,13 +816,16 @@ gh run view <run-id> --log-failed
 - **Quick Reference Updated**: Fixed 5 critical inconsistencies, aligned with league separation
 - **All Documentation Verified**: 100% alignment across guides, 20/20 tests passed
 - **Performance Optimized**: Both NFL (7min) and NCAAF (7min) workflows tuned
-- **CLAUDE.md Enhanced**: Added dedicated data collection workflows section
 
 **Key Improvements:**
+- ✅ Automatic week detection from system date (no manual entry needed)
+- ✅ Pre-flight validation prevents analyzing wrong week's games
+- ✅ Clear warnings when data sources don't align (expected when prepping)
+- ✅ Cross-validates schedule, odds, and detected week
 - ✅ Zero mixing of NFL/NCAAF data possible (enforced by commands)
 - ✅ All operators follow consistent procedures
 - ✅ Automated verification of data integrity
-- ✅ Clear separation: output/{source}/nfl/ vs output/{source}/ncaaf/
+- ✅ Complete documentation with examples and troubleshooting
 
 **Previous Sessions**: See [docs/reports/archive/sessions/](docs/reports/archive/sessions/) for complete history
 
