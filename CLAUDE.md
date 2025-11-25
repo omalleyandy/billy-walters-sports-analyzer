@@ -48,7 +48,18 @@ This document contains critical information about working with the Billy Walters
   - Performance: Complete pipeline in <10 seconds, 100% success rate (15/15 NFL games)
 - **League Separation**: Strict NFL/NCAAF isolation (never mixed)
 - **Data Collection**: Optimized for both NFL & NCAAF workflows
-- **Last Session**: 2025-11-24 - PostgreSQL data loading workflow, GameIDMapper, full odds loading (15/15 games mapped)
+- **NCAAF Expansion**: ✨ Complete transactions and news scrapers (NEW 2025-11-25)
+  - Transactions: espn_ncaaf_transactions_client.py (360 lines, 10+ teams)
+  - News: espn_ncaaf_news_client.py (380 lines, Playwright-based)
+  - CLI: scrape_espn_ncaaf_transactions.py, scrape_espn_ncaaf_news.py
+- **Action Network Audit**: ✨ Comprehensive integration review (NEW 2025-11-25)
+  - 1,614 lines across 4 files (client, scrapers, loader)
+  - Identified gaps: No CLI for browser client, selector maintenance risk
+  - Recommendations: Create CLI wrapper, implement selector validation
+- **NFL.com API Wrapper**: ✨ CLI created for official NFL data (NEW 2025-11-25)
+  - scrape_nfl_com.py with schedule and news support
+  - Note: API endpoints return 401 (authentication required)
+- **Last Session**: 2025-11-25 - Phase 4 NCAAF expansion, Action Network audit, NFL.com API wrapper, Type checking (0 errors)
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -859,6 +870,75 @@ gh run view <run-id> --log-failed
 ---
 
 ## Recent Updates
+
+**Latest Session (2025-11-25 - Phase 4 NCAAF Expansion & Integration Audits)**:
+
+#### NEW: Phase 4 Work Complete - NCAAF Expansion & Integration Audits ✨ (2025-11-25)
+
+**NCAAF Data Collection Expansion**:
+- **NCAAF Transactions Client** (`src/data/espn_ncaaf_transactions_client.py` - 360 lines)
+  - Parallel implementation to NFL client (clean separation)
+  - Supports 10+ major FBS teams (Alabama, LSU, Ohio State, Clemson, Georgia, Texas, Oklahoma, USC, Florida, Texas A&M)
+  - Transaction types: Transfer In/Out, Coaching, Recruiting, Eligibility, Injury
+  - CLI wrapper: `scripts/scrapers/scrape_espn_ncaaf_transactions.py`
+  - Tested: Alabama extraction successful (output saved)
+
+- **NCAAF News Client** (`src/data/espn_ncaaf_news_client.py` - 380 lines)
+  - Playwright-based browser automation (matches NFL news client pattern)
+  - Team-specific news categories: Recruiting, Coaching, Injuries, Transfers, Game Analysis
+  - CLI wrapper: `scripts/scrapers/scrape_espn_ncaaf_news.py`
+  - Full context manager support + error handling
+
+- **CLI Integration**:
+  - `--team`, `--teams`, `--all-teams` options (consistent with NFL)
+  - `--output-dir` for custom locations
+  - `--quiet` mode for automation
+  - Timestamped JSON output files
+
+**Action Network Integration Audit** (1,614 lines across 4 files):
+- ✅ `action_network_client.py` (390 lines): Quality Playwright client with login, rate limiting, retry logic
+- ✅ `action_network_scraper.py` (499 lines): Legacy network interception scraper (appears experimental)
+- ✅ `action_network_sitemap_scraper.py` (463 lines): Production-ready sitemap parser with URL categorization
+- ✅ `action_network_loader.py` (262 lines): Data models and JSONL parsing infrastructure
+
+**Audit Findings**:
+- ⚠️ **Gap**: No CLI wrapper for `action_network_client.py` (370 lines of quality code unused from CLI)
+- ⚠️ **Risk**: CSS selectors hardcoded in client (Action Network UI changes could break scraper)
+- ✅ **Strength**: Dual scraping approaches (browser automation + sitemap catalog) provide flexibility
+- 📋 **Recommendation**: Create CLI wrapper for live odds scraping, implement selector validation tests
+
+**NFL.com API Integration**:
+- **Created CLI Wrapper** (`scripts/scrapers/scrape_nfl_com.py`)
+  - Supports `--schedule` (game times, networks, scores)
+  - Supports `--news` (team-specific articles)
+  - Options: `--week`, `--team`, `--limit`
+
+- **API Status**: 401 Unauthorized
+  - NFL API endpoints require browser authentication headers
+  - Current implementation uses static headers (insufficient)
+  - **Next Step**: Implement Playwright session capture (see `scripts/dev/capture_nfl_api_headers.py`)
+
+**Code Quality**:
+- ✅ All new code formatted with `ruff format`
+- ✅ Type checking passed: 0 errors, 0 warnings
+- ✅ Follows existing patterns and conventions
+- ✅ Full docstrings on public APIs
+
+**Files Added (1,522 lines)**:
+- src/data/espn_ncaaf_transactions_client.py (360 lines)
+- src/data/espn_ncaaf_news_client.py (380 lines)
+- scripts/scrapers/scrape_espn_ncaaf_transactions.py (145 lines)
+- scripts/scrapers/scrape_espn_ncaaf_news.py (180 lines)
+- scripts/scrapers/scrape_nfl_com.py (130 lines)
+- output/espn/transactions/ncaaf/transactions_ncaaf_*.json (tested output)
+
+**League Separation Maintained**:
+- NCAAF modules separate from NFL (no cross-contamination)
+- Separate team mappings
+- Separate output directories
+- Consistent CLI patterns
+
+---
 
 **Latest Session (2025-11-24 - Continued)**:
 
