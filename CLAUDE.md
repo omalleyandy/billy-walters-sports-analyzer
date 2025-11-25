@@ -37,12 +37,13 @@ This document contains critical information about working with the Billy Walters
 - **Code Quality**: Automated linting and type checking
 - **Security**: Vulnerability scanning and secret detection
 - **Data Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather
-- **Edge Detection**: ✨ Production-ready with automatic schedule validation (NEW 2025-11-25)
-- **Pre-Flight Checks**: Automatic week detection & data source validation integrated (NEW 2025-11-25)
-- **Results Validation**: Complete betting results checker system
+- **Edge Detection**: ✨ Production-ready with automatic schedule validation
+- **Pre-Flight Checks**: Automatic week detection & data source validation
+- **Results Validation**: ✨ Complete NFL results validator with ATS tracking (NEW 2025-11-24)
+- **NFL Scoreboard**: ✨ ESPN API client for fetching game scores by week (NEW 2025-11-24)
 - **League Separation**: Strict NFL/NCAAF isolation (never mixed)
 - **Data Collection**: Optimized for both NFL & NCAAF workflows
-- **Last Session**: 2025-11-25 - Schedule validation system, edge detector integration, documentation updates
+- **Last Session**: 2025-11-24 - NFL scoreboard client, results validator, Week 12 validation (4-3 ATS, +13% ROI)
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -773,59 +774,47 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 - Continued)**:
+**Latest Session (2025-11-24)**:
 
-#### New: Schedule Validation System & Edge Detector Integration ✨
-- **ScheduleValidator Class**: Automatic week detection from system date with NFL/NCAAF support
-  - `src/walters_analyzer/utils/schedule_validator.py` - 430+ lines of robust validation
-  - Detects current week based on hardcoded season week date ranges
-  - Validates schedule files against detected week
-  - Validates odds files against detected week
-  - Cross-validates all three sources (date, schedule, odds)
-  - Provides detailed pre-flight validation reports
+#### New: NFL Scoreboard Client & Results Validator ✨
+- **NFL Scoreboard Client** (`src/data/espn_nfl_scoreboard_client.py`)
+  - Fetches actual game scores from ESPN API for any week (1-18)
+  - Auto-detects current week from system date
+  - Parses ESPN's "competitors" array format correctly
+  - Saves scores to JSON for offline analysis
+  - Ready for full season score tracking
 
-- **Edge Detector Enhancement**: Integrated pre-flight checks into main workflow
-  - Loads Overtime.ag odds (more reliable than Action Network)
-  - Automatic pre-flight validation before analysis
-  - Clear warnings when week mismatches detected
-  - Graceful fallback for missing power ratings
-  - Corrects critical bug: wrong games being analyzed (Week 12 instead of Week 13)
+- **Results Validator** (`src/walters_analyzer/results/results_validator.py`)
+  - Compares edge detection predictions vs actual game results
+  - Calculates ATS (Against The Spread) performance metrics
+  - Computes ROI based on Kelly sizing
+  - Team name ↔ abbreviation conversion (all 32 NFL teams)
+  - Generates detailed markdown performance reports
+  - Ready for ongoing season tracking
 
-- **Comprehensive Documentation Created**:
-  - `docs/guides/EDGE_DETECTOR_WORKFLOW.md` - Complete 400+ line operator guide
-  - Pre-flight check explanations with example output
-  - Troubleshooting guide for common scenarios
-  - Weekly workflow procedures
-  - Week date reference for 2025 season
+- **Week 12 Validation Complete**
+  - Successfully matched 8 predictions to actual scores
+  - **ATS Record**: 4 Wins - 3 Losses (57.1% win rate)
+  - **ROI**: +13.0% (positive return on investment)
+  - **Avg Confidence**: 66.4 points
+  - Demonstrated system works end-to-end
+  - See: [docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md](docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md)
 
-- **Documentation Integration Updated**:
-  - `docs/_INDEX.md` - Added edge detector workflow section with feature highlights
-  - `CLAUDE.md` - Updated with NFL/NCAAF workflow details mentioning pre-flight checks
-  - Command Quick Reference - Added pre-flight check command and key improvements
-  - Data Collection Workflows - Integrated edge detector with automatic validation
-
-#### Earlier This Session (2025-11-25 - First Part):
-- **ESPN Client Archived**: Deprecated espn_api_client.py → archive/espn_clients/ with migration guide
-- **League Separation Enforced**: NFL/NCAAF data strictly separated across all workflows
-- **Comprehensive Guides Created**: 6 new documentation guides (3,021+ lines)
-  - LEAGUE_SEPARATION_GUIDE.md - Master reference for data isolation
-  - NFL_DATA_COLLECTION_WORKFLOW.md - Complete NFL procedures
-  - NCAAF_DATA_COLLECTION_WORKFLOW.md - Complete NCAAF procedures
-  - DATA_OUTPUT_STRUCTURE_VERIFICATION.md - Validation & verification tools
-  - OPTIONAL_IMPROVEMENTS_COMPLETED.md - Session completion summary
-- **Quick Reference Updated**: Fixed 5 critical inconsistencies, aligned with league separation
-- **All Documentation Verified**: 100% alignment across guides, 20/20 tests passed
-- **Performance Optimized**: Both NFL (7min) and NCAAF (7min) workflows tuned
+#### Key Files Added:
+- `src/data/espn_nfl_scoreboard_client.py` - ESPN scoreboard API client
+- `src/walters_analyzer/results/results_validator.py` - Results validation engine
+- `output/nfl_scores/scores_2025_week_12.json` - Week 12 actual scores
+- `docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md` - Complete workflow guide
 
 **Key Improvements:**
-- ✅ Automatic week detection from system date (no manual entry needed)
-- ✅ Pre-flight validation prevents analyzing wrong week's games
-- ✅ Clear warnings when data sources don't align (expected when prepping)
-- ✅ Cross-validates schedule, odds, and detected week
-- ✅ Zero mixing of NFL/NCAAF data possible (enforced by commands)
-- ✅ All operators follow consistent procedures
-- ✅ Automated verification of data integrity
-- ✅ Complete documentation with examples and troubleshooting
+- ✅ Automated results validation (no manual score checking)
+- ✅ Direct ESPN API integration (reliable data source)
+- ✅ Week-by-week performance tracking enabled
+- ✅ Full season CLV calculation framework ready
+- ✅ Historical score fetching for any completed week
+- ✅ Clear separation between Week 12 validation and Week 13 prep
+
+**Next Steps**: Run `/collect-all-data` on Tuesday (Week 13 prep) to continue automated workflow
 
 **Previous Sessions**: See [docs/reports/archive/sessions/](docs/reports/archive/sessions/) for complete history
 

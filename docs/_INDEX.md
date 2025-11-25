@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Reorganization**: 2025-11-24 - Migrated 125+ files from root to categorized subdirectories
+**Last Update**: 2025-11-24 - Added NFL Scoreboard Client & Results Validator with Week 12 validation results
 
 ---
 
@@ -169,7 +169,52 @@ This index provides quick navigation to all project documentation organized by t
 
 ## Performance & Results Checking
 
-### Betting Results Checker ✅ NEW (2025-11-23)
+### NFL Scoreboard Client & Results Validator ✨ NEW (2025-11-24)
+Complete automated system for fetching NFL game scores and validating edge detection predictions.
+
+**Components:**
+- **NFL Scoreboard Client** (`src/data/espn_nfl_scoreboard_client.py`)
+  - Fetches actual game scores from ESPN API for any week (1-18)
+  - Auto-detects current NFL week from system date
+  - Supports historical score retrieval for entire season
+  - JSON output for offline analysis
+
+- **Results Validator** (`src/walters_analyzer/results/results_validator.py`)
+  - Compares edge predictions vs actual game results
+  - Calculates ATS (Against The Spread) performance
+  - Computes ROI based on Kelly sizing
+  - Team name ↔ abbreviation mapping (32 NFL teams)
+  - Generates detailed markdown reports
+
+**Week 12 Validation Results:**
+- **Predictions**: 8 edge detection predictions
+- **ATS Record**: 4 Wins - 3 Losses (57.1% win rate)
+- **ROI**: +13.0% (positive return on investment)
+- **Average Confidence**: 66.4 points
+- **Status**: ✅ System fully operational
+
+**Usage Example:**
+```python
+from walters_analyzer.results.results_validator import ResultsValidator
+
+validator = ResultsValidator()
+results = await validator.validate_week(12)
+stats = validator.calculate_performance_stats(results)
+report = await validator.generate_report(results, 12)
+await validator.save_report(report, 12)
+```
+
+**Documentation**: [Week 12 Closeout & Week 13 Setup](guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md) - Complete workflow with results
+
+**Key Features:**
+- ✅ Automatic week detection from system date
+- ✅ ESPN API integration for reliable scores
+- ✅ Prediction-to-score matching with team mapping
+- ✅ ATS, ROI, and confidence metrics
+- ✅ Ready for full season tracking
+- ✅ Historical score fetching capability
+
+### Betting Results Checker ✅ (2025-11-23)
 The complete system for evaluating betting predictions against actual game results, calculating performance metrics, and generating comprehensive reports.
 
 **Documentation:**
