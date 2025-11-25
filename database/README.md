@@ -272,7 +272,7 @@ with db.get_cursor(commit=True) as cursor:
 ## 📚 Documentation
 
 **Complete Setup Guide:**
-`docs/DATABASE_SETUP_GUIDE.md` - Step-by-step instructions with screenshots
+`docs/technical/database/DATABASE_SETUP_GUIDE.md` - Step-by-step instructions with screenshots
 
 **Python API:**
 - `src/db/connection.py` - Database connection manager
@@ -412,7 +412,7 @@ uv sync
 
 ## 📈 Next Steps
 
-1. ✅ Complete setup (follow `docs/DATABASE_SETUP_GUIDE.md`)
+1. ✅ Complete setup (follow `docs/technical/database/DATABASE_SETUP_GUIDE.md`)
 2. ✅ Run test connection
 3. ✅ Migrate Week 12 data
 4. ✅ Run sample queries
@@ -423,7 +423,7 @@ uv sync
 ---
 
 **Need Help?**
-- Setup guide: `docs/DATABASE_SETUP_GUIDE.md`
+- Setup guide: `docs/technical/database/DATABASE_SETUP_GUIDE.md`
 - Lessons learned: `LESSONS_LEARNED.md`
 - PostgreSQL docs: https://www.postgresql.org/docs/
 - pgAdmin docs: https://www.pgadmin.org/docs/

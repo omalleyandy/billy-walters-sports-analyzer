@@ -36,7 +36,7 @@ Continued from previous session. Organized untracked files, verified system stab
 3. `scripts/utilities/get_week_weather.py` - Batch weather lookups for all games in a week
 
 **Documentation Created:**
-1. `docs/SYSTEM_READY.md` (315 lines)
+1. `docs/reports/SYSTEM_READY.md` (315 lines)
    - Executive summary with all operational components
    - 5 detected edges with 14.9-21.9 point advantages
    - Complete system architecture diagram
@@ -148,7 +148,7 @@ print(f'Games: {cur.fetchone()[0]}')
    - Integrate injury updates into pre-game analysis
 
 ### Files Modified/Created This Session
-- ✅ Created: `docs/SYSTEM_READY.md` (315 lines)
+- ✅ Created: `docs/reports/SYSTEM_READY.md` (315 lines)
 - ✅ Created: `scripts/analysis/analyze_nfl_injuries.py` (141 lines)
 - ✅ Created: `scripts/analysis/update_power_ratings_from_massey.py` (150+ lines)
 - ✅ Created: `scripts/utilities/fetch_week_schedules.py`
@@ -736,7 +736,7 @@ Expected success: 85-95%
 **Files Created:**
 - `extract_fbs_teams_from_scoreboard.py` - Team list extractor
 - `data/current/fbs_teams_from_scoreboard.json` - Complete FBS team list
-- `docs/FBS_TEAM_COVERAGE_FIX.md` - Comprehensive documentation
+- `docs/archive/fixes/FBS_TEAM_COVERAGE_FIX.md` - Comprehensive documentation
 
 **Files Modified:**
 - `scripts/scrapers/scrape_espn_team_stats.py` - Uses scoreboard-based team list
@@ -898,13 +898,13 @@ uv run python scripts/scrapers/scrape_espn_team_stats.py --league ncaaf --week 1
 - `scripts/scrapers/scrape_espn_team_stats.py:36-67` - Updated team loading
 - `get_toledo_miami_stats.py` - Complete matchup analysis example
 - `check_maction_scores.py` - Automated score fetching
-- `docs/MACTION_PERFORMANCE_REPORT_2025-11-12.md` - Performance tracking template
-- `docs/FBS_TEAM_COVERAGE_FIX.md` - Complete fix documentation
+- `docs/reports/MACTION_PERFORMANCE_REPORT_2025-11-12.md` - Performance tracking template
+- `docs/archive/fixes/FBS_TEAM_COVERAGE_FIX.md` - Complete fix documentation
 
 **Documentation:**
-- `docs/FBS_TEAM_COVERAGE_FIX.md` - Problem, solution, validation
+- `docs/archive/fixes/FBS_TEAM_COVERAGE_FIX.md` - Problem, solution, validation
 - `maction_predictions_summary.md` - All 3 game predictions
-- `docs/MACTION_PERFORMANCE_REPORT_2025-11-12.md` - Performance tracking
+- `docs/reports/MACTION_PERFORMANCE_REPORT_2025-11-12.md` - Performance tracking
 
 ### Future Recommendations
 

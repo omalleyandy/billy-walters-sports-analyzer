@@ -603,5 +603,5 @@ PROXY_URL=http://user:pass@host:port
 
 ---
 
-**Last Updated:** 2025-11-13
-**Version:** 2.0
+**Last Updated:** 2025-11-24
+**Version:** 2.1
