@@ -95,9 +95,11 @@ This index provides quick navigation to all project documentation organized by t
 ## Getting Started
 
 ### Quick Start
-- [Quick Start Guide](guides/QUICKSTART.md) - Get running in 5 minutes
+- [Windows Setup Guide](guides/quickstart_windows_setup.md) - Windows installation & setup
+- [MCP Setup Quick Start](guides/quickstart_mcp_setup.md) - Node.js & MCP Inspector setup
+- [Weekly Workflow Quick Start](guides/quickstart_weekly_workflow.md) - Tuesday-Sunday betting workflow
+- [Wednesday Workflow Quick Start](guides/quickstart_wednesday_workflow.md) - Mid-week analysis guide
 - [Overtime Quick Start](guides/OVERTIME_QUICKSTART.md) - Overtime.ag scraping guide
-- [Windows Setup Guide](guides/WINDOWS_SETUP_GUIDE.md) - Windows installation
 - [Data Collection Guide](guides/DATA_COLLECTION_GUIDE.md) - Complete data collection workflow
 
 ### Installation & Configuration
@@ -193,7 +195,16 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 - [MCP Before/After Comparison](MCP_BEFORE_AFTER.md) - Visual comparison and benefits
 - [Existing MCP Server](../.claude/walters_mcp_server.py) - Current implementation (basic)
 
-### Technical Guides
+### Technical Guides & Troubleshooting
+- [Testing Guide](guides/TESTING_GUIDE.md) - pytest framework and test execution
+- [MCP Diagnostic Guide](guides/mcp_diagnostic_guide.md) - MCP server troubleshooting
+- [Live Odds Scraper Guide](guides/LIVE_ODDS_SCRAPER_GUIDE.md) - Betting odds collection
+- [Overtime Edge Detection Guide](guides/CHECK_OVERTIME_EDGES_GUIDE.md) - Finding betting edges in Overtime data
+- [Monitor Setup Guide](guides/MONITOR_SETUP_GUIDE.md) - System monitoring configuration
+- [Monitoring Reference](guides/monitoring_reference.md) - Monitoring best practices
+- [Web Fetch Client](api/web_fetch_client.md) - HTTP client documentation
+
+### Legacy Technical References
 - [Scraper Quick Reference](SCRAPER_QUICK_REFERENCE.md) - All scrapers at a glance
 - [Overtime Scraping Schedule](OVERTIME_SCRAPING_SCHEDULE.md) - Optimal scraping times
 - [Overtime Hybrid Scraper Details](OVERTIME_HYBRID_SCRAPER.md) - Technical implementation
@@ -331,6 +342,18 @@ billy-walters-sports-analyzer/
 - **Weather**: NOAA, Weather.gov, AccuWeather, OpenWeather
 - **Python Libraries**: pandas, numpy, scikit-learn, httpx, pydantic, anthropic, openai
 
+## Archived Documentation
+
+Historical documentation is organized in `docs/archive/`:
+
+- **Sessions**: `archive/sessions/` - Development session summaries (8 archived)
+- **Week-Specific**: `archive/week_specific/` - Week 12/13 analysis & guides (7 archived)
+- **Phases**: `archive/phases/` - Completed phase implementations (4 archived)
+- **Old Quick Start Variants**: `archive/old_quickstart_variants/` - Superseded by unified guides (2 archived)
+- **Other Archives**: `archive/{fixes,reviews,status,setup,versions,q_and_a}/` - Reference materials
+
+**Note**: All currently-active documentation is at root level or in `docs/guides/`, `docs/api/`, etc.
+
 ## Document Status Legend
 
 - ✅ **Current** - Up-to-date, actively maintained
@@ -340,8 +363,8 @@ billy-walters-sports-analyzer/
 
 ---
 
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-11-24
 **Project Status**: Production-ready with active development
-**New**: Agent automation workflows guide added (.claude/AGENT_WORKFLOWS.md)
+**Documentation Reorganization**: Phase 2 complete - Technical guides moved to `docs/guides/`, phase files archived, Quick Start variants consolidated (30% root directory reduction)
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
