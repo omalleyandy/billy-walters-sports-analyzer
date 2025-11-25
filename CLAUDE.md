@@ -39,7 +39,7 @@ This document contains critical information about working with the Billy Walters
 - **Data Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather
 - **Edge Detection**: Production-ready for NFL & NCAAF
 - **Results Validation**: Complete betting results checker system
-- **Last Session**: 2025-11-23 - ESPN Data QA (56 tests, 100% pass rate)
+- **Last Session**: 2025-11-24 - Documentation reorganization (125+ files migrated)
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -283,14 +283,28 @@ billy-walters-sports-analyzer/
 │   ├── dev/                     # Debug tools
 │   └── archive/                 # Legacy code
 ├── tests/                       # Test suite (146+ tests)
-├── docs/                        # Documentation
-│   ├── guides/                  # User guides
+├── docs/                        # Documentation (organized by category)
 │   ├── api/                     # API documentation
+│   │   ├── espn/                # ESPN API docs (22 files)
+│   │   └── action_network/      # Action Network docs (5 files)
 │   ├── data_sources/            # Data schema docs
+│   │   └── overtime/            # Overtime.ag docs (6 files)
+│   ├── features/                # Feature documentation
+│   │   ├── ncaaf/               # NCAAF-specific (7 files)
+│   │   ├── nfl/                 # NFL-specific (8 files)
+│   │   ├── results_checker/     # Results checker (5 files)
+│   │   └── ...                  # power_ratings, sfactor
+│   ├── guides/                  # User guides
+│   │   └── methodology/         # Billy Walters methodology (8 files)
+│   ├── technical/               # Technical docs
+│   │   ├── mcp/                 # MCP architecture (6 files)
+│   │   └── database/            # Database docs (4 files)
+│   ├── reports/                 # Reports and status
+│   ├── archive/                 # Historical documentation
 │   └── _INDEX.md                # Complete documentation index
 ├── .claude/
 │   ├── commands/                # Custom slash commands (14 commands)
-│   └── hooks/                   # Automation hooks (14 hooks - see Automation Hooks section)
+│   └── hooks/                   # Automation hooks (14 hooks)
 ├── .env.example
 ├── pyproject.toml               # Package config, ruff/pyright settings
 ├── CLAUDE.md                    # This file

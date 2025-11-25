@@ -2,6 +2,8 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
+**Last Reorganization**: 2025-11-24 - Migrated 125+ files from root to categorized subdirectories
+
 ---
 
 ## Quick Start - Choose Your Path
@@ -29,13 +31,13 @@ This index provides quick navigation to all project documentation organized by t
 - **Thursday (5 min)**: `/scrape-overtime` - Refresh odds before TNF
 - **Sunday (5 min)**: `/check-results` - Track performance
 
-**Details**: See [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md)
+**Details**: See [Weekly Results Workflow](features/results_checker/WEEKLY_RESULTS_WORKFLOW.md)
 
 ### Developer? Start Here
 **Goal**: Understand system architecture and contribute code
 
 1. **Read**: [CLAUDE.md](../CLAUDE.md) - Core development rules
-2. **Review**: [Architecture](ARCHITECTURE.md) - System design
+2. **Review**: [Architecture](technical/ARCHITECTURE.md) - System design
 3. **Setup**: [CI/CD Prevention](guides/ci_cd_prevention_guide.md)
 4. **Contribute**: [Git Workflow](../.github/GIT_WORKFLOW_GUIDE.md)
 
@@ -79,13 +81,13 @@ This index provides quick navigation to all project documentation organized by t
 → Tue (collect) → Wed (analyze) → Thu (refresh) → Sun (results)
 
 **Q: How do I check my betting performance?**
-→ `/check-results --league nfl` (see [Betting Results Checker](BETTING_RESULTS_CHECKER.md))
+→ `/check-results --league nfl` (see [Betting Results Checker](features/results_checker/BETTING_RESULTS_CHECKER.md))
 
 **Q: Why did my CI check fail?**
 → See [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md#prevention-checklist)
 
 **Q: Where is the database documentation?**
-→ [Database Setup Guide](DATABASE_SETUP_GUIDE.md) and [Quick Start Database](QUICK_START_DATABASE.md)
+→ [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) and [Quick Start Database](technical/database/QUICK_START_DATABASE.md)
 
 **Q: How do I interpret edge detection results?**
 → 7+ pts = MAX BET, 4-7 = STRONG, 2-4 = MODERATE, 1-2 = LEAN, <1 = NO PLAY
@@ -111,23 +113,23 @@ This index provides quick navigation to all project documentation organized by t
 ### Billy Walters Analysis
 - [Billy Walters Methodology](guides/BILLY_WALTERS_METHODOLOGY.md) - Core betting principles
 - [Billy Walters PRD v1.5](guides/billy_walters_analytics_prd_v1.5.md) - Product requirements
-- [Advanced Master Class Sections](advanced-master-class-section-1.md) - Deep dive tutorials (5 sections)
+- [Advanced Master Class Sections](guides/methodology/) - Deep dive tutorials (5 sections)
 - **See Also**: CLAUDE.md § "Football Analytics Best Practices" for weekly workflow
 
 ### Analysis Tools
 - [Edge Detection](../src/walters_analyzer/valuation/billy_walters_edge_detector.py) - Detect betting edges (NFL)
-- [NCAAF Edge Detection Design](NCAAF_EDGE_DETECTION_DESIGN.md) - **NEW** ✨ Architecture and implementation plan for college football edges (separate from NFL)
-- [Power Ratings](guides/README_POWER_RATINGS.md) - Power rating system
-- [Feature Coverage](FEATURE_COVERAGE.md) - Available analysis features
+- [NCAAF Edge Detection Design](features/ncaaf/NCAAF_EDGE_DETECTION_DESIGN.md) - Architecture and implementation plan for college football edges
+- [Power Ratings](features/power_ratings/) - Power rating system documentation
+- [Feature Coverage](technical/FEATURE_COVERAGE.md) - Available analysis features
 - **Reference**: CLAUDE.md § "Billy Walters Workflow Commands & Hooks" for all commands
 
 ## Data Collection
 
 ### Scrapers & APIs
 - [API Integration Details](api/API_INTEGRATION_DETAILS.md) - **COMPREHENSIVE** - All API technical details (Weather, ESPN, Overtime, Action Network)
-- [Overtime.ag Hybrid Scraper](OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
-- [ESPN NCAAF Scoreboard](ESPN_NCAAF_SCOREBOARD.md) - College football scores
-- [Action Network Quality Report](ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ Data assurance (512 records, 100% quality)
+- [Overtime.ag Hybrid Scraper](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
+- [ESPN Documentation](api/espn/) - ESPN API integration (22 documents)
+- [Action Network Quality Report](api/action_network/ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ Data assurance (512 records, 100% quality)
 - [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
 - **Quick Reference**: CLAUDE.md § "Environment Variables & API Keys" for credentials setup
@@ -138,9 +140,9 @@ This index provides quick navigation to all project documentation organized by t
 The complete system for evaluating betting predictions against actual game results, calculating performance metrics, and generating comprehensive reports.
 
 **Documentation:**
-- [Betting Results Checker](BETTING_RESULTS_CHECKER.md) - **START HERE** - Complete user guide with examples, calculation details, troubleshooting
-- [Results Checker Implementation Summary](RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview of architecture and components
-- [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md) - Integration guide for Billy Walters workflow (Tuesday-Sunday schedule)
+- [Betting Results Checker](features/results_checker/BETTING_RESULTS_CHECKER.md) - **START HERE** - Complete user guide with examples, calculation details, troubleshooting
+- [Results Checker Implementation Summary](features/results_checker/RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview of architecture and components
+- [Weekly Results Workflow](features/results_checker/WEEKLY_RESULTS_WORKFLOW.md) - Integration guide for Billy Walters workflow (Tuesday-Sunday schedule)
 
 **Key Features:**
 - ✅ ESPN API integration (NFL & NCAAF scores)
@@ -168,7 +170,8 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 - [NCAAF Injuries](data_sources/injuries_ncaaf.md) - College football injury data
 - [NFL Odds](data_sources/odds_nfl.md) - NFL betting odds format
 - [NCAAF Odds](data_sources/odds_ncaaf.md) - College football odds format
-- [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Validate data quality
+- [Overtime.ag Documentation](data_sources/overtime/) - Odds source (6 documents)
+- [Data Validation Guide](reports/DATA_VALIDATION_GUIDE.md) - Validate data quality
 
 ### Weather Integration
 - [Weather Alerts](features/weather_alerts.md) - Weather impact analysis
@@ -178,21 +181,21 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 
 ### Core Documentation
 - [Development Guidelines](../CLAUDE.md) - **PRIMARY** development guide
-- [Agent Workflows](../.claude/AGENT_WORKFLOWS.md) - **NEW** ✨ Autonomous agent automation guide
+- [Agent Workflows](../.claude/AGENT_WORKFLOWS.md) - Autonomous agent automation guide
 - [Troubleshooting Guide](../TROUBLESHOOTING.md) - Error resolution and solutions
-- [Architecture](ARCHITECTURE.md) - System architecture overview
+- [Architecture](technical/ARCHITECTURE.md) - System architecture overview
 - [CI/CD Documentation](../.github/CI_CD.md) - Continuous integration setup
 
 ### CI/CD Troubleshooting
 - [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md) - ✅ **Comprehensive** - Prevent CI failures (formatting, types, tests)
-- [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ **RESOLVED** - How to interpret CI failures correctly
+- [CI Fix Archives](archive/fixes/) - Historical CI/CD fix documentation
 - [Local Validation Checklist](guides/ci_cd_prevention_guide.md#prevention-checklist) - Run before every commit
 
-### MCP Architecture (NEW) 🆕
-- [MCP Quick Start](MCP_QUICK_START.md) - **START HERE** - 5-minute overview
-- [MCP Architecture](MCP_ARCHITECTURE.md) - Complete technical architecture (35+ pages)
-- [MCP Phase 1 Implementation](MCP_PHASE1_IMPLEMENTATION.md) - Step-by-step implementation guide
-- [MCP Before/After Comparison](MCP_BEFORE_AFTER.md) - Visual comparison and benefits
+### MCP Architecture
+- [MCP Quick Start](technical/mcp/MCP_QUICK_START.md) - **START HERE** - 5-minute overview
+- [MCP Architecture](technical/mcp/MCP_ARCHITECTURE.md) - Complete technical architecture (35+ pages)
+- [MCP Phase 1 Implementation](technical/mcp/MCP_PHASE1_IMPLEMENTATION.md) - Step-by-step implementation guide
+- [MCP Before/After Comparison](technical/mcp/MCP_BEFORE_AFTER.md) - Visual comparison and benefits
 - [Existing MCP Server](../.claude/walters_mcp_server.py) - Current implementation (basic)
 
 ### Technical Guides & Troubleshooting
@@ -216,9 +219,9 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 - [Example Edge Detection Output](guides/EXAMPLE_OUTPUT.md) - Sample output showing what users will see
 
 ### Legacy Technical References
-- [Scraper Quick Reference](SCRAPER_QUICK_REFERENCE.md) - All scrapers at a glance
-- [Overtime Scraping Schedule](OVERTIME_SCRAPING_SCHEDULE.md) - Optimal scraping times
-- [Overtime Hybrid Scraper Details](OVERTIME_HYBRID_SCRAPER.md) - Technical implementation
+- [Scraper Quick Reference](guides/SCRAPER_QUICK_REFERENCE.md) - All scrapers at a glance
+- [Overtime Scraping Schedule](data_sources/overtime/OVERTIME_SCRAPING_SCHEDULE.md) - Optimal scraping times
+- [Overtime Hybrid Scraper Details](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md) - Technical implementation
 - [Overtime Technical Reference](guides/OVERTIME_TECHNICAL_REFERENCE.md) - Advanced details
 
 ### Scripts & Utilities
@@ -238,11 +241,11 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 
 ### Quality Assurance
 - [ESPN Data QA Report](reports/ESPN_DATA_QA_REPORT_2025-11-23.md) - ✅ **COMPLETE** - 56/56 tests passed (all 6 components)
-- [ESPN Data QA Quick Reference](ESPN_DATA_QA_QUICK_REFERENCE.md) - Test execution guide and troubleshooting
-- [ESPN Data QA Test Inventory](ESPN_DATA_QA_TEST_INVENTORY.md) - Detailed test listing by component
-- [ESPN Data QA Deliverables](ESPN_DATA_QA_DELIVERABLES.md) - Summary of QA testing deliverables
+- [ESPN Data QA Quick Reference](api/espn/ESPN_DATA_QA_QUICK_REFERENCE.md) - Test execution guide and troubleshooting
+- [ESPN Data QA Test Inventory](api/espn/ESPN_DATA_QA_TEST_INVENTORY.md) - Detailed test listing by component
+- [ESPN Data QA Deliverables](api/espn/ESPN_DATA_QA_DELIVERABLES.md) - Summary of QA testing deliverables
 - [Example Output](guides/EXAMPLE_OUTPUT.md) - Expected output formats
-- [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Quality standards
+- [Data Validation Guide](reports/DATA_VALIDATION_GUIDE.md) - Quality standards
 
 ## Week 12 Analysis (Current)
 
@@ -258,9 +261,9 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 ## Reports & History
 
 ### Active Reports
-- [Feature Coverage](FEATURE_COVERAGE.md) - Current feature status
-- [API Integration Complete](API_INTEGRATION_COMPLETE.md) - Integration milestones
-- [Action Network Quality Assurance](ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ 100% data quality validation
+- [Feature Coverage](technical/FEATURE_COVERAGE.md) - Current feature status
+- [API Integration Complete](technical/API_INTEGRATION_COMPLETE.md) - Integration milestones
+- [Action Network Quality Assurance](api/action_network/ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ 100% data quality validation
 
 ### Recent Session Notes (2025-11-23)
 - [CLAUDE.md § Recent Updates](../CLAUDE.md#recent-updates-2025-11-12-to-2025-11-23) - AccuWeather fixes, Week 12 analysis, Action Network validation
@@ -295,55 +298,72 @@ billy-walters-sports-analyzer/
 │   ├── integration/             # Integration tests
 │   └── unit/                    # Unit tests
 ├── docs/                        # Documentation (this directory)
-│   ├── guides/                  # User guides
 │   ├── api/                     # API documentation
+│   │   ├── espn/                # ESPN API docs (22 files)
+│   │   └── action_network/      # Action Network docs (5 files)
 │   ├── data_sources/            # Data schema docs
+│   │   └── overtime/            # Overtime.ag docs (6 files)
 │   ├── features/                # Feature documentation
-│   └── reports/archive/         # Historical reports
+│   │   ├── ncaaf/               # NCAAF-specific docs (7 files)
+│   │   ├── nfl/                 # NFL-specific docs (8 files)
+│   │   ├── power_ratings/       # Power rating docs (3 files)
+│   │   ├── results_checker/     # Results checker docs (5 files)
+│   │   └── sfactor/             # Situational factors (7 files)
+│   ├── guides/                  # User guides
+│   │   └── methodology/         # Billy Walters methodology (8 files)
+│   ├── technical/               # Technical documentation
+│   │   ├── database/            # Database docs (4 files)
+│   │   ├── devtools/            # Chrome DevTools docs (2 files)
+│   │   └── mcp/                 # MCP architecture docs (6 files)
+│   ├── reports/                 # Reports and status
+│   └── archive/                 # Historical documentation
+│       ├── sessions/            # Session summaries
+│       ├── fixes/               # Bug fix documentation
+│       └── ...                  # Other archived docs
 └── .claude/                     # Claude Code configuration
     ├── commands/                # Custom slash commands (14 commands)
-    └── hooks/                   # Automation hooks (3 hooks)
+    └── hooks/                   # Automation hooks (14 hooks)
 ```
 
 ## Quick Links by Task
 
 ### I want to collect betting odds
-1. [Overtime Hybrid Scraper](OVERTIME_HYBRID_SCRAPER.md)
+1. [Overtime Hybrid Scraper](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md)
 2. [Overtime Quick Start](guides/OVERTIME_QUICKSTART.md)
-3. [Scraper Quick Reference](SCRAPER_QUICK_REFERENCE.md)
+3. [Scraper Quick Reference](guides/SCRAPER_QUICK_REFERENCE.md)
 
 ### I want to analyze games
 1. [Billy Walters Methodology](guides/BILLY_WALTERS_METHODOLOGY.md)
 2. [CLI Reference](guides/CLI_REFERENCE.md) - `/edge-detector`, `/betting-card`
-3. [Power Ratings](guides/README_POWER_RATINGS.md)
+3. [Power Ratings](features/power_ratings/)
 
 ### I want to check betting results
-1. [Betting Results Checker](BETTING_RESULTS_CHECKER.md) - Complete guide with examples
-2. [Weekly Results Workflow](WEEKLY_RESULTS_WORKFLOW.md) - Integration with Billy Walters workflow
-3. [Results Checker Implementation](RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview
+1. [Betting Results Checker](features/results_checker/BETTING_RESULTS_CHECKER.md) - Complete guide with examples
+2. [Weekly Results Workflow](features/results_checker/WEEKLY_RESULTS_WORKFLOW.md) - Integration with Billy Walters workflow
+3. [Results Checker Implementation](features/results_checker/RESULTS_CHECKER_IMPLEMENTATION_SUMMARY.md) - Technical overview
 
 ### I want to understand the system
 1. [Development Guidelines](../CLAUDE.md)
-2. [Architecture](ARCHITECTURE.md)
-3. [Feature Coverage](FEATURE_COVERAGE.md)
+2. [Architecture](technical/ARCHITECTURE.md)
+3. [Feature Coverage](technical/FEATURE_COVERAGE.md)
 
 ### I need to troubleshoot
 1. [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md) - Prevent failures before they happen
-2. [CI Dependency Fix 2025-11-23](CI_DEPENDENCY_FIX_2025-11-23.md) - ✅ How to interpret CI failures
+2. [CI Fix Archives](archive/fixes/) - Historical CI/CD fix documentation
 3. [Troubleshooting Guide](../TROUBLESHOOTING.md) - Error resolution and solutions
 4. [CI/CD Troubleshooting](../.github/CI_CD.md) - Technical CI/CD details
-5. [Data Validation Guide](DATA_VALIDATION_GUIDE.md) - Data quality issues
+5. [Data Validation Guide](reports/DATA_VALIDATION_GUIDE.md) - Data quality issues
 
 ### I want to contribute
 1. [Development Guidelines](../CLAUDE.md)
 2. [GitHub Workflow Guide](guides/GITHUB_WORKFLOW_GUIDE.md)
 3. [CI/CD Documentation](../.github/CI_CD.md)
 
-### I want to build MCP servers (NEW) 🆕
-1. [MCP Quick Start](MCP_QUICK_START.md) - Understand MCP in 5 minutes
-2. [MCP Before/After](MCP_BEFORE_AFTER.md) - See the benefits
-3. [MCP Phase 1 Implementation](MCP_PHASE1_IMPLEMENTATION.md) - Start building (4-6 hours)
-4. [MCP Architecture](MCP_ARCHITECTURE.md) - Full technical details
+### I want to build MCP servers
+1. [MCP Quick Start](technical/mcp/MCP_QUICK_START.md) - Understand MCP in 5 minutes
+2. [MCP Before/After](technical/mcp/MCP_BEFORE_AFTER.md) - See the benefits
+3. [MCP Phase 1 Implementation](technical/mcp/MCP_PHASE1_IMPLEMENTATION.md) - Start building (4-6 hours)
+4. [MCP Architecture](technical/mcp/MCP_ARCHITECTURE.md) - Full technical details
 
 ## External Resources
 
@@ -357,19 +377,20 @@ billy-walters-sports-analyzer/
 
 Historical documentation is organized in `docs/archive/`:
 
-- **Sessions**: `archive/sessions/` - Development session summaries (8 archived)
-- **Week-Specific**: `archive/week_specific/` - Week 12/13 analysis & guides (9 archived, includes Phase 3 additions)
-- **Phases**: `archive/phases/` - Completed phase implementations (4 archived)
-- **Old Quick Start Variants**: `archive/old_quickstart_variants/` - Superseded by unified guides (2 archived)
-- **Versions**: `archive/versions/` - Old configuration files and instruction versions (3 archived)
-- **Setup**: `archive/setup/` - Completed setup tasks (1 archived)
-- **Status**: `archive/status/` - Historical status reports (2 archived)
-- **Fixes**: `archive/fixes/` - Bug fix documentation (2 archived)
-- **Reviews**: `archive/reviews/` - Code review notes (1 archived)
-- **Q&A**: `archive/q_and_a/` - Historical questions and answers (1 archived)
-- **Unclear**: `archive/unclear/` - Files with uncertain purpose (1 archived)
+- **Sessions**: `archive/sessions/` - Development session summaries (13+ archived)
+- **Week-Specific**: `archive/week_specific/` - Week 12/13 analysis & guides
+- **Phases**: `archive/phases/` - Completed phase implementations
+- **Old Quick Start Variants**: `archive/old_quickstart_variants/` - Superseded by unified guides
+- **Versions**: `archive/versions/` - Old configuration files and instruction versions
+- **Setup**: `archive/setup/` - Completed setup tasks and Windows migration docs
+- **Status**: `archive/status/` - Historical status reports
+- **Fixes**: `archive/fixes/` - Bug fix documentation (CI/CD fixes, rating fixes, etc.)
+- **Reviews**: `archive/reviews/` - Code review notes
+- **Q&A**: `archive/q_and_a/` - Historical questions and answers
+- **Raw Data**: `archive/raw_data/` - Large raw data files (e.g., HTML source dumps)
+- **Unclear**: `archive/unclear/` - Files with uncertain purpose
 
-**Note**: All currently-active documentation is at root level or in `docs/guides/`, `docs/api/`, `docs/technical/`, `docs/utilities/`, etc.
+**Note**: All currently-active documentation is in organized subdirectories: `docs/api/`, `docs/features/`, `docs/guides/`, `docs/technical/`, `docs/data_sources/`.
 
 ## Document Status Legend
 
@@ -382,6 +403,21 @@ Historical documentation is organized in `docs/archive/`:
 
 **Last Updated**: 2025-11-24
 **Project Status**: Production-ready with active development
-**Documentation Reorganization**: Phase 3 complete! Technical docs moved to `docs/technical/`, utilities organized, archives complete. Root directory: 60 → 7 files (88% reduction)
+**Documentation Reorganization**: Phase 4 complete! 125+ files migrated from docs root to categorized subdirectories. Root directory now contains only `_INDEX.md` and `README.md`.
+
+**New Structure Summary**:
+- `api/espn/` - 22 ESPN docs
+- `api/action_network/` - 5 Action Network docs
+- `features/ncaaf/` - 7 NCAAF docs
+- `features/nfl/` - 8 NFL docs
+- `features/sfactor/` - 7 Situational Factor docs
+- `features/results_checker/` - 5 Results Checker docs
+- `features/power_ratings/` - 3 Power Rating docs
+- `technical/mcp/` - 6 MCP docs
+- `technical/database/` - 4 Database docs
+- `data_sources/overtime/` - 6 Overtime docs
+- `guides/methodology/` - 8 Billy Walters methodology docs
+- `archive/sessions/` - 13+ session reports
+- `archive/fixes/` - CI/CD and bug fix docs
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
