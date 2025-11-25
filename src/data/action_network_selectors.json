@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "last_validated": "2025-11-25",
+  "description": "CSS/XPath selectors for Action Network scraping with multi-selector fallback support",
+  "selectors": {
+    "login_button": [
+      ".user-component__button.user-component__login.css-1wwjzac.epb8che0",
+      ".user-component__button.user-component__login",
+      "button[class*='user-component__login']",
+      "button:has-text('Sign In')"
+    ],
+    "username_input": [
+      "input[placeholder='Email']",
+      "input[type='email']",
+      "input[name='email']",
+      "input[name='username']"
+    ],
+    "password_input": [
+      "input[placeholder='Password']",
+      "input[type='password']",
+      "input[name='password']"
+    ],
+    "submit_button": [
+      "button[type='submit']",
+      "button:has-text('Sign In')",
+      "button:has-text('Login')",
+      "form button[type='button']"
+    ],
+    "sport_nfl": [
+      "//div[@class='css-p3ig27 emv4lho0']//div//span[@class='nav-link__title'][normalize-space()='NFL']",
+      "//span[@class='nav-link__title'][normalize-space()='NFL']",
+      "a[href*='/nfl']:has-text('NFL')",
+      "nav span:has-text('NFL')",
+      "//a[contains(@href, '/nfl')]//span[contains(text(), 'NFL')]"
+    ],
+    "sport_ncaaf": [
+      "//div[@class='css-p3ig27 emv4lho0']//div//span[@class='nav-link__title'][normalize-space()='NCAAF']",
+      "//span[@class='nav-link__title'][normalize-space()='NCAAF']",
+      "a[href*='/college-football']:has-text('NCAAF')",
+      "nav span:has-text('NCAAF')",
+      "//a[contains(@href, '/college-football')]//span[contains(text(), 'NCAAF')]"
+    ],
+    "odds_tab": [
+      "//a[contains(@class,'subNav__navLink')][normalize-space()='Odds']",
+      "//a[contains(@class,'subNav__navLink') and contains(text(), 'Odds')]",
+      "a[class*='subNav__navLink']:has-text('Odds')",
+      "nav a:has-text('Odds')"
+    ],
+    "odds_table": [
+      "table.odds-table",
+      "table[class*='odds']",
+      "table[class*='game']",
+      "table"
+    ],
+    "game_row": [
+      "tr.game-row",
+      "tr[class*='game-row']",
+      "table tbody tr"
+    ],
+    "team_name": [
+      ".team-name",
+      "[class*='team-name']",
+      "td[class*='team']"
+    ],
+    "game_time": [
+      ".game-time",
+      "[class*='game-time']",
+      "[class*='time']"
+    ],
+    "rotation_number": [
+      ".rotation-number",
+      "[class*='rotation']"
+    ],
+    "best_odds_spread": [
+      ".spread-cell .best-odds",
+      "[class*='spread'] [class*='best']",
+      "[class*='spread'] span"
+    ],
+    "best_odds_total": [
+      ".total-cell .best-odds",
+      "[class*='total'] [class*='best']",
+      "[class*='total'] span"
+    ],
+    "best_odds_moneyline": [
+      ".moneyline-cell .best-odds",
+      "[class*='moneyline'] [class*='best']",
+      "[class*='moneyline'] span"
+    ],
+    "sportsbook_name": [
+      ".sportsbook-name",
+      "[class*='sportsbook']",
+      "[class*='book']"
+    ]
+  },
+  "notes": {
+    "auto_generated_classes": "Selectors include both specific CSS-in-JS classes (e.g., css-1wwjzac) and fallback patterns for when class names change",
+    "xpath_selectors": "Some selectors use XPath for more robust element matching. Prefix with 'xpath=' when using with Playwright",
+    "maintenance": "Update this file when Action Network UI changes detected. Run selector validation tests to verify changes.",
+    "fallback_strategy": "Client tries each selector in order. First match is used. Warnings logged when fallbacks are needed."
+  }
+}

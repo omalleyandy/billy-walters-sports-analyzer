@@ -2,13 +2,16 @@
 Action Network Web Scraper Client
 
 Fetches NFL and NCAAF odds data from Action Network using Playwright.
-Implements rate limiting, retry logic, and data validation.
+Implements rate limiting, retry logic, and data validation with multi-selector
+fallback support for resilience against CSS class changes.
 """
 
 import asyncio
+import json
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Literal
 
 from playwright.async_api import Browser, Page, async_playwright
@@ -22,16 +25,65 @@ class ActionNetworkClient:
     BASE_URL = "https://www.actionnetwork.com"
     LOGIN_URL = f"{BASE_URL}/login"
 
-    # Selectors from user documentation
-    SELECTORS = {
-        "login_button": ".user-component__button.user-component__login.css-1wwjzac.epb8che0",
-        "username_input": 'input[placeholder="Email"]',
-        "password_input": 'input[placeholder="Password"]',
-        "submit_button": 'button[type="submit"]',
-        "sport_nfl": "//div[@class='css-p3ig27 emv4lho0']//div//span[@class='nav-link__title'][normalize-space()='NFL']",
-        "sport_ncaaf": "//div[@class='css-p3ig27 emv4lho0']//div//span[@class='nav-link__title'][normalize-space()='NCAAF']",
-        "odds_tab": "//a[contains(@class,'subNav__navLink')][normalize-space()='Odds']",
-    }
+    @staticmethod
+    def _init_selectors() -> dict[str, list[str]]:
+        """Load multi-selector config from JSON file with fallbacks."""
+        config_file = Path(__file__).parent / "action_network_selectors.json"
+
+        if config_file.exists():
+            try:
+                with open(config_file) as f:
+                    config = json.load(f)
+                    logger.debug(f"Loaded config from {config_file.name}")
+                    return config.get("selectors", {})
+            except (json.JSONDecodeError, IOError) as e:
+                logger.warning(f"Failed to load config: {e}. Using fallbacks.")
+
+        # Fallback selectors if config not available
+        return {
+            "login_button": [
+                (".user-component__button.user-component__login.css-1wwjzac.epb8che0"),
+                ".user-component__button.user-component__login",
+                "button[class*='user-component__login']",
+            ],
+            "username_input": [
+                'input[placeholder="Email"]',
+                "input[type='email']",
+                "input[name='email']",
+            ],
+            "password_input": [
+                'input[placeholder="Password"]',
+                "input[type='password']",
+            ],
+            "submit_button": [
+                'button[type="submit"]',
+                "button:has-text('Sign In')",
+            ],
+            "sport_nfl": [
+                (
+                    "//div[@class='css-p3ig27 emv4lho0']//div//"
+                    "span[@class='nav-link__title']"
+                    "[normalize-space()='NFL']"
+                ),
+                ("//span[@class='nav-link__title'][normalize-space()='NFL']"),
+                "a[href*='/nfl']:has-text('NFL')",
+            ],
+            "sport_ncaaf": [
+                (
+                    "//div[@class='css-p3ig27 emv4lho0']//div//"
+                    "span[@class='nav-link__title']"
+                    "[normalize-space()='NCAAF']"
+                ),
+                ("//span[@class='nav-link__title'][normalize-space()='NCAAF']"),
+                "a[href*='/college-football']:has-text('NCAAF')",
+            ],
+            "odds_tab": [
+                ("//a[contains(@class,'subNav__navLink')][normalize-space()='Odds']"),
+                "a[class*='subNav__navLink']:has-text('Odds')",
+            ],
+        }
+
+    SELECTORS = _init_selectors()
 
     def __init__(
         self,
@@ -101,46 +153,161 @@ class ActionNetworkClient:
         logger.info("Navigating to login page")
         await page.goto(self.LOGIN_URL, wait_until="networkidle")
 
-        # Click login button to reveal login form
+        # Click login button to reveal login form (use fallback)
         try:
-            await page.click(self.SELECTORS["login_button"], timeout=5000)
+            await self._try_selectors(
+                page,
+                self.SELECTORS["login_button"],
+                action="click",
+                timeout=5000,
+            )
         except Exception:
             # Login form may already be visible
             logger.debug("Login button not found, form may already be visible")
 
-        # Fill in credentials
+        # Fill in credentials (use fallback selectors)
         logger.info("Entering credentials")
-        await page.fill(self.SELECTORS["username_input"], self.username)
-        await page.fill(self.SELECTORS["password_input"], self.password)
+        username_selector = self.SELECTORS.get("username_input", [])
+        password_selector = self.SELECTORS.get("password_input", [])
 
-        # Submit login form
-        await page.click(self.SELECTORS["submit_button"])
+        if username_selector and password_selector:
+            try:
+                # Try to fill username using fallback
+                for selector in username_selector:
+                    try:
+                        if selector.startswith("//"):
+                            selector = f"xpath={selector}"
+                        await page.fill(selector, self.username)
+                        break
+                    except Exception:
+                        continue
+            except Exception as e:
+                logger.warning(f"Could not fill username: {e}")
+
+            try:
+                # Try to fill password using fallback
+                for selector in password_selector:
+                    try:
+                        if selector.startswith("//"):
+                            selector = f"xpath={selector}"
+                        await page.fill(selector, self.password)
+                        break
+                    except Exception:
+                        continue
+            except Exception as e:
+                logger.warning(f"Could not fill password: {e}")
+
+        # Submit login form (use fallback)
+        try:
+            await self._try_selectors(
+                page,
+                self.SELECTORS["submit_button"],
+                action="click",
+                timeout=5000,
+            )
+        except Exception as e:
+            logger.warning(f"Could not submit login form: {e}")
 
         # Wait for navigation to complete
         await page.wait_for_load_state("networkidle")
 
-        # Verify login success by checking for user-specific element
+        # Verify login success by checking for absence of login form
+        # (more reliable than waiting for specific elements)
         try:
-            # Wait for any of these success indicators
-            # 1. User account menu (logged in state)
-            # 2. Navigation loaded (successful page load)
-            # 3. Absence of login button (successful login)
-            await page.wait_for_selector(
-                'a[href*="/account"], a[href*="/profile"], nav[class*="user"]',
-                state="visible",
-                timeout=15000,
-            )
-            logger.info("Login successful")
-        except Exception as e:
-            # Fallback: check if login form is gone (alternative success indicator)
+            # Check if login form is gone (most reliable success indicator)
+            login_form = await page.query_selector('input[placeholder="Email"]')
+            if login_form is None:
+                logger.info("Login successful (form disappeared)")
+                return
+        except Exception:
+            pass
+
+        # Try alternative success indicators
+        success_selectors = [
+            'a[href*="/account"]',
+            'a[href*="/profile"]',
+            'nav[class*="user"]',
+            "div[class*='user-menu']",
+        ]
+
+        for selector in success_selectors:
             try:
-                login_form = await page.query_selector('input[placeholder="Email"]')
-                if login_form is None:
-                    logger.info("Login successful (form disappeared)")
+                element = await page.query_selector(selector)
+                if element:
+                    logger.info(f"Login successful (found: {selector})")
                     return
-            except:
-                pass
-            raise RuntimeError(f"Login failed: {e}") from e
+            except Exception:
+                continue
+
+        # If we got here, login may have failed
+        raise RuntimeError("Login failed: Could not verify login success")
+
+    async def _try_selectors(
+        self,
+        page: Page,
+        selector_list: list[str],
+        action: str = "wait",
+        timeout: int = 5000,
+    ) -> Any:
+        """
+        Try multiple selectors until one succeeds (multi-selector fallback).
+
+        Args:
+            page: Playwright page object
+            selector_list: List of CSS/XPath selectors to try in order
+            action: Action to perform ('wait', 'click', 'fill', 'query')
+            timeout: Timeout in milliseconds
+
+        Returns:
+            Element handle or result depending on action
+
+        Raises:
+            RuntimeError: If all selectors fail
+        """
+        last_error = None
+
+        for i, selector in enumerate(selector_list):
+            try:
+                # Convert XPath selectors to Playwright format
+                if selector.startswith("//"):
+                    selector = f"xpath={selector}"
+
+                if action == "wait":
+                    element = await page.wait_for_selector(selector, timeout=timeout)
+                elif action == "click":
+                    await page.click(selector, timeout=timeout)
+                    element = True
+                elif action == "query":
+                    element = await page.query_selector(selector)
+                elif action == "query_all":
+                    element = await page.query_selector_all(selector)
+                else:
+                    raise ValueError(f"Unknown action: {action}")
+
+                # Log if fallback was used
+                if i > 0:
+                    logger.warning(
+                        f"Primary selector failed, used fallback "
+                        f"#{i + 1}/{len(selector_list)}: {selector}"
+                    )
+                else:
+                    logger.debug(f"Selector matched (attempt 1): {selector}")
+
+                return element
+
+            except Exception as e:
+                last_error = e
+                logger.debug(
+                    f"Selector attempt {i + 1}/{len(selector_list)} failed: {selector}"
+                )
+                if i < len(selector_list) - 1:
+                    continue
+
+        # All selectors failed
+        raise RuntimeError(
+            f"All {len(selector_list)} selectors failed for action '{action}': "
+            f"{last_error}"
+        ) from last_error
 
     async def _rate_limit(self) -> None:
         """Enforce rate limiting between requests."""
@@ -205,19 +372,21 @@ class ActionNetworkClient:
 
         page = self._page
 
-        # Navigate to league
+        # Navigate to league (use fallback selectors)
         sport_selector = (
             self.SELECTORS["sport_nfl"]
             if league == "NFL"
             else self.SELECTORS["sport_ncaaf"]
         )
         logger.debug(f"Clicking {league} navigation")
-        await page.click(sport_selector)
+        await self._try_selectors(page, sport_selector, action="click", timeout=10000)
         await page.wait_for_load_state("networkidle")
 
-        # Navigate to odds page
+        # Navigate to odds page (use fallback selectors)
         logger.debug("Clicking Odds tab")
-        await page.click(self.SELECTORS["odds_tab"])
+        await self._try_selectors(
+            page, self.SELECTORS["odds_tab"], action="click", timeout=10000
+        )
         await page.wait_for_load_state("networkidle")
 
         # Extract odds data from table
