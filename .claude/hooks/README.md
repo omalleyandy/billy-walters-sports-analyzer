@@ -47,53 +47,70 @@ python .claude/hooks/session_end.py
 
 ## Data Collection Hooks
 
-### pre_data_collection.py
-Validates environment before running `/collect-all-data`.
+### pre_data_collection_validator.py
+Comprehensive pre-flight validation before running `/collect-all-data`.
 
 ```bash
-python .claude/hooks/pre_data_collection.py
+python .claude/hooks/pre_data_collection_validator.py
 ```
 
 **Validates:**
-- API keys present (AccuWeather, Overtime, Action Network, etc.)
-- Output directories exist
-- Current NFL week detected
-- Last data collection timestamp
+- Environment variables (all API keys)
+- Database connection
+- Required output directories exist
+- Current NFL/NCAAF week detected
+- No data collection already in progress
 
 **Exit Codes:**
 - `0` = All checks passed, safe to proceed
-- `1` = Missing API keys or directories, cannot proceed
+- `1` = Critical error detected, abort collection
 
 **Use Case**: Tuesday/Wednesday morning before data collection
 
+**Key Features:**
+- ✅ Database connectivity check
+- ✅ Automatic week detection
+- ✅ Process locking (prevents concurrent runs)
+- ✅ Comprehensive environment validation
+
 ---
 
-### post_data_collection.py
-Validates data quality after collection completes.
+### post_data_collection_validator.py
+Comprehensive post-flight validation after collection completes.
 
 ```bash
-python .claude/hooks/post_data_collection.py [week]
+python .claude/hooks/post_data_collection_validator.py --league nfl
 ```
 
 **Parameters:**
-- `[week]` (optional): NFL week number (auto-detected if omitted)
+- `--league` (required): `nfl` or `ncaaf`
 
 **Validates:**
-- Required files present (5 minimum: power ratings, schedules, odds, etc.)
-- Data freshness (<24 hours)
-- Generates quality score (EXCELLENT/GOOD/FAIR/POOR)
-- Provides actionable next steps
+- All required data files collected
+- Data quality and consistency
+- Database integrity
+- Files ready for analysis
 
 **Output:**
 ```
-Data Quality Assessment - Week 10
-File Status: ✓ All 5 required files present
-Data Freshness: Excellent (collected 2 hours ago)
-Quality Score: EXCELLENT
-Recommendations: Ready for edge detection
+Post-Flight Validation - Week 13 NFL
+[OK] All required files present
+[OK] Data quality: EXCELLENT
+[OK] Database sync: SUCCESS
+[OK] Ready for edge detection
 ```
 
+**Exit Codes:**
+- `0` = All data quality checks passed
+- `1` = Data quality issues found, manual review needed
+
 **Use Case**: Immediately after `/collect-all-data` completes
+
+**Key Features:**
+- ✅ Complete data quality assessment
+- ✅ Database validation
+- ✅ League-specific checks (NFL/NCAAF)
+- ✅ Detailed quality reports
 
 ---
 
