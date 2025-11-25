@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """
-ESPN API Client
+ESPN API Client - DEPRECATED
+
+⚠️ DEPRECATION NOTICE: This module is deprecated and should not be used.
+Use espn_client.py instead, which provides:
+  - Async/await support for better concurrency
+  - Automatic retry logic with exponential backoff
+  - Circuit breaker pattern for resilience
+  - Superior error handling
+
+This module is maintained for backwards compatibility only.
+Migration path: Replace all imports of ESPNAPIClient with AsyncESPNClient from espn_client.py
+
 Simple REST API client for ESPN football data (NFL & NCAAF)
 No authentication required!
 """
