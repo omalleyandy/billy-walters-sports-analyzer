@@ -59,14 +59,27 @@ class NFLGameStatsClient:
         self._page: Optional[Page] = None
 
     async def connect(self) -> None:
-        """Initialize Playwright browser."""
+        """Initialize Playwright browser with bot evasion."""
         try:
             self._playwright = await async_playwright().start()
+            # Launch with bot detection evasion
             self._browser = await self._playwright.chromium.launch(
-                headless=self.headless
+                headless=self.headless,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-setuid-sandbox",
+                ],
             )
-            self._page = await self._browser.new_page()
-            logger.info("NFL Game Stats client connected")
+            self._page = await self._browser.new_page(
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+                viewport={"width": 1920, "height": 1080},
+            )
+            logger.info("NFL Game Stats client connected with bot evasion")
         except Exception as e:
             logger.error(f"Failed to connect: {e}")
             raise
@@ -113,9 +126,13 @@ class NFLGameStatsClient:
         schedule_url = f"{self.BASE_URL}/schedules/{year}/by-week/{week}"
         logger.info(f"Fetching schedule from {schedule_url}")
 
-        # Navigate to schedule page
-        await self._page.goto(schedule_url, wait_until="networkidle")
-        await asyncio.sleep(1)
+        # Navigate to schedule page with timeout
+        await self._page.goto(
+            schedule_url,
+            wait_until="domcontentloaded",
+            timeout=60000,
+        )
+        await asyncio.sleep(2)
 
         # Extract all game links
         game_links = await self._extract_game_links()
@@ -204,8 +221,14 @@ class NFLGameStatsClient:
 
         try:
             logger.info(f"Navigating to {game_url}")
-            await self._page.goto(game_url, wait_until="networkidle")
-            await asyncio.sleep(1)
+            # Use longer timeout and load strategy
+            await self._page.goto(
+                game_url,
+                wait_until="domcontentloaded",
+                timeout=60000,
+            )
+            # Extra wait for JS to render
+            await asyncio.sleep(3)
 
             # Ensure we're on stats tab
             if "tab=stats" not in self._page.url:
@@ -255,9 +278,24 @@ class NFLGameStatsClient:
         try:
             # Get game title/teams (appears in header)
             # Example: "BILLS AT TEXANS"
-            game_title = await self._page.locator(
-                "h1, [data-test='game-title']"
-            ).first.text_content()
+            # Try multiple selectors for robustness
+            game_title = None
+            selectors = [
+                "h1",
+                "[data-test='game-title']",
+                "div.Game__header h1",
+                "[class*='game'] [class*='title']",
+            ]
+
+            for selector in selectors:
+                try:
+                    game_title = await self._page.locator(selector).first.text_content(
+                        timeout=5000
+                    )
+                    if game_title:
+                        break
+                except Exception:
+                    continue
 
             if not game_title:
                 logger.warning("Could not find game title")
