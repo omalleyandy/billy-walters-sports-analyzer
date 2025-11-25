@@ -286,7 +286,9 @@ class ESPNNFLScoreboardClient:
             return None
 
     async def save_week_scores(
-        self, games: list[dict[str, Any]], week: int, output_dir: Optional[Path] = None
+        self, games: list[dict[str, Any]], week: int,
+        output_dir: Optional[Path] = None,
+        league: str = "nfl"
     ) -> Path:
         """
         Save week scores to JSON file.
@@ -294,23 +296,59 @@ class ESPNNFLScoreboardClient:
         Args:
             games: List of game dictionaries
             week: Week number
-            output_dir: Output directory (default: output/nfl_scores/)
+            output_dir: Output directory (default: output/espn/scores/nfl/)
+            league: League identifier for path organization
 
         Returns:
             Path to saved file
         """
         if output_dir is None:
-            output_dir = Path(__file__).parent.parent.parent / "output" / "nfl_scores"
+            # NEW: Use organized structure output/espn/scores/{league}/
+            output_dir = (
+                Path(__file__).parent.parent.parent / "output" / "espn" /
+                "scores" / league.lower()
+            )
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        filename = f"scores_2025_week_{week:02d}.json"
+        # NEW: Use timestamped filename matching other scrapers
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"scores_{league.lower()}_{timestamp}.json"
         filepath = output_dir / filename
 
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(games, f, indent=2, default=str)
 
         logger.info(f"Saved {len(games)} games to {filepath}")
+
+        # Backward compatibility: Create symlink in old location
+        try:
+            old_location = (
+                Path(__file__).parent.parent.parent / "output" / "nfl_scores"
+            )
+            old_location.mkdir(parents=True, exist_ok=True)
+            old_filename = f"scores_2025_week_{week:02d}.json"
+            old_filepath = old_location / old_filename
+
+            if old_filepath.exists():
+                old_filepath.unlink()
+
+            try:
+                old_filepath.symlink_to(filepath.resolve())
+                logger.info(f"Created symlink for backward compatibility")
+            except OSError:
+                # Windows fallback: copy instead of symlink
+                import shutil
+                shutil.copy2(filepath, old_filepath)
+                logger.info(
+                    f"Copied to legacy location for backward compatibility"
+                )
+        except Exception as e:
+            logger.warning(
+                f"Could not create backward compatibility link: {e}"
+            )
+
         return filepath
 
     async def save_all_scores(
@@ -323,17 +361,24 @@ class ESPNNFLScoreboardClient:
 
         Args:
             scores: Dictionary mapping week to list of games
-            output_dir: Output directory
+            output_dir: Output directory (default: output/espn/scores/nfl/)
 
         Returns:
             Path to saved file
         """
         if output_dir is None:
-            output_dir = Path(__file__).parent.parent.parent / "output" / "nfl_scores"
+            # NEW: Use organized structure
+            output_dir = (
+                Path(__file__).parent.parent.parent / "output" / "espn" /
+                "scores" / "nfl"
+            )
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        filename = "scores_2025_all_weeks.json"
+        # NEW: Use timestamped filename
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"scores_nfl_all_weeks_{timestamp}.json"
         filepath = output_dir / filename
 
         with open(filepath, "w", encoding="utf-8") as f:

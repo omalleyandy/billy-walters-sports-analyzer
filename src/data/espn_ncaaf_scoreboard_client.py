@@ -421,24 +421,18 @@ class ESPNNCAAFScoreboardClient:
 
         Args:
             scoreboard: Scoreboard API response
-            output_dir: Output directory (e.g., data/raw/espn/scoreboard)
-            date: Date string (YYYYMMDD) for subdirectory
+            output_dir: Output directory (e.g., output/espn/scores/ncaaf)
+            date: Date string (YYYYMMDD) - kept for compatibility, not used
 
         Returns:
             Path to saved file
         """
-        # Create date subdirectory
-        if date:
-            save_dir = output_dir / date
-        else:
-            save_dir = output_dir / datetime.now().strftime("%Y%m%d")
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-        save_dir.mkdir(parents=True, exist_ok=True)
-
-        # Generate filename with timestamp
+        # Generate filename with timestamp matching NFL pattern
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{timestamp}_scoreboard.json"
-        filepath = save_dir / filename
+        filename = f"scores_ncaaf_{timestamp}.json"
+        filepath = output_dir / filename
 
         # Save JSON
         with open(filepath, "w", encoding="utf-8") as f:
@@ -457,25 +451,19 @@ class ESPNNCAAFScoreboardClient:
 
         Args:
             game_data: Complete game data (summary + plays + win prob)
-            output_dir: Output directory
-            date: Date string (YYYYMMDD) for subdirectory
+            output_dir: Output directory (e.g., output/espn/scores/ncaaf)
+            date: Date string (YYYYMMDD) - kept for compatibility, not used
 
         Returns:
             Path to saved file
         """
-        # Create date subdirectory
-        if date:
-            save_dir = output_dir / date
-        else:
-            save_dir = output_dir / datetime.now().strftime("%Y%m%d")
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-        save_dir.mkdir(parents=True, exist_ok=True)
-
-        # Generate filename
+        # Generate filename with event ID matching output pattern
         event_id = game_data["event_id"]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{timestamp}_game_{event_id}.json"
-        filepath = save_dir / filename
+        filename = f"game_ncaaf_{event_id}_{timestamp}.json"
+        filepath = output_dir / filename
 
         # Save JSON
         with open(filepath, "w", encoding="utf-8") as f:

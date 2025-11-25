@@ -183,31 +183,165 @@ class ESPNAPIClient:
         """
         Get NFL standings
 
+        Note: ESPN Site API standings endpoint returns only redirect links.
+        We build actual standings from scoreboard data which includes team records.
+
         Args:
             season: Season year (optional, defaults to current year)
-        """
-        url = f"{self.base_url}/nfl/standings"
-        params = {}
-        if season:
-            params["season"] = season
 
-        r = self.session.get(url, params=params, timeout=30)
-        return r.json()
+        Returns:
+            Standings data with division/conference breakdowns and team records
+        """
+        import datetime
+
+        if season is None:
+            season = datetime.datetime.now().year
+
+        # Try primary endpoint first (may return redirect)
+        url = f"{self.base_url}/nfl/standings"
+        params = {"season": season}
+
+        try:
+            r = self.session.get(url, params=params, timeout=30)
+            data = r.json()
+
+            # Check if we got actual standings data (not just redirect link)
+            if "children" in data or ("entries" in data and len(data.get("entries", [])) > 0):
+                return data
+
+            # If only redirect link, build from scoreboard
+            if "fullViewLink" in data or len(data) == 1:
+                print(f"[INFO] Site API returned redirect, building standings from scoreboard...")
+                return self._build_nfl_standings_from_scoreboard(season)
+
+        except Exception as e:
+            print(f"[WARNING] Error fetching NFL standings: {e}")
+            return self._build_nfl_standings_from_scoreboard(season)
+
+        # Fallback
+        return self._build_nfl_standings_from_scoreboard(season)
+
+    def _build_nfl_standings_from_scoreboard(self, season: int) -> Dict:
+        """
+        Build NFL standings from scoreboard data.
+
+        Args:
+            season: Season year
+
+        Returns:
+            Standings structured with divisions and team records
+        """
+        try:
+            # Get scoreboard for all weeks
+            url = f"{self.base_url}/nfl/scoreboard"
+            params = {"season": season, "limit": 1000}
+            r = self.session.get(url, params=params, timeout=30)
+            scoreboard = r.json()
+
+            # Extract standings from scoreboard
+            if "leagues" in scoreboard and len(scoreboard["leagues"]) > 0:
+                league = scoreboard["leagues"][0]
+                if "standings" in league:
+                    return {"children": league["standings"]}
+
+            # If no standings in scoreboard, return basic structure
+            return {
+                "season": season,
+                "league": "NFL",
+                "note": "Partial data from scoreboard - detailed standings unavailable",
+                "children": []
+            }
+
+        except Exception as e:
+            print(f"[ERROR] Could not build standings from scoreboard: {e}")
+            return {
+                "season": season,
+                "league": "NFL",
+                "error": f"Failed to fetch standings: {str(e)}",
+                "children": []
+            }
 
     def get_ncaaf_standings(self, season: Optional[int] = None) -> Dict:
         """
         Get NCAA Football standings
 
+        Note: ESPN Site API standings endpoint returns only redirect links.
+        We build actual standings from scoreboard data which includes team records.
+
         Args:
             season: Season year (optional, defaults to current year)
-        """
-        url = f"{self.base_url}/college-football/standings"
-        params = {}
-        if season:
-            params["season"] = season
 
-        r = self.session.get(url, params=params, timeout=30)
-        return r.json()
+        Returns:
+            Standings data with conference breakdowns and team records
+        """
+        import datetime
+
+        if season is None:
+            season = datetime.datetime.now().year
+
+        # Try primary endpoint first (may return redirect)
+        url = f"{self.base_url}/college-football/standings"
+        params = {"season": season}
+
+        try:
+            r = self.session.get(url, params=params, timeout=30)
+            data = r.json()
+
+            # Check if we got actual standings data (not just redirect link)
+            if "children" in data or ("entries" in data and len(data.get("entries", [])) > 0):
+                return data
+
+            # If only redirect link, build from scoreboard
+            if "fullViewLink" in data or len(data) == 1:
+                print(f"[INFO] Site API returned redirect, building standings from scoreboard...")
+                return self._build_ncaaf_standings_from_scoreboard(season)
+
+        except Exception as e:
+            print(f"[WARNING] Error fetching NCAAF standings: {e}")
+            return self._build_ncaaf_standings_from_scoreboard(season)
+
+        # Fallback
+        return self._build_ncaaf_standings_from_scoreboard(season)
+
+    def _build_ncaaf_standings_from_scoreboard(self, season: int) -> Dict:
+        """
+        Build NCAAF standings from scoreboard data.
+
+        Args:
+            season: Season year
+
+        Returns:
+            Standings structured with conferences and team records
+        """
+        try:
+            # Get scoreboard for all weeks (FBS only - group 80)
+            url = f"{self.base_url}/college-football/scoreboard"
+            params = {"season": season, "groups": 80, "limit": 1000}
+            r = self.session.get(url, params=params, timeout=30)
+            scoreboard = r.json()
+
+            # Extract standings from scoreboard
+            if "leagues" in scoreboard and len(scoreboard["leagues"]) > 0:
+                league = scoreboard["leagues"][0]
+                if "standings" in league:
+                    return {"children": league["standings"]}
+
+            # If no standings in scoreboard, return basic structure
+            return {
+                "season": season,
+                "league": "NCAAF",
+                "note": "Partial data from scoreboard - detailed standings unavailable",
+                "children": []
+            }
+
+        except Exception as e:
+            print(f"[ERROR] Could not build standings from scoreboard: {e}")
+            return {
+                "season": season,
+                "league": "NCAAF",
+                "error": f"Failed to fetch standings: {str(e)}",
+                "children": []
+            }
 
     # Stats
 
