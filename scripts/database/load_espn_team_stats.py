@@ -245,7 +245,7 @@ class ESPNTeamStatsLoader:
             f"skipped {total_skipped} errors"
         )
         if failed_teams and total_inserted == 0:
-            print(f"  Failed teams (first 3):")
+            print("  Failed teams (first 3):")
             for team, err in failed_teams[:3]:
                 print(f"    {team}: {err}")
         return total_inserted, total_skipped
@@ -277,7 +277,7 @@ class ESPNTeamStatsLoader:
         """)
 
         if result:
-            print(f"\n  Top 3 by Points Per Game:")
+            print("\n  Top 3 by Points Per Game:")
             for row in result:
                 ppg = row.get("points_per_game", 0)
                 print(f"    {row['league']}: {row['team']} ({ppg:.1f} PPG)")
@@ -302,7 +302,7 @@ class ESPNTeamStatsLoader:
             print("\n" + "=" * 70)
             print("[OK] ESPN TEAM STATISTICS LOADED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
             print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} teams with statistics")

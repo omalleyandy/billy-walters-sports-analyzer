@@ -65,6 +65,6 @@ if __name__ == "__main__":
 
     nfl_games, ncaaf_games = asyncio.run(fetch_schedules(nfl_week, ncaaf_week))
 
-    print(f"\n" + "=" * 80)
+    print("\n" + "=" * 80)
     print(f"SUMMARY: {len(nfl_games)} NFL games, {len(ncaaf_games)} NCAAF games")
     print("=" * 80)

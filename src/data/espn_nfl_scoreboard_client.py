@@ -317,7 +317,6 @@ class ESPNNFLScoreboardClient:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # NEW: Use timestamped filename matching other scrapers
-        from datetime import datetime
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"scores_{league.lower()}_{timestamp}.json"
@@ -340,13 +339,13 @@ class ESPNNFLScoreboardClient:
 
             try:
                 old_filepath.symlink_to(filepath.resolve())
-                logger.info(f"Created symlink for backward compatibility")
+                logger.info("Created symlink for backward compatibility")
             except OSError:
                 # Windows fallback: copy instead of symlink
                 import shutil
 
                 shutil.copy2(filepath, old_filepath)
-                logger.info(f"Copied to legacy location for backward compatibility")
+                logger.info("Copied to legacy location for backward compatibility")
         except Exception as e:
             logger.warning(f"Could not create backward compatibility link: {e}")
 
@@ -380,7 +379,6 @@ class ESPNNFLScoreboardClient:
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # NEW: Use timestamped filename
-        from datetime import datetime
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"scores_nfl_all_weeks_{timestamp}.json"

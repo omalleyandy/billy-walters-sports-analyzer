@@ -264,7 +264,7 @@ class DataLoader:
                     print(f"    [WARN] Failed to process {city_name}: {e}")
                     self.stats["errors"] += 1
 
-            print(f"  [OK] Weather processing complete")
+            print("  [OK] Weather processing complete")
             return True
 
         except Exception as e:

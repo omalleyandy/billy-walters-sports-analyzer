@@ -254,7 +254,7 @@ def analyze_injuries(injury_file: Path):
     total_doubtful = sum(t["doubtful_count"] for t in team_impacts)
     total_questionable = sum(t["questionable_count"] for t in team_impacts)
 
-    print(f"\nLeague Totals:")
+    print("\nLeague Totals:")
     print(f"  OUT: {total_out} players")
     print(f"  DOUBTFUL: {total_doubtful} players")
     print(f"  QUESTIONABLE: {total_questionable} players")

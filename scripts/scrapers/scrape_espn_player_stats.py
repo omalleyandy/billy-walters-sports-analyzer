@@ -136,7 +136,7 @@ Examples:
                 # Extract and save leaders if requested
                 if args.extract_leaders:
                     if not args.quiet:
-                        print(f"[*] Extracting stat leaders...")
+                        print("[*] Extracting stat leaders...")
 
                     leaders = client.extract_stat_leaders(stats_data)
 

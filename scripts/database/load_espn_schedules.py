@@ -255,7 +255,7 @@ class ESPNScheduleLoader:
         """)
 
         if result:
-            print(f"\n  NFL games by week:")
+            print("\n  NFL games by week:")
             for row in result:
                 print(f"    Week {row['week']}: {row['count']} games")
 
@@ -279,7 +279,7 @@ class ESPNScheduleLoader:
             print("\n" + "=" * 70)
             print("[OK] ESPN SCHEDULES LOADED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
             print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} games in database")

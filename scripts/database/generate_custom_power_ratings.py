@@ -47,7 +47,7 @@ class CustomPowerRatingGenerator:
         print(f"\n[LOAD] ESPN Team Statistics ({league.upper()})...")
 
         result = self.db.execute_query(
-            f"""
+            """
             SELECT team, week, season,
                    points_per_game, total_yards_per_game,
                    passing_yards_per_game, rushing_yards_per_game,
@@ -82,7 +82,7 @@ class CustomPowerRatingGenerator:
         print(f"\n[LOAD] ESPN Injury Data ({league.upper()})...")
 
         result = self.db.execute_query(
-            f"""
+            """
             SELECT team, week, season,
                    player_name, position, status, severity,
                    impact_estimate
@@ -110,7 +110,7 @@ class CustomPowerRatingGenerator:
         print(f"\n[LOAD] ESPN Standings ({league.upper()})...")
 
         result = self.db.execute_query(
-            f"""
+            """
             SELECT team, week, season,
                    wins, losses, ties,
                    home_wins, home_losses,
@@ -138,7 +138,7 @@ class CustomPowerRatingGenerator:
         print(f"\n[LOAD] Massey Ratings ({league.upper()}) for Comparison...")
 
         result = self.db.execute_query(
-            f"""
+            """
             SELECT team, week, season, rating
             FROM massey_ratings
             WHERE league = %s
@@ -392,10 +392,10 @@ class CustomPowerRatingGenerator:
             print("\n" + "=" * 70)
             print("[OK] CUSTOM POWER RATINGS GENERATED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(f"  NFL:   {nfl_inserted} ratings, {nfl_skipped} skipped")
             print(f"  NCAAF: {ncaaf_inserted} ratings, {ncaaf_skipped} skipped")
-            print(f"\nYour custom ratings are now in the database!")
+            print("\nYour custom ratings are now in the database!")
             print("Next steps:")
             print("  1. Compare custom vs Massey ratings for accuracy")
             print("  2. Use custom ratings for edge detection")

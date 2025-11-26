@@ -232,7 +232,7 @@ class MasseyRatingsLoader:
             print("\n" + "=" * 70)
             print("[OK] MASSEY RATINGS LOADED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
             print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} teams in database")

@@ -156,7 +156,7 @@ Examples:
 
         # Save aggregated results
         if not args.quiet:
-            print(f"\n[*] Saving results...")
+            print("\n[*] Saving results...")
 
         output_file = await client.save_transactions_json(
             all_results,

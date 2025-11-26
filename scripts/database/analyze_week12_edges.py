@@ -128,7 +128,7 @@ def print_edge_report(edges):
     max_edges = len([e for e in edges if e["edge_strength"] == "MAX"])
     strong_edges = len([e for e in edges if e["edge_strength"] == "STRONG"])
 
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  Total Games: {total_games}")
     print(f"  Playable Edges (>1pt): {playable_games}")
     print(f"  MAX Edges (7+pts): {max_edges}")

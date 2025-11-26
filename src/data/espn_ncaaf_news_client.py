@@ -78,7 +78,6 @@ class ESPNNCAAFNewsClient:
 
     async def connect(self) -> None:
         """Initialize Playwright browser."""
-        from playwright.async_api import async_playwright
 
         self._playwright = await async_playwright().start()
         self._browser = await self._playwright.chromium.launch(headless=self.headless)

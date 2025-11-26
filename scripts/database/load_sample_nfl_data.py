@@ -301,7 +301,7 @@ class SampleNFLDataLoader:
                     )
 
             self.conn.commit()
-            logger.info(f"[OK] Loaded team statistics for 12 weeks")
+            logger.info("[OK] Loaded team statistics for 12 weeks")
             cursor.close()
 
         except Exception as e:

@@ -181,7 +181,7 @@ Examples:
 
         # Save aggregated results
         if not args.quiet:
-            print(f"\n[*] Saving results...")
+            print("\n[*] Saving results...")
 
         output_file = await client.save_news_json(all_results, args.output_dir)
 

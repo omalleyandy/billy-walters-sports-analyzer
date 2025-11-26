@@ -301,30 +301,36 @@ class NFLGameStatsClient:
             raise RuntimeError("Page not initialized")
 
         try:
-            # Get game title/teams (appears in header)
-            # Example: "BILLS AT TEXANS"
-            # Try multiple selectors for robustness
-            game_title = None
-            selectors = [
-                "h1",
-                "[data-test='game-title']",
-                "div.Game__header h1",
-                "[class*='game'] [class*='title']",
-            ]
+            # Get game title from page title meta tag
+            # Format: "Team1 at Team2 YYYY REG/POST XX - Game Center"
+            # Example: "Green Bay Packers at Detroit Lions 2025 REG 13 - Game Center"
+            page_title = await self._page.title()
+            logger.debug(f"Page title: {page_title}")
 
-            for selector in selectors:
-                try:
-                    game_title = await self._page.locator(selector).first.text_content(
-                        timeout=5000
-                    )
-                    if game_title:
-                        break
-                except Exception:
-                    continue
+            # Extract teams from page title
+            # Split by " at " (case insensitive)
+            if " at " not in page_title.lower():
+                logger.warning(f"Could not parse teams from page title: {page_title}")
+                # Try DOM selectors as fallback
+                game_title = await self._extract_game_title_from_dom()
+                if not game_title:
+                    return {}
+            else:
+                # Split by " at "
+                parts = page_title.lower().split(" at ")
+                away_team_full = parts[0].strip()
+                # Get the part before " YYYY REG/POST"
+                home_and_meta = parts[1]
+                home_parts = home_and_meta.split(" 202")
+                home_team_full = home_parts[0].strip()
 
-            if not game_title:
-                logger.warning("Could not find game title")
-                return {}
+                # Extract team name (last word of full name)
+                # E.g., "Green Bay Packers" -> "Packers"
+                away_team = away_team_full.split()[-1].upper()
+                home_team = home_team_full.split()[-1].upper()
+
+                game_title = f"{away_team} at {home_team}"
+                logger.debug(f"Extracted from page title: {away_team} vs {home_team}")
 
             # Parse teams from title
             # Format: "TEAM1 at TEAM2" or similar
@@ -355,6 +361,53 @@ class NFLGameStatsClient:
         except Exception as e:
             logger.error(f"Error extracting game info: {e}")
             return {}
+
+    async def _extract_game_title_from_dom(self) -> Optional[str]:
+        """
+        Extract game title from DOM as fallback when page title parsing fails.
+
+        Looks for team names in h3 headers like "GB PASSING" or button labels.
+
+        Returns:
+            Game title string (e.g., "PACKERS AT LIONS") or None
+        """
+        if not self._page:
+            return None
+
+        try:
+            # Try to get team names from button labels
+            selectors = [
+                "button:has-text('PACKERS')",
+                "button:has-text('LIONS')",
+                "button:has-text('BILLS')",
+                "button:has-text('CHIEFS')",
+            ]
+
+            teams = []
+            for selector in selectors:
+                try:
+                    elements = await self._page.locator(selector).all()
+                    for elem in elements:
+                        text = await elem.text_content()
+                        if text:
+                            team = text.strip().upper()
+                            if team not in teams:
+                                teams.append(team)
+                                if len(teams) == 2:
+                                    break
+                    if len(teams) == 2:
+                        break
+                except Exception:
+                    continue
+
+            if len(teams) >= 2:
+                return f"{teams[0]} AT {teams[1]}"
+
+            return None
+
+        except Exception as e:
+            logger.debug(f"Error extracting game title from DOM: {e}")
+            return None
 
     async def _extract_team_stats(self, team_name: str) -> dict[str, Any]:
         """
@@ -409,6 +462,13 @@ class NFLGameStatsClient:
         """
         Parse the stats table for the current team view.
 
+        Table structure:
+        - Row 0: Column headers (PLAYER, CMP, ATT) - for PASSING
+        - Row 1-N: Passing stats
+        - Row N+1: Column headers (PLAYER, ATT, YDS) - for RUSHING
+        - Row N+2-M: Rushing stats
+        - etc.
+
         Returns:
             Dictionary with categorized stats
         """
@@ -433,44 +493,78 @@ class NFLGameStatsClient:
             rows = await self._page.locator("tr").all()
             logger.info(f"Found {len(rows)} table rows")
 
-            current_category = None
+            # Extract all text in one pass (more efficient)
+            row_texts = []
             for row in rows:
                 try:
-                    # Check if this is a category header
-                    header_text = await row.locator("th").first.text_content()
+                    # Get all cells (th and td) from this row
+                    cells = await row.locator("th, td").all()
+                    if cells:
+                        texts = []
+                        for cell in cells:
+                            try:
+                                text = await cell.text_content(timeout=1000)
+                                texts.append(text.strip() if text else "")
+                            except Exception:
+                                texts.append("")
+                        row_texts.append(texts)
+                except Exception as e:
+                    logger.debug(f"Error extracting row cells: {e}")
+                    continue
 
-                    if header_text:
-                        header_text = header_text.upper().strip()
+            logger.info(f"Extracted text from {len(row_texts)} rows")
 
-                        if "PASSING" in header_text:
-                            current_category = "passing"
-                        elif "RUSHING" in header_text:
-                            current_category = "rushing"
-                        elif "RECEIVING" in header_text:
-                            current_category = "receiving"
-                        elif "DEFENSE" in header_text:
-                            current_category = "defense"
-                        elif "SPECIAL TEAMS" in header_text:
-                            current_category = "special_teams"
+            # Parse rows by detecting header rows and categorizing by column content
+            i = 0
+            while i < len(row_texts):
+                row_text = row_texts[i]
+                if not row_text:
+                    i += 1
+                    continue
 
+                # Detect category by checking column headers
+                first_cell_upper = row_text[0].upper()
+                category = None
+
+                # Header rows typically have "PLAYER" as first column
+                if "PLAYER" in first_cell_upper:
+                    # Determine which type of PLAYER stats by column headers
+                    if any("CMP" in c.upper() for c in row_text):
+                        category = "passing"
+                    elif any("ATT" in c.upper() for c in row_text):
+                        # Could be rushing or receiving, check for REC
+                        if any("REC" in c.upper() for c in row_text):
+                            category = "receiving"
+                        else:
+                            category = "rushing"
+                    else:
+                        # Unknown, skip
+                        i += 1
                         continue
 
-                    # Parse data row
-                    cells = await row.locator("td").all()
-                    if cells and current_category:
-                        cell_texts = [await cell.text_content() for cell in cells]
+                    # Skip header row and parse following data rows
+                    i += 1
+                    while i < len(row_texts):
+                        data_row = row_texts[i]
+                        if not data_row:
+                            i += 1
+                            break
 
-                        # First cell usually contains stat name
-                        if cell_texts:
-                            stat_name = cell_texts[0].strip()
-                            stat_values = [v.strip() for v in cell_texts[1:]]
+                        first = data_row[0].upper()
+                        # Stop at next header row (PLAYER) or category switch
+                        if "PLAYER" in first:
+                            break
 
-                            if stat_name and stat_values:
-                                stats[current_category][stat_name] = stat_values
+                        # Store the stat (first column is name, rest are values)
+                        stat_name = data_row[0]
+                        stat_values = data_row[1:]
 
-                except Exception as e:
-                    logger.debug(f"Error parsing row: {e}")
-                    continue
+                        if stat_name and stat_values:
+                            stats[category][stat_name] = stat_values
+
+                        i += 1
+                else:
+                    i += 1
 
             return stats
 

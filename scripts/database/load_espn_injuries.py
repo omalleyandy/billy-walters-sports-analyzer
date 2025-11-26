@@ -292,7 +292,7 @@ class ESPNInjuriesLoader:
         """)
 
         if result:
-            print(f"\n  By severity:")
+            print("\n  By severity:")
             for row in result:
                 print(f"    {row['league']} {row['severity']}: {row['count']} players")
 
@@ -316,7 +316,7 @@ class ESPNInjuriesLoader:
             print("\n" + "=" * 70)
             print("[OK] ESPN INJURIES LOADED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
             print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} injury records in database")

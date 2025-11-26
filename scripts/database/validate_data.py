@@ -79,7 +79,7 @@ def validate_database():
                 f"  [OK] Boston College verified: ID={bc[0]}, Name={bc[1]}, Abbrev={bc[2]}"
             )
         else:
-            print(f"  [WARNING] Boston College (ID 103) not found")
+            print("  [WARNING] Boston College (ID 103) not found")
             all_passed = False
 
         # Check for NULL team names
@@ -97,7 +97,7 @@ def validate_database():
             GROUP BY conference
             ORDER BY count DESC
         """)
-        print(f"\n  Conference Distribution:")
+        print("\n  Conference Distribution:")
         for conf, count in cur.fetchall():
             print(f"    {conf:30} {count:>3} teams")
 
@@ -126,7 +126,7 @@ def validate_database():
             GROUP BY week, season_year
             ORDER BY season_year DESC, week DESC
         """)
-        print(f"\n  Statistics by Week:")
+        print("\n  Statistics by Week:")
         results = cur.fetchall()
         if results:
             for week, count, season in results[:5]:
@@ -157,14 +157,14 @@ def validate_database():
         """)
         total, null_ppg, null_papg, null_tm = cur.fetchone()
         if null_ppg > 0 or null_papg > 0 or null_tm > 0:
-            print(f"  [WARNING] NULL values found:")
+            print("  [WARNING] NULL values found:")
             print(f"    PPG: {null_ppg}/{total}")
             print(f"    PAPG: {null_papg}/{total}")
             print(f"    Turnover Margin: {null_tm}/{total}")
             if null_ppg > 10 or null_papg > 10:
                 all_passed = False
         else:
-            print(f"  [OK] No NULL values in critical fields")
+            print("  [OK] No NULL values in critical fields")
 
     except psycopg2.Error as e:
         print(f"  [ERROR] {e}")
@@ -190,7 +190,7 @@ def validate_database():
             GROUP BY rating_system
             ORDER BY count DESC
         """)
-        print(f"\n  Rating Systems:")
+        print("\n  Rating Systems:")
         for system, count in cur.fetchall():
             print(f"    {system:40} {count:>4} ratings")
 
@@ -203,7 +203,7 @@ def validate_database():
         """)
         bc_ratings = cur.fetchall()
         if bc_ratings:
-            print(f"\n  [OK] Boston College Power Ratings:")
+            print("\n  [OK] Boston College Power Ratings:")
             for system, value in bc_ratings[:3]:
                 print(f"    {system:40} {value:.2f}")
 
@@ -230,7 +230,7 @@ def validate_database():
             print(f"  [WARNING] {orphaned_stats} orphaned stat records")
             all_passed = False
         else:
-            print(f"  [OK] No orphaned stat records")
+            print("  [OK] No orphaned stat records")
 
         # Check orphaned schedules
         cur.execute("""
@@ -243,7 +243,7 @@ def validate_database():
             print(f"  [WARNING] {orphaned_games} games with missing team references")
             all_passed = False
         else:
-            print(f"  [OK] All game teams reference valid team IDs")
+            print("  [OK] All game teams reference valid team IDs")
 
     except psycopg2.Error as e:
         print(f"  [ERROR] {e}")
@@ -269,7 +269,7 @@ def validate_database():
             GROUP BY status
             ORDER BY count DESC
         """)
-        print(f"\n  Games by Status:")
+        print("\n  Games by Status:")
         for status, count in cur.fetchall():
             print(f"    {status:30} {count:>5}")
 

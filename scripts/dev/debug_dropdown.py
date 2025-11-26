@@ -106,7 +106,7 @@ async def debug_dropdown():
                     )
                     if first_cell:
                         cell_text = await first_cell.inner_text()
-                        print(f"\n  First odds cell after switching to Total:")
+                        print("\n  First odds cell after switching to Total:")
                         print(f"  '{cell_text.replace(chr(10), ' | ')}'")
 
         await browser.close()

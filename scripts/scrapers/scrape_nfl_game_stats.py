@@ -97,7 +97,7 @@ Examples:
     # Parse headless flag
     headless = args.headless.lower() == "true"
 
-    logger.info(f"Starting NFL game stats scraper")
+    logger.info("Starting NFL game stats scraper")
     logger.info(f"  Year: {args.year}")
     logger.info(f"  Week: {args.week}")
     logger.info(f"  Headless: {headless}")

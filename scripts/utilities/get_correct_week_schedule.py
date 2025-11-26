@@ -21,8 +21,8 @@ def main():
     print("=" * 80)
     today = datetime.now()
     print(f"Today: {today.strftime('%A, %B %d, %Y')}")
-    print(f"Current NFL Week: 12 (ending tonight with MNF)")
-    print(f"Next NFL Week: 13 (starts Thursday, Nov 28 - Thanksgiving)")
+    print("Current NFL Week: 12 (ending tonight with MNF)")
+    print("Next NFL Week: 13 (starts Thursday, Nov 28 - Thanksgiving)")
     print()
 
     print("=" * 80)

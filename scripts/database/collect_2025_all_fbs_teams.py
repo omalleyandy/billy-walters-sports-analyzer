@@ -432,7 +432,7 @@ async def main():
     collector = NCAAF2025AllTeamsCollector(output_base_dir=args.output_dir)
 
     logger.info("Starting 2025 NCAAF season collection (weeks 1-16)")
-    logger.info(f"Teams: 136 FBS teams (including Boston College ID 103)")
+    logger.info("Teams: 136 FBS teams (including Boston College ID 103)")
     logger.info(f"Output: {args.output_dir}")
 
     season_summary = await collector.collect_full_season()

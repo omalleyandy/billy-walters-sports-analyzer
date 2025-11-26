@@ -42,7 +42,7 @@ class ESPNScoreboardsStandingsLoader:
 
             events = scoreboard_data.get("events", [])
             if not events:
-                print(f"  [WARNING] No games found in scoreboard")
+                print("  [WARNING] No games found in scoreboard")
                 return 0, 0
 
             print(f"  Found {len(events)} games")
@@ -185,7 +185,7 @@ class ESPNScoreboardsStandingsLoader:
             # Extract standings groups (divisions/conferences)
             groups = standings_data.get("groups", [])
             if not groups:
-                print(f"  [WARNING] No standings groups found")
+                print("  [WARNING] No standings groups found")
                 return 0, 0
 
             conn = self.db.get_connection()
@@ -360,7 +360,7 @@ class ESPNScoreboardsStandingsLoader:
             print("\n" + "=" * 70)
             print("[OK] ESPN SCOREBOARDS & STANDINGS LOADED")
             print("=" * 70)
-            print(f"\nSummary:")
+            print("\nSummary:")
             print(
                 f"  Scoreboards: {nfl_sb + ncaaf_sb} loaded, "
                 f"{nfl_sb_skip + ncaaf_sb_skip} skipped"

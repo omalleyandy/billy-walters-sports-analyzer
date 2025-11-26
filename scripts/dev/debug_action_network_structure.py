@@ -90,9 +90,9 @@ async def debug_page_structure():
                 # Check siblings (might have odds table)
                 sibling = await parent.query_selector("table")
                 if sibling:
-                    print(f"    Has sibling table: YES")
+                    print("    Has sibling table: YES")
                 else:
-                    print(f"    Has sibling table: NO")
+                    print("    Has sibling table: NO")
 
         # Save a snapshot of the HTML
         print("\n=== Saving HTML snapshot ===")

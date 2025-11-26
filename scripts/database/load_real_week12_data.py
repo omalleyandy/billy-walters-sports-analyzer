@@ -495,7 +495,7 @@ def insert_structure_for_analysis(db):
             fetch=False,
         )
 
-    print(f"[OK] Set up analysis framework")
+    print("[OK] Set up analysis framework")
 
 
 def insert_realistic_weather(db):
