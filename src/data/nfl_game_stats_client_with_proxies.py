@@ -79,9 +79,9 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
 
         # Try to get credentials from parameters or environment
         if not proxyscrape_username:
-            proxyscrape_username = os.getenv("PROXYSCRAPE_USERNAME")
+            proxyscrape_username = os.environ.get("PROXYSCRAPE_USERNAME")
         if not proxyscrape_password:
-            proxyscrape_password = os.getenv("PROXYSCRAPE_PASSWORD")
+            proxyscrape_password = os.environ.get("PROXYSCRAPE_PASSWORD")
 
         # Initialize proxy rotator with credentials
         if use_proxies:

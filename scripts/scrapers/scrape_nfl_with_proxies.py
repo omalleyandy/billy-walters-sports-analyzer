@@ -136,20 +136,18 @@ Examples:
     setup_logging(args.verbose)
 
     # Check for ProxyScrape credentials
-    username = os.getenv("PROXYSCRAPE_USERNAME")
-    password = os.getenv("PROXYSCRAPE_PASSWORD")
-
-    if not username or not password:
-        logger.warning(
-            "No ProxyScrape credentials found. Set environment variables:\n"
-            "    export PROXYSCRAPE_USERNAME=your-username\n"
-            "    export PROXYSCRAPE_PASSWORD=your-password"
-        )
-        logger.info("Proceeding without proxies (will use direct connection)")
-    else:
+    try:
+        username = os.environ["PROXYSCRAPE_USERNAME"]
+        password = os.environ["PROXYSCRAPE_PASSWORD"]
         logger.info(
             "Using ProxyScrape direct mode (20 rotating residential US proxies)"
         )
+    except KeyError as e:
+        logger.error(
+            f"Missing required environment variable: {e}. "
+            "Set PROXYSCRAPE_USERNAME and PROXYSCRAPE_PASSWORD."
+        )
+        return 1
 
     # Parse headless flag
     headless = args.headless.lower() == "true"
