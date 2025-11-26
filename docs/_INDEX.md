@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Update**: 2025-11-25 - Action Network Phase 3: Complete totals (O/U) extraction via dropdown switching
+**Last Update**: 2025-11-25 (Late) - NFL.com Client Consolidation: Merged proxy support into single client class
 
 ---
 

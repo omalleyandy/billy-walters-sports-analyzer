@@ -50,13 +50,14 @@ This document contains critical information about working with the Billy Walters
 - **Results Validation**: ATS tracking, ROI calculation, team name mapping
 - **PostgreSQL Loading**: GameIDMapper (Overtime→ESPN), <10 sec full pipeline
 
-**Last Session**: 2025-11-25 (Continued) - NFL.com scraper: Fixed game title extraction and stats parsing bugs
-- Game title: Now uses page meta title tag instead of missing h1 element
-- Stats parsing: Rewrote for actual NFL.com table structure (PLAYER header rows + data)
-- Performance: Fixed hang on 174-row table parsing; now ~8 sec per game
-- Results: 9/17 games successfully collecting full stats (passing, rushing)
-- Remaining 8 games: Hit timeout (proxy rate limiting, not parsing)
-- See: [NFL_SCRAPER_DEBUGGING_SUMMARY.md](docs/guides/NFL_SCRAPER_DEBUGGING_SUMMARY.md)
+**Last Session**: 2025-11-25 (Late) - NFL.com Scraper Consolidation & Refactoring
+- **NFL.com Client Consolidation**: Merged `nfl_game_stats_client_with_proxies.py` into `nfl_game_stats_client.py`
+- **Optional Proxy Support**: Clean optional dependency pattern with environment variable fallback
+- **Parameter Layering**: Credentials via parameters or `PROXYSCRAPE_USERNAME`/`PROXYSCRAPE_PASSWORD` env vars
+- **Proxy Strategies**: Support "rotate" (sequential) and "random" IP selection
+- **Lazy Initialization**: Proxy rotator only initialized when `use_proxies=True`
+- **Code Quality**: ✅ All ruff/pyright checks passing, imports verified
+- Results: Single consolidated client, no code duplication, backward compatible
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -863,7 +864,86 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 Continued - NFL.com Scraper Debugging)**:
+**Latest Session (2025-11-25 Late - NFL.com Client Consolidation)**:
+
+#### NFL.com Game Stats Client: Consolidation Refactoring Complete ✨ (2025-11-25 Late)
+
+**Architecture Decision**: Eliminate code duplication between `nfl_game_stats_client.py` and `nfl_game_stats_client_with_proxies.py` while maintaining clean separation of concerns.
+
+**Implementation Approach**:
+- **Optional Dependency Pattern**: ProxyScrapeRotator imported with try/except fallback
+  - Allows client to work with or without proxy library
+  - No hard dependency on optional proxy components
+
+- **Parameter Layering**:
+  - Direct parameters: `proxyscrape_username`, `proxyscrape_password`
+  - Environment variable fallback: `PROXYSCRAPE_USERNAME`, `PROXYSCRAPE_PASSWORD`
+  - Parameters take precedence over environment variables
+
+- **Strategy Pattern**:
+  - `proxy_rotation_strategy` parameter: "rotate" (sequential) or "random"
+  - Enables different proxy selection strategies without code changes
+
+- **Lazy Initialization**:
+  - Proxy rotator only created if `use_proxies=True`
+  - Reduces overhead when proxies not needed
+  - Clean initialization in `connect()`, cleanup in `close()`
+
+**Code Changes**:
+1. **`src/data/nfl_game_stats_client.py`**:
+   - Added optional proxy parameters to `__init__`
+   - Conditional proxy initialization in `connect()`
+   - New `_get_proxy()` helper for rotation strategy
+   - Added `get_proxy_health()` and `test_proxies()` methods
+   - Updated docstring with proxy usage examples
+
+2. **`scripts/scrapers/scrape_nfl_with_proxies.py`**:
+   - Updated import: `NFLGameStatsClientWithProxies` → `NFLGameStatsClient`
+   - Updated instantiation to pass proxy parameters
+
+3. **`src/data/nfl_game_stats_client_with_proxies.py`**:
+   - DELETED (consolidated into base class)
+
+**Usage Patterns**:
+```python
+# Without proxies (default)
+client = NFLGameStatsClient()
+
+# With proxies (environmental credentials)
+client = NFLGameStatsClient(use_proxies=True)
+
+# With proxies (explicit credentials)
+client = NFLGameStatsClient(
+    use_proxies=True,
+    proxyscrape_username="user",
+    proxyscrape_password="pass",
+    proxy_rotation_strategy="random"
+)
+```
+
+**Benefits**:
+- ✅ Single client class to maintain
+- ✅ No code duplication
+- ✅ Optional features don't break without dependencies
+- ✅ Backward compatible API
+- ✅ Clean separation of proxy concerns
+- ✅ Flexible credential management
+
+**Code Quality**:
+- ✅ All ruff format + ruff check passing
+- ✅ Type hints fully maintained
+- ✅ Import verification successful
+- ✅ No breaking changes
+
+**Files Modified**: 2 updated, 1 deleted
+- **Modified**: `src/data/nfl_game_stats_client.py`, `scripts/scrapers/scrape_nfl_with_proxies.py`
+- **Deleted**: `src/data/nfl_game_stats_client_with_proxies.py`
+
+**Commit**: `refactor: consolidate proxy support into nfl_game_stats_client.py`
+
+---
+
+**Previous Session (2025-11-25 Continued - NFL.com Scraper Debugging)**:
 
 #### NFL Game Stats Scraper: Fixed Title & Stats Parsing ✨ (2025-11-25 Continued)
 
