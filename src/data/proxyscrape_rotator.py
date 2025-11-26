@@ -94,14 +94,15 @@ class ProxyScrapeRotator:
         Generate proxy list using direct gateway credentials.
 
         For direct mode (rp.scrapegw.com:6060), the gateway automatically
-        rotates through 20 residential proxies. We generate the same proxy
-        URL multiple times to simulate rotation.
+        rotates through 20 residential proxies. Returns proxy server URLs
+        WITHOUT embedded credentials (Playwright requires separate auth).
 
         Returns:
-            List of proxy URLs with auth: http://user:pass@host:port
+            List of proxy URLs without auth: http://host:port
         """
-        proxy_auth = f"{self.username}:{self.password}"
-        proxy_url = f"http://{proxy_auth}@{self.GATEWAY_HOST}:{self.GATEWAY_PORT}"
+        # Playwright requires separate username/password fields for HTTP proxy auth
+        # So we return just the server URL (credentials passed separately)
+        proxy_url = f"http://{self.GATEWAY_HOST}:{self.GATEWAY_PORT}"
 
         # Generate list with same proxy repeated (gateway handles rotation)
         proxies = [proxy_url] * self.num_rotating_proxies

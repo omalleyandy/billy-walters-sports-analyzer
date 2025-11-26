@@ -5,7 +5,9 @@ Enhanced version of NFLGameStatsClient that uses rotating residential
 proxies to bypass bot detection and rate limiting.
 
 Usage:
-    from src.data.nfl_game_stats_client_with_proxies import NFLGameStatsClientWithProxies
+    from src.data.nfl_game_stats_client_with_proxies import (
+        NFLGameStatsClientWithProxies,
+    )
     import os
 
     username = os.getenv("PROXYSCRAPE_USERNAME")
@@ -28,7 +30,7 @@ import logging
 import os
 from typing import Optional
 
-from playwright.async_api import async_playwright, Page, Browser
+from playwright.async_api import async_playwright
 
 from .nfl_game_stats_client import NFLGameStatsClient
 from .proxyscrape_rotator import ProxyScrapeRotator
@@ -58,13 +60,15 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
         """
         Initialize NFL scraper with ProxyScrape residential proxy support.
 
-        Uses direct gateway credentials (rp.scrapegw.com:6060) which automatically
-        manages 20 rotating residential proxies.
+        Uses direct gateway credentials (rp.scrapegw.com:6060) which
+        automatically manages 20 rotating residential proxies.
 
         Args:
             headless: Run browser in headless mode
-            proxyscrape_username: ProxyScrape username (or PROXYSCRAPE_USERNAME env)
-            proxyscrape_password: ProxyScrape password (or PROXYSCRAPE_PASSWORD env)
+            proxyscrape_username: ProxyScrape username (PROXYSCRAPE_USERNAME
+                env var)
+            proxyscrape_password: ProxyScrape password (PROXYSCRAPE_PASSWORD
+                env var)
             use_proxies: Enable proxy rotation
             proxy_rotation_strategy: "rotate" (sequential) or "random"
         """
@@ -92,8 +96,9 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
                     self.proxy_rotator = None
                     logger.warning(
                         "Proxy support enabled but no credentials found. "
-                        "Set PROXYSCRAPE_USERNAME + PROXYSCRAPE_PASSWORD environment variables. "
-                        "Falling back to direct connection."
+                        "Set PROXYSCRAPE_USERNAME + PROXYSCRAPE_PASSWORD "
+                        "environment variables. Falling back to direct "
+                        "connection."
                     )
             except Exception as e:
                 logger.error(f"Error initializing proxy rotator: {e}")
@@ -134,8 +139,14 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
             if self.proxy_rotator:
                 proxy = await self._get_proxy()
                 if proxy:
-                    page_context["proxy"] = {"server": proxy}
-                    logger.info(f"Using proxy: {proxy.split('@')[-1][:50]}...")
+                    # Playwright requires separate username/password fields
+                    # for HTTP proxy auth
+                    page_context["proxy"] = {
+                        "server": proxy,
+                        "username": self.proxy_rotator.username,
+                        "password": self.proxy_rotator.password,
+                    }
+                    logger.info(f"Using proxy: {proxy}")
 
             self._page = await self._browser.new_page(**page_context)
 
@@ -229,16 +240,21 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
                         new_proxy = await self._get_proxy()
                         if new_proxy:
                             logger.info("Retrying with new proxy...")
-                            # Note: Proxy change requires new page/context
+                            # Proxy change requires new page/context
                             await self._page.close()
+                            user_agent = (
+                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                "Chrome/120.0.0.0 Safari/537.36"
+                            )
                             self._page = await self._browser.new_page(
-                                user_agent=(
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                                    "Chrome/120.0.0.0 Safari/537.36"
-                                ),
+                                user_agent=user_agent,
                                 viewport={"width": 1920, "height": 1080},
-                                proxy={"server": new_proxy},
+                                proxy={
+                                    "server": new_proxy,
+                                    "username": self.proxy_rotator.username,
+                                    "password": self.proxy_rotator.password,
+                                },
                             )
 
                     await asyncio.sleep(5)
@@ -285,14 +301,19 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
                             if new_proxy:
                                 logger.info("Retrying game with new proxy...")
                                 await self._page.close()
+                                user_agent = (
+                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                    "Chrome/120.0.0.0 Safari/537.36"
+                                )
                                 self._page = await self._browser.new_page(
-                                    user_agent=(
-                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                                        "Chrome/120.0.0.0 Safari/537.36"
-                                    ),
+                                    user_agent=user_agent,
                                     viewport={"width": 1920, "height": 1080},
-                                    proxy={"server": new_proxy},
+                                    proxy={
+                                        "server": new_proxy,
+                                        "username": self.proxy_rotator.username,
+                                        "password": self.proxy_rotator.password,
+                                    },
                                 )
                             await asyncio.sleep(5)
 
