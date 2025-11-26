@@ -246,11 +246,11 @@ class NFLGameStatsClient:
 
         try:
             logger.info(f"Navigating to {game_url}")
-            # Use longer timeout and load strategy
+            # Use longer timeout and load strategy (120s for slow connections)
             await self._page.goto(
                 game_url,
                 wait_until="domcontentloaded",
-                timeout=60000,
+                timeout=120000,
             )
             # Extra wait for JS to render
             await asyncio.sleep(3)
