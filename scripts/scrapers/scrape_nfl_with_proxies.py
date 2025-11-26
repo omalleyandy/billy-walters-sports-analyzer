@@ -135,19 +135,26 @@ Examples:
     # Setup logging
     setup_logging(args.verbose)
 
-    # Check for ProxyScrape API key
-    api_key = os.getenv("PROXYSCRAPE_API_KEY")
-    if not api_key:
+    # Check for ProxyScrape credentials
+    username = os.getenv("PROXYSCRAPE_USERNAME")
+    password = os.getenv("PROXYSCRAPE_PASSWORD")
+
+    if not username or not password:
         logger.warning(
-            "PROXYSCRAPE_API_KEY not set. Set it with: "
-            "export PROXYSCRAPE_API_KEY=your-key"
+            "No ProxyScrape credentials found. Set environment variables:\n"
+            "    export PROXYSCRAPE_USERNAME=your-username\n"
+            "    export PROXYSCRAPE_PASSWORD=your-password"
         )
         logger.info("Proceeding without proxies (will use direct connection)")
+    else:
+        logger.info(
+            "Using ProxyScrape direct mode (20 rotating residential US proxies)"
+        )
 
     # Parse headless flag
     headless = args.headless.lower() == "true"
 
-    logger.info(f"Starting NFL game stats scraper with proxies")
+    logger.info("Starting NFL game stats scraper with proxies")
     logger.info(f"  Year: {args.year}")
     logger.info(f"  Week: {args.week}")
     logger.info(f"  Headless: {headless}")
@@ -157,8 +164,9 @@ Examples:
 
     client = NFLGameStatsClientWithProxies(
         headless=headless,
-        proxyscrape_api_key=api_key,
-        use_proxies=bool(api_key),
+        proxyscrape_username=username,
+        proxyscrape_password=password,
+        use_proxies=bool(username and password),
         proxy_rotation_strategy=args.proxy_strategy,
     )
 

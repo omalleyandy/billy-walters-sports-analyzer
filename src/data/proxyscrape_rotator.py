@@ -4,18 +4,24 @@ ProxyScrape Residential Proxy Rotator
 Integrates ProxyScrape residential rotating proxies with Playwright
 for NFL.com scraping with bot detection evasion.
 
+Uses direct gateway credentials (rp.scrapegw.com:6060) which automatically
+manages 20 rotating residential proxies. No API key needed.
+
 Configuration:
-    PROXYSCRAPE_API_KEY: Your ProxyScrape API key
-    PROXYSCRAPE_FORMAT: "textplain" (default) or "json"
+    PROXYSCRAPE_USERNAME: Your username (e.g., "5iwdzupyp3mzyv6-country-us")
+    PROXYSCRAPE_PASSWORD: Your password (e.g., "29eplg6c8ctwjrs")
 
 Usage:
-    rotator = ProxyScrapeRotator(api_key="your-key")
+    rotator = ProxyScrapeRotator(
+        username="your-username",
+        password="your-password"
+    )
+
     proxy_url = await rotator.get_next_proxy()
     # Use proxy_url with Playwright
 """
 
 import asyncio
-import json
 import logging
 import random
 from typing import Optional
@@ -29,29 +35,39 @@ logger = logging.getLogger(__name__)
 class ProxyScrapeRotator:
     """Manage rotating residential proxies from ProxyScrape."""
 
-    API_ENDPOINT = "https://api.proxyscrape.com/v2/"
+    GATEWAY_HOST = "rp.scrapegw.com"
+    GATEWAY_PORT = 6060
 
     def __init__(
         self,
-        api_key: str,
-        format_type: str = "textplain",
+        username: str,
+        password: str,
         cache_ttl: int = 3600,
+        num_rotating_proxies: int = 20,
     ):
         """
-        Initialize ProxyScrape rotator.
+        Initialize ProxyScrape rotator with direct gateway credentials.
 
         Args:
-            api_key: ProxyScrape API key
-            format_type: "textplain" or "json"
+            username: ProxyScrape username (e.g., "5iwdzupyp3mzyv6-country-us")
+            password: ProxyScrape password (e.g., "29eplg6c8ctwjrs")
             cache_ttl: Cache duration in seconds (default 1 hour)
+            num_rotating_proxies: Number of rotating proxies at gateway
+                                 (default 20 - matches ProxyScrape default)
         """
-        self.api_key = api_key
-        self.format_type = format_type
+        if not username or not password:
+            raise ValueError("username and password are required")
+
+        self.username = username
+        self.password = password
+        self.num_rotating_proxies = num_rotating_proxies
         self.cache_ttl = cache_ttl
         self._session: Optional[aiohttp.ClientSession] = None
         self._proxy_list: list[str] = []
         self._cache_time: Optional[datetime] = None
         self._current_index = 0
+
+        logger.info("ProxyScrapeRotator initialized (direct gateway mode)")
 
     async def __aenter__(self):
         """Async context manager entry."""
@@ -73,62 +89,37 @@ class ProxyScrapeRotator:
             await self._session.close()
             logger.info("ProxyScrape rotator closed")
 
-    async def _fetch_proxies(self) -> list[str]:
+    def _generate_direct_proxies(self) -> list[str]:
         """
-        Fetch proxy list from ProxyScrape API.
+        Generate proxy list using direct gateway credentials.
+
+        For direct mode (rp.scrapegw.com:6060), the gateway automatically
+        rotates through 20 residential proxies. We generate the same proxy
+        URL multiple times to simulate rotation.
 
         Returns:
-            List of proxy URLs in format http://ip:port
+            List of proxy URLs with auth: http://user:pass@host:port
         """
-        if not self._session:
-            await self.connect()
+        proxy_auth = f"{self.username}:{self.password}"
+        proxy_url = f"http://{proxy_auth}@{self.GATEWAY_HOST}:{self.GATEWAY_PORT}"
 
-        try:
-            params = {
-                "request": "getproxies",
-                "protocol": "http",
-                "timeout": "5000",
-                "ssl": "all",
-                "anonymity": "all",
-                "country": "all",
-                "sort": "lastchecked",
-                "format": self.format_type,
-                "api_key": self.api_key,
-            }
+        # Generate list with same proxy repeated (gateway handles rotation)
+        proxies = [proxy_url] * self.num_rotating_proxies
 
-            logger.info("Fetching proxies from ProxyScrape API...")
+        logger.info(
+            f"Generated {len(proxies)} proxy references "
+            f"(gateway manages {self.num_rotating_proxies} rotating IPs)"
+        )
+        return proxies
 
-            async with self._session.get(
-                self.API_ENDPOINT,
-                params=params,
-                timeout=aiohttp.ClientTimeout(total=30),
-            ) as resp:
-                if resp.status != 200:
-                    logger.error(f"API error: {resp.status}")
-                    return []
+    async def _fetch_proxies(self) -> list[str]:
+        """
+        Generate proxy list from direct gateway credentials.
 
-                content = await resp.text()
-
-                if self.format_type == "textplain":
-                    # Format: ip:port\nip:port\n...
-                    proxies = [
-                        f"http://{line.strip()}"
-                        for line in content.split("\n")
-                        if line.strip()
-                    ]
-                else:
-                    # JSON format
-                    data = json.loads(content)
-                    proxies = [
-                        f"http://{p['ip']}:{p['port']}" for p in data.get("proxies", [])
-                    ]
-
-                logger.info(f"Fetched {len(proxies)} proxies from ProxyScrape")
-                return proxies
-
-        except Exception as e:
-            logger.error(f"Error fetching proxies: {e}")
-            return []
+        Returns:
+            List of proxy URLs in format http://user:pass@host:port
+        """
+        return self._generate_direct_proxies()
 
     async def get_next_proxy(self) -> Optional[str]:
         """

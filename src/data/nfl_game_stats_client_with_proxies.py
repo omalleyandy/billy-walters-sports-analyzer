@@ -8,9 +8,11 @@ Usage:
     from src.data.nfl_game_stats_client_with_proxies import NFLGameStatsClientWithProxies
     import os
 
-    api_key = os.getenv("PROXYSCRAPE_API_KEY")
+    username = os.getenv("PROXYSCRAPE_USERNAME")
+    password = os.getenv("PROXYSCRAPE_PASSWORD")
     client = NFLGameStatsClientWithProxies(
-        proxyscrape_api_key=api_key,
+        proxyscrape_username=username,
+        proxyscrape_password=password,
         use_proxies=True,
     )
 
@@ -48,16 +50,21 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
     def __init__(
         self,
         headless: bool = True,
-        proxyscrape_api_key: Optional[str] = None,
+        proxyscrape_username: Optional[str] = None,
+        proxyscrape_password: Optional[str] = None,
         use_proxies: bool = True,
         proxy_rotation_strategy: str = "rotate",  # "rotate" or "random"
     ):
         """
-        Initialize NFL scraper with proxy support.
+        Initialize NFL scraper with ProxyScrape residential proxy support.
+
+        Uses direct gateway credentials (rp.scrapegw.com:6060) which automatically
+        manages 20 rotating residential proxies.
 
         Args:
             headless: Run browser in headless mode
-            proxyscrape_api_key: ProxyScrape API key (or use PROXYSCRAPE_API_KEY env var)
+            proxyscrape_username: ProxyScrape username (or PROXYSCRAPE_USERNAME env)
+            proxyscrape_password: ProxyScrape password (or PROXYSCRAPE_PASSWORD env)
             use_proxies: Enable proxy rotation
             proxy_rotation_strategy: "rotate" (sequential) or "random"
         """
@@ -66,20 +73,33 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
         self.use_proxies = use_proxies
         self.proxy_strategy = proxy_rotation_strategy
 
-        # Get API key from parameter or environment
-        if not proxyscrape_api_key:
-            proxyscrape_api_key = os.getenv("PROXYSCRAPE_API_KEY")
+        # Try to get credentials from parameters or environment
+        if not proxyscrape_username:
+            proxyscrape_username = os.getenv("PROXYSCRAPE_USERNAME")
+        if not proxyscrape_password:
+            proxyscrape_password = os.getenv("PROXYSCRAPE_PASSWORD")
 
-        if use_proxies and proxyscrape_api_key:
-            self.proxy_rotator = ProxyScrapeRotator(api_key=proxyscrape_api_key)
+        # Initialize proxy rotator with credentials
+        if use_proxies:
+            try:
+                if proxyscrape_username and proxyscrape_password:
+                    self.proxy_rotator = ProxyScrapeRotator(
+                        username=proxyscrape_username,
+                        password=proxyscrape_password,
+                    )
+                    logger.info("Proxy rotator initialized (20 rotating proxies)")
+                else:
+                    self.proxy_rotator = None
+                    logger.warning(
+                        "Proxy support enabled but no credentials found. "
+                        "Set PROXYSCRAPE_USERNAME + PROXYSCRAPE_PASSWORD environment variables. "
+                        "Falling back to direct connection."
+                    )
+            except Exception as e:
+                logger.error(f"Error initializing proxy rotator: {e}")
+                self.proxy_rotator = None
         else:
             self.proxy_rotator = None
-            if use_proxies:
-                logger.warning(
-                    "Proxy support enabled but no API key found. "
-                    "Set PROXYSCRAPE_API_KEY environment variable. "
-                    "Falling back to direct connection."
-                )
 
     async def connect(self) -> None:
         """Initialize browser and proxy rotator."""
@@ -208,7 +228,7 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
                     if self.proxy_rotator:
                         new_proxy = await self._get_proxy()
                         if new_proxy:
-                            logger.info(f"Retrying with new proxy...")
+                            logger.info("Retrying with new proxy...")
                             # Note: Proxy change requires new page/context
                             await self._page.close()
                             self._page = await self._browser.new_page(
@@ -263,7 +283,7 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
                             # Rotate to new proxy
                             new_proxy = await self._get_proxy()
                             if new_proxy:
-                                logger.info(f"Retrying game with new proxy...")
+                                logger.info("Retrying game with new proxy...")
                                 await self._page.close()
                                 self._page = await self._browser.new_page(
                                     user_agent=(
