@@ -50,14 +50,14 @@ This document contains critical information about working with the Billy Walters
 - **Results Validation**: ATS tracking, ROI calculation, team name mapping
 - **PostgreSQL Loading**: GameIDMapper (Overtime→ESPN), <10 sec full pipeline
 
-**Last Session**: 2025-11-25 (Late) - NFL.com Scraper Consolidation & Refactoring
-- **NFL.com Client Consolidation**: Merged `nfl_game_stats_client_with_proxies.py` into `nfl_game_stats_client.py`
-- **Optional Proxy Support**: Clean optional dependency pattern with environment variable fallback
-- **Parameter Layering**: Credentials via parameters or `PROXYSCRAPE_USERNAME`/`PROXYSCRAPE_PASSWORD` env vars
-- **Proxy Strategies**: Support "rotate" (sequential) and "random" IP selection
-- **Lazy Initialization**: Proxy rotator only initialized when `use_proxies=True`
-- **Code Quality**: ✅ All ruff/pyright checks passing, imports verified
-- Results: Single consolidated client, no code duplication, backward compatible
+**Last Session**: 2025-11-26 - Action Network Sharp Money Scraper (NFL + NCAAF)
+- **Sharp Money Detection**: Playwright scraper for Action Network betting percentages (tickets vs money)
+- **Billy Walters Principle**: "Follow the money, not the tickets" - 5+ point divergence = sharp signal
+- **Week 13 Results**: 16 NFL games, 7 sharp signals (DAL +3.5, MIA -6.0, SEA -10.5, GB +2.5, LAC -10.0)
+- **Integrated Edge Calculator**: Combines power ratings + sharp signals (+/-10-20% confidence)
+- **Automated Collector**: Supports NFL + NCAAF, hourly/continuous monitoring
+- **Quick CLI**: `python collect_action_network.py` for single scrape
+- Results: Complete sharp money pipeline ready for Week 13 analysis
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -785,6 +785,58 @@ uv run python scripts/scrapers/scrape_espn_team_stats.py --league ncaaf --week 1
 uv run python scripts/analysis/check_betting_results.py --league nfl
 ```
 
+### Action Network Sharp Money Scraper ✨ NEW (2025-11-26)
+
+**Purpose**: Detect sharp vs public money divergence - a core Billy Walters principle.
+
+**Sharp Money Signal**: When ticket % and money % diverge by 5+ points, follow the money.
+- Public bets create ticket volume
+- Sharp bettors (professionals) move the money
+- Divergence indicates which side the pros are on
+
+**Quick Commands**:
+```bash
+# Single scrape (NFL + NCAAF)
+python collect_action_network.py
+
+# Check status
+python collect_action_network.py --status
+
+# Continuous monitoring (every hour)
+python collect_action_network.py --watch
+```
+
+**Data Output**: `data/action_network/`
+- `nfl_odds_latest.json` - Most recent NFL data
+- `ncaaf_odds_latest.json` - Most recent NCAAF data
+- `{league}_odds_week{N}_{timestamp}.json` - Timestamped archives
+
+**Sharp Play Detection**:
+```powershell
+# View sharp plays (PowerShell)
+$data = Get-Content .\data\action_network\nfl_odds_latest.json | ConvertFrom-Json
+$data.sharp_plays | Format-Table game, pick, divergence, signal
+```
+
+**Divergence Thresholds**:
+| Divergence | Signal Strength | Action |
+|------------|-----------------|--------|
+| 15+ pts | 🔥 VERY STRONG | High confidence sharp play |
+| 10-14 pts | ⚡ STRONG | Significant sharp action |
+| 5-9 pts | ✓ MODERATE | Notable divergence |
+| <5 pts | ○ NEUTRAL | No significant signal |
+
+**Integration with Edge Calculator**:
+- Sharp confirmation: +10-20% edge boost
+- Sharp contradiction: -10-20% edge penalty
+- See `src/walters_analyzer/core/integrated_edge_calculator.py`
+
+**Files**:
+- `collect_action_network.py` - Quick CLI script
+- `src/walters_analyzer/scrapers/action_network_scraper.py` - Playwright scraper
+- `src/walters_analyzer/scrapers/action_network_collector.py` - Automated collector
+- `docs/ACTION_NETWORK_COLLECTION.md` - Complete guide
+
 ---
 
 ## Troubleshooting
@@ -864,7 +916,65 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 Late - NFL.com Client Consolidation)**:
+**Latest Session (2025-11-26 - Action Network Sharp Money Scraper)**:
+
+#### Action Network Sharp Money Detection Complete ✨ (2025-11-26)
+
+**Billy Walters Principle Implemented**: "Follow the money, not the tickets."
+
+**New Capability**: Automated scraping of betting percentages from Action Network to detect sharp (professional) vs public betting divergence.
+
+**Sharp Money Signal**:
+- **Tickets %**: Volume of bets placed (public action)
+- **Money %**: Dollar amount wagered (sharp action)
+- **Divergence**: `money% - tickets%` ≥ 5 points indicates sharp side
+
+**Implementation**:
+1. **Playwright Scraper**: Bypasses CloudFlare with stealth settings
+   - File: `src/walters_analyzer/scrapers/action_network_scraper.py`
+   - Extracts: spreads, moneylines, totals, betting percentages
+
+2. **Automated Collector**: Periodic scraping with state tracking
+   - File: `src/walters_analyzer/scrapers/action_network_collector.py`
+   - Leagues: NFL + NCAAF
+   - Output: `data/action_network/`
+
+3. **Quick CLI**: Simple commands for daily use
+   - File: `collect_action_network.py`
+   - Commands: single scrape, status check, continuous watch
+
+4. **Integrated Edge Calculator**: Combines power ratings + sharp signals
+   - File: `src/walters_analyzer/core/integrated_edge_calculator.py`
+   - Sharp confirmation: +10-20% edge boost
+   - Sharp contradiction: -10-20% edge penalty
+
+**Week 13 NFL Results (First Run)**:
+- 16 games scraped successfully
+- 7 sharp money signals detected:
+  - KC @ DAL: DAL +3.5 (+15 divergence) 🔥 VERY STRONG
+  - NO @ MIA: MIA -6.0 (+15 divergence) 🔥 VERY STRONG
+  - MIN @ SEA: SEA -10.5 (+11 divergence) ⚡ STRONG
+  - GB @ DET: GB +2.5 (+8 divergence) ⚡ STRONG
+  - LV @ LAC: LAC -10.0 (+7 divergence) ⚡ STRONG
+
+**Technical Fixes**:
+- Fixed `wait_for_selector` for hidden `<script>` tags (use `state='attached'`)
+- Fixed JSON path: `props.pageProps` not `pageProps`
+- Added NCAAF to default leagues
+
+**Files Created/Modified**:
+- `collect_action_network.py` - Quick CLI
+- `src/walters_analyzer/scrapers/action_network_scraper.py` - Playwright scraper
+- `src/walters_analyzer/scrapers/action_network_collector.py` - Automated collector
+- `src/walters_analyzer/core/integrated_edge_calculator.py` - Edge integration
+- `docs/ACTION_NETWORK_COLLECTION.md` - Complete guide
+- `docs/ACTION_NETWORK_INTEGRATION.md` - Integration summary
+
+**Memory Updated**: Added Action Network scraper to project memory (line 14)
+
+---
+
+**Previous Session (2025-11-25 Late - NFL.com Client Consolidation)**:
 
 #### NFL.com Game Stats Client: Consolidation Refactoring Complete ✨ (2025-11-25 Late)
 
