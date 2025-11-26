@@ -32,52 +32,25 @@ This document contains critical information about working with the Billy Walters
 - **NCAAF** (NCAA College Football)
 
 ### Project Status
-- **CI/CD**: Fully operational (GitHub Actions)
-- **Tests**: 379 tests passing, 40 skipped (multi-platform)
-- **Code Quality**: Automated linting and type checking
-- **Security**: Vulnerability scanning and secret detection
-- **Data Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather
-- **Edge Detection**: ✨ Production-ready with automatic schedule validation
-- **Pre-Flight Checks**: Automatic week detection & data source validation
-- **Results Validation**: ✨ Complete NFL results validator with ATS tracking (NEW 2025-11-24)
-- **NFL Scoreboard**: ✨ ESPN API client for fetching game scores by week (NEW 2025-11-24)
-- **PostgreSQL Data Loading**: ✨ Complete GameIDMapper + full odds loading (NEW 2025-11-24)
-  - GameIDMapper: Maps Overtime.ag IDs to ESPN IDs with 2-day fuzzy matching
-  - Odds Loading: Extracts nested dict format and inserts with valid FK references
-  - Games Table: Populated with league column for proper constraints
-  - Performance: Complete pipeline in <10 seconds, 100% success rate (15/15 NFL games)
+
+**Core Infrastructure** (Stable):
+- **CI/CD**: Fully operational (GitHub Actions) - lint, type check, security scan, tests
+- **Tests**: 379 passing, 40 skipped (Ubuntu/Windows, Python 3.11/3.12)
 - **League Separation**: Strict NFL/NCAAF isolation (never mixed)
-- **Data Collection**: Optimized for both NFL & NCAAF workflows
-- **NCAAF Expansion**: ✨ Complete transactions and news scrapers (NEW 2025-11-25)
-  - Transactions: espn_ncaaf_transactions_client.py (360 lines, 10+ teams)
-  - News: espn_ncaaf_news_client.py (380 lines, Playwright-based)
-  - CLI: scrape_espn_ncaaf_transactions.py, scrape_espn_ncaaf_news.py
-- **Action Network Live Odds CLI**: ✨ Phase 1 implementation complete (NEW 2025-11-25)
-  - scrape_action_network_live.py (239 lines, fully featured CLI)
-  - Unlocks 370+ lines of ActionNetworkClient functionality
-  - Supports --nfl, --ncaaf, --no-headless, --quiet, configurable retries
-  - Production-ready with proper exit codes and logging
-- **Action Network Multi-Selector Fallback**: ✨ Phase 2 defensive enhancements (NEW 2025-11-25)
-  - action_network_client.py enhanced with _try_selectors() method
-  - action_network_selectors.json (16 selector groups, 3-4 variants each)
-  - test_action_network_selectors.py (20 tests, 100% passing)
-  - Cascading selector strategy: specific CSS → generic wildcards → fallbacks
-  - Prevents silent failures from Action Network CSS-in-JS class changes
-  - Automatic fallback logging for early detection of UI changes
-- **Action Network Totals Extraction**: ✨ Phase 3 complete odds extraction (NEW 2025-11-25)
-  - Dropdown switching from "Spread" to "Total" view
-  - Parses O/U format: `o48.5\n-110\nu48.5\n-110`
-  - Merges totals into game data automatically
-  - 16/16 NFL games now have complete spread + O/U + moneyline
-  - Previously `over_under` and `total_odds` were null - now fully populated
-- **Action Network Integrated in Data Workflow**: ✨ Workflow documentation updated (NEW 2025-11-25)
-  - Added to .claude/commands/collect-all-data.md Step 6
-  - Integrated as optional real-time odds alternative
-  - Output locations documented for NFL/NCAAF separation
-- **NFL.com API Wrapper**: ✨ CLI created for official NFL data (NEW 2025-11-25)
-  - scrape_nfl_com.py with schedule and news support
-  - Note: API endpoints return 401 (authentication required)
-- **Last Session**: 2025-11-25 - Action Network Phase 3 complete: Totals (O/U) extraction via dropdown switching, 16/16 games with complete odds data
+
+**Data Collection** (Production-Ready):
+- **Sources**: ESPN, Overtime.ag, Action Network, Massey, AccuWeather, NFL.com
+- **Scrapers**: 27+ clients with multi-selector fallback strategies
+- **Action Network**: Complete odds (spread, moneyline, O/U) with selector resilience
+- **NFL.com Stats**: Playwright scraper with ProxyScrape residential proxy integration
+- **NCAAF**: Transactions + news clients for 10+ FBS teams
+
+**Analysis Pipeline** (Production-Ready):
+- **Edge Detection**: Auto week detection, schedule/odds validation, pre-flight checks
+- **Results Validation**: ATS tracking, ROI calculation, team name mapping
+- **PostgreSQL Loading**: GameIDMapper (Overtime→ESPN), <10 sec full pipeline
+
+**Last Session**: 2025-11-25 - NFL.com scraper: proxy hardening, Playwright auth fixes, multi-selector strategy
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -756,17 +729,19 @@ uv run python scripts/scrapers/scrape_overtime_api.py --nfl
 uv run python scripts/analysis/check_betting_results.py --league nfl
 ```
 
-**Available Slash Commands** (14 total):
+**Available Slash Commands** (16 total):
+- `/collect-all-data` - Complete workflow (7 steps with auto pre/post validation)
+- `/edge-detector` - Detect betting edges (auto pre-flight validation)
+- `/betting-card` - Generate recommendations
+- `/current-week` - Show current NFL week
+- `/pre-validate` - Manual environment check before data collection
+- `/post-validate` - Manual data quality check after collection
+- `/validate-data` - Check data quality
 - `/power-ratings` - Calculate power ratings
 - `/scrape-overtime` - Collect odds (API - fast)
-- `/collect-all-data` - Complete workflow (all 7 steps)
-- `/edge-detector` - Detect betting edges
-- `/betting-card` - Generate recommendations
 - `/clv-tracker` - Track performance
-- `/validate-data` - Check data quality
 - `/weather [team] [time]` - Weather impact
 - `/injury-report [team] [league]` - Injury analysis
-- `/current-week` - Show current NFL week
 - `/document-lesson` - Add to TROUBLESHOOTING.md
 - `/lessons` - View troubleshooting guide
 
@@ -816,14 +791,7 @@ uv run python scripts/analysis/check_betting_results.py --league nfl
 2. Did "Install dependencies" show ✓ or ✗?
 3. Are test failures pre-existing? (36 known failures documented)
 
-**Quick Fix (90% of issues):**
-```bash
-uv run ruff format .
-uv run ruff check . --fix
-uv run pyright
-git add . && git commit -m "fix: apply code quality checks"
-git push
-```
+**Quick Fix (90% of issues):** See [CI/CD Quick Fix](#quick-fix-90-of-ci-failures) above.
 
 **ModuleNotFoundError:**
 ```bash
@@ -889,7 +857,48 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 - Action Network Phase 3: Totals Extraction)**:
+**Latest Session (2025-11-25 - NFL.com Scraper & Proxy Hardening)**:
+
+#### NFL.com Game Stats Scraper Complete ✨ (2025-11-25)
+
+**Proxy Credential Hardening**:
+- `os.environ` with hard fail for missing PROXY_USER/PROXY_PASS
+- No silent fallbacks - explicit errors on misconfiguration
+- Prevents accidental direct connections that could trigger bans
+
+**Playwright Proxy Authentication**:
+- Fixed: Use separate `username`/`password` fields (not combined `server` URL)
+- Playwright's `proxy` config requires discrete credential fields
+- Properly formats proxy for residential IP rotation
+
+**NFL Scraper Resilience**:
+- Multi-selector strategy for table/stat extraction
+- Improved timeout handling (30s default, configurable)
+- Bot evasion techniques (viewport randomization, timing jitter)
+- Graceful error recovery with detailed logging
+
+**ProxyScrape Integration**:
+- Residential proxy support for NFL.com scraping
+- Automatic IP rotation per request
+- US geo-targeting for sports content
+
+**Documentation**:
+- NFL stats scraper quick start guide created
+- Comprehensive implementation summary added
+- MCP integration documented
+
+**Files Modified**:
+- `src/data/nfl_stats_scraper.py` - Core scraper with proxy support
+- Proxy configuration hardened across codebase
+
+**Code Quality**:
+- ✅ ruff format applied
+- ✅ Type hints maintained
+- ✅ Error handling comprehensive
+
+---
+
+**Previous Session (2025-11-25 - Action Network Phase 3: Totals Extraction)**:
 
 #### NEW: Action Network Totals (O/U) Extraction Complete ✨ (2025-11-25)
 
@@ -925,273 +934,17 @@ gh run view <run-id> --log-failed
 - ✅ 20/20 selector tests passing
 - ✅ No breaking changes
 
----
-
-**Previous Session (2025-11-25 - Action Network Phase 1+2 Complete)**:
-
-#### Action Network Live Odds & Selector Resilience Complete ✨ (2025-11-25)
-
-**Phase 1: CLI Wrapper - Unlocked Unused Functionality**
-- **New File**: `scripts/scrapers/scrape_action_network_live.py` (239 lines)
-- **Purpose**: CLI wrapper for ActionNetworkClient to unlock 370+ lines of Playwright automation
-- **Features**:
-  - `--nfl`, `--ncaaf` flags (both default if neither specified)
-  - `--no-headless` for debugging (visible browser)
-  - `--quiet` mode for automation
-  - `--max-retries` (configurable, default 3)
-  - `--rate-limit` (configurable, default 2.0s)
-  - `--output-dir` (default `output/action_network`)
-  - Timestamped JSON output per league
-  - Standard exit codes (0=success, 130=interrupted, 1=error)
-- **Code Quality**: ✅ 0 ruff errors, 0 pyright errors
-- **Status**: Production-ready, fully tested
-
-**Phase 2: Multi-Selector Fallback - Defensive Enhancement**
-- **Updated**: `src/data/action_network_client.py` (added ~150 lines)
-  - New method: `_try_selectors()` - cascading selector matcher
-  - Strategies: CSS-in-JS classes → class wildcards → XPath → text-based
-  - Automatic logging of fallback usage for early UI change detection
-  - Integrated into `_login()` and `_fetch_odds_impl()`
-  - Backward compatible (no breaking changes)
-
-- **New File**: `src/data/action_network_selectors.json` (120 lines)
-  - 16 selector groups with 3-4 variants each
-  - Externalizes selectors for maintenance
-  - Version tracking + last_validated timestamp
-  - Comprehensive documentation on CSS-in-JS brittleness
-  - Fallback strategy clearly documented
-  - Ready for weekly selector health checks
-
-- **New File**: `tests/test_action_network_selectors.py` (280 lines)
-  - 20 comprehensive tests (100% passing) ✅
-  - Test Classes:
-    - TestSelectorConfiguration (6 tests) - Config loading & structure
-    - TestSelectorFallbackLogic (2 tests) - _try_selectors method
-    - TestSelectorConfigValidation (3 tests) - Content validation
-    - TestSelectorCoverage (3 tests) - Required elements
-    - TestSelectorMaintenance (3 tests) - Version tracking
-    - Plus XPath & precedence tests
-  - Detects selector changes before production failures
-
-**Workflow Integration**
-- Updated `.claude/commands/collect-all-data.md`
-  - Added Action Network Live Odds as Step 6 option
-  - Documented as optional real-time odds alternative
-  - Output locations documented for NFL/NCAAF
-  - Integration with edge detection pipeline shown
-
-**Code Quality Results**:
-- ✅ All code formatted (ruff): 562 lines
-- ✅ All tests passing: 20/20 selector tests
-- ✅ Type checking clean: 0 errors, 0 warnings
-- ✅ No breaking changes
-- ✅ Backward compatible
-
-**Key Achievements**:
-- ✅ Unlocked 370+ lines of ActionNetworkClient functionality
-- ✅ Prevented silent failures from CSS selector changes
-- ✅ Externalized selectors for easier maintenance
-- ✅ Added comprehensive validation testing
-- ✅ Production-ready defensive enhancements
-- ✅ Integrated into data collection workflow
-
----
-
-**Previous Session (2025-11-25 - Phase 4 NCAAF Expansion & Integration Audits)**:
-
-#### Phase 4 Work Complete - NCAAF Expansion & Integration Audits ✨ (2025-11-25)
-
-**NCAAF Data Collection Expansion**:
-- **NCAAF Transactions Client** (`src/data/espn_ncaaf_transactions_client.py` - 360 lines)
-  - Parallel implementation to NFL client (clean separation)
-  - Supports 10+ major FBS teams (Alabama, LSU, Ohio State, Clemson, Georgia, Texas, Oklahoma, USC, Florida, Texas A&M)
-  - Transaction types: Transfer In/Out, Coaching, Recruiting, Eligibility, Injury
-  - CLI wrapper: `scripts/scrapers/scrape_espn_ncaaf_transactions.py`
-  - Tested: Alabama extraction successful (output saved)
-
-- **NCAAF News Client** (`src/data/espn_ncaaf_news_client.py` - 380 lines)
-  - Playwright-based browser automation (matches NFL news client pattern)
-  - Team-specific news categories: Recruiting, Coaching, Injuries, Transfers, Game Analysis
-  - CLI wrapper: `scripts/scrapers/scrape_espn_ncaaf_news.py`
-  - Full context manager support + error handling
-
-- **CLI Integration**:
-  - `--team`, `--teams`, `--all-teams` options (consistent with NFL)
-  - `--output-dir` for custom locations
-  - `--quiet` mode for automation
-  - Timestamped JSON output files
-
-**Action Network Integration Audit** (1,614 lines across 4 files):
-- ✅ `action_network_client.py` (390 lines): Quality Playwright client with login, rate limiting, retry logic
-- ✅ `action_network_scraper.py` (499 lines): Legacy network interception scraper (appears experimental)
-- ✅ `action_network_sitemap_scraper.py` (463 lines): Production-ready sitemap parser with URL categorization
-- ✅ `action_network_loader.py` (262 lines): Data models and JSONL parsing infrastructure
-
-**Audit Findings**:
-- ⚠️ **Gap**: No CLI wrapper for `action_network_client.py` (370 lines of quality code unused from CLI)
-- ⚠️ **Risk**: CSS selectors hardcoded in client (Action Network UI changes could break scraper)
-- ✅ **Strength**: Dual scraping approaches (browser automation + sitemap catalog) provide flexibility
-- 📋 **Recommendation**: Create CLI wrapper for live odds scraping, implement selector validation tests
-
-**NFL.com API Integration**:
-- **Created CLI Wrapper** (`scripts/scrapers/scrape_nfl_com.py`)
-  - Supports `--schedule` (game times, networks, scores)
-  - Supports `--news` (team-specific articles)
-  - Options: `--week`, `--team`, `--limit`
-
-- **API Status**: 401 Unauthorized
-  - NFL API endpoints require browser authentication headers
-  - Current implementation uses static headers (insufficient)
-  - **Next Step**: Implement Playwright session capture (see `scripts/dev/capture_nfl_api_headers.py`)
-
-**Code Quality**:
-- ✅ All new code formatted with `ruff format`
-- ✅ Type checking passed: 0 errors, 0 warnings
-- ✅ Follows existing patterns and conventions
-- ✅ Full docstrings on public APIs
-
-**Files Added (1,522 lines)**:
-- src/data/espn_ncaaf_transactions_client.py (360 lines)
-- src/data/espn_ncaaf_news_client.py (380 lines)
-- scripts/scrapers/scrape_espn_ncaaf_transactions.py (145 lines)
-- scripts/scrapers/scrape_espn_ncaaf_news.py (180 lines)
-- scripts/scrapers/scrape_nfl_com.py (130 lines)
-- output/espn/transactions/ncaaf/transactions_ncaaf_*.json (tested output)
-
-**League Separation Maintained**:
-- NCAAF modules separate from NFL (no cross-contamination)
-- Separate team mappings
-- Separate output directories
-- Consistent CLI patterns
-
----
-
-**Latest Session (2025-11-24 - Continued)**:
-
-#### NEW: PostgreSQL Data Loading Workflow Complete ✨ (2025-11-24)
-**Full end-to-end data loading pipeline from collection to database**
-
-- **GameIDMapper** (`scripts/database/game_id_mapper.py` - 265 lines)
-  - Intelligent mapping between Overtime.ag and ESPN game IDs
-  - Fuzzy matching with 2-day date tolerance (handles timezone differences)
-  - Cached lookup for fast performance (~100K games in memory)
-  - Success rate: 100% on NFL Week 13 (15/15 games)
-
-- **Enhanced Data Loader** (`scripts/database/load_collected_data_to_db.py`)
-  - Integrated GameIDMapper for game ID conversion
-  - Fixed odds extraction from nested dict format
-    - Spread: {home: -2.5, away: 2.5}
-    - Moneyline: {home: -145, away: 125}
-    - Total: {points: 49.0}
-  - Added date parsing for multiple formats (MM/DD/YYYY HH:MM, ISO, etc.)
-  - Added populate_games_table() to copy espn_schedules with league column
-  - ON CONFLICT DO NOTHING gracefully handles duplicates
-
-- **Database Results (Week 13 NFL)**
-  - Schedules: 16 records loaded
-  - Games table: 16 records populated
-  - Team stats: 32 records loaded
-  - Odds: 15 games with complete betting data (spread, moneyline, total)
-  - Errors: 0
-  - Total load time: <10 seconds
-
-- **Documentation Created**
-  - `docs/technical/database/POSTGRES_DATA_LOADING_WORKFLOW.md` - Complete 400+ line guide
-  - Updated `docs/_INDEX.md` with new Database & Data Storage section
-  - Updated `CLAUDE.md` with latest features
-
-**Key Technical Achievements:**
-- ✅ Resolved game ID mismatch between Overtime.ag and ESPN
-- ✅ Implemented fuzzy matching with 2-day tolerance
-- ✅ Extracted nested dict odds format correctly
-- ✅ Populated games table with proper league column
-- ✅ Achieved 100% success rate on all 15 NFL Week 13 games
-- ✅ Complete workflow documented and ready for production
-
-**Example:** Baltimore Ravens (HOME -3.5) vs Cincinnati Bengals (AWAY +3.5)
-- Overtime.ag ID: 114570442 → ESPN ID: 401772930
-- Spread: -3.5 / 3.5
-- Moneyline: -145 / 125
-- Total: 26.0 (1st half)
-
----
-
-#### Previous: Hook System Integration with Slash Commands ✨
-- **Integrated Validators into Slash Commands**
-  - `/collect-all-data` now runs automatic pre/post-flight validation
-  - `/edge-detector` now runs automatic pre-flight validation
-  - Validators prevent unsafe operations (missing API keys, data, etc.)
-  - Exit codes standardized: 0 = success, 1 = failure
-
-- **New Slash Commands for Manual Checks**
-  - `/pre-validate` - Check environment before data collection
-  - `/post-validate` - Check data quality after collection
-  - Useful for independent verification or troubleshooting
-
-- **Hook System Documentation**
-  - `.claude/hooks/README.md` - Updated with system architecture diagram
-  - Shows how hooks integrate with commands automatically
-  - Explains three invocation methods (automatic, manual slash commands, direct Python)
-  - Entry points clearly documented
-
-- **Commands Reference Updated**
-  - `.claude/commands/README.md` - Version 2.2 with validator integration
-  - Updated `/collect-all-data`, `/edge-detector` with pre/post-flight details
-  - Added `/pre-validate`, `/post-validate` to Quick Start table
-  - Updated recommended weekly workflow to show validation points
-
-- **CLAUDE.md Updated**
-  - New "Hook Integration Architecture" section
-  - Shows automatic validation workflow clearly
-  - Documents three ways to invoke hooks
-  - Weekly workflow timeline with validation points
-  - Exit codes explained for scripting
-
-**Key Result:** Validators now transparent to user - validation happens automatically in background without extra commands needed.
-
----
-
-#### Earlier: NFL Scoreboard Client & Results Validator ✨
-- **NFL Scoreboard Client** (`src/data/espn_nfl_scoreboard_client.py`)
-  - Fetches actual game scores from ESPN API for any week (1-18)
-  - Auto-detects current week from system date
-  - Parses ESPN's "competitors" array format correctly
-  - Saves scores to JSON for offline analysis
-  - Ready for full season score tracking
-
-- **Results Validator** (`src/walters_analyzer/results/results_validator.py`)
-  - Compares edge detection predictions vs actual game results
-  - Calculates ATS (Against The Spread) performance metrics
-  - Computes ROI based on Kelly sizing
-  - Team name ↔ abbreviation conversion (all 32 NFL teams)
-  - Generates detailed markdown performance reports
-  - Ready for ongoing season tracking
-
-- **Week 12 Validation Complete**
-  - Successfully matched 8 predictions to actual scores
-  - **ATS Record**: 4 Wins - 3 Losses (57.1% win rate)
-  - **ROI**: +13.0% (positive return on investment)
-  - **Avg Confidence**: 66.4 points
-  - Demonstrated system works end-to-end
-  - See: [docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md](docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md)
-
-#### Key Files Added:
-- `src/data/espn_nfl_scoreboard_client.py` - ESPN scoreboard API client
-- `src/walters_analyzer/results/results_validator.py` - Results validation engine
-- `output/nfl_scores/scores_2025_week_12.json` - Week 12 actual scores
-- `docs/guides/WEEK_12_CLOSEOUT_AND_WEEK_13_SETUP.md` - Complete workflow guide
-
-**Key Improvements:**
-- ✅ Automated results validation (no manual score checking)
-- ✅ Direct ESPN API integration (reliable data source)
-- ✅ Week-by-week performance tracking enabled
-- ✅ Full season CLV calculation framework ready
-- ✅ Historical score fetching for any completed week
-- ✅ Clear separation between Week 12 validation and Week 13 prep
-
-**Next Steps**: Run `/collect-all-data` on Tuesday (Week 13 prep) to continue automated workflow
-
 **Previous Sessions**: See [docs/reports/archive/sessions/](docs/reports/archive/sessions/) for complete history
+
+### Key Milestones (Archived)
+
+| Date | Milestone | Details |
+|------|-----------|---------|
+| 2025-11-25 | Action Network Complete | Phases 1-3: CLI, selector fallback, totals extraction |
+| 2025-11-25 | NCAAF Expansion | Transactions + news scrapers for 10+ FBS teams |
+| 2025-11-24 | PostgreSQL Pipeline | GameIDMapper + full odds loading (<10 sec) |
+| 2025-11-24 | Hook Integration | Auto pre/post validation in slash commands |
+| 2025-11-24 | Results Validator | ATS tracking, ROI calculation, Week 12: 57.1% ATS |
 
 ---
 
