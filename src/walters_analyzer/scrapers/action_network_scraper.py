@@ -152,6 +152,61 @@ class ActionNetworkScraper:
         'ncaab': 'https://www.actionnetwork.com/ncaab/odds',
     }
     
+    # League-specific divergence thresholds
+    # NFL has efficient markets with lower divergences
+    # NCAAF has less betting volume, resulting in higher divergences
+    DIVERGENCE_THRESHOLDS = {
+        'nfl': {
+            'moderate': 5,    # 5+ = moderate sharp signal
+            'strong': 10,     # 10+ = strong sharp signal  
+            'very_strong': 15 # 15+ = very strong sharp signal
+        },
+        'ncaaf': {
+            'moderate': 20,   # 20+ = moderate sharp signal
+            'strong': 30,     # 30+ = strong sharp signal
+            'very_strong': 40 # 40+ = very strong sharp signal
+        },
+        'nba': {
+            'moderate': 5,
+            'strong': 10,
+            'very_strong': 15
+        },
+        'ncaab': {
+            'moderate': 15,   # College basketball similar to NCAAF
+            'strong': 25,
+            'very_strong': 35
+        }
+    }
+    
+    @classmethod
+    def get_min_divergence(cls, league: str) -> int:
+        """Get minimum divergence threshold for a league."""
+        thresholds = cls.DIVERGENCE_THRESHOLDS.get(league.lower(), cls.DIVERGENCE_THRESHOLDS['nfl'])
+        return thresholds['moderate']
+    
+    @classmethod
+    def get_signal_strength(cls, league: str, divergence: int) -> str:
+        """
+        Get signal strength label for a divergence value.
+        
+        Args:
+            league: League identifier ('nfl', 'ncaaf', etc.)
+            divergence: Absolute divergence value
+            
+        Returns:
+            Signal strength: 'VERY_STRONG', 'STRONG', 'MODERATE', or 'NONE'
+        """
+        thresholds = cls.DIVERGENCE_THRESHOLDS.get(league.lower(), cls.DIVERGENCE_THRESHOLDS['nfl'])
+        abs_div = abs(divergence)
+        
+        if abs_div >= thresholds['very_strong']:
+            return 'VERY_STRONG'
+        elif abs_div >= thresholds['strong']:
+            return 'STRONG'
+        elif abs_div >= thresholds['moderate']:
+            return 'MODERATE'
+        return 'NONE'
+    
     def __init__(self, headless: bool = True, data_dir: Optional[Path] = None):
         """
         Initialize scraper.
@@ -465,17 +520,31 @@ class ActionNetworkScraper:
         """Convenience method for NCAAF odds."""
         return await self.scrape_odds('ncaaf')
     
-    def get_sharp_plays(self, games: list[GameOdds], min_divergence: int = 5) -> list[dict]:
+    def get_sharp_plays(self, games: list[GameOdds], league: str = 'nfl', min_divergence: Optional[int] = None) -> list[dict]:
         """
         Identify games with sharp money divergence.
         
+        Uses league-specific thresholds:
+        - NFL: 5+ (moderate), 10+ (strong), 15+ (very strong)
+        - NCAAF: 20+ (moderate), 30+ (strong), 40+ (very strong)
+        
+        NOTE: Action Network's "home"/"away" labels in their API data may not match
+        physical home/away teams. We determine the correct team based on spread value:
+        - Negative spread = favorite (laying points)
+        - Positive spread = underdog (getting points)
+        
         Args:
             games: List of GameOdds
-            min_divergence: Minimum ticket/money divergence (default 5)
+            league: League identifier for threshold selection
+            min_divergence: Override minimum divergence (uses league default if None)
             
         Returns:
-            List of sharp play dictionaries
+            List of sharp play dictionaries with signal strength
         """
+        # Use league-specific threshold if not overridden
+        if min_divergence is None:
+            min_divergence = self.get_min_divergence(league)
+        
         sharp_plays = []
         
         for game in games:
@@ -487,32 +556,70 @@ class ActionNetworkScraper:
             
             # Check for significant divergence
             if abs(away_div) >= min_divergence or abs(home_div) >= min_divergence:
-                # Determine sharp side
-                if away_div >= min_divergence:
-                    sharp_side = game.away_team
-                    sharp_spread = game.away_spread.value
-                    div = away_div
-                elif home_div >= min_divergence:
-                    sharp_side = game.home_team
-                    sharp_spread = game.home_spread.value
+                # Determine which spread LINE has sharp money
+                # (Don't trust "home"/"away" labels - they may be inverted)
+                
+                if home_div >= min_divergence:
+                    sharp_spread_value = game.home_spread.value
                     div = home_div
+                    tickets_pct = game.home_spread.betting.tickets_pct
+                    money_pct = game.home_spread.betting.money_pct
+                elif away_div >= min_divergence:
+                    sharp_spread_value = game.away_spread.value
+                    div = away_div
+                    tickets_pct = game.away_spread.betting.tickets_pct
+                    money_pct = game.away_spread.betting.money_pct
                 elif home_div <= -min_divergence:
-                    sharp_side = game.away_team
-                    sharp_spread = game.away_spread.value
+                    # Fade public on "home" line = bet "away" line
+                    sharp_spread_value = game.away_spread.value
                     div = away_div
+                    tickets_pct = game.away_spread.betting.tickets_pct
+                    money_pct = game.away_spread.betting.money_pct
                 else:
-                    sharp_side = game.home_team
-                    sharp_spread = game.home_spread.value
+                    # Fade public on "away" line = bet "home" line
+                    sharp_spread_value = game.home_spread.value
                     div = home_div
+                    tickets_pct = game.home_spread.betting.tickets_pct
+                    money_pct = game.home_spread.betting.money_pct
+                
+                # Determine which team the spread belongs to based on value:
+                # - Negative spread value = favorite (laying points)
+                # - Positive spread value = underdog (getting points)
+                # 
+                # We use the GAME FORMAT to determine teams:
+                # "AWAY @ HOME" means away_team is visitor, home_team is at home
+                #
+                # Check which team is ACTUALLY the underdog by looking at
+                # WHICH spread line has the positive value
+                # If away_spread.value > 0, the physically away team is underdog
+                # If home_spread.value > 0, the physically home team is underdog
+                
+                if game.away_spread.value > 0:
+                    # Away team is underdog (getting points)
+                    underdog = game.away_team
+                    favorite = game.home_team
+                else:
+                    # Home team is underdog (getting points)
+                    underdog = game.home_team
+                    favorite = game.away_team
+                
+                # Now match the sharp spread to the correct team
+                if sharp_spread_value > 0:
+                    # Sharp money on the underdog
+                    sharp_side = underdog
+                else:
+                    # Sharp money on the favorite
+                    sharp_side = favorite
                 
                 sharp_plays.append({
                     'game': f"{game.away_team} @ {game.home_team}",
-                    'pick': f"{sharp_side} {sharp_spread:+.1f}",
-                    'tickets_pct': game.away_spread.betting.tickets_pct if sharp_side == game.away_team else game.home_spread.betting.tickets_pct,
-                    'money_pct': game.away_spread.betting.money_pct if sharp_side == game.away_team else game.home_spread.betting.money_pct,
+                    'pick': f"{sharp_side} {sharp_spread_value:+.1f}",
+                    'tickets_pct': tickets_pct,
+                    'money_pct': money_pct,
                     'divergence': div,
                     'line_move': game.line_movement,
-                    'signal': 'SHARP' if div > 0 else 'FADE_PUBLIC'
+                    'signal': 'SHARP' if div > 0 else 'FADE_PUBLIC',
+                    'signal_strength': self.get_signal_strength(league, div)
                 })
         
         return sorted(sharp_plays, key=lambda x: abs(x['divergence']), reverse=True)
@@ -615,8 +722,9 @@ class ActionNetworkScraper:
             
             output['games'].append(game_dict)
         
-        # Add sharp plays summary
-        output['sharp_plays'] = self.get_sharp_plays(games)
+        # Add sharp plays summary (use league-specific thresholds)
+        output['sharp_plays'] = self.get_sharp_plays(games, league=league)
+        output['divergence_thresholds'] = self.DIVERGENCE_THRESHOLDS.get(league, self.DIVERGENCE_THRESHOLDS['nfl'])
         
         # Save to file
         filename = f"{league}_odds_week{week}_{timestamp.strftime('%Y%m%d_%H%M%S')}.json"

@@ -29,8 +29,12 @@ async def main():
         print(f"Total Scrapes: {status['scrape_count']}")
         print(f"Data Files: {status['data_files']}")
         
+        print("\n📊 Divergence Thresholds:")
+        print("  NFL:   5+ (moderate), 10+ (strong), 15+ (very strong)")
+        print("  NCAAF: 20+ (moderate), 30+ (strong), 40+ (very strong)")
+        
         if status['latest_data']:
-            print("\n📊 Latest Data:")
+            print("\n📈 Latest Data:")
             for league, data in status['latest_data'].items():
                 print(f"  {league.upper()}: {data['game_count']} games, {data['sharp_plays']} sharp plays")
         return
@@ -44,6 +48,9 @@ async def main():
     # Default: single scrape
     print("\n🎰 SCRAPING ACTION NETWORK ODDS...")
     print("=" * 50)
+    print("\nUsing league-specific divergence thresholds:")
+    print("  NFL:   5+ (moderate), 10+ (strong), 15+ (very strong)")
+    print("  NCAAF: 20+ (moderate), 30+ (strong), 40+ (very strong)")
     
     collector = ActionNetworkCollector()
     result = await collector.run_once()
@@ -52,7 +59,8 @@ async def main():
         print("\n✅ SCRAPE SUCCESSFUL!")
         for league, data in result['results'].items():
             if data['success']:
-                print(f"\n{league.upper()}:")
+                min_div = data.get('min_divergence', 5)
+                print(f"\n{league.upper()} (threshold: {min_div}+ divergence):")
                 print(f"  Games: {data['game_count']}")
                 print(f"  Sharp Plays: {data['sharp_plays']}")
                 
@@ -64,9 +72,11 @@ async def main():
                     if latest_file.exists():
                         with open(latest_file) as f:
                             odds_data = json.load(f)
-                        print("\n🎯 SHARP MONEY SIGNALS:")
+                        print(f"\n🎯 {league.upper()} SHARP MONEY SIGNALS:")
                         for play in odds_data.get('sharp_plays', [])[:5]:
-                            print(f"  • {play['game']}: {play['pick']} ({play['divergence']:+d} div)")
+                            strength = play.get('signal_strength', 'MODERATE')
+                            strength_emoji = '🔥' if strength == 'VERY_STRONG' else '⚡' if strength == 'STRONG' else '📊'
+                            print(f"  {strength_emoji} {play['game']}: {play['pick']} ({play['divergence']:+d} div) [{strength}]")
     else:
         print(f"\n❌ Scrape failed: {result.get('error')}")
         sys.exit(1)

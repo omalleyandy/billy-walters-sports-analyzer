@@ -17,11 +17,26 @@ The Action Network scraper collects real-time betting odds with **public vs shar
 
 ### Sharp Money Detection
 
-**Billy Walters Principle**: "When tickets and money diverge by 5+ points, follow the money."
+**Billy Walters Principle**: "When tickets and money diverge significantly, follow the money."
 
 - **Tickets > Money** = Public side (fade this)
 - **Money > Tickets** = Sharp side (follow this)
-- **5+ point divergence** = Significant signal
+
+#### League-Specific Thresholds
+
+**CRITICAL**: NFL and NCAAF markets have different liquidity levels, requiring separate divergence thresholds:
+
+| Signal Strength | NFL Threshold | NCAAF Threshold | Meaning |
+|-----------------|---------------|-----------------|----------|
+| **Moderate** | 5+ divergence | 20+ divergence | Worth monitoring |
+| **Strong** | 10+ divergence | 30+ divergence | Significant signal |
+| **Very Strong** | 15+ divergence | 40+ divergence | High confidence |
+
+**Why the difference?**
+- **NFL**: Highly efficient market with massive betting volume. Even 5-point divergence is meaningful.
+- **NCAAF**: Lower betting volume, less efficient market. Games routinely show 20-40+ divergence due to lopsided action on smaller games.
+
+**Example**: A +25 divergence in NFL would be extremely rare and very strong. The same +25 divergence in NCAAF is moderate - just means sharps are betting one side in a low-volume game.
 
 ---
 
@@ -104,6 +119,11 @@ data/action_network/
   "week": 13,
   "scraped_at": "2025-11-26T12:00:00",
   "game_count": 16,
+  "divergence_thresholds": {
+    "moderate": 5,
+    "strong": 10,
+    "very_strong": 15
+  },
   "games": [
     {
       "game_id": 256733,
@@ -125,7 +145,8 @@ data/action_network/
       "tickets_pct": 48,
       "money_pct": 56,
       "divergence": 8,
-      "signal": "SHARP"
+      "signal": "SHARP",
+      "signal_strength": "MODERATE"
     }
   ]
 }

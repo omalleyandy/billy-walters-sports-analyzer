@@ -818,13 +818,20 @@ $data = Get-Content .\data\action_network\nfl_odds_latest.json | ConvertFrom-Jso
 $data.sharp_plays | Format-Table game, pick, divergence, signal
 ```
 
-**Divergence Thresholds**:
-| Divergence | Signal Strength | Action |
-|------------|-----------------|--------|
-| 15+ pts | 🔥 VERY STRONG | High confidence sharp play |
-| 10-14 pts | ⚡ STRONG | Significant sharp action |
-| 5-9 pts | ✓ MODERATE | Notable divergence |
-| <5 pts | ○ NEUTRAL | No significant signal |
+**Divergence Thresholds (League-Specific)**:
+
+**CRITICAL**: NFL and NCAAF require different thresholds due to market liquidity differences:
+
+| Signal Strength | NFL | NCAAF | Meaning |
+|-----------------|-----|-------|----------|
+| 🔥 VERY STRONG | 15+ | 40+ | High confidence |
+| ⚡ STRONG | 10-14 | 30-39 | Significant action |
+| 📊 MODERATE | 5-9 | 20-29 | Notable signal |
+| ○ NEUTRAL | <5 | <20 | No signal |
+
+**Why different?**
+- **NFL**: Highly efficient market, massive volume. Even 5+ divergence is meaningful.
+- **NCAAF**: Lower volume, less efficient. 20-40+ divergence common in smaller games.
 
 **Integration with Edge Calculator**:
 - Sharp confirmation: +10-20% edge boost

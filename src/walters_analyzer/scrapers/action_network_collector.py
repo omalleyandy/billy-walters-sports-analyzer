@@ -183,16 +183,19 @@ class ActionNetworkCollector:
                 
                 if games:
                     filepath = self.scraper.save_data(games, league)
-                    sharp_plays = self.scraper.get_sharp_plays(games)
+                    # Use league-specific thresholds for sharp play detection
+                    sharp_plays = self.scraper.get_sharp_plays(games, league=league)
+                    min_div = self.scraper.get_min_divergence(league)
                     
                     results[league] = {
                         'success': True,
                         'game_count': len(games),
                         'sharp_plays': len(sharp_plays),
-                        'filepath': str(filepath)
+                        'filepath': str(filepath),
+                        'min_divergence': min_div
                     }
                     
-                    logger.info(f"Scraped {len(games)} {league.upper()} games, {len(sharp_plays)} sharp plays")
+                    logger.info(f"Scraped {len(games)} {league.upper()} games, {len(sharp_plays)} sharp plays (threshold: {min_div}+)")
                 else:
                     results[league] = {
                         'success': False,
