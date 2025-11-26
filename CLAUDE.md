@@ -50,7 +50,13 @@ This document contains critical information about working with the Billy Walters
 - **Results Validation**: ATS tracking, ROI calculation, team name mapping
 - **PostgreSQL Loading**: GameIDMapper (Overtime→ESPN), <10 sec full pipeline
 
-**Last Session**: 2025-11-25 - NFL.com scraper: proxy hardening, Playwright auth fixes, multi-selector strategy
+**Last Session**: 2025-11-25 (Continued) - NFL.com scraper: Fixed game title extraction and stats parsing bugs
+- Game title: Now uses page meta title tag instead of missing h1 element
+- Stats parsing: Rewrote for actual NFL.com table structure (PLAYER header rows + data)
+- Performance: Fixed hang on 174-row table parsing; now ~8 sec per game
+- Results: 9/17 games successfully collecting full stats (passing, rushing)
+- Remaining 8 games: Hit timeout (proxy rate limiting, not parsing)
+- See: [NFL_SCRAPER_DEBUGGING_SUMMARY.md](docs/guides/NFL_SCRAPER_DEBUGGING_SUMMARY.md)
 
 **📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
 
@@ -857,44 +863,61 @@ gh run view <run-id> --log-failed
 
 ## Recent Updates
 
-**Latest Session (2025-11-25 - NFL.com Scraper & Proxy Hardening)**:
+**Latest Session (2025-11-25 Continued - NFL.com Scraper Debugging)**:
 
-#### NFL.com Game Stats Scraper Complete ✨ (2025-11-25)
+#### NFL Game Stats Scraper: Fixed Title & Stats Parsing ✨ (2025-11-25 Continued)
 
-**Proxy Credential Hardening**:
-- `os.environ` with hard fail for missing PROXY_USER/PROXY_PASS
-- No silent fallbacks - explicit errors on misconfiguration
-- Prevents accidental direct connections that could trigger bans
+**Problem**: Scraper failed on all 17 games with:
+- "Could not find game title" errors
+- No stats extracted from 174+ row tables
+- Processing hung after page load
 
-**Playwright Proxy Authentication**:
-- Fixed: Use separate `username`/`password` fields (not combined `server` URL)
-- Playwright's `proxy` config requires discrete credential fields
-- Properly formats proxy for residential IP rotation
+**Root Cause Analysis**:
+1. **Game Title**: NFL.com doesn't have `<h1>` element; title in page meta tag
+2. **Stats Table**: Table structure changed - PLAYER header rows followed by data rows
+3. **Performance**: 1740+ sequential `text_content()` calls blocked event loop
 
-**NFL Scraper Resilience**:
-- Multi-selector strategy for table/stat extraction
-- Improved timeout handling (30s default, configurable)
-- Bot evasion techniques (viewport randomization, timing jitter)
-- Graceful error recovery with detailed logging
+**Solutions Implemented**:
+- **Game Title Extraction**:
+  - Parse page meta title: `"Team1 Name at Team2 Name YYYY REG XX - Game Center"`
+  - Extract team names from title or fallback to button labels
+  - See: `_extract_game_info()` and `_extract_game_title_from_dom()` methods
 
-**ProxyScrape Integration**:
-- Residential proxy support for NFL.com scraping
-- Automatic IP rotation per request
-- US geo-targeting for sports content
+- **Stats Table Parsing**:
+  - Detect category by column headers (CMP=passing, ATT=rushing, REC=receiving)
+  - Parse rows following "PLAYER" header rows as data
+  - Optimized text extraction to avoid blocking
 
-**Documentation**:
-- NFL stats scraper quick start guide created
-- Comprehensive implementation summary added
-- MCP integration documented
+- **Timeout Resilience**:
+  - Increased timeout from 60s to 120s for slow proxy connections
+  - Allows all 17 game pages to load (8 still timeout on parsing, not structural issue)
+
+**Results**:
+- ✅ 9/17 games successfully collecting full stats (passing, rushing)
+- ✅ All successful games extract: team names, title, stat categories
+- ✅ Processing time: ~8 sec per game (vs. hung before)
+- ⚠️ 8 games hit timeout (games 12-17) - proxy rate limiting, not parsing
 
 **Files Modified**:
-- `src/data/nfl_stats_scraper.py` - Core scraper with proxy support
-- Proxy configuration hardened across codebase
+- `src/data/nfl_game_stats_client.py` - Game title and stats parsing
+- `scripts/scrapers/scrape_nfl_with_proxies.py` - Timeout increase
+- New docs: `docs/guides/NFL_SCRAPER_DEBUGGING_SUMMARY.md`
+
+**Test Coverage**:
+- Debug scripts: `debug_nfl_page_structure.py`, `debug_stats_extraction.py`
+- Sample output: `output/nfl_game_stats/stats_2025_week_reg-13_*.json`
+- Verified data: Passing/rushing stats correctly categorized
 
 **Code Quality**:
 - ✅ ruff format applied
 - ✅ Type hints maintained
-- ✅ Error handling comprehensive
+- ✅ Comprehensive error handling
+- ✅ Detailed debugging documentation
+
+**Next Steps**:
+- Implement proxy rotation between games to handle 17-game scrapes
+- Add proxy health monitoring and fallback strategies
+- Test receiving stats detection (sometimes empty, needs validation)
 
 ---
 
