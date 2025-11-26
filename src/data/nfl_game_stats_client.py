@@ -5,16 +5,25 @@ Fetches game statistics from NFL.com for both teams in a matchup.
 Navigates schedule pages, extracts game links, and scrapes detailed
 team stats from the STATS tab.
 
-Usage:
+Supports optional ProxyScrape residential proxy integration for
+bypassing bot detection and rate limiting.
+
+Usage (without proxies):
     client = NFLGameStatsClient()
+    await client.connect()
+    stats = await client.get_week_stats(year=2025, week="reg-12")
+    await client.close()
 
-    # Get all games from a week
-    stats = await client.get_week_stats(year=2025, week=12)
-
-    # Get stats for a specific game
-    stats = await client.get_game_stats(
-        url="https://www.nfl.com/games/bills-at-texans-2025-reg-12"
+Usage (with proxies):
+    import os
+    client = NFLGameStatsClient(
+        use_proxies=True,
+        proxyscrape_username=os.getenv("PROXYSCRAPE_USERNAME"),
+        proxyscrape_password=os.getenv("PROXYSCRAPE_PASSWORD"),
     )
+    await client.connect()
+    stats = await client.get_week_stats(year=2025, week="reg-12")
+    await client.close()
 
 Categories extracted:
     - Passing: Completions, yards, TDs, INTs, QBR
@@ -27,6 +36,7 @@ Categories extracted:
 import asyncio
 import json
 import logging
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Any
@@ -35,32 +45,79 @@ from playwright.async_api import async_playwright, Page, Browser
 
 logger = logging.getLogger(__name__)
 
+# Import proxy rotator (optional dependency)
+try:
+    from .proxyscrape_rotator import ProxyScrapeRotator
+except ImportError:
+    ProxyScrapeRotator = None
+
 
 class NFLGameStatsClient:
     """
     NFL.com Game Stats Scraper Client.
 
     Fetches detailed game statistics from NFL.com for both teams
-    in each matchup.
+    in each matchup. Optionally uses ProxyScrape residential proxies
+    for bot detection evasion.
     """
 
     BASE_URL = "https://www.nfl.com"
     SCHEDULE_URL = "https://www.nfl.com/schedules/{year}/by-week/{week}"
 
-    def __init__(self, headless: bool = True):
+    def __init__(
+        self,
+        headless: bool = True,
+        use_proxies: bool = False,
+        proxyscrape_username: Optional[str] = None,
+        proxyscrape_password: Optional[str] = None,
+        proxy_rotation_strategy: str = "rotate",
+    ):
         """
         Initialize NFL Game Stats client.
 
         Args:
             headless: Run browser in headless mode
+            use_proxies: Enable ProxyScrape residential proxies
+            proxyscrape_username: ProxyScrape username (PROXYSCRAPE_USERNAME env)
+            proxyscrape_password: ProxyScrape password (PROXYSCRAPE_PASSWORD env)
+            proxy_rotation_strategy: "rotate" (sequential) or "random"
         """
         self.headless = headless
+        self.use_proxies = use_proxies
+        self.proxy_strategy = proxy_rotation_strategy
         self._browser: Optional[Browser] = None
         self._page: Optional[Page] = None
+        self.proxy_rotator: Optional[Any] = None
+
+        # Initialize proxy support if enabled
+        if use_proxies and ProxyScrapeRotator:
+            # Get credentials from parameters or environment
+            if not proxyscrape_username:
+                proxyscrape_username = os.environ.get("PROXYSCRAPE_USERNAME")
+            if not proxyscrape_password:
+                proxyscrape_password = os.environ.get("PROXYSCRAPE_PASSWORD")
+
+            if proxyscrape_username and proxyscrape_password:
+                self.proxy_rotator = ProxyScrapeRotator(
+                    username=proxyscrape_username,
+                    password=proxyscrape_password,
+                )
+                logger.info("Proxy rotator initialized (20 rotating residential IPs)")
+            else:
+                logger.warning(
+                    "Proxy support enabled but no credentials found. "
+                    "Set PROXYSCRAPE_USERNAME + PROXYSCRAPE_PASSWORD. "
+                    "Proceeding without proxies."
+                )
 
     async def connect(self) -> None:
-        """Initialize Playwright browser with bot evasion."""
+        """Initialize Playwright browser with bot evasion and optional proxies."""
         try:
+            # Initialize proxy rotator if configured
+            if self.proxy_rotator:
+                await self.proxy_rotator.connect()
+                logger.info("Proxy rotator initialized")
+
             self._playwright = await async_playwright().start()
             # Launch with bot detection evasion
             self._browser = await self._playwright.chromium.launch(
@@ -71,15 +128,32 @@ class NFLGameStatsClient:
                     "--disable-setuid-sandbox",
                 ],
             )
-            self._page = await self._browser.new_page(
-                user_agent=(
+
+            # Prepare page context with user agent and viewport
+            page_context = {
+                "user_agent": (
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                     "AppleWebKit/537.36 (KHTML, like Gecko) "
                     "Chrome/120.0.0.0 Safari/537.36"
                 ),
-                viewport={"width": 1920, "height": 1080},
-            )
+                "viewport": {"width": 1920, "height": 1080},
+            }
+
+            # Add proxy if available
+            if self.proxy_rotator:
+                proxy = await self._get_proxy()
+                if proxy:
+                    # Playwright requires separate username/password fields
+                    page_context["proxy"] = {
+                        "server": proxy,
+                        "username": self.proxy_rotator.username,
+                        "password": self.proxy_rotator.password,
+                    }
+                    logger.info(f"Using proxy: {proxy}")
+
+            self._page = await self._browser.new_page(**page_context)
             logger.info("NFL Game Stats client connected with bot evasion")
+
         except Exception as e:
             logger.error(f"Failed to connect: {e}")
             raise
@@ -93,9 +167,31 @@ class NFLGameStatsClient:
                 await self._browser.close()
             if self._playwright:
                 await self._playwright.stop()
+            if self.proxy_rotator:
+                await self.proxy_rotator.close()
             logger.info("NFL Game Stats client closed")
         except Exception as e:
             logger.error(f"Error closing client: {e}")
+
+    async def _get_proxy(self) -> Optional[str]:
+        """
+        Get proxy based on configured strategy.
+
+        Returns:
+            Proxy URL or None
+        """
+        if not self.proxy_rotator:
+            return None
+
+        try:
+            if self.proxy_strategy == "random":
+                return await self.proxy_rotator.get_random_proxy()
+            else:
+                return await self.proxy_rotator.get_next_proxy()
+
+        except Exception as e:
+            logger.error(f"Error getting proxy: {e}")
+            return None
 
     async def __aenter__(self):
         """Async context manager entry."""
@@ -611,6 +707,57 @@ class NFLGameStatsClient:
         except Exception as e:
             logger.error(f"Error exporting stats: {e}")
             return ""
+
+    async def get_proxy_health(self) -> dict:
+        """
+        Get health report of proxy system.
+
+        Returns:
+            Dictionary with health metrics
+        """
+        if not self.proxy_rotator:
+            return {"enabled": False}
+
+        return await self.proxy_rotator.get_health_report()
+
+    async def test_proxies(self, limit: int = 5) -> dict:
+        """
+        Test proxies to find working ones.
+
+        Args:
+            limit: Maximum proxies to test
+
+        Returns:
+            Dictionary with test results
+        """
+        if not self.proxy_rotator:
+            logger.warning("Proxy rotator not available")
+            return {}
+
+        await self.proxy_rotator.connect()
+
+        try:
+            # Fetch proxies
+            proxies = await self.proxy_rotator._fetch_proxies()
+
+            if not proxies:
+                logger.warning("No proxies available")
+                return {}
+
+            # Test limited number
+            proxies_to_test = proxies[:limit]
+            logger.info(f"Testing {len(proxies_to_test)} proxies...")
+
+            results = {}
+            for proxy in proxies_to_test:
+                working = await self.proxy_rotator.test_proxy(proxy)
+                results[proxy] = working
+                await asyncio.sleep(1)
+
+            return results
+
+        finally:
+            await self.proxy_rotator.close()
 
 
 async def main():

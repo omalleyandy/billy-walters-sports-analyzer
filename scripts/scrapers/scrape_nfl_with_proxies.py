@@ -37,7 +37,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from data.nfl_game_stats_client_with_proxies import NFLGameStatsClientWithProxies
+from data.nfl_game_stats_client import NFLGameStatsClient
 
 logger = logging.getLogger(__name__)
 
@@ -160,7 +160,7 @@ Examples:
     logger.info(f"  Max retries: {args.max_retries}")
     logger.info(f"  Output: {args.output}")
 
-    client = NFLGameStatsClientWithProxies(
+    client = NFLGameStatsClient(
         headless=headless,
         proxyscrape_username=username,
         proxyscrape_password=password,
