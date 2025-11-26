@@ -171,11 +171,36 @@ class NFLGameStatsClient:
         game_links = []
 
         try:
-            # Wait for schedule to load
-            await self._page.wait_for_selector("a[href*='/games/']", timeout=10000)
+            # Try multiple selector strategies
+            selectors = [
+                "a[href*='/games/']",  # Original selector
+                "a[href*='games']",  # Alternative
+                "[data-href*='/games/']",  # Data attribute
+            ]
 
-            # Get all game links
-            links = await self._page.locator("a[href*='/games/']").all()
+            links = []
+            for selector in selectors:
+                try:
+                    await self._page.wait_for_selector(selector, timeout=10000)
+                    links = await self._page.locator(selector).all()
+                    if links:
+                        logger.info(
+                            f"Found {len(links)} game links using selector: {selector}"
+                        )
+                        break
+                except Exception as e:
+                    logger.debug(f"Selector {selector} failed: {e}")
+                    continue
+
+            if not links:
+                logger.warning("No game links found with any selector strategy")
+                # Try to get HTML content for debugging
+                html = await self._page.content()
+                logger.debug(f"Page content length: {len(html)}")
+                if "games" in html.lower():
+                    logger.info("Page contains 'games' text")
+                return []
+
             logger.info(f"Found {len(links)} game link elements")
 
             # Extract unique game URLs

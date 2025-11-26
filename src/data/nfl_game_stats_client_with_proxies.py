@@ -212,8 +212,8 @@ class NFLGameStatsClientWithProxies(NFLGameStatsClient):
             try:
                 await self._page.goto(
                     schedule_url,
-                    wait_until="domcontentloaded",
-                    timeout=60000,
+                    wait_until="networkidle",
+                    timeout=120000,
                 )
                 await asyncio.sleep(2)
                 break
