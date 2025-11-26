@@ -59,7 +59,11 @@ class NFL2024SeasonCollector:
 
         try:
             url = f"{self.ESPN_BASE}/scoreboard"
-            params = {"week": week, "seasontype": season_type, "season": self.SEASON_YEAR}
+            params = {
+                "week": week,
+                "seasontype": season_type,
+                "season": self.SEASON_YEAR,
+            }
 
             response = await self.session.get(url, params=params)
 
@@ -339,8 +343,10 @@ class NFL2024SeasonCollector:
             if stats:
                 week_data["team_stats"].append(stats)
 
-        logger.info(f"Games: {len(week_data['games'])}/{len(events)} loaded, "
-                    f"{len(week_data['team_stats'])} team stats")
+        logger.info(
+            f"Games: {len(week_data['games'])}/{len(events)} loaded, "
+            f"{len(week_data['team_stats'])} team stats"
+        )
 
         # Save week data
         week_file = (
@@ -366,7 +372,9 @@ class NFL2024SeasonCollector:
         logger.info("Billy Walters Analysis Package")
         logger.info("=" * 80)
         logger.info(f"Output: {self.output_dir}")
-        logger.info(f"Starting 2024 NFL season collection (weeks 1-{self.REGULAR_SEASON_WEEKS})")
+        logger.info(
+            f"Starting 2024 NFL season collection (weeks 1-{self.REGULAR_SEASON_WEEKS})"
+        )
         logger.info("=" * 80)
 
         season_summary = {

@@ -12,7 +12,9 @@ This script performs edge detection on real Week 12 data:
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -122,9 +124,9 @@ def print_edge_report(edges):
 
     # Summary stats
     total_games = len(edges)
-    playable_games = len([e for e in edges if e['edge_strength'] != 'NO_PLAY'])
-    max_edges = len([e for e in edges if e['edge_strength'] == 'MAX'])
-    strong_edges = len([e for e in edges if e['edge_strength'] == 'STRONG'])
+    playable_games = len([e for e in edges if e["edge_strength"] != "NO_PLAY"])
+    max_edges = len([e for e in edges if e["edge_strength"] == "MAX"])
+    strong_edges = len([e for e in edges if e["edge_strength"] == "STRONG"])
 
     print(f"\nSummary:")
     print(f"  Total Games: {total_games}")
@@ -133,36 +135,36 @@ def print_edge_report(edges):
     print(f"  STRONG Edges (4-7pts): {strong_edges}")
 
     print("\n" + "-" * 120)
-    print(f"{'Game':<20} {'Matchup':<30} {'Ratings':<15} {'Market':<10} {'Edge':<8} {'Category':<10} {'Bet':<20} {'Units':<8} {'Win%':<7}")
+    print(
+        f"{'Game':<20} {'Matchup':<30} {'Ratings':<15} {'Market':<10} {'Edge':<8} {'Category':<10} {'Bet':<20} {'Units':<8} {'Win%':<7}"
+    )
     print("-" * 120)
 
     for edge in edges:
-        if edge['edge_strength'] != 'NO_PLAY':
-            game_key = f"{edge['away_team'][:3].upper()}@{edge['home_team'][:3].upper()}"
-
-            matchup = (
-                f"{edge['away_team'][:12]} @ "
-                f"{edge['home_team'][:12]}"
+        if edge["edge_strength"] != "NO_PLAY":
+            game_key = (
+                f"{edge['away_team'][:3].upper()}@{edge['home_team'][:3].upper()}"
             )
 
-            ratings = (
-                f"{edge['away_rating']:.1f} vs "
-                f"{edge['home_rating']:.1f}"
-            )
+            matchup = f"{edge['away_team'][:12]} @ {edge['home_team'][:12]}"
 
-            market = (
-                f"{edge['market_spread']:+.1f}" if edge['market_spread'] else "N/A"
-            )
+            ratings = f"{edge['away_rating']:.1f} vs {edge['home_rating']:.1f}"
+
+            market = f"{edge['market_spread']:+.1f}" if edge["market_spread"] else "N/A"
 
             edge_str = f"{edge['edge_points']:.1f}"
 
-            category = edge['edge_strength']
+            category = edge["edge_strength"]
 
-            bet = edge['recommended_bet'][:20] if edge['recommended_bet'] != 'NO_EDGE' else "SKIP"
+            bet = (
+                edge["recommended_bet"][:20]
+                if edge["recommended_bet"] != "NO_EDGE"
+                else "SKIP"
+            )
 
-            units = edge['recommended_units']
+            units = edge["recommended_units"]
 
-            win_pct = edge['expected_win_pct']
+            win_pct = edge["expected_win_pct"]
 
             print(
                 f"{game_key:<20} {matchup:<30} {ratings:<15} {market:<10} "
@@ -234,6 +236,7 @@ def main():
     except Exception as e:
         print(f"[ERROR] Analysis failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

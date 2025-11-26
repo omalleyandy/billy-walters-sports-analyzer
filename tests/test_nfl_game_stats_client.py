@@ -59,9 +59,7 @@ class TestNFLGameStatsClient:
 
         # With stats tab
         url_with_stats = (
-            f"{base_url}?tab=stats"
-            if "?" not in base_url
-            else f"{base_url}&tab=stats"
+            f"{base_url}?tab=stats" if "?" not in base_url else f"{base_url}&tab=stats"
         )
 
         assert "tab=stats" in url_with_stats
@@ -169,8 +167,7 @@ class TestNFLGameStatsClient:
 
         # Simulate filename generation
         filename = (
-            f"stats_{week_data['year']}_week_{week_data['week']}_"
-            "20250101_120000.json"
+            f"stats_{week_data['year']}_week_{week_data['week']}_20250101_120000.json"
         )
 
         assert "stats_2025" in filename

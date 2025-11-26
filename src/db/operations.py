@@ -84,9 +84,7 @@ class DatabaseOperations:
         results = self.db.execute_query(query, (game_id,))
         return dict(results[0]) if results else None
 
-    def update_game_score(
-        self, game_id: str, home_score: int, away_score: int
-    ) -> None:
+    def update_game_score(self, game_id: str, home_score: int, away_score: int) -> None:
         """Update game final score."""
         query = """
             UPDATE games
@@ -229,7 +227,9 @@ class DatabaseOperations:
             fetch=False,
         )
 
-    def get_closing_line(self, game_id: str, sportsbook: str = "overtime") -> Optional[Dict]:
+    def get_closing_line(
+        self, game_id: str, sportsbook: str = "overtime"
+    ) -> Optional[Dict]:
         """Get closing line for a game."""
         query = """
             SELECT * FROM odds
@@ -425,9 +425,7 @@ class DatabaseOperations:
             fetch=False,
         )
 
-    def get_game_weather(
-        self, game_id: str, is_actual: bool = True
-    ) -> Optional[Dict]:
+    def get_game_weather(self, game_id: str, is_actual: bool = True) -> Optional[Dict]:
         """Get weather for a game."""
         query = """
             SELECT * FROM weather

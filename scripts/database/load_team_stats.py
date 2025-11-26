@@ -22,7 +22,7 @@ def load_team_stats(week: int, season: int):
             user="postgres",
             password="postgres",
             host="localhost",
-            port="5432"
+            port="5432",
         )
         cur = conn.cursor()
         print("[OK] Connected to PostgreSQL")
@@ -33,8 +33,10 @@ def load_team_stats(week: int, season: int):
     # Load stats file
     try:
         stats_file = (
-            Path(__file__).parent.parent.parent / "data" / "current" /
-            f"ncaaf_team_stats_week_{week}.json"
+            Path(__file__).parent.parent.parent
+            / "data"
+            / "current"
+            / f"ncaaf_team_stats_week_{week}.json"
         )
         with open(stats_file) as f:
             stats_data = json.load(f)
@@ -116,7 +118,7 @@ def load_team_stats(week: int, season: int):
     try:
         cur.execute(
             "SELECT COUNT(*) FROM ncaaf_team_stats WHERE week = %s AND season_year = %s",
-            (week, season)
+            (week, season),
         )
         count = cur.fetchone()[0]
         print(f"[OK] Verified: {count} stat records in database for Week {week}")
@@ -131,8 +133,12 @@ def load_team_stats(week: int, season: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Load NCAAF team statistics")
-    parser.add_argument("--week", type=int, default=13, help="Week number (default: 13)")
-    parser.add_argument("--season", type=int, default=2025, help="Season year (default: 2025)")
+    parser.add_argument(
+        "--week", type=int, default=13, help="Week number (default: 13)"
+    )
+    parser.add_argument(
+        "--season", type=int, default=2025, help="Season year (default: 2025)"
+    )
 
     args = parser.parse_args()
     success = load_team_stats(args.week, args.season)

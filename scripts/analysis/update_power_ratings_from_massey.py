@@ -144,9 +144,7 @@ class PowerRatingUpdater:
                     logger.warning(
                         f"Previous ratings appear to be on wrong scale (avg={avg:.2f})"
                     )
-                    logger.info(
-                        "Skipping 90/10 blend, will use pure Massey conversion"
-                    )
+                    logger.info("Skipping 90/10 blend, will use pure Massey conversion")
                     return False
 
             self.previous_ratings = prev_ratings_raw

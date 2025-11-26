@@ -150,16 +150,16 @@ class NCAAFEdgeDetector:
             edges = []
             for game in games:
                 try:
-                    edge = await self._analyze_game(
-                        game, ratings, odds, injuries, week
-                    )
+                    edge = await self._analyze_game(game, ratings, odds, injuries, week)
                     if edge and edge.edge_points >= self.EDGE_THRESHOLD:
                         edges.append(edge)
                 except Exception as e:
                     logger.warning(f"Error analyzing {game.get('matchup')}: {e}")
                     continue
 
-            logger.info(f"[OK] Found {len(edges)} edges (threshold: {self.EDGE_THRESHOLD})")
+            logger.info(
+                f"[OK] Found {len(edges)} edges (threshold: {self.EDGE_THRESHOLD})"
+            )
 
             # Save results
             if edges:
@@ -206,8 +206,7 @@ class NCAAFEdgeDetector:
                     return data["ratings"]
                 elif "teams" in data:
                     return {
-                        team["name"]: team.get("rating", 75.0)
-                        for team in data["teams"]
+                        team["name"]: team.get("rating", 75.0) for team in data["teams"]
                     }
                 else:
                     # Assume flat structure {team_name: rating, ...}
@@ -307,9 +306,7 @@ class NCAAFEdgeDetector:
             edge_points = abs(predicted_spread - market_spread)
 
             # Calculate adjustments
-            situational_adj = await self.situational.calculate(
-                game, ratings, week
-            )
+            situational_adj = await self.situational.calculate(game, ratings, week)
             weather_adj = await self._calculate_weather_adjustment(game)
             emotional_adj = await self.situational.emotional_adjustment(game, week)
             injury_adj = await self.injury_calc.calculate_impact(

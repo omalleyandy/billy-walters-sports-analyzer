@@ -21,7 +21,7 @@ def load_teams():
             user="postgres",
             password="postgres",
             host="localhost",
-            port="5432"
+            port="5432",
         )
         cur = conn.cursor()
         print("[OK] Connected to PostgreSQL")
@@ -31,7 +31,9 @@ def load_teams():
 
     # Load ESPN teams mapping
     try:
-        espn_teams_file = Path(__file__).parent.parent.parent / "data" / "current" / "espn_teams.json"
+        espn_teams_file = (
+            Path(__file__).parent.parent.parent / "data" / "current" / "espn_teams.json"
+        )
         with open(espn_teams_file) as f:
             espn_data = json.load(f)
         espn_teams = espn_data.get("ncaaf", {})
@@ -43,7 +45,12 @@ def load_teams():
 
     # Load team abbreviation mappings
     try:
-        mappings_file = Path(__file__).parent.parent.parent / "src" / "data" / "ncaaf_team_mappings.json"
+        mappings_file = (
+            Path(__file__).parent.parent.parent
+            / "src"
+            / "data"
+            / "ncaaf_team_mappings.json"
+        )
         with open(mappings_file) as f:
             mappings = json.load(f).get("mappings", {})
         print(f"[OK] Loaded {len(mappings)} team abbreviation mappings")

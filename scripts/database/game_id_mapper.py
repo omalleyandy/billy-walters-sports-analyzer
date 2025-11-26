@@ -47,9 +47,7 @@ class GameIDMapper:
             key = self._make_cache_key(home_team, away_team, game_date)
             self._espn_schedule_cache[key] = game_id
 
-    def _make_cache_key(
-        self, home_team: str, away_team: str, game_date
-    ) -> str:
+    def _make_cache_key(self, home_team: str, away_team: str, game_date) -> str:
         """Create normalized cache key from team names and date."""
         # Normalize team names (strip, lowercase for comparison)
         home = home_team.strip().lower()
@@ -91,10 +89,7 @@ class GameIDMapper:
         # (accounts for time zone differences)
         try:
             result = self.find_game_by_teams_and_date(
-                home_team,
-                away_team,
-                game_date,
-                tolerance_days=2
+                home_team, away_team, game_date, tolerance_days=2
             )
 
             if result:
@@ -103,10 +98,7 @@ class GameIDMapper:
                 return result
 
         except Exception as e:
-            print(
-                f"[WARNING] Mapping error for {home_team} vs "
-                f"{away_team}: {e}"
-            )
+            print(f"[WARNING] Mapping error for {home_team} vs {away_team}: {e}")
 
         return None
 
@@ -191,8 +183,7 @@ class GameIDMapper:
 
         except Exception as e:
             print(
-                f"[WARNING] Date-based mapping error: {home_team} vs "
-                f"{away_team}: {e}"
+                f"[WARNING] Date-based mapping error: {home_team} vs {away_team}: {e}"
             )
 
         return None
@@ -231,8 +222,9 @@ class GameIDMapper:
 
             for row in schedules:
                 try:
-                    (game_id, season, week, league, home_team,
-                     away_team, game_date) = row
+                    (game_id, season, week, league, home_team, away_team, game_date) = (
+                        row
+                    )
 
                     # Insert into games table
                     self.db.execute_query(
@@ -243,8 +235,15 @@ class GameIDMapper:
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT DO NOTHING
                         """,
-                        (game_id, season, week, league, home_team,
-                         away_team, game_date),
+                        (
+                            game_id,
+                            season,
+                            week,
+                            league,
+                            home_team,
+                            away_team,
+                            game_date,
+                        ),
                         fetch=False,
                     )
                     count += 1
@@ -282,9 +281,7 @@ if __name__ == "__main__":
     print(f"Result: {inserted} games inserted/updated")
 
     # Test mapping
-    print(
-        "\n[TEST] Testing game_id mapping (Overtime -> ESPN)..."
-    )
+    print("\n[TEST] Testing game_id mapping (Overtime -> ESPN)...")
     # This would require actual Overtime game data to test
 
     mapper.close()

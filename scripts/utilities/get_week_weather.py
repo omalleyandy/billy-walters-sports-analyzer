@@ -97,9 +97,7 @@ def main():
 
                     if home_team and away_team:
                         if i < 20:  # Show first 20
-                            print(
-                                f"{away_team:28s} @ {home_team:28s} | {date[:10]}"
-                            )
+                            print(f"{away_team:28s} @ {home_team:28s} | {date[:10]}")
                         if home_team:
                             ncaaf_home_teams[home_team] = {
                                 "away": away_team,
@@ -120,7 +118,9 @@ def main():
         ncaaf_home_teams = {}
 
     print("\n" + "=" * 80)
-    print(f"TOTAL: {len(nfl_home_teams)} NFL + {len(ncaaf_home_teams)} NCAAF home teams")
+    print(
+        f"TOTAL: {len(nfl_home_teams)} NFL + {len(ncaaf_home_teams)} NCAAF home teams"
+    )
     print("=" * 80)
 
     # Return home teams for weather checking

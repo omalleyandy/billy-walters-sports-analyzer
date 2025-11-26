@@ -187,15 +187,15 @@ class Injury(BaseModel):
     jersey_number: Optional[int] = None
 
     # Injury details
-    injury_status: str = Field(..., pattern="^(OUT|DOUBTFUL|QUESTIONABLE|PROBABLE|HEALTHY)$")
+    injury_status: str = Field(
+        ..., pattern="^(OUT|DOUBTFUL|QUESTIONABLE|PROBABLE|HEALTHY)$"
+    )
     injury_type: Optional[str] = None
     injury_side: Optional[str] = None
 
     # Impact
     impact_points: Optional[Decimal] = None
-    player_tier: Optional[str] = Field(
-        None, pattern="^(ELITE|STARTER|BACKUP|DEPTH)$"
-    )
+    player_tier: Optional[str] = Field(None, pattern="^(ELITE|STARTER|BACKUP|DEPTH)$")
     is_key_player: bool = False
 
     # Timeline

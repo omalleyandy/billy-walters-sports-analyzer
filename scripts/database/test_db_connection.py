@@ -5,7 +5,9 @@ import sys
 import os
 
 # Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -37,7 +39,7 @@ def main():
             WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
         """)
 
-        table_count = result[0]['table_count']
+        table_count = result[0]["table_count"]
         print(f"[OK] Found {table_count} tables (expected: 10)")
 
         if table_count != 10:

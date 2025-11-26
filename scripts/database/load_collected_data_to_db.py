@@ -188,10 +188,7 @@ class DataLoader:
                     self.stats["team_stats"] += 1
 
                 except Exception as e:
-                    print(
-                        f"  [WARNING] Failed to load stats for {team_name}: "
-                        f"{e}"
-                    )
+                    print(f"  [WARNING] Failed to load stats for {team_name}: {e}")
                     self.stats["errors"] += 1
 
             print(f"  [OK] Loaded {self.stats['team_stats']} team records")
@@ -212,9 +209,7 @@ class DataLoader:
 
         try:
             # Find weather files
-            weather_files = list(Path("data/current").glob(
-                "weather_forecasts_*.json"
-            ))
+            weather_files = list(Path("data/current").glob("weather_forecasts_*.json"))
 
             if not weather_files:
                 print("  [WARNING] No weather files found in data/current/")
@@ -255,9 +250,7 @@ class DataLoader:
                     wind_speed = weather_data.get("wind_speed")
                     wind_gust = weather_data.get("wind_gust")
                     humidity = weather_data.get("humidity")
-                    precip_chance = weather_data.get(
-                        "precipitation_chance"
-                    )
+                    precip_chance = weather_data.get("precipitation_chance")
                     category = weather_data.get("weather_category")
                     source = weather_data.get("source", "accuweather")
 
@@ -287,15 +280,12 @@ class DataLoader:
             # Find Overtime API odds file
             league_dir = self.league.lower()
             odds_files = list(
-                Path(f"output/overtime/{league_dir}/pregame").glob(
-                    "api_walters_*.json"
-                )
+                Path(f"output/overtime/{league_dir}/pregame").glob("api_walters_*.json")
             )
 
             if not odds_files:
                 print(
-                    f"  [WARNING] No odds files found in "
-                    f"output/overtime/{league_dir}/"
+                    f"  [WARNING] No odds files found in output/overtime/{league_dir}/"
                 )
                 return False
 
@@ -310,9 +300,7 @@ class DataLoader:
 
             for game in games:
                 try:
-                    overtime_game_id = (
-                        game.get("id") or game.get("game_id")
-                    )
+                    overtime_game_id = game.get("id") or game.get("game_id")
 
                     # Extract team names, handling nested dict format
                     home_team = game.get("home_team")
@@ -360,20 +348,16 @@ class DataLoader:
                         ]
                         for fmt in formats:
                             try:
-                                game_date = datetime.strptime(
-                                    game_date_str, fmt
-                                )
+                                game_date = datetime.strptime(game_date_str, fmt)
                                 break
                             except ValueError:
                                 continue
 
-                    espn_game_id = (
-                        self.mapper.map_overtime_to_espn(
-                            overtime_game_id,
-                            home_team,
-                            away_team,
-                            game_date,
-                        )
+                    espn_game_id = self.mapper.map_overtime_to_espn(
+                        overtime_game_id,
+                        home_team,
+                        away_team,
+                        game_date,
                     )
 
                     if not espn_game_id:
@@ -406,12 +390,8 @@ class DataLoader:
                         moneyline_home = None
                         moneyline_away = None
 
-                    moneyline_home = (
-                        int(moneyline_home) if moneyline_home else None
-                    )
-                    moneyline_away = (
-                        int(moneyline_away) if moneyline_away else None
-                    )
+                    moneyline_home = int(moneyline_home) if moneyline_home else None
+                    moneyline_away = int(moneyline_away) if moneyline_away else None
 
                     # Total: {points: 49.0, ...}
                     total_data = game.get("total", {})
@@ -470,9 +450,7 @@ class DataLoader:
         print(f"\n[0/4] Populating games table (Week {self.week})...")
         try:
             count = self.mapper.populate_games_table(
-                season=2025,
-                week=self.week,
-                league=self.league
+                season=2025, week=self.week, league=self.league
             )
             print(f"  [OK] Inserted {count} games into games table")
             return True
@@ -517,8 +495,7 @@ class DataLoader:
                 print("[OK] All data loaded successfully!")
             else:
                 print(
-                    f"[WARNING] {self.stats['errors']} errors occurred "
-                    f"during loading"
+                    f"[WARNING] {self.stats['errors']} errors occurred during loading"
                 )
 
         finally:

@@ -16,8 +16,9 @@ instead of relying on Massey composite.
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -413,6 +414,7 @@ def main():
     except Exception as e:
         print(f"\n[ERROR] Failed to create tables: {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
     finally:

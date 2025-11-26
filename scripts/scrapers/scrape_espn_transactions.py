@@ -135,9 +135,7 @@ Examples:
 
                 if not args.quiet:
                     trans_count = result["transaction_count"]
-                    print(
-                        f"    [OK] {trans_count} transactions found"
-                    )
+                    print(f"    [OK] {trans_count} transactions found")
                     if trans_count > 0 and trans_count <= 3:
                         for trans in result["transactions"][:3]:
                             print(
@@ -162,7 +160,9 @@ Examples:
             print("\n" + "=" * 70)
             print("TRANSACTIONS SCRAPING COMPLETE")
             print("=" * 70)
-            print(f"Teams scraped: {len([r for r in all_results.values() if 'error' not in r])}")
+            print(
+                f"Teams scraped: {len([r for r in all_results.values() if 'error' not in r])}"
+            )
             print(f"Total transactions: {total_transactions}")
             print(f"Saved to: {output_file}")
 

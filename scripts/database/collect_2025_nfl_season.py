@@ -59,16 +59,18 @@ class NFL2025SeasonCollector:
 
         try:
             url = f"{self.ESPN_BASE}/scoreboard"
-            params = {"week": week, "seasontype": season_type, "season": self.SEASON_YEAR}
+            params = {
+                "week": week,
+                "seasontype": season_type,
+                "season": self.SEASON_YEAR,
+            }
 
             response = await self.session.get(url, params=params)
 
             if response.status_code == 200:
                 return response.json()
             else:
-                logger.warning(
-                    f"Week {week}: HTTP {response.status_code}"
-                )
+                logger.warning(f"Week {week}: HTTP {response.status_code}")
                 return None
 
         except Exception as e:
@@ -161,7 +163,9 @@ class NFL2025SeasonCollector:
                 "game_date": game_date,
                 "game_date_iso": datetime.fromisoformat(
                     game_date.replace("Z", "+00:00")
-                ).isoformat() if game_date else None,
+                ).isoformat()
+                if game_date
+                else None,
                 # Teams
                 "home_team": home_team,
                 "home_team_abbr": home_team_abbr,
@@ -432,8 +436,7 @@ class NFL2025SeasonCollector:
             total = week_data["total_games"]
             stats = len(week_data["team_stats"])
             result_msg = (
-                f"Week {week} Complete: {games}/{total} games, "
-                f"{stats} team stats"
+                f"Week {week} Complete: {games}/{total} games, {stats} team stats"
             )
             logger.info(result_msg)
 
@@ -496,7 +499,9 @@ async def main():
     logger.info("=" * 80)
     logger.info(f"Output: {args.output_dir}")
 
-    start_msg = f"Starting 2025 NFL season collection (weeks {args.start_week}-{args.end_week})"
+    start_msg = (
+        f"Starting 2025 NFL season collection (weeks {args.start_week}-{args.end_week})"
+    )
     logger.info(start_msg)
 
     try:

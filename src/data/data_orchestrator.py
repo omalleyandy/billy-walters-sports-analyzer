@@ -33,6 +33,7 @@ from .weather_client import WeatherClient
 logger = logging.getLogger(__name__)
 action_network_client = ActionNetworkClient(headless=False)
 
+
 class DataSource(str, Enum):
     """Available data sources."""
 
@@ -221,7 +222,11 @@ class DataOrchestrator:
             )
 
         # Add NFL.com schedule task
-        if include_nfl_com and resolved_week is not None and resolved_season is not None:
+        if (
+            include_nfl_com
+            and resolved_week is not None
+            and resolved_season is not None
+        ):
             self._add_task(
                 CollectionTask(
                     source=DataSource.NFL_COM,
@@ -303,9 +308,7 @@ class DataOrchestrator:
             CollectionTask(
                 source=DataSource.ESPN,
                 description=f"ESPN NCAAF scoreboard week {resolved_week or week}",
-                function=lambda: self._collect_espn_scoreboard(
-                    "NCAAF", resolved_week
-                ),
+                function=lambda: self._collect_espn_scoreboard("NCAAF", resolved_week),
                 priority=1,
             )
         )
@@ -608,11 +611,11 @@ class DataOrchestrator:
                 )
 
             resolved_week = resolved_week or scoreboard.get("week", {}).get("number")
-            resolved_season = resolved_season or scoreboard.get("season", {}).get("year")
-        except Exception as exc:
-            logger.warning(
-                f"Could not infer {league} week/season from ESPN: {exc}"
+            resolved_season = resolved_season or scoreboard.get("season", {}).get(
+                "year"
             )
+        except Exception as exc:
+            logger.warning(f"Could not infer {league} week/season from ESPN: {exc}")
 
         return resolved_week, resolved_season
 

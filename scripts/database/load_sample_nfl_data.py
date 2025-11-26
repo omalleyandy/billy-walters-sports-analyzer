@@ -324,7 +324,9 @@ class SampleNFLDataLoader:
             logger.info(f"[OK] Teams loaded: {team_count}")
 
             # Check team stats
-            cursor.execute("SELECT COUNT(*) FROM nfl_team_stats WHERE season_year = 2025")
+            cursor.execute(
+                "SELECT COUNT(*) FROM nfl_team_stats WHERE season_year = 2025"
+            )
             stats_count = cursor.fetchone()[0]
             logger.info(f"[OK] Team stats loaded: {stats_count}")
 
@@ -350,9 +352,7 @@ class SampleNFLDataLoader:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Load sample NFL data for testing"
-    )
+    parser = argparse.ArgumentParser(description="Load sample NFL data for testing")
     parser.add_argument(
         "--dbname",
         default="sports_db",

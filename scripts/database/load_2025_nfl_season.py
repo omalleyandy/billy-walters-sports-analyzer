@@ -90,7 +90,9 @@ class NFL2025HistoricalLoader:
             status = game_data.get("status", "SCHEDULED")
             stadium = game_data.get("stadium")
             is_outdoor = game_data.get("is_outdoor")
-            is_neutral = False  # NFL games not neutral site (only some international games)
+            is_neutral = (
+                False  # NFL games not neutral site (only some international games)
+            )
 
             # Insert or update game
             insert_query = """
@@ -166,7 +168,9 @@ class NFL2025HistoricalLoader:
             rushing_yards_allowed_per_game = team_stats.get(
                 "rushing_yards_allowed_per_game"
             )
-            total_yards_allowed_per_game = team_stats.get("total_yards_allowed_per_game")
+            total_yards_allowed_per_game = team_stats.get(
+                "total_yards_allowed_per_game"
+            )
             turnover_margin = team_stats.get("turnover_margin")
             third_down_pct = team_stats.get("third_down_pct")
             takeaways = team_stats.get("takeaways")
@@ -317,9 +321,7 @@ class NFL2025HistoricalLoader:
 
     def load_full_season(self, data_dir: Path) -> Dict:
         """Load all 18 weeks of 2025 NFL season"""
-        logger.info(
-            "Loading 2025 NFL historical season (weeks 1-18, all games)..."
-        )
+        logger.info("Loading 2025 NFL historical season (weeks 1-18, all games)...")
 
         season_summary = {
             "season": 2025,
@@ -397,9 +399,7 @@ class NFL2025HistoricalLoader:
             if sample_games:
                 logger.info("[OK] Sample games:")
                 for game in sample_games:
-                    logger.info(
-                        f"  Week {game[4]}: {game[2]}@{game[1]} ({game[3]})"
-                    )
+                    logger.info(f"  Week {game[4]}: {game[2]}@{game[1]} ({game[3]})")
 
             return {
                 "total_games": total_games,
@@ -524,7 +524,7 @@ async def main():
             f"Games: {season_summary['total_games_success']} loaded, "
             f"{season_summary['total_games_errors']} errors"
         )
-        if season_summary['total_team_stats_success'] > 0:
+        if season_summary["total_team_stats_success"] > 0:
             logger.info(
                 f"Team Stats: {season_summary['total_team_stats_success']} loaded, "
                 f"{season_summary['total_team_stats_errors']} errors"

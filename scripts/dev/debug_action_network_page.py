@@ -30,7 +30,7 @@ async def main():
         browser = await p.chromium.launch(headless=False)
         context = await browser.new_context(
             viewport={"width": 1280, "height": 900},
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         )
         page = await context.new_page()
 
@@ -39,7 +39,7 @@ async def main():
         await page.goto(
             "https://www.actionnetwork.com/login",
             wait_until="domcontentloaded",
-            timeout=60000
+            timeout=60000,
         )
         await page.wait_for_load_state("load")
 
@@ -56,7 +56,7 @@ async def main():
         await page.goto(
             "https://www.actionnetwork.com/nfl/odds",
             wait_until="domcontentloaded",
-            timeout=60000
+            timeout=60000,
         )
         await page.wait_for_load_state("load")
         await page.wait_for_timeout(5000)  # Wait for dynamic content
@@ -84,7 +84,7 @@ async def main():
         print(f"Tables found: {len(tables)}")
         for i, table in enumerate(tables[:5]):
             classes = await table.get_attribute("class") or ""
-            print(f"  Table {i+1}: class='{classes}'")
+            print(f"  Table {i + 1}: class='{classes}'")
 
         # Look for common game container patterns
         patterns = [
@@ -107,7 +107,7 @@ async def main():
                     for i, el in enumerate(elements[:2]):
                         classes = await el.get_attribute("class") or ""
                         text = (await el.inner_text())[:80].replace("\n", " ")
-                        print(f"  {i+1}. class='{classes[:60]}' text='{text}...'")
+                        print(f"  {i + 1}. class='{classes[:60]}' text='{text}...'")
             except Exception as e:
                 print(f"  Error checking {pattern}: {e}")
 
@@ -119,7 +119,10 @@ async def main():
         for line in lines:
             line = line.strip()
             # Look for spreads like "-3.5" or "+7"
-            if any(c in line for c in ["-1", "+1", "-2", "+2", "-3", "+3", "-4", "-5", "-6", "-7"]):
+            if any(
+                c in line
+                for c in ["-1", "+1", "-2", "+2", "-3", "+3", "-4", "-5", "-6", "-7"]
+            ):
                 if len(line) < 50:  # Short lines likely to be odds
                     betting_patterns.append(line)
         print(f"Potential betting lines found: {len(betting_patterns)}")

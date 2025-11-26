@@ -16,7 +16,9 @@ import os
 from datetime import datetime, timedelta
 
 # Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -153,7 +155,17 @@ def insert_power_ratings(db):
              offense_rating, defense_rating, created_at, updated_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             """,
-            (season, week, league, team, rating, "composite", rating, rating + 2, rating - 2),
+            (
+                season,
+                week,
+                league,
+                team,
+                rating,
+                "composite",
+                rating,
+                rating + 2,
+                rating - 2,
+            ),
             fetch=False,
         )
 
@@ -193,7 +205,16 @@ def insert_odds(db):
              total, over_juice, under_juice, timestamp, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             """,
-            (game_id, sportsbook, odds_type, spread, juice, total, total_juice, total_juice),
+            (
+                game_id,
+                sportsbook,
+                odds_type,
+                spread,
+                juice,
+                total,
+                total_juice,
+                total_juice,
+            ),
             fetch=False,
         )
 
@@ -316,20 +337,132 @@ def insert_weather_data(db):
 
     weather = [
         # BUF vs KC - Cold with wind
-        ("BUF_KC_2025_W12", 34.0, 32.0, 12.5, 18.0, "W", 65, 10, "none", None, 10.0, 45, "GOOD", -1.0, -0.5),
+        (
+            "BUF_KC_2025_W12",
+            34.0,
+            32.0,
+            12.5,
+            18.0,
+            "W",
+            65,
+            10,
+            "none",
+            None,
+            10.0,
+            45,
+            "GOOD",
+            -1.0,
+            -0.5,
+        ),
         # SF vs GB - Cold Wisconsin
-        ("SF_GB_2025_W12", 28.0, 24.0, 18.0, 25.0, "NW", 55, 5, "none", None, 8.0, 60, "MODERATE", -2.0, -1.0),
+        (
+            "SF_GB_2025_W12",
+            28.0,
+            24.0,
+            18.0,
+            25.0,
+            "NW",
+            55,
+            5,
+            "none",
+            None,
+            8.0,
+            60,
+            "MODERATE",
+            -2.0,
+            -1.0,
+        ),
         # DET vs CHI - Mild indoor
-        ("DET_CHI_2025_W12", None, None, None, None, None, None, None, None, None, None, None, "IDEAL", 0.0, 0.0),
+        (
+            "DET_CHI_2025_W12",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
         # DAL vs NYG - Clear
-        ("DAL_NYG_2025_W12", 48.0, 46.0, 8.0, 12.0, "S", 50, 0, "none", None, 10.0, 30, "GOOD", 0.0, 0.0),
+        (
+            "DAL_NYG_2025_W12",
+            48.0,
+            46.0,
+            8.0,
+            12.0,
+            "S",
+            50,
+            0,
+            "none",
+            None,
+            10.0,
+            30,
+            "GOOD",
+            0.0,
+            0.0,
+        ),
         # MIA vs TB - Warm
-        ("MIA_TB_2025_W12", 72.0, 70.0, 6.0, 10.0, "E", 70, 5, "none", None, 10.0, 20, "IDEAL", 0.0, 0.0),
+        (
+            "MIA_TB_2025_W12",
+            72.0,
+            70.0,
+            6.0,
+            10.0,
+            "E",
+            70,
+            5,
+            "none",
+            None,
+            10.0,
+            20,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
         # NE vs LAR - Mild
-        ("NE_LAR_2025_W12", 60.0, 58.0, 4.0, 8.0, "W", 45, 0, "none", None, 10.0, 10, "IDEAL", 0.0, 0.0),
+        (
+            "NE_LAR_2025_W12",
+            60.0,
+            58.0,
+            4.0,
+            8.0,
+            "W",
+            45,
+            0,
+            "none",
+            None,
+            10.0,
+            10,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
     ]
 
-    for game_id, temp, feels_like, wind, gust, direction, humidity, precip_chance, precip_type, precip_amt, vis, cloud, category, total_adj, spread_adj in weather:
+    for (
+        game_id,
+        temp,
+        feels_like,
+        wind,
+        gust,
+        direction,
+        humidity,
+        precip_chance,
+        precip_type,
+        precip_amt,
+        vis,
+        cloud,
+        category,
+        total_adj,
+        spread_adj,
+    ) in weather:
         if temp is not None:  # Only insert if outdoor
             db.execute_query(
                 """
@@ -341,15 +474,31 @@ def insert_weather_data(db):
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
                 """,
                 (
-                    game_id, temp, feels_like, wind, gust, direction,
-                    humidity, precip_chance, precip_type, vis, cloud,
-                    category, total_adj, spread_adj, 20,
-                    "accuweather", "forecast", False,
+                    game_id,
+                    temp,
+                    feels_like,
+                    wind,
+                    gust,
+                    direction,
+                    humidity,
+                    precip_chance,
+                    precip_type,
+                    vis,
+                    cloud,
+                    category,
+                    total_adj,
+                    spread_adj,
+                    20,
+                    "accuweather",
+                    "forecast",
+                    False,
                 ),
                 fetch=False,
             )
 
-    print(f"[OK] Inserted {len([w for w in weather if w[1] is not None])} weather records")
+    print(
+        f"[OK] Inserted {len([w for w in weather if w[1] is not None])} weather records"
+    )
 
 
 def main():
@@ -384,6 +533,7 @@ def main():
     except Exception as e:
         print(f"[ERROR] Failed to populate data: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

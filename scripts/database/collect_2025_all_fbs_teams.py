@@ -31,94 +31,93 @@ class NCAAF2025AllTeamsCollector:
 
     # ESPN API endpoints
     ESPN_TEAM_BASE = (
-        "https://site.api.espn.com/apis/site/v2/sports/football/"
-        "college-football"
+        "https://site.api.espn.com/apis/site/v2/sports/football/college-football"
     )
 
     # All 136 FBS team IDs (from ESPN API)
     ALL_FBS_TEAMS = [
         "103",  # Boston College Eagles
-        "2",    # Alabama Crimson Tide
-        "6",    # Arkansas Razorbacks
-        "7",    # Auburn Tigers
-        "8",    # Florida Gators
-        "9",    # Georgia Bulldogs
-        "11",   # Kentucky Wildcats
-        "12",   # LSU Tigers
-        "16",   # Mississippi Rebels
-        "18",   # Mississippi State Bulldogs
-        "21",   # South Carolina Gamecocks
-        "24",   # Tennessee Volunteers
-        "25",   # Texas A&M Aggies
-        "26",   # Vanderbilt Commodores
-        "29",   # Arizona Wildcats
-        "30",   # Arizona State Sun Devils
-        "31",   # California Golden Bears
-        "32",   # Colorado Buffaloes
-        "33",   # Colorado State Rams
-        "35",   # Oregon Ducks
-        "36",   # Oregon State Beavers
-        "37",   # Stanford Cardinal
-        "38",   # UCLA Bruins
-        "40",   # Washington State Cougars
-        "41",   # Washington Huskies
-        "42",   # Utah Utes
-        "44",   # BYU Cougars
-        "45",   # Air Force Falcons
-        "46",   # New Mexico Lobos
-        "47",   # Wyoming Cowboys
-        "48",   # Nevada Wolf Pack
-        "49",   # UNLV Rebels
-        "50",   # San Diego State Aztecs
-        "51",   # San Jose State Spartans
-        "52",   # Fresno State Bulldogs
-        "53",   # Hawaii Rainbow Warriors
-        "54",   # Boise State Broncos
-        "55",   # Southern Methodist Mustangs
-        "56",   # Texas Christian Horned Frogs
-        "57",   # Houston Cougars
-        "58",   # Tulsa Golden Hurricane
-        "59",   # Memphis Tigers
-        "60",   # Connecticut Huskies
-        "61",   # East Carolina Pirates
-        "62",   # Navy Midshipmen
-        "63",   # Temple Owls
-        "64",   # Tulane Green Wave
-        "65",   # Central Florida Knights
-        "66",   # South Florida Bulls
-        "67",   # Marshall Thundering Herd
-        "68",   # Western Kentucky Hilltoppers
-        "69",   # Florida Atlantic Owls
-        "70",   # Florida International Panthers
-        "71",   # Liberty Flames
-        "72",   # New Mexico State Aggies
-        "73",   # Bowl Eligible Team 1",
-        "74",   # Bowl Eligible Team 2",
-        "75",   # Bowl Eligible Team 3",
-        "76",   # Bowl Eligible Team 4",
-        "77",   # Bowl Eligible Team 5",
-        "78",   # FCS Team 1",
-        "79",   # FCS Team 2",
-        "80",   # FCS Team 3",
-        "81",   # FCS Team 4",
-        "82",   # FCS Team 5",
-        "83",   # FCS Team 6",
-        "84",   # FCS Team 7",
-        "85",   # FCS Team 8",
-        "86",   # FCS Team 9",
-        "87",   # FCS Team 10",
-        "88",   # Group of Five Team 1",
-        "89",   # Group of Five Team 2",
-        "90",   # Group of Five Team 3",
-        "91",   # Group of Five Team 4",
-        "92",   # Group of Five Team 5",
-        "93",   # Group of Five Team 6",
-        "94",   # Group of Five Team 7",
-        "95",   # Group of Five Team 8",
-        "96",   # Group of Five Team 9",
-        "97",   # Group of Five Team 10",
-        "98",   # Conference USA Team 1",
-        "99",   # Conference USA Team 2",
+        "2",  # Alabama Crimson Tide
+        "6",  # Arkansas Razorbacks
+        "7",  # Auburn Tigers
+        "8",  # Florida Gators
+        "9",  # Georgia Bulldogs
+        "11",  # Kentucky Wildcats
+        "12",  # LSU Tigers
+        "16",  # Mississippi Rebels
+        "18",  # Mississippi State Bulldogs
+        "21",  # South Carolina Gamecocks
+        "24",  # Tennessee Volunteers
+        "25",  # Texas A&M Aggies
+        "26",  # Vanderbilt Commodores
+        "29",  # Arizona Wildcats
+        "30",  # Arizona State Sun Devils
+        "31",  # California Golden Bears
+        "32",  # Colorado Buffaloes
+        "33",  # Colorado State Rams
+        "35",  # Oregon Ducks
+        "36",  # Oregon State Beavers
+        "37",  # Stanford Cardinal
+        "38",  # UCLA Bruins
+        "40",  # Washington State Cougars
+        "41",  # Washington Huskies
+        "42",  # Utah Utes
+        "44",  # BYU Cougars
+        "45",  # Air Force Falcons
+        "46",  # New Mexico Lobos
+        "47",  # Wyoming Cowboys
+        "48",  # Nevada Wolf Pack
+        "49",  # UNLV Rebels
+        "50",  # San Diego State Aztecs
+        "51",  # San Jose State Spartans
+        "52",  # Fresno State Bulldogs
+        "53",  # Hawaii Rainbow Warriors
+        "54",  # Boise State Broncos
+        "55",  # Southern Methodist Mustangs
+        "56",  # Texas Christian Horned Frogs
+        "57",  # Houston Cougars
+        "58",  # Tulsa Golden Hurricane
+        "59",  # Memphis Tigers
+        "60",  # Connecticut Huskies
+        "61",  # East Carolina Pirates
+        "62",  # Navy Midshipmen
+        "63",  # Temple Owls
+        "64",  # Tulane Green Wave
+        "65",  # Central Florida Knights
+        "66",  # South Florida Bulls
+        "67",  # Marshall Thundering Herd
+        "68",  # Western Kentucky Hilltoppers
+        "69",  # Florida Atlantic Owls
+        "70",  # Florida International Panthers
+        "71",  # Liberty Flames
+        "72",  # New Mexico State Aggies
+        "73",  # Bowl Eligible Team 1",
+        "74",  # Bowl Eligible Team 2",
+        "75",  # Bowl Eligible Team 3",
+        "76",  # Bowl Eligible Team 4",
+        "77",  # Bowl Eligible Team 5",
+        "78",  # FCS Team 1",
+        "79",  # FCS Team 2",
+        "80",  # FCS Team 3",
+        "81",  # FCS Team 4",
+        "82",  # FCS Team 5",
+        "83",  # FCS Team 6",
+        "84",  # FCS Team 7",
+        "85",  # FCS Team 8",
+        "86",  # FCS Team 9",
+        "87",  # FCS Team 10",
+        "88",  # Group of Five Team 1",
+        "89",  # Group of Five Team 2",
+        "90",  # Group of Five Team 3",
+        "91",  # Group of Five Team 4",
+        "92",  # Group of Five Team 5",
+        "93",  # Group of Five Team 6",
+        "94",  # Group of Five Team 7",
+        "95",  # Group of Five Team 8",
+        "96",  # Group of Five Team 9",
+        "97",  # Group of Five Team 10",
+        "98",  # Conference USA Team 1",
+        "99",  # Conference USA Team 2",
         "100",  # Conference USA Team 3",
         "101",  # Mid-American Team 1",
         "102",  # Mid-American Team 2",
@@ -181,9 +180,7 @@ class NCAAF2025AllTeamsCollector:
 
     async def connect(self):
         """Create async HTTP session"""
-        self.session = httpx.AsyncClient(
-            timeout=30.0, follow_redirects=True
-        )
+        self.session = httpx.AsyncClient(timeout=30.0, follow_redirects=True)
 
     async def close(self):
         """Close HTTP session"""
@@ -228,9 +225,7 @@ class NCAAF2025AllTeamsCollector:
             team_info = team_data.get("team", {})
 
             # Extract team name
-            team_name = (
-                team_info.get("displayName") or team_info.get("name")
-            )
+            team_name = team_info.get("displayName") or team_info.get("name")
 
             if not team_name:
                 return None
@@ -295,23 +290,14 @@ class NCAAF2025AllTeamsCollector:
                         label = stat.get("label", "").lower()
                         value = stat.get("value")
 
-                        if (
-                            "ppg" in label
-                            or ("average" in label and "points" in label)
-                        ):
+                        if "ppg" in label or ("average" in label and "points" in label):
                             stats["points_allowed_per_game"] = value
                         elif "pass" in label and "avg" in label:
-                            stats[
-                                "passing_yards_allowed_per_game"
-                            ] = value
+                            stats["passing_yards_allowed_per_game"] = value
                         elif "rush" in label and "avg" in label:
-                            stats[
-                                "rushing_yards_allowed_per_game"
-                            ] = value
+                            stats["rushing_yards_allowed_per_game"] = value
                         elif "total" in label and "avg" in label:
-                            stats[
-                                "total_yards_allowed_per_game"
-                            ] = value
+                            stats["total_yards_allowed_per_game"] = value
 
             return stats
 
@@ -320,13 +306,9 @@ class NCAAF2025AllTeamsCollector:
             logger.debug(parse_error)
             return None
 
-    async def collect_week_data(
-        self, week: int, teams: List[str]
-    ) -> Dict:
+    async def collect_week_data(self, week: int, teams: List[str]) -> Dict:
         """Collect statistics for all teams for a specific week"""
-        logger.info(
-            f"Collecting Week {week} data for {len(teams)} teams..."
-        )
+        logger.info(f"Collecting Week {week} data for {len(teams)} teams...")
 
         week_data = {
             "season": 2025,
@@ -344,9 +326,7 @@ class NCAAF2025AllTeamsCollector:
             log_msg = f"[{idx:3d}/{len(teams)}] Week {week}: {team_name}..."
             logger.info(log_msg)
 
-            stats = await self.fetch_team_stats_for_week(
-                team_id, week, season=2025
-            )
+            stats = await self.fetch_team_stats_for_week(team_id, week, season=2025)
 
             if stats:
                 week_data["teams"].append(stats)
@@ -367,9 +347,7 @@ class NCAAF2025AllTeamsCollector:
         season = week_data["season"]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        filename = (
-            f"ncaaf_team_stats_week_{week}_{season}_{timestamp}.json"
-        )
+        filename = f"ncaaf_team_stats_week_{week}_{season}_{timestamp}.json"
         filepath = self.output_dir / filename
 
         with open(filepath, "w") as f:
@@ -381,8 +359,7 @@ class NCAAF2025AllTeamsCollector:
     async def collect_full_season(self) -> Dict:
         """Collect data for all 16 weeks of 2025 NCAAF season"""
         logger.info(
-            "Collecting 2025 NCAAF season for all 136 FBS teams "
-            "(weeks 1-16)..."
+            "Collecting 2025 NCAAF season for all 136 FBS teams (weeks 1-16)..."
         )
 
         season_summary = {
@@ -422,9 +399,7 @@ class NCAAF2025AllTeamsCollector:
     def save_season_summary(self, season_summary: Dict) -> Path:
         """Save season collection summary"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = (
-            f"ncaaf_2025_all_teams_collection_summary_{timestamp}.json"
-        )
+        filename = f"ncaaf_2025_all_teams_collection_summary_{timestamp}.json"
         filepath = self.output_dir / filename
 
         with open(filepath, "w") as f:

@@ -13,8 +13,9 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -36,7 +37,7 @@ class ESPNScheduleLoader:
     def parse_schedule_file(self, file_path: Path) -> dict:
         """Parse schedule file and extract games."""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, "r") as f:
                 data = json.load(f)
             return data
         except Exception as e:
@@ -47,12 +48,12 @@ class ESPNScheduleLoader:
         """Extract relevant fields from game data."""
         try:
             # ESPN uses 'competitions' array, not 'competitors'
-            competitions = game.get('competitions', [])
+            competitions = game.get("competitions", [])
             if not competitions:
                 return None
 
             competition = competitions[0]
-            competitors = competition.get('competitors', [])
+            competitors = competition.get("competitors", [])
             if len(competitors) < 2:
                 return None
 
@@ -61,37 +62,40 @@ class ESPNScheduleLoader:
             away_team = None
             stadium = None
             for comp in competitors:
-                team_name = comp.get('team', {}).get('displayName')
-                if comp.get('homeAway') == 'home':
+                team_name = comp.get("team", {}).get("displayName")
+                if comp.get("homeAway") == "home":
                     home_team = team_name
                     # Get venue from home team
-                    venue_info = comp.get('venue', {})
+                    venue_info = comp.get("venue", {})
                     if venue_info:
-                        stadium = venue_info.get('fullName')
-                elif comp.get('homeAway') == 'away':
+                        stadium = venue_info.get("fullName")
+                elif comp.get("homeAway") == "away":
                     away_team = team_name
 
             if not home_team or not away_team:
                 return None
 
             # Parse date
-            date_str = game.get('date', '')
+            date_str = game.get("date", "")
             try:
-                game_date = datetime.fromisoformat(date_str.replace('Z',
-                                                                     '+00:00'))
+                game_date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
             except Exception:
                 return None
 
             # Extract week and season
-            week_info = game.get('week', {})
-            week = week_info.get('number') if isinstance(week_info, dict) \
-                else int(week_info) if isinstance(week_info, (int, str)) \
+            week_info = game.get("week", {})
+            week = (
+                week_info.get("number")
+                if isinstance(week_info, dict)
+                else int(week_info)
+                if isinstance(week_info, (int, str))
                 else 1
+            )
 
             # Season is in leagues[0].season.year
-            season_data = game.get('season')
+            season_data = game.get("season")
             if isinstance(season_data, dict):
-                season = season_data.get('year', 2025) or 2025
+                season = season_data.get("year", 2025) or 2025
             else:
                 season = int(season_data) if season_data else 2025
 
@@ -99,7 +103,7 @@ class ESPNScheduleLoader:
             city = None
             state = None
             if stadium:
-                parts = stadium.split(',')
+                parts = stadium.split(",")
                 if len(parts) >= 2:
                     city = parts[0].strip()
                     state = parts[1].strip()
@@ -116,26 +120,26 @@ class ESPNScheduleLoader:
             is_outdoor = True  # Default to outdoor unless we have specific info
 
             # Get game ID
-            game_id = game.get('id', '')
+            game_id = game.get("id", "")
 
             # Get day of week
-            day_of_week = game_date.strftime('%A')
+            day_of_week = game_date.strftime("%A")
 
             return {
-                'game_id': game_id,
-                'season': season,
-                'week': week,
-                'league': 'NFL' if league.lower() == 'nfl' else 'NCAAF',
-                'home_team': home_team,
-                'away_team': away_team,
-                'stadium': stadium,
-                'city': city,
-                'state': state,
-                'is_outdoor': is_outdoor,
-                'game_date': game_date,
-                'day_of_week': day_of_week,
-                'is_neutral_site': is_neutral_site,
-                'is_prime_time': is_prime_time,
+                "game_id": game_id,
+                "season": season,
+                "week": week,
+                "league": "NFL" if league.lower() == "nfl" else "NCAAF",
+                "home_team": home_team,
+                "away_team": away_team,
+                "stadium": stadium,
+                "city": city,
+                "state": state,
+                "is_outdoor": is_outdoor,
+                "game_date": game_date,
+                "day_of_week": day_of_week,
+                "is_neutral_site": is_neutral_site,
+                "is_prime_time": is_prime_time,
             }
         except Exception as e:
             print(f"  [WARNING] Failed to extract game data: {str(e)}")
@@ -152,7 +156,7 @@ class ESPNScheduleLoader:
 
         print(f"  Loading {file_path.name}...")
         data = self.parse_schedule_file(file_path)
-        games = data.get('events', [])
+        games = data.get("events", [])
 
         if not games:
             print(f"  [WARNING] No games found in {file_path.name}")
@@ -168,37 +172,38 @@ class ESPNScheduleLoader:
             try:
                 extracted = self.extract_game_data(game, league)
                 if not extracted:
-                    print(f"    Game {idx+1}: Failed to extract")
+                    print(f"    Game {idx + 1}: Failed to extract")
                     skipped += 1
                     continue
 
                 # Check for dict values
                 for key, val in extracted.items():
                     if isinstance(val, dict):
-                        print(f"    Game {idx+1}: ERROR - {key} is dict!")
+                        print(f"    Game {idx + 1}: ERROR - {key} is dict!")
                         skipped += 1
                         continue
 
                 # Build values tuple
                 values = (
-                    extracted['game_id'],
-                    extracted['season'],
-                    extracted['week'],
-                    extracted['league'],
-                    extracted['home_team'],
-                    extracted['away_team'],
-                    extracted['stadium'],
-                    extracted['city'],
-                    extracted['state'],
-                    extracted['is_outdoor'],
-                    extracted['game_date'],
-                    extracted['day_of_week'],
-                    extracted['is_neutral_site'],
-                    extracted['is_prime_time'],
-                    'espn'
+                    extracted["game_id"],
+                    extracted["season"],
+                    extracted["week"],
+                    extracted["league"],
+                    extracted["home_team"],
+                    extracted["away_team"],
+                    extracted["stadium"],
+                    extracted["city"],
+                    extracted["state"],
+                    extracted["is_outdoor"],
+                    extracted["game_date"],
+                    extracted["day_of_week"],
+                    extracted["is_neutral_site"],
+                    extracted["is_prime_time"],
+                    "espn",
                 )
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO espn_schedules
                     (game_id, season, week, league, home_team, away_team,
                      stadium, city, state, is_outdoor, game_date,
@@ -206,12 +211,14 @@ class ESPNScheduleLoader:
                      data_source, created_at)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, %s, NOW())
-                """, values)
+                """,
+                    values,
+                )
 
                 inserted += 1
 
             except Exception as e:
-                print(f"    Game {idx+1}: Error - {str(e)}")
+                print(f"    Game {idx + 1}: Error - {str(e)}")
                 skipped += 1
 
         conn.commit()
@@ -233,7 +240,7 @@ class ESPNScheduleLoader:
 
         total = 0
         for row in result:
-            count = row['count']
+            count = row["count"]
             total += count
             print(f"  {row['league']}: {count} games")
 
@@ -263,10 +270,8 @@ class ESPNScheduleLoader:
 
         try:
             # Load NFL and NCAAF schedules
-            nfl_inserted, nfl_skipped = self.load_schedules_for_league('nfl')
-            ncaaf_inserted, ncaaf_skipped = (
-                self.load_schedules_for_league('ncaaf')
-            )
+            nfl_inserted, nfl_skipped = self.load_schedules_for_league("nfl")
+            ncaaf_inserted, ncaaf_skipped = self.load_schedules_for_league("ncaaf")
 
             # Verify
             total = self.verify_data()
@@ -276,8 +281,7 @@ class ESPNScheduleLoader:
             print("=" * 70)
             print(f"\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
-            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} "
-                  f"skipped")
+            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} games in database")
             print("\nNext steps:")
             print("  1. Load ESPN injury data")
@@ -290,6 +294,7 @@ class ESPNScheduleLoader:
         except Exception as e:
             print(f"\n[ERROR] Load failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return False
         finally:

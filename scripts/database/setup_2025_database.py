@@ -27,9 +27,7 @@ def create_database(password: str = "Omarley@2025") -> bool:
         cursor = conn.cursor()
 
         # Check if database exists
-        cursor.execute(
-            "SELECT 1 FROM pg_database WHERE datname = 'sports_db';"
-        )
+        cursor.execute("SELECT 1 FROM pg_database WHERE datname = 'sports_db';")
         if cursor.fetchone():
             logger.info("[OK] Database sports_db already exists")
             cursor.close()

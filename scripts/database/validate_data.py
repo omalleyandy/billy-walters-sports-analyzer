@@ -11,9 +11,9 @@ import sys
 
 def validate_database():
     """Run comprehensive database validation"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("NCAAF PostgreSQL Database Validation")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     # Database connection
     try:
@@ -22,7 +22,7 @@ def validate_database():
             user="postgres",
             password="postgres",
             host="localhost",
-            port="5432"
+            port="5432",
         )
         cur = conn.cursor()
         print("[OK] Connected to PostgreSQL\n")
@@ -43,7 +43,7 @@ def validate_database():
         "ncaaf_team_stats",
         "ncaaf_power_ratings",
         "ncaaf_schedules",
-        "ncaaf_team_injuries"
+        "ncaaf_team_injuries",
     ]
 
     for table in tables:
@@ -75,7 +75,9 @@ def validate_database():
         )
         bc = cur.fetchone()
         if bc:
-            print(f"  [OK] Boston College verified: ID={bc[0]}, Name={bc[1]}, Abbrev={bc[2]}")
+            print(
+                f"  [OK] Boston College verified: ID={bc[0]}, Name={bc[1]}, Abbrev={bc[2]}"
+            )
         else:
             print(f"  [WARNING] Boston College (ID 103) not found")
             all_passed = False
@@ -140,7 +142,9 @@ def validate_database():
         """)
         bc_stats = cur.fetchone()
         if bc_stats:
-            print(f"\n  [OK] Boston College Week {bc_stats[0]}: PPG={bc_stats[1]}, PAPG={bc_stats[2]}, TO_Margin={bc_stats[3]}")
+            print(
+                f"\n  [OK] Boston College Week {bc_stats[0]}: PPG={bc_stats[1]}, PAPG={bc_stats[2]}, TO_Margin={bc_stats[3]}"
+            )
 
         # Check for missing/NULL critical fields
         cur.execute("""
@@ -278,12 +282,12 @@ def validate_database():
     # =====================================================================
     # Summary
     # =====================================================================
-    print("="*80)
+    print("=" * 80)
     if all_passed:
         print("[SUCCESS] ✅ Database validation passed!")
     else:
         print("[WARNING] ⚠️  Some validation checks failed - review above")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     cur.close()
     conn.close()

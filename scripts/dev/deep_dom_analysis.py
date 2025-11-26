@@ -65,14 +65,18 @@ async def analyze_dom():
                     "el => el.parentElement ? el.parentElement.children.length : 0"
                 )
 
-                ancestors.append({
-                    "depth": depth,
-                    "tag": tag,
-                    "class": class_preview,
-                    "siblings": sibling_count
-                })
+                ancestors.append(
+                    {
+                        "depth": depth,
+                        "tag": tag,
+                        "class": class_preview,
+                        "siblings": sibling_count,
+                    }
+                )
 
-                print(f"    [{depth}] <{tag}> class='{class_preview}' (siblings: {sibling_count})")
+                print(
+                    f"    [{depth}] <{tag}> class='{class_preview}' (siblings: {sibling_count})"
+                )
 
                 # Move to parent
                 parent = await current.evaluate("el => el.parentElement")
@@ -86,7 +90,17 @@ async def analyze_dom():
         print("\n[5] Searching for betting line patterns...")
 
         # Look for elements containing spread-like values
-        spread_patterns = ["+2.5", "-2.5", "+3", "-3", "+7", "-7", "-110", "-105", "+100"]
+        spread_patterns = [
+            "+2.5",
+            "-2.5",
+            "+3",
+            "-3",
+            "+7",
+            "-7",
+            "-110",
+            "-105",
+            "+100",
+        ]
 
         for pattern in spread_patterns[:3]:
             elements = await page.query_selector_all(f"text='{pattern}'")
@@ -95,11 +109,17 @@ async def analyze_dom():
                 for i, elem in enumerate(elements[:2]):
                     tag = await elem.evaluate("el => el.tagName")
                     classes = await elem.get_attribute("class") or ""
-                    parent_tag = await elem.evaluate("el => el.parentElement?.tagName || 'none'")
-                    parent_class = await elem.evaluate("el => el.parentElement?.className || ''")
+                    parent_tag = await elem.evaluate(
+                        "el => el.parentElement?.tagName || 'none'"
+                    )
+                    parent_class = await elem.evaluate(
+                        "el => el.parentElement?.className || ''"
+                    )
 
                     print(f"      [{i}] <{tag}> class='{classes[:40]}'")
-                    print(f"          Parent: <{parent_tag}> class='{parent_class[:40]}'")
+                    print(
+                        f"          Parent: <{parent_tag}> class='{parent_class[:40]}'"
+                    )
 
         # Step 3: Look at table structure
         print("\n[6] Analyzing table structure...")
@@ -111,7 +131,7 @@ async def analyze_dom():
             rows = await table.query_selector_all("tr")
             cols = await table.query_selector_all("th, td")
 
-            print(f"\n    Table {i+1}: class='{table_class[:50]}'")
+            print(f"\n    Table {i + 1}: class='{table_class[:50]}'")
             print(f"      Rows: {len(rows)}, Cells: {len(cols)}")
 
             # Get first row content
@@ -129,11 +149,15 @@ async def analyze_dom():
 
             # Try to find nearby table (sibling or child of parent)
             # Method 1: Check if there's a table as a sibling
-            sibling_table = await first_game.query_selector("xpath=following-sibling::table")
+            sibling_table = await first_game.query_selector(
+                "xpath=following-sibling::table"
+            )
             if sibling_table:
                 print("    Found table as following sibling!")
                 table_text = await sibling_table.inner_text()
-                print(f"    Table preview: {table_text[:200].replace(chr(10), ' | ')}...")
+                print(
+                    f"    Table preview: {table_text[:200].replace(chr(10), ' | ')}..."
+                )
             else:
                 print("    No direct sibling table")
 
@@ -148,7 +172,9 @@ async def analyze_dom():
                 if parent_table:
                     print("    Found table in parent!")
                     table_text = await parent_table.inner_text()
-                    print(f"    Table preview: {table_text[:200].replace(chr(10), ' | ')}...")
+                    print(
+                        f"    Table preview: {table_text[:200].replace(chr(10), ' | ')}..."
+                    )
 
                 # Look for sibling divs with odds
                 siblings = await parent.query_selector_all(":scope > div")
@@ -203,7 +229,9 @@ async def analyze_dom():
                     classes = await current.get_attribute("class") or ""
                     current_text = await current.inner_text()
                     text_preview = current_text[:40].replace("\n", "|")
-                    print(f"      L{level}: <{tag}> class='{classes[:30]}' text='{text_preview}'")
+                    print(
+                        f"      L{level}: <{tag}> class='{classes[:30]}' text='{text_preview}'"
+                    )
                     current = await current.query_selector("xpath=..")
 
         # Step 7: Full page evaluation for odds patterns
@@ -255,13 +283,15 @@ async def analyze_dom():
 
         print("\n    Game-Container Analysis:")
         for i, r in enumerate(result):
-            print(f"\n    Game {i+1}: {r['gameText']}")
+            print(f"\n    Game {i + 1}: {r['gameText']}")
             print(f"      Container class: {r['containerClass']}")
             print(f"      Container text length: {r['containerTextLength']}")
             print(f"      Spread matches: {r['spreadMatches']}")
             print("      Parent chain:")
-            for p in r['parents'][:3]:
-                print(f"        <{p['tag']}> class='{p['class']}' children={p['childCount']}")
+            for p in r["parents"][:3]:
+                print(
+                    f"        <{p['tag']}> class='{p['class']}' children={p['childCount']}"
+                )
 
         await browser.close()
         print("\n" + "=" * 70)

@@ -19,7 +19,9 @@ import sys
 import os
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -247,7 +249,6 @@ def insert_massey_power_ratings(db):
         ("San Francisco 49ers", 2025, 12, "NFL", 89.5),
         ("Philadelphia Eagles", 2025, 12, "NFL", 88.2),
         ("Baltimore Ravens", 2025, 12, "NFL", 87.1),
-
         # Mid-tier teams
         ("Green Bay Packers", 2025, 12, "NFL", 85.0),
         ("Los Angeles Chargers", 2025, 12, "NFL", 84.3),
@@ -255,7 +256,6 @@ def insert_massey_power_ratings(db):
         ("Los Angeles Rams", 2025, 12, "NFL", 82.7),
         ("Miami Dolphins", 2025, 12, "NFL", 82.1),
         ("Dallas Cowboys", 2025, 12, "NFL", 80.5),
-
         # Lower-mid tier teams
         ("New York Jets", 2025, 12, "NFL", 79.2),
         ("Tampa Bay Buccaneers", 2025, 12, "NFL", 78.8),
@@ -281,8 +281,16 @@ def insert_massey_power_ratings(db):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             """,
             (
-                season, week, league, team, rating, "composite", rating,
-                rating + 1.5, rating - 1.5, rating - 3.0,
+                season,
+                week,
+                league,
+                team,
+                rating,
+                "composite",
+                rating,
+                rating + 1.5,
+                rating - 1.5,
+                rating - 3.0,
             ),
             fetch=False,
         )
@@ -298,40 +306,28 @@ def insert_realistic_odds(db):
     odds_data = [
         # KC vs TB: KC heavy favorite (94.5 vs 78.8)
         ("KC_TB_2025_W12", "overtime", "opening", -9.5, -110, 43.0, -110),
-
         # BUF vs KC: Pick'em/slight KC lean (93.8 vs 94.5)
         ("BUF_KC_2025_W12", "overtime", "opening", -1.5, -110, 42.5, -110),
-
         # SF vs GB: SF slight favorite (89.5 vs 85.0)
         ("SF_GB_2025_W12", "overtime", "opening", -4.0, -110, 45.5, -110),
-
         # PHI vs BAL: Tight game (88.2 vs 87.1)
         ("PHI_BAL_2025_W12", "overtime", "opening", -1.0, -110, 44.0, -110),
-
         # TEN vs NE: NE slight favorite (72.2 vs 69.5)
         ("TEN_NE_2025_W12", "overtime", "opening", -3.5, -110, 41.0, -110),
-
         # LAC vs ARI: LAC favorite (84.3 vs 83.5)
         ("LAC_ARI_2025_W12", "overtime", "opening", -2.5, -110, 42.5, -110),
-
         # LV vs LAR: LAR big favorite (82.7 vs 73.5)
         ("LV_LAR_2025_W12", "overtime", "opening", -9.0, -110, 42.0, -110),
-
         # WAS vs NO: NO slight favorite (75.1 vs 77.5)
         ("WAS_NOG_2025_W12", "overtime", "opening", 2.5, -110, 44.5, -110),
-
         # MIA vs NYJ: MIA favorite (82.1 vs 79.2)
         ("MIA_NYJ_2025_W12", "overtime", "opening", -3.0, -110, 43.0, -110),
-
         # SEA vs MIN: MIN favorite (74.8 vs 76.3)
         ("SEA_MIN_2025_W12", "overtime", "opening", 2.0, -110, 42.5, -110),
-
         # DET vs CHI: DET big favorite (91.2 vs 70.8)
         ("DET_CHI_2025_W12", "overtime", "opening", -20.5, -110, 44.0, -110),
-
         # DAL vs NYG: DAL strong favorite (80.5 vs 68.2)
         ("DAL_NYG_2025_W12", "overtime", "opening", -12.5, -110, 43.5, -110),
-
         # IND vs NE: NE slight favorite (69.5 vs 67.0)
         ("IND_NE_2025_W12", "overtime", "opening", -2.5, -110, 40.5, -110),
     ]
@@ -344,7 +340,16 @@ def insert_realistic_odds(db):
              total, over_juice, under_juice, timestamp, created_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             """,
-            (game_id, sportsbook, odds_type, spread, juice, total, total_juice, total_juice),
+            (
+                game_id,
+                sportsbook,
+                odds_type,
+                spread,
+                juice,
+                total,
+                total_juice,
+                total_juice,
+            ),
             fetch=False,
         )
 
@@ -357,15 +362,113 @@ def insert_structure_for_analysis(db):
 
     # Insert some realistic situational factors for key games
     key_games = [
-        ("BUF_KC_2025_W12", "Buffalo Bills", -2, False, False, 500, -1, False, True, False, False, False, ""),
-        ("BUF_KC_2025_W12", "Kansas City Chiefs", -2, True, False, 0, 0, False, True, False, False, True, ""),
-        ("SF_GB_2025_W12", "San Francisco 49ers", -2, False, False, 1500, 2, True, False, False, False, False, ""),
-        ("SF_GB_2025_W12", "Green Bay Packers", -2, True, False, 0, 0, False, False, False, False, False, ""),
-        ("DET_CHI_2025_W12", "Detroit Lions", 0, False, False, 200, 0, False, True, False, False, False, ""),
-        ("DET_CHI_2025_W12", "Chicago Bears", 0, False, False, 200, 0, False, True, False, False, False, ""),
+        (
+            "BUF_KC_2025_W12",
+            "Buffalo Bills",
+            -2,
+            False,
+            False,
+            500,
+            -1,
+            False,
+            True,
+            False,
+            False,
+            False,
+            "",
+        ),
+        (
+            "BUF_KC_2025_W12",
+            "Kansas City Chiefs",
+            -2,
+            True,
+            False,
+            0,
+            0,
+            False,
+            True,
+            False,
+            False,
+            True,
+            "",
+        ),
+        (
+            "SF_GB_2025_W12",
+            "San Francisco 49ers",
+            -2,
+            False,
+            False,
+            1500,
+            2,
+            True,
+            False,
+            False,
+            False,
+            False,
+            "",
+        ),
+        (
+            "SF_GB_2025_W12",
+            "Green Bay Packers",
+            -2,
+            True,
+            False,
+            0,
+            0,
+            False,
+            False,
+            False,
+            False,
+            False,
+            "",
+        ),
+        (
+            "DET_CHI_2025_W12",
+            "Detroit Lions",
+            0,
+            False,
+            False,
+            200,
+            0,
+            False,
+            True,
+            False,
+            False,
+            False,
+            "",
+        ),
+        (
+            "DET_CHI_2025_W12",
+            "Chicago Bears",
+            0,
+            False,
+            False,
+            200,
+            0,
+            False,
+            True,
+            False,
+            False,
+            False,
+            "",
+        ),
     ]
 
-    for game_id, team, days_rest, is_short, is_extra, travel, tz_change, is_long, is_div, is_rivalry, is_revenge, is_prime, notes in key_games:
+    for (
+        game_id,
+        team,
+        days_rest,
+        is_short,
+        is_extra,
+        travel,
+        tz_change,
+        is_long,
+        is_div,
+        is_rivalry,
+        is_revenge,
+        is_prime,
+        notes,
+    ) in key_games:
         db.execute_query(
             """
             INSERT INTO situational_factors
@@ -375,8 +478,20 @@ def insert_structure_for_analysis(db):
              created_at, updated_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             """,
-            (game_id, team, days_rest, is_short, is_extra, travel, tz_change, is_long,
-             is_div, is_rivalry, is_revenge, is_prime),
+            (
+                game_id,
+                team,
+                days_rest,
+                is_short,
+                is_extra,
+                travel,
+                tz_change,
+                is_long,
+                is_div,
+                is_rivalry,
+                is_revenge,
+                is_prime,
+            ),
             fetch=False,
         )
 
@@ -389,22 +504,246 @@ def insert_realistic_weather(db):
 
     weather_data = [
         # Cold/windy outdoor games
-        ("SF_GB_2025_W12", 28.0, 24.0, 18.0, 28.0, "NW", 55, 5, "none", None, 8.0, 60, "MODERATE", -2.0, -1.0),
-        ("TEN_NE_2025_W12", 32.0, 29.0, 15.0, 22.0, "W", 60, 10, "none", None, 9.0, 55, "GOOD", -1.5, -0.8),
-        ("KC_TB_2025_W12", 70.0, 68.0, 8.0, 14.0, "E", 65, 10, "none", None, 10.0, 25, "IDEAL", 0.0, 0.0),
-        ("BUF_KC_2025_W12", 34.0, 32.0, 12.0, 18.0, "W", 65, 10, "none", None, 10.0, 45, "GOOD", -1.0, -0.5),
-        ("LAC_ARI_2025_W12", 68.0, 66.0, 5.0, 10.0, "S", 40, 0, "none", None, 10.0, 15, "IDEAL", 0.0, 0.0),
-        ("LV_LAR_2025_W12", 62.0, 60.0, 4.0, 8.0, "W", 45, 0, "none", None, 10.0, 10, "IDEAL", 0.0, 0.0),
-        ("WAS_NOG_2025_W12", 54.0, 52.0, 6.0, 12.0, "S", 55, 0, "none", None, 10.0, 30, "IDEAL", 0.0, 0.0),
-        ("MIA_NYJ_2025_W12", 48.0, 46.0, 10.0, 16.0, "W", 60, 5, "none", None, 9.0, 40, "GOOD", -0.5, -0.3),
-        ("DET_CHI_2025_W12", None, None, None, None, None, None, None, None, None, None, None, "IDEAL", 0.0, 0.0),
-        ("DAL_NYG_2025_W12", 52.0, 50.0, 8.0, 14.0, "W", 50, 0, "none", None, 10.0, 35, "GOOD", 0.0, 0.0),
-        ("IND_NE_2025_W12", 38.0, 35.0, 14.0, 20.0, "NW", 58, 8, "none", None, 9.0, 50, "MODERATE", -1.5, -0.8),
-        ("PHI_BAL_2025_W12", 42.0, 40.0, 10.0, 16.0, "W", 60, 5, "none", None, 9.0, 45, "GOOD", -0.5, -0.3),
-        ("SEA_MIN_2025_W12", None, None, None, None, None, None, None, None, None, None, None, "IDEAL", 0.0, 0.0),
+        (
+            "SF_GB_2025_W12",
+            28.0,
+            24.0,
+            18.0,
+            28.0,
+            "NW",
+            55,
+            5,
+            "none",
+            None,
+            8.0,
+            60,
+            "MODERATE",
+            -2.0,
+            -1.0,
+        ),
+        (
+            "TEN_NE_2025_W12",
+            32.0,
+            29.0,
+            15.0,
+            22.0,
+            "W",
+            60,
+            10,
+            "none",
+            None,
+            9.0,
+            55,
+            "GOOD",
+            -1.5,
+            -0.8,
+        ),
+        (
+            "KC_TB_2025_W12",
+            70.0,
+            68.0,
+            8.0,
+            14.0,
+            "E",
+            65,
+            10,
+            "none",
+            None,
+            10.0,
+            25,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
+        (
+            "BUF_KC_2025_W12",
+            34.0,
+            32.0,
+            12.0,
+            18.0,
+            "W",
+            65,
+            10,
+            "none",
+            None,
+            10.0,
+            45,
+            "GOOD",
+            -1.0,
+            -0.5,
+        ),
+        (
+            "LAC_ARI_2025_W12",
+            68.0,
+            66.0,
+            5.0,
+            10.0,
+            "S",
+            40,
+            0,
+            "none",
+            None,
+            10.0,
+            15,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
+        (
+            "LV_LAR_2025_W12",
+            62.0,
+            60.0,
+            4.0,
+            8.0,
+            "W",
+            45,
+            0,
+            "none",
+            None,
+            10.0,
+            10,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
+        (
+            "WAS_NOG_2025_W12",
+            54.0,
+            52.0,
+            6.0,
+            12.0,
+            "S",
+            55,
+            0,
+            "none",
+            None,
+            10.0,
+            30,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
+        (
+            "MIA_NYJ_2025_W12",
+            48.0,
+            46.0,
+            10.0,
+            16.0,
+            "W",
+            60,
+            5,
+            "none",
+            None,
+            9.0,
+            40,
+            "GOOD",
+            -0.5,
+            -0.3,
+        ),
+        (
+            "DET_CHI_2025_W12",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
+        (
+            "DAL_NYG_2025_W12",
+            52.0,
+            50.0,
+            8.0,
+            14.0,
+            "W",
+            50,
+            0,
+            "none",
+            None,
+            10.0,
+            35,
+            "GOOD",
+            0.0,
+            0.0,
+        ),
+        (
+            "IND_NE_2025_W12",
+            38.0,
+            35.0,
+            14.0,
+            20.0,
+            "NW",
+            58,
+            8,
+            "none",
+            None,
+            9.0,
+            50,
+            "MODERATE",
+            -1.5,
+            -0.8,
+        ),
+        (
+            "PHI_BAL_2025_W12",
+            42.0,
+            40.0,
+            10.0,
+            16.0,
+            "W",
+            60,
+            5,
+            "none",
+            None,
+            9.0,
+            45,
+            "GOOD",
+            -0.5,
+            -0.3,
+        ),
+        (
+            "SEA_MIN_2025_W12",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            "IDEAL",
+            0.0,
+            0.0,
+        ),
     ]
 
-    for game_id, temp, feels_like, wind, gust, direction, humidity, precip_chance, precip_type, precip_amt, vis, cloud, category, total_adj, spread_adj in weather_data:
+    for (
+        game_id,
+        temp,
+        feels_like,
+        wind,
+        gust,
+        direction,
+        humidity,
+        precip_chance,
+        precip_type,
+        precip_amt,
+        vis,
+        cloud,
+        category,
+        total_adj,
+        spread_adj,
+    ) in weather_data:
         if temp is not None:
             db.execute_query(
                 """
@@ -416,15 +755,31 @@ def insert_realistic_weather(db):
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
                 """,
                 (
-                    game_id, temp, feels_like, wind, gust, direction,
-                    humidity, precip_chance, precip_type, vis, cloud,
-                    category, total_adj, spread_adj, 20,
-                    "accuweather", "forecast", False,
+                    game_id,
+                    temp,
+                    feels_like,
+                    wind,
+                    gust,
+                    direction,
+                    humidity,
+                    precip_chance,
+                    precip_type,
+                    vis,
+                    cloud,
+                    category,
+                    total_adj,
+                    spread_adj,
+                    20,
+                    "accuweather",
+                    "forecast",
+                    False,
                 ),
                 fetch=False,
             )
 
-    print(f"[OK] Inserted {len([w for w in weather_data if w[1] is not None])} weather forecasts")
+    print(
+        f"[OK] Inserted {len([w for w in weather_data if w[1] is not None])} weather forecasts"
+    )
 
 
 def main():
@@ -467,6 +822,7 @@ def main():
     except Exception as e:
         print(f"[ERROR] Failed to load data: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

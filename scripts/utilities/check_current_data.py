@@ -4,7 +4,9 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -27,7 +29,9 @@ result = db.execute_query("""
 """)
 print("Games by week:")
 for row in result:
-    print(f"  {row['league']} Season {row['season']} Week {row['week']}: {row['count']} games")
+    print(
+        f"  {row['league']} Season {row['season']} Week {row['week']}: {row['count']} games"
+    )
 
 # Power Ratings
 result = db.execute_query("SELECT COUNT(*) as count FROM power_ratings")

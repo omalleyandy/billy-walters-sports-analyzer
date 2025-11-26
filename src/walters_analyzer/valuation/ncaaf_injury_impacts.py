@@ -128,9 +128,7 @@ class NCAAFInjuryImpacts:
             self.logger.warning(f"Error calculating injury impact: {e}")
             return 0.0
 
-    def _calculate_team_impact(
-        self, team: str, injuries: List[Dict]
-    ) -> float:
+    def _calculate_team_impact(self, team: str, injuries: List[Dict]) -> float:
         """
         Calculate total injury impact for a single team.
 
@@ -225,16 +223,12 @@ class NCAAFInjuryImpacts:
             return "out_2_weeks"
         elif any(x in status_lower for x in ["week", "1 week", "out"]):
             return "out_1_week"
-        elif any(
-            x in status_lower for x in ["question", "probable", "day-to-day"]
-        ):
+        elif any(x in status_lower for x in ["question", "probable", "day-to-day"]):
             return "questionable"
         else:
             return "questionable"
 
-    def get_critical_injuries(
-        self, team: str, injuries: List[Dict]
-    ) -> List[Dict]:
+    def get_critical_injuries(self, team: str, injuries: List[Dict]) -> List[Dict]:
         """
         Get list of critical injuries (≥2.0 points impact).
 
@@ -273,9 +267,7 @@ class NCAAFInjuryImpacts:
 
         return critical
 
-    def summarize_injuries(
-        self, team: str, injuries: List[Dict]
-    ) -> Dict[str, any]:
+    def summarize_injuries(self, team: str, injuries: List[Dict]) -> Dict[str, any]:
         """
         Generate injury summary for a team.
 

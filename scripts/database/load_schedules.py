@@ -36,7 +36,7 @@ def load_schedules(season: int = 2025):
             user="postgres",
             password="postgres",
             host="localhost",
-            port="5432"
+            port="5432",
         )
         cur = conn.cursor()
         print("[OK] Connected to PostgreSQL")
@@ -47,8 +47,10 @@ def load_schedules(season: int = 2025):
     # Load schedules file
     try:
         schedule_file = (
-            Path(__file__).parent.parent.parent / "output" / "unified" /
-            "ncaaf_schedule.json"
+            Path(__file__).parent.parent.parent
+            / "output"
+            / "unified"
+            / "ncaaf_schedule.json"
         )
         with open(schedule_file) as f:
             content = f.read()
@@ -140,8 +142,7 @@ def load_schedules(season: int = 2025):
     # Verify insertion
     try:
         cur.execute(
-            "SELECT COUNT(*) FROM ncaaf_schedules WHERE season_year = %s",
-            (season,)
+            "SELECT COUNT(*) FROM ncaaf_schedules WHERE season_year = %s", (season,)
         )
         count = cur.fetchone()[0]
         print(f"[OK] Verified: {count} game records in database")
@@ -156,7 +157,9 @@ def load_schedules(season: int = 2025):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Load NCAAF game schedules")
-    parser.add_argument("--season", type=int, default=2025, help="Season year (default: 2025)")
+    parser.add_argument(
+        "--season", type=int, default=2025, help="Season year (default: 2025)"
+    )
 
     args = parser.parse_args()
     success = load_schedules(args.season)

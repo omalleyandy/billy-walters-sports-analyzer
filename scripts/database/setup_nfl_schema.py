@@ -47,7 +47,9 @@ def setup_schema(
         logger.info("[OK] Connected to PostgreSQL")
 
         # Read SQL file
-        sql_file = Path(__file__).parent.parent.parent / "database" / "nfl_extensions.sql"
+        sql_file = (
+            Path(__file__).parent.parent.parent / "database" / "nfl_extensions.sql"
+        )
         sql_content = read_sql_file(sql_file)
 
         # Execute schema
@@ -92,9 +94,7 @@ def setup_schema(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Setup NFL 2025 database schema"
-    )
+    parser = argparse.ArgumentParser(description="Setup NFL 2025 database schema")
     parser.add_argument(
         "--dbname",
         default="sports_db",

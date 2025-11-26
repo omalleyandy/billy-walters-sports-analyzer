@@ -130,9 +130,7 @@ class ESPNNewsClient:
         """Context manager exit."""
         await self.close()
 
-    async def get_team_news(
-        self, team_abbr: str, limit: int = 20
-    ) -> dict:
+    async def get_team_news(self, team_abbr: str, limit: int = 20) -> dict:
         """
         Get recent news articles for a specific NFL team.
 
@@ -219,16 +217,12 @@ class ESPNNewsClient:
             # Extract article links
             article_links = await self._extract_article_links(page)
 
-            logger.info(
-                f"Found {len(article_links)} article links on {url}"
-            )
+            logger.info(f"Found {len(article_links)} article links on {url}")
 
             # Process articles up to limit
             for i, (title, link) in enumerate(article_links[:limit], 1):
                 try:
-                    article = await self._fetch_article_content(
-                        page, link, title
-                    )
+                    article = await self._fetch_article_content(page, link, title)
                     if article:
                         articles.append(article)
                     logger.debug(
@@ -268,19 +262,14 @@ class ESPNNewsClient:
                     continue
 
                 # Look for article URLs (contain /story/ or /article/)
-                if any(
-                    x in href.lower()
-                    for x in ["/story/", "/article/", "/blog/"]
-                ):
+                if any(x in href.lower() for x in ["/story/", "/article/", "/blog/"]):
                     # Clean up text (remove extra whitespace)
                     clean_text = " ".join(text.split())
 
                     # Skip duplicate links and short titles
-                    if (
-                        len(clean_text) > 10
-                        and clean_text
-                        not in [link[0] for link in article_links]
-                    ):
+                    if len(clean_text) > 10 and clean_text not in [
+                        link[0] for link in article_links
+                    ]:
                         article_links.append((clean_text, href))
 
                         # Stop after finding enough
@@ -324,9 +313,7 @@ class ESPNNewsClient:
             content = await self._extract_article_text(page)
 
             # Determine content category
-            category = self._categorize_article(
-                title, summary, content
-            )
+            category = self._categorize_article(title, summary, content)
 
             return {
                 "title": title,
@@ -396,9 +383,7 @@ class ESPNNewsClient:
         return text.strip()[:2000]  # First 2000 chars
 
     @staticmethod
-    def _categorize_article(
-        title: str, summary: Optional[str], content: str
-    ) -> str:
+    def _categorize_article(title: str, summary: Optional[str], content: str) -> str:
         """
         Categorize article based on content.
 
@@ -482,9 +467,7 @@ class ESPNNewsClient:
             return max(scores, key=scores.get)
         return "Team News"
 
-    async def save_news_json(
-        self, news_data: dict, output_dir: Path
-    ) -> Path:
+    async def save_news_json(self, news_data: dict, output_dir: Path) -> Path:
         """
         Save raw news data to JSON file.
 

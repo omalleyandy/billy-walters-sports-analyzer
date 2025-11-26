@@ -158,9 +158,7 @@ Examples:
                     team_full = NFL_TEAMS[team_abbr]["full_name"]
                     print(f"[*] Fetching {team_full}...")
 
-                result = await client.get_team_news(
-                    team_abbr, limit=args.limit
-                )
+                result = await client.get_team_news(team_abbr, limit=args.limit)
                 all_results[team_abbr] = result
                 total_articles += result["article_count"]
 

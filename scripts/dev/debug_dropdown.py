@@ -82,7 +82,11 @@ async def debug_dropdown():
 
             # Get all options
             if parent_select:
-                select_elem = await page.query_selector(f"select#{parent_select['id']}" if parent_select['id'] else "select:has(option:has-text('Total'))")
+                select_elem = await page.query_selector(
+                    f"select#{parent_select['id']}"
+                    if parent_select["id"]
+                    else "select:has(option:has-text('Total'))"
+                )
                 if select_elem:
                     current_value = await select_elem.input_value()
                     print(f"  Current value: '{current_value}'")
@@ -97,7 +101,9 @@ async def debug_dropdown():
                     print(f"  New value after selection: '{new_value}'")
 
                     # Get first row data
-                    first_cell = await page.query_selector("div.best-odds__open-container")
+                    first_cell = await page.query_selector(
+                        "div.best-odds__open-container"
+                    )
                     if first_cell:
                         cell_text = await first_cell.inner_text()
                         print(f"\n  First odds cell after switching to Total:")

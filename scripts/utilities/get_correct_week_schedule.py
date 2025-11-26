@@ -48,15 +48,23 @@ def main():
                 for e in events:
                     date_str = e.get("date", "")
                     if date_str:
-                        dates.append(datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(tzinfo=None))
+                        dates.append(
+                            datetime.fromisoformat(
+                                date_str.replace("Z", "+00:00")
+                            ).replace(tzinfo=None)
+                        )
                 if dates:
-                    print(f"NFL games date range: {min(dates).strftime('%b %d')} to {max(dates).strftime('%b %d')}")
+                    print(
+                        f"NFL games date range: {min(dates).strftime('%b %d')} to {max(dates).strftime('%b %d')}"
+                    )
 
             week_13_games = []
             for event in events:
                 game_date_str = event.get("date", "")
                 if game_date_str:
-                    game_date = datetime.fromisoformat(game_date_str.replace('Z', '+00:00'))
+                    game_date = datetime.fromisoformat(
+                        game_date_str.replace("Z", "+00:00")
+                    )
                     # Remove timezone for comparison
                     game_date_naive = game_date.replace(tzinfo=None)
 
@@ -70,7 +78,7 @@ def main():
                 competitions = event.get("competitions", [])
                 for comp in competitions:
                     date = event.get("date", "TBD")
-                    game_date = datetime.fromisoformat(date.replace('Z', '+00:00'))
+                    game_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
                     date_display = game_date.strftime("%a %b %d, %I:%M %p ET")
 
                     competitors = comp.get("competitors", [])
@@ -104,6 +112,7 @@ def main():
     except Exception as e:
         print(f"[ERROR] Failed to fetch NFL schedule: {e}")
         import traceback
+
         traceback.print_exc()
         nfl_home_teams = {}
 
@@ -126,7 +135,9 @@ def main():
             for event in events:
                 game_date_str = event.get("date", "")
                 if game_date_str:
-                    game_date = datetime.fromisoformat(game_date_str.replace('Z', '+00:00'))
+                    game_date = datetime.fromisoformat(
+                        game_date_str.replace("Z", "+00:00")
+                    )
                     game_date_naive = game_date.replace(tzinfo=None)
 
                     if week_14_start <= game_date_naive < week_14_end:
@@ -140,7 +151,7 @@ def main():
                 competitions = event.get("competitions", [])
                 for comp in competitions:
                     date = event.get("date", "TBD")
-                    game_date = datetime.fromisoformat(date.replace('Z', '+00:00'))
+                    game_date = datetime.fromisoformat(date.replace("Z", "+00:00"))
                     date_display = game_date.strftime("%a %b %d")
 
                     competitors = comp.get("competitors", [])
@@ -158,9 +169,7 @@ def main():
 
                     if home_team and away_team:
                         if i < 25:  # Show first 25
-                            print(
-                                f"{away_team:28s} @ {home_team:28s} | {date_display}"
-                            )
+                            print(f"{away_team:28s} @ {home_team:28s} | {date_display}")
                         if home_team:
                             ncaaf_home_teams[home_team] = {
                                 "away": away_team,
@@ -180,11 +189,14 @@ def main():
     except Exception as e:
         print(f"[ERROR] Failed to fetch NCAAF schedule: {e}")
         import traceback
+
         traceback.print_exc()
         ncaaf_home_teams = {}
 
     print("\n" + "=" * 80)
-    print(f"CORRECTED TOTALS: {len(nfl_home_teams)} NFL + {len(ncaaf_home_teams)} NCAAF")
+    print(
+        f"CORRECTED TOTALS: {len(nfl_home_teams)} NFL + {len(ncaaf_home_teams)} NCAAF"
+    )
     print("=" * 80)
 
     return nfl_home_teams, ncaaf_home_teams

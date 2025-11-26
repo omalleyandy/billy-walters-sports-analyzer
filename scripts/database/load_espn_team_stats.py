@@ -11,8 +11,9 @@ Uses ESPN's site API which provides comprehensive team statistics.
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 from src.data.espn_api_client import ESPNAPIClient
@@ -31,17 +32,17 @@ class ESPNTeamStatsLoader:
             data = self.api.get_nfl_teams()
             teams = {}
             try:
-                sports = data.get('sports', [])
+                sports = data.get("sports", [])
                 if sports:
                     sport = sports[0]
-                    leagues = sport.get('leagues', [])
+                    leagues = sport.get("leagues", [])
                     if leagues:
                         league = leagues[0]
-                        team_list = league.get('teams', [])
+                        team_list = league.get("teams", [])
                         for team_entry in team_list:
-                            team = team_entry.get('team', {})
-                            team_id = team.get('id')
-                            team_name = team.get('displayName')
+                            team = team_entry.get("team", {})
+                            team_id = team.get("id")
+                            team_name = team.get("displayName")
                             if team_id and team_name:
                                 teams[team_id] = team_name
             except (KeyError, IndexError, TypeError):
@@ -54,20 +55,20 @@ class ESPNTeamStatsLoader:
     def get_ncaaf_teams(self) -> dict:
         """Get all NCAAF FBS teams with IDs."""
         try:
-            data = self.api.get_ncaaf_teams(group='80')  # FBS = group 80
+            data = self.api.get_ncaaf_teams(group="80")  # FBS = group 80
             teams = {}
             try:
-                sports = data.get('sports', [])
+                sports = data.get("sports", [])
                 if sports:
                     sport = sports[0]
-                    leagues = sport.get('leagues', [])
+                    leagues = sport.get("leagues", [])
                     if leagues:
                         league = leagues[0]
-                        team_list = league.get('teams', [])
+                        team_list = league.get("teams", [])
                         for team_entry in team_list:
-                            team = team_entry.get('team', {})
-                            team_id = team.get('id')
-                            team_name = team.get('displayName')
+                            team = team_entry.get("team", {})
+                            team_id = team.get("id")
+                            team_name = team.get("displayName")
                             if team_id and team_name:
                                 teams[team_id] = team_name
             except (KeyError, IndexError, TypeError):
@@ -85,16 +86,16 @@ class ESPNTeamStatsLoader:
             cat_stats = stats[category]
             if isinstance(cat_stats, list):
                 for stat in cat_stats:
-                    if stat.get('name') == name:
-                        val = stat.get('displayValue')
+                    if stat.get("name") == name:
+                        val = stat.get("displayValue")
                         if val:
-                            return float(val.replace(',', ''))
+                            return float(val.replace(",", ""))
             elif isinstance(cat_stats, dict):
-                for stat in cat_stats.get('stats', []):
-                    if stat.get('name') == name:
-                        val = stat.get('displayValue')
+                for stat in cat_stats.get("stats", []):
+                    if stat.get("name") == name:
+                        val = stat.get("displayValue")
                         if val:
-                            return float(val.replace(',', ''))
+                            return float(val.replace(",", ""))
             return None
         except Exception:
             return None
@@ -103,12 +104,12 @@ class ESPNTeamStatsLoader:
         """Load team stats for a league."""
         print(f"\n[LOAD] {league.upper()} Team Statistics...")
 
-        if league == 'NFL':
+        if league == "NFL":
             teams = self.get_nfl_teams()
-            db_league = 'NFL'
+            db_league = "NFL"
         else:
             teams = self.get_ncaaf_teams()
-            db_league = 'NCAAF'
+            db_league = "NCAAF"
 
         if not teams:
             print(f"  [WARNING] Could not retrieve {league.upper()} teams")
@@ -126,84 +127,59 @@ class ESPNTeamStatsLoader:
         for team_id, team_name in teams.items():
             try:
                 stats_data = self.api.get_team_statistics(team_id, league)
-                stats = stats_data.get('stats', {})
+                stats = stats_data.get("stats", {})
 
                 if not stats:
                     total_skipped += 1
                     continue
 
                 # Extract offensive stats
-                ppg = self.extract_stat(stats, 'Offense', 'Points per game')
+                ppg = self.extract_stat(stats, "Offense", "Points per game")
                 total_yards = self.extract_stat(
-                    stats, 'Offense', 'Total Yards per game'
+                    stats, "Offense", "Total Yards per game"
                 )
                 pass_yards = self.extract_stat(
-                    stats, 'Offense', 'Passing Yards per game'
+                    stats, "Offense", "Passing Yards per game"
                 )
                 rush_yards = self.extract_stat(
-                    stats, 'Offense', 'Rushing Yards per game'
+                    stats, "Offense", "Rushing Yards per game"
                 )
-                comp_pct = self.extract_stat(
-                    stats, 'Offense', 'Completions per game'
-                )
-                ypa = self.extract_stat(
-                    stats, 'Offense', 'Yards per Attempt'
-                )
-                pass_td = self.extract_stat(
-                    stats, 'Offense', 'Passing Touchdowns'
-                )
-                rush_td = self.extract_stat(
-                    stats, 'Offense', 'Rushing Touchdowns'
-                )
-                int_thrown = self.extract_stat(
-                    stats, 'Offense', 'Interceptions'
-                )
-                fumbles = self.extract_stat(
-                    stats, 'Offense', 'Fumbles'
-                )
+                comp_pct = self.extract_stat(stats, "Offense", "Completions per game")
+                ypa = self.extract_stat(stats, "Offense", "Yards per Attempt")
+                pass_td = self.extract_stat(stats, "Offense", "Passing Touchdowns")
+                rush_td = self.extract_stat(stats, "Offense", "Rushing Touchdowns")
+                int_thrown = self.extract_stat(stats, "Offense", "Interceptions")
+                fumbles = self.extract_stat(stats, "Offense", "Fumbles")
 
                 # Extract defensive stats
-                papg = self.extract_stat(
-                    stats, 'Defense', 'Points allowed per game'
-                )
+                papg = self.extract_stat(stats, "Defense", "Points allowed per game")
                 yards_allowed = self.extract_stat(
-                    stats, 'Defense', 'Yards Allowed per game'
+                    stats, "Defense", "Yards Allowed per game"
                 )
                 pass_yards_allowed = self.extract_stat(
-                    stats, 'Defense', 'Passing Yards Allowed per game'
+                    stats, "Defense", "Passing Yards Allowed per game"
                 )
                 rush_yards_allowed = self.extract_stat(
-                    stats, 'Defense', 'Rushing Yards Allowed per game'
+                    stats, "Defense", "Rushing Yards Allowed per game"
                 )
-                sacks = self.extract_stat(
-                    stats, 'Defense', 'Sacks'
-                )
-                int_gained = self.extract_stat(
-                    stats, 'Defense', 'Interceptions'
-                )
-                fr = self.extract_stat(
-                    stats, 'Defense', 'Fumble Recoveries'
-                )
+                sacks = self.extract_stat(stats, "Defense", "Sacks")
+                int_gained = self.extract_stat(stats, "Defense", "Interceptions")
+                fr = self.extract_stat(stats, "Defense", "Fumble Recoveries")
 
                 # Extract efficiency metrics
-                to_margin = self.extract_stat(
-                    stats, 'Efficiency', 'Turnover Margin'
-                )
-                third_down_pct = self.extract_stat(
-                    stats, 'Efficiency', 'Third Down %'
-                )
+                to_margin = self.extract_stat(stats, "Efficiency", "Turnover Margin")
+                third_down_pct = self.extract_stat(stats, "Efficiency", "Third Down %")
                 fourth_down_pct = self.extract_stat(
-                    stats, 'Efficiency', 'Fourth Down %'
+                    stats, "Efficiency", "Fourth Down %"
                 )
-                rz_pct = self.extract_stat(
-                    stats, 'Efficiency', 'Red Zone %'
-                )
+                rz_pct = self.extract_stat(stats, "Efficiency", "Red Zone %")
 
                 # Get current week (would need season calendar for historical)
                 week = 12  # TODO: Auto-detect current week
                 season = 2025
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO espn_team_stats
                     (season, week, league, team,
                      points_per_game, total_yards_per_game,
@@ -222,22 +198,38 @@ class ESPNTeamStatsLoader:
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                """, (
-                    season, week, db_league, team_name,
-                    ppg, total_yards,
-                    pass_yards, rush_yards,
-                    comp_pct, None,
-                    None, ypa,
-                    pass_td, rush_td,
-                    int_thrown, fumbles,
-                    papg, yards_allowed,
-                    pass_yards_allowed,
-                    rush_yards_allowed, sacks,
-                    int_gained, fr,
-                    to_margin, third_down_pct,
-                    fourth_down_pct, rz_pct,
-                    'espn'
-                ))
+                """,
+                    (
+                        season,
+                        week,
+                        db_league,
+                        team_name,
+                        ppg,
+                        total_yards,
+                        pass_yards,
+                        rush_yards,
+                        comp_pct,
+                        None,
+                        None,
+                        ypa,
+                        pass_td,
+                        rush_td,
+                        int_thrown,
+                        fumbles,
+                        papg,
+                        yards_allowed,
+                        pass_yards_allowed,
+                        rush_yards_allowed,
+                        sacks,
+                        int_gained,
+                        fr,
+                        to_margin,
+                        third_down_pct,
+                        fourth_down_pct,
+                        rz_pct,
+                        "espn",
+                    ),
+                )
 
                 total_inserted += cursor.rowcount
 
@@ -248,8 +240,10 @@ class ESPNTeamStatsLoader:
         conn.commit()
         cursor.close()
 
-        print(f"  Inserted {total_inserted} team statistics, "
-              f"skipped {total_skipped} errors")
+        print(
+            f"  Inserted {total_inserted} team statistics, "
+            f"skipped {total_skipped} errors"
+        )
         if failed_teams and total_inserted == 0:
             print(f"  Failed teams (first 3):")
             for team, err in failed_teams[:3]:
@@ -269,7 +263,7 @@ class ESPNTeamStatsLoader:
 
         total = 0
         for row in result:
-            count = row['count']
+            count = row["count"]
             total += count
             print(f"  {row['league']}: {count} teams")
 
@@ -285,7 +279,7 @@ class ESPNTeamStatsLoader:
         if result:
             print(f"\n  Top 3 by Points Per Game:")
             for row in result:
-                ppg = row.get('points_per_game', 0)
+                ppg = row.get("points_per_game", 0)
                 print(f"    {row['league']}: {row['team']} ({ppg:.1f} PPG)")
 
         print(f"  Total: {total} teams loaded")
@@ -299,12 +293,8 @@ class ESPNTeamStatsLoader:
 
         try:
             # Load NFL and NCAAF stats
-            nfl_inserted, nfl_skipped = self.load_team_stats_for_league(
-                'NFL'
-            )
-            ncaaf_inserted, ncaaf_skipped = (
-                self.load_team_stats_for_league('NCAAF')
-            )
+            nfl_inserted, nfl_skipped = self.load_team_stats_for_league("NFL")
+            ncaaf_inserted, ncaaf_skipped = self.load_team_stats_for_league("NCAAF")
 
             # Verify
             total = self.verify_data()
@@ -314,8 +304,7 @@ class ESPNTeamStatsLoader:
             print("=" * 70)
             print(f"\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
-            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} "
-                  f"skipped")
+            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} teams with statistics")
             print("\nNext steps:")
             print("  1. Load ESPN scoreboards")
@@ -327,6 +316,7 @@ class ESPNTeamStatsLoader:
         except Exception as e:
             print(f"\n[ERROR] Load failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return False
         finally:

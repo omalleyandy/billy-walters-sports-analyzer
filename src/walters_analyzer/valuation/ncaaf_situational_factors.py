@@ -123,9 +123,7 @@ class NCAAFSituationalFactors:
             self.logger.warning(f"Error calculating S-factor: {e}")
             return 0.0
 
-    def _calculate_rest_advantage(
-        self, away_rest: int, home_rest: int
-    ) -> float:
+    def _calculate_rest_advantage(self, away_rest: int, home_rest: int) -> float:
         """
         Calculate rest advantage adjustment.
 
@@ -257,7 +255,9 @@ class NCAAFSituationalFactors:
             self.logger.warning(f"Error calculating emotional adjustment: {e}")
             return 0.0
 
-    def get_conference_strength_adjustment(self, away_conf: str, home_conf: str) -> float:
+    def get_conference_strength_adjustment(
+        self, away_conf: str, home_conf: str
+    ) -> float:
         """
         Get conference strength relative adjustment.
 

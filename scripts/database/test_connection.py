@@ -26,7 +26,7 @@ def main():
         WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
     """)
 
-    table_count = result[0]['table_count']
+    table_count = result[0]["table_count"]
     print(f"[OK] Found {table_count} tables (expected: 9)")
 
     if table_count != 9:

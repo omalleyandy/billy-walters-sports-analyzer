@@ -49,121 +49,104 @@ def generate_action_network_odds():
             "sport": "nfl",
             "teams": [
                 {"display_name": "Kansas City Chiefs", "id": "KCC"},
-                {"display_name": "Buffalo Bills", "id": "BUF"}
+                {"display_name": "Buffalo Bills", "id": "BUF"},
             ],
             "start_time": "2025-11-24T22:30:00Z",
             "markets": {
                 "draftkings": {
                     "event": {
-                        "spread": [
-                            {"value": -3.5, "odds": -110}
-                        ],
+                        "spread": [{"value": -3.5, "odds": -110}],
                         "total": [
                             {"value": 44.5, "odds": -110},
-                            {"value": 44.5, "odds": -110}
-                        ]
+                            {"value": 44.5, "odds": -110},
+                        ],
                     }
                 }
-            }
+            },
         },
         {
             "id": 2,
             "sport": "nfl",
             "teams": [
                 {"display_name": "Detroit Lions", "id": "DET"},
-                {"display_name": "Chicago Bears", "id": "CHI"}
+                {"display_name": "Chicago Bears", "id": "CHI"},
             ],
             "start_time": "2025-11-27T12:30:00Z",
             "markets": {
                 "draftkings": {
                     "event": {
-                        "spread": [
-                            {"value": -11.0, "odds": -110}
-                        ],
+                        "spread": [{"value": -11.0, "odds": -110}],
                         "total": [
                             {"value": 48.5, "odds": -110},
-                            {"value": 48.5, "odds": -110}
-                        ]
+                            {"value": 48.5, "odds": -110},
+                        ],
                     }
                 }
-            }
+            },
         },
         {
             "id": 3,
             "sport": "nfl",
             "teams": [
                 {"display_name": "Denver Broncos", "id": "DEN"},
-                {"display_name": "New England Patriots", "id": "NE"}
+                {"display_name": "New England Patriots", "id": "NE"},
             ],
             "start_time": "2025-11-27T15:15:00Z",
             "markets": {
                 "draftkings": {
                     "event": {
-                        "spread": [
-                            {"value": -6.0, "odds": -110}
-                        ],
+                        "spread": [{"value": -6.0, "odds": -110}],
                         "total": [
                             {"value": 41.5, "odds": -110},
-                            {"value": 41.5, "odds": -110}
-                        ]
+                            {"value": 41.5, "odds": -110},
+                        ],
                     }
                 }
-            }
+            },
         },
         {
             "id": 4,
             "sport": "nfl",
             "teams": [
                 {"display_name": "Dallas Cowboys", "id": "DAL"},
-                {"display_name": "Washington Commanders", "id": "WAS"}
+                {"display_name": "Washington Commanders", "id": "WAS"},
             ],
             "start_time": "2025-11-27T15:15:00Z",
             "markets": {
                 "draftkings": {
                     "event": {
-                        "spread": [
-                            {"value": -4.5, "odds": -110}
-                        ],
+                        "spread": [{"value": -4.5, "odds": -110}],
                         "total": [
                             {"value": 48.0, "odds": -110},
-                            {"value": 48.0, "odds": -110}
-                        ]
+                            {"value": 48.0, "odds": -110},
+                        ],
                     }
                 }
-            }
+            },
         },
         {
             "id": 5,
             "sport": "nfl",
             "teams": [
                 {"display_name": "Green Bay Packers", "id": "GB"},
-                {"display_name": "Minnesota Vikings", "id": "MIN"}
+                {"display_name": "Minnesota Vikings", "id": "MIN"},
             ],
             "start_time": "2025-11-27T20:20:00Z",
             "markets": {
                 "draftkings": {
                     "event": {
-                        "spread": [
-                            {"value": -3.0, "odds": -110}
-                        ],
+                        "spread": [{"value": -3.0, "odds": -110}],
                         "total": [
                             {"value": 46.0, "odds": -110},
-                            {"value": 46.0, "odds": -110}
-                        ]
+                            {"value": 46.0, "odds": -110},
+                        ],
                     }
                 }
-            }
-        }
+            },
+        },
     ]
 
-    odds_response = [
-        {
-            "url": "scoreboard",
-            "data": {
-                "games": games
-            }
-        }
-    ]
+    odds_response = [{"url": "scoreboard", "data": {"games": games}}]
 
     path = Path("output/action_network")
     path.mkdir(parents=True, exist_ok=True)
@@ -307,8 +290,7 @@ def main():
     print("=" * 80)
     print("[OK] All test data files generated!")
     print("You can now run edge detector:")
-    print("uv run python -m walters_analyzer.valuation."
-          "billy_walters_edge_detector")
+    print("uv run python -m walters_analyzer.valuation.billy_walters_edge_detector")
     print("=" * 80)
 
 

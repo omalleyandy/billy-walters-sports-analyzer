@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 class League(Enum):
     """Supported sports leagues"""
+
     NFL = "NFL"
     NCAAF = "NCAAF"
 
@@ -36,6 +37,7 @@ class League(Enum):
 @dataclass
 class OffensiveMetrics:
     """Team offensive statistics"""
+
     points_per_game: Optional[float] = None
     total_yards_per_game: Optional[float] = None
     passing_yards_per_game: Optional[float] = None
@@ -51,6 +53,7 @@ class OffensiveMetrics:
 @dataclass
 class DefensiveMetrics:
     """Team defensive statistics"""
+
     points_allowed_per_game: Optional[float] = None
     yards_allowed_per_game: Optional[float] = None
     passing_yards_allowed_per_game: Optional[float] = None
@@ -67,6 +70,7 @@ class DefensiveMetrics:
 @dataclass
 class InjuryImpact:
     """Team injury burden assessment"""
+
     elite_players_out: int = 0  # Number of elite players unavailable
     starter_players_out: int = 0
     backup_players_out: int = 0
@@ -77,6 +81,7 @@ class InjuryImpact:
 @dataclass
 class TeamStatus:
     """Team recent performance and status"""
+
     wins: int = 0
     losses: int = 0
     streak_type: str = ""  # "W" or "L"
@@ -90,6 +95,7 @@ class TeamStatus:
 @dataclass
 class ComponentRating:
     """Individual component rating with explanation"""
+
     component: str
     rating_contribution: float
     percentage_weight: float
@@ -99,6 +105,7 @@ class ComponentRating:
 @dataclass
 class PowerRating:
     """Complete power rating with component breakdown"""
+
     team: str
     league: League
     overall_rating: float
@@ -244,9 +251,7 @@ class CustomPowerRatingEngine:
 
         # Yards per game secondary (40% of offensive rating)
         if metrics.total_yards_per_game:
-            ypg_differential = (
-                metrics.total_yards_per_game - avg_ypg
-            ) / avg_ypg
+            ypg_differential = (metrics.total_yards_per_game - avg_ypg) / avg_ypg
             ypg_rating = ypg_differential * 10.0  # Scale to -10 to +10 range
         else:
             ypg_rating = 0.0
@@ -454,9 +459,7 @@ class CustomPowerRatingEngine:
         overall_rating = self.rating_baseline + weighted_rating
 
         # Constrain to league-specific range
-        overall_rating = max(
-            self.rating_min, min(self.rating_max, overall_rating)
-        )
+        overall_rating = max(self.rating_min, min(self.rating_max, overall_rating))
 
         # Calculate Massey differential if provided
         massey_diff = None
@@ -578,9 +581,7 @@ class CustomPowerRatingEngine:
 
     def get_bottom_teams(self, n: int = 10) -> List[PowerRating]:
         """Get bottom N teams by overall rating."""
-        sorted_ratings = sorted(
-            self.ratings.values(), key=lambda x: x.overall_rating
-        )
+        sorted_ratings = sorted(self.ratings.values(), key=lambda x: x.overall_rating)
         return sorted_ratings[:n]
 
     def compare_with_massey(self) -> Dict[str, Dict]:

@@ -47,9 +47,7 @@ class DatabaseConnection:
         """
         self.host = host or os.getenv("DB_HOST", "localhost")
         self.port = port or int(os.getenv("DB_PORT", "5432"))
-        self.database = database or os.getenv(
-            "DB_NAME", "billy_walters_analytics"
-        )
+        self.database = database or os.getenv("DB_NAME", "billy_walters_analytics")
         self.user = user or os.getenv("DB_USER", "postgres")
         self.password = password or os.getenv("DB_PASSWORD", "")
 

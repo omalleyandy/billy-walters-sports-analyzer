@@ -57,7 +57,9 @@ async def debug_tabs():
                         text = await elem.inner_text()
                         tag = await elem.evaluate("el => el.tagName")
                         classes = await elem.get_attribute("class") or ""
-                        print(f"  [{i}] <{tag}> class='{classes[:50]}' text='{text[:30]}'")
+                        print(
+                            f"  [{i}] <{tag}> class='{classes[:50]}' text='{text[:30]}'"
+                        )
             except Exception as e:
                 print(f"'{pattern}': Error - {e}")
 
@@ -84,7 +86,9 @@ async def debug_tabs():
                         tag = await elem.evaluate("el => el.tagName")
                         classes = await elem.get_attribute("class") or ""
                         text_preview = text[:40].replace("\n", "|")
-                        print(f"  [{i}] <{tag}> class='{classes[:40]}' text='{text_preview}'")
+                        print(
+                            f"  [{i}] <{tag}> class='{classes[:40]}' text='{text_preview}'"
+                        )
             except Exception as e:
                 print(f"'{search}': Error - {e}")
 
@@ -113,14 +117,20 @@ async def debug_tabs():
         print("LOOKING FOR TOGGLE/TAB BUTTONS")
         print("=" * 60)
 
-        toggles = await page.query_selector_all("[class*='toggle'], [class*='tab'], [class*='pill']")
+        toggles = await page.query_selector_all(
+            "[class*='toggle'], [class*='tab'], [class*='pill']"
+        )
         print(f"Found {len(toggles)} toggle/tab/pill elements")
         for i, toggle in enumerate(toggles[:10]):
             text = await toggle.inner_text()
             classes = await toggle.get_attribute("class") or ""
-            clickable = await toggle.evaluate("el => el.tagName === 'BUTTON' || el.tagName === 'A' || el.onclick !== null")
+            clickable = await toggle.evaluate(
+                "el => el.tagName === 'BUTTON' || el.tagName === 'A' || el.onclick !== null"
+            )
             text_preview = text[:30].replace("\n", "|")
-            print(f"  [{i}] class='{classes[:40]}' text='{text_preview}' clickable={clickable}")
+            print(
+                f"  [{i}] class='{classes[:40]}' text='{text_preview}' clickable={clickable}"
+            )
 
         await browser.close()
         print("\n" + "=" * 60)

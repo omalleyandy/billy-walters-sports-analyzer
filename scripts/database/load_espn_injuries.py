@@ -12,8 +12,9 @@ import sys
 import os
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 from src.data.espn_api_client import ESPNAPIClient
@@ -22,44 +23,44 @@ from src.data.espn_api_client import ESPNAPIClient
 # Severity classification for key positions
 # Elite = starter with high impact on team success
 INJURY_IMPACT_VALUES = {
-    'NFL': {
-        'QB': 4.5,       # Elite position - 4.5 pt impact
-        'RB': 2.5,
-        'WR': 1.8,
-        'TE': 1.5,
-        'LT': 1.5,       # Offensive line
-        'LG': 1.2,
-        'RG': 1.2,
-        'RT': 1.5,
-        'C': 1.2,
-        'DE': 1.5,       # Defensive line
-        'DT': 1.5,
-        'EDGE': 1.8,     # Pass rusher
-        'OLB': 1.2,      # Linebacker
-        'MLB': 1.5,
-        'ILB': 1.2,
-        'CB': 1.2,       # Defensive back
-        'FS': 1.2,
-        'SS': 1.0,
+    "NFL": {
+        "QB": 4.5,  # Elite position - 4.5 pt impact
+        "RB": 2.5,
+        "WR": 1.8,
+        "TE": 1.5,
+        "LT": 1.5,  # Offensive line
+        "LG": 1.2,
+        "RG": 1.2,
+        "RT": 1.5,
+        "C": 1.2,
+        "DE": 1.5,  # Defensive line
+        "DT": 1.5,
+        "EDGE": 1.8,  # Pass rusher
+        "OLB": 1.2,  # Linebacker
+        "MLB": 1.5,
+        "ILB": 1.2,
+        "CB": 1.2,  # Defensive back
+        "FS": 1.2,
+        "SS": 1.0,
     },
-    'NCAAF': {
-        'QB': 5.0,       # Larger impact in college due to depth
-        'RB': 3.5,
-        'WR': 2.5,
-        'TE': 2.0,
-        'LT': 1.5,
-        'LG': 1.2,
-        'RG': 1.2,
-        'RT': 1.5,
-        'C': 1.2,
-        'DE': 2.0,
-        'DT': 1.8,
-        'EDGE': 2.0,
-        'LB': 1.8,
-        'CB': 1.5,
-        'FS': 1.5,
-        'SS': 1.2,
-    }
+    "NCAAF": {
+        "QB": 5.0,  # Larger impact in college due to depth
+        "RB": 3.5,
+        "WR": 2.5,
+        "TE": 2.0,
+        "LT": 1.5,
+        "LG": 1.2,
+        "RG": 1.2,
+        "RT": 1.5,
+        "C": 1.2,
+        "DE": 2.0,
+        "DT": 1.8,
+        "EDGE": 2.0,
+        "LB": 1.8,
+        "CB": 1.5,
+        "FS": 1.5,
+        "SS": 1.2,
+    },
 }
 
 
@@ -76,17 +77,17 @@ class ESPNInjuriesLoader:
             data = self.api.get_nfl_teams()
             teams = {}
             try:
-                sports = data.get('sports', [])
+                sports = data.get("sports", [])
                 if sports:
                     sport = sports[0]
-                    leagues = sport.get('leagues', [])
+                    leagues = sport.get("leagues", [])
                     if leagues:
                         league = leagues[0]
-                        team_list = league.get('teams', [])
+                        team_list = league.get("teams", [])
                         for team_entry in team_list:
-                            team = team_entry.get('team', {})
-                            team_id = team.get('id')
-                            team_name = team.get('displayName')
+                            team = team_entry.get("team", {})
+                            team_id = team.get("id")
+                            team_name = team.get("displayName")
                             if team_id and team_name:
                                 teams[team_id] = team_name
             except (KeyError, IndexError, TypeError):
@@ -99,20 +100,20 @@ class ESPNInjuriesLoader:
     def get_ncaaf_teams(self) -> dict:
         """Get all NCAAF FBS teams with IDs."""
         try:
-            data = self.api.get_ncaaf_teams(group='80')  # FBS = group 80
+            data = self.api.get_ncaaf_teams(group="80")  # FBS = group 80
             teams = {}
             try:
-                sports = data.get('sports', [])
+                sports = data.get("sports", [])
                 if sports:
                     sport = sports[0]
-                    leagues = sport.get('leagues', [])
+                    leagues = sport.get("leagues", [])
                     if leagues:
                         league = leagues[0]
-                        team_list = league.get('teams', [])
+                        team_list = league.get("teams", [])
                         for team_entry in team_list:
-                            team = team_entry.get('team', {})
-                            team_id = team.get('id')
-                            team_name = team.get('displayName')
+                            team = team_entry.get("team", {})
+                            team_id = team.get("id")
+                            team_name = team.get("displayName")
                             if team_id and team_name:
                                 teams[team_id] = team_name
             except (KeyError, IndexError, TypeError):
@@ -124,32 +125,32 @@ class ESPNInjuriesLoader:
 
     def get_injury_severity(self, position: str) -> str:
         """Classify injury severity based on position."""
-        pos_upper = position.upper() if position else 'UNKNOWN'
+        pos_upper = position.upper() if position else "UNKNOWN"
         # Extract primary position (e.g., "QB" from "QB (P)")
-        pos_base = pos_upper.split('(')[0].strip()
+        pos_base = pos_upper.split("(")[0].strip()
         # Map position to severity level
-        if pos_base in ['QB']:
-            return 'ELITE'
-        elif pos_base in ['RB', 'WR', 'DE', 'MLB']:
-            return 'STARTER'
-        elif pos_base in ['TE', 'OL', 'LB', 'DB']:
-            return 'BACKUP'
+        if pos_base in ["QB"]:
+            return "ELITE"
+        elif pos_base in ["RB", "WR", "DE", "MLB"]:
+            return "STARTER"
+        elif pos_base in ["TE", "OL", "LB", "DB"]:
+            return "BACKUP"
         else:
-            return 'RESERVE'
+            return "RESERVE"
 
     def get_impact_estimate(self, position: str, league: str) -> float:
         """Get impact estimate for injury based on position and league."""
-        pos_upper = position.upper() if position else 'UNKNOWN'
-        pos_base = pos_upper.split('(')[0].strip()
+        pos_upper = position.upper() if position else "UNKNOWN"
+        pos_base = pos_upper.split("(")[0].strip()
 
         impact_map = INJURY_IMPACT_VALUES.get(league, {})
         if pos_base in impact_map:
             return impact_map[pos_base]
         # Default impact based on severity
         severity = self.get_injury_severity(position)
-        if severity == 'ELITE':
+        if severity == "ELITE":
             return 3.0
-        elif severity == 'STARTER':
+        elif severity == "STARTER":
             return 1.5
         else:
             return 0.5
@@ -158,14 +159,14 @@ class ESPNInjuriesLoader:
         """Load injuries for a league."""
         print(f"\n[LOAD] {league.upper()} Injuries...")
 
-        if league == 'NFL':
+        if league == "NFL":
             teams = self.get_nfl_teams()
-            league_code = 'nfl'
-            db_league = 'NFL'
+            league_code = "nfl"
+            db_league = "NFL"
         else:
             teams = self.get_ncaaf_teams()
-            league_code = 'college-football'
-            db_league = 'NCAAF'
+            league_code = "college-football"
+            db_league = "NCAAF"
 
         if not teams:
             print(f"  [WARNING] Could not retrieve {league.upper()} teams")
@@ -182,7 +183,7 @@ class ESPNInjuriesLoader:
         for team_id, team_name in teams.items():
             try:
                 injury_data = self.api.get_team_injuries(team_id, league_code)
-                injuries = injury_data.get('items', [])
+                injuries = injury_data.get("items", [])
 
                 if not injuries:
                     continue
@@ -190,31 +191,31 @@ class ESPNInjuriesLoader:
                 for injury in injuries:
                     try:
                         # Extract player info
-                        athlete = injury.get('athlete', {})
-                        player_name = athlete.get('displayName')
-                        player_position = athlete.get('position', {}).get(
-                            'abbreviation'
+                        athlete = injury.get("athlete", {})
+                        player_name = athlete.get("displayName")
+                        player_position = athlete.get("position", {}).get(
+                            "abbreviation"
                         )
-                        jersey = athlete.get('jersey')
+                        jersey = athlete.get("jersey")
 
                         if not player_name:
                             continue
 
                         # Extract injury details
-                        status = injury.get('status')
-                        injury_type = injury.get('type')
+                        status = injury.get("status")
+                        injury_type = injury.get("type")
 
                         # Calculate severity and impact
                         severity = self.get_injury_severity(player_position)
                         impact = self.get_impact_estimate(player_position, db_league)
 
                         # Parse report date
-                        date_str = injury.get('date')
+                        date_str = injury.get("date")
                         report_date = None
                         if date_str:
                             try:
                                 report_date = datetime.fromisoformat(
-                                    date_str.replace('Z', '+00:00')
+                                    date_str.replace("Z", "+00:00")
                                 )
                             except Exception:
                                 pass
@@ -223,7 +224,8 @@ class ESPNInjuriesLoader:
                         week = 12  # TODO: Auto-detect current week
                         season = 2025
 
-                        cursor.execute("""
+                        cursor.execute(
+                            """
                             INSERT INTO espn_injuries
                             (season, week, league, game_id, player_name,
                              position, jersey_number, team, injury_type,
@@ -231,14 +233,24 @@ class ESPNInjuriesLoader:
                              data_source, created_at)
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,
                                     %s, %s, %s, %s, %s, NOW())
-                        """, (
-                            season, week, db_league, None,
-                            player_name,
-                            player_position, jersey,
-                            team_name, injury_type,
-                            status, severity, impact,
-                            report_date, 'espn'
-                        ))
+                        """,
+                            (
+                                season,
+                                week,
+                                db_league,
+                                None,
+                                player_name,
+                                player_position,
+                                jersey,
+                                team_name,
+                                injury_type,
+                                status,
+                                severity,
+                                impact,
+                                report_date,
+                                "espn",
+                            ),
+                        )
 
                         total_inserted += cursor.rowcount
 
@@ -246,14 +258,12 @@ class ESPNInjuriesLoader:
                         total_skipped += 1
 
             except Exception as e:
-                print(f"  [WARNING] Failed to fetch injuries for {team_name}: "
-                      f"{str(e)}")
+                print(f"  [WARNING] Failed to fetch injuries for {team_name}: {str(e)}")
 
         conn.commit()
         cursor.close()
 
-        print(f"  Inserted {total_inserted} injuries, "
-              f"skipped {total_skipped} errors")
+        print(f"  Inserted {total_inserted} injuries, skipped {total_skipped} errors")
         return total_inserted, total_skipped
 
     def verify_data(self):
@@ -269,7 +279,7 @@ class ESPNInjuriesLoader:
 
         total = 0
         for row in result:
-            count = row['count']
+            count = row["count"]
             total += count
             print(f"  {row['league']}: {count} injuries")
 
@@ -284,8 +294,7 @@ class ESPNInjuriesLoader:
         if result:
             print(f"\n  By severity:")
             for row in result:
-                print(f"    {row['league']} {row['severity']}: "
-                      f"{row['count']} players")
+                print(f"    {row['league']} {row['severity']}: {row['count']} players")
 
         print(f"  Total: {total} injury records")
         return total
@@ -298,10 +307,8 @@ class ESPNInjuriesLoader:
 
         try:
             # Load NFL and NCAAF injuries
-            nfl_inserted, nfl_skipped = self.load_injuries_for_league('NFL')
-            ncaaf_inserted, ncaaf_skipped = (
-                self.load_injuries_for_league('NCAAF')
-            )
+            nfl_inserted, nfl_skipped = self.load_injuries_for_league("NFL")
+            ncaaf_inserted, ncaaf_skipped = self.load_injuries_for_league("NCAAF")
 
             # Verify
             total = self.verify_data()
@@ -311,8 +318,7 @@ class ESPNInjuriesLoader:
             print("=" * 70)
             print(f"\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
-            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} "
-                  f"skipped")
+            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} injury records in database")
             print("\nNext steps:")
             print("  1. Load ESPN team statistics")
@@ -324,6 +330,7 @@ class ESPNInjuriesLoader:
         except Exception as e:
             print(f"\n[ERROR] Load failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return False
         finally:

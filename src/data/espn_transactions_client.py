@@ -258,9 +258,7 @@ class ESPNTransactionsClient:
             "raw_text": text,
         }
 
-    def _extract_transactions_from_text(
-        self, text: str, team_abbr: str
-    ) -> list[dict]:
+    def _extract_transactions_from_text(self, text: str, team_abbr: str) -> list[dict]:
         """
         Extract transactions from page text as fallback.
 
@@ -288,8 +286,7 @@ class ESPNTransactionsClient:
 
         # Find all dates in the text with their positions
         dates_with_pos = [
-            (m.group(1), m.start(), m.end())
-            for m in re.finditer(date_pattern, text)
+            (m.group(1), m.start(), m.end()) for m in re.finditer(date_pattern, text)
         ]
 
         if not dates_with_pos:
@@ -325,7 +322,9 @@ class ESPNTransactionsClient:
         for i, (date_str, start, end) in enumerate(dates_with_pos):
             # Get content from after this date until the next date
             content_start = end
-            content_end = dates_with_pos[i + 1][1] if i + 1 < len(dates_with_pos) else len(text)
+            content_end = (
+                dates_with_pos[i + 1][1] if i + 1 < len(dates_with_pos) else len(text)
+            )
 
             content = text[content_start:content_end].strip()
 
@@ -398,16 +397,78 @@ class ESPNTransactionsClient:
 
         # Skip common keywords, positions, and action verbs
         skip_words = {
-            "signed", "traded", "released", "waived", "claimed", "acquired",
-            "placed", "designated", "activated", "promoted", "reverted",
-            "elevated", "hired", "announced", "retired",
-            "off", "to", "from", "as", "with", "on",
-            "nfl", "team", "pup", "nfi", "reserve", "injured", "return",
-            "-", "/", "|", "and", "the", "a", "an", "in", "of", "for", "by",
+            "signed",
+            "traded",
+            "released",
+            "waived",
+            "claimed",
+            "acquired",
+            "placed",
+            "designated",
+            "activated",
+            "promoted",
+            "reverted",
+            "elevated",
+            "hired",
+            "announced",
+            "retired",
+            "off",
+            "to",
+            "from",
+            "as",
+            "with",
+            "on",
+            "nfl",
+            "team",
+            "pup",
+            "nfi",
+            "reserve",
+            "injured",
+            "return",
+            "-",
+            "/",
+            "|",
+            "and",
+            "the",
+            "a",
+            "an",
+            "in",
+            "of",
+            "for",
+            "by",
             # Position abbreviations
-            "qb", "rb", "wr", "te", "ol", "dl", "lb", "cb", "s", "p", "k",
-            "ole", "olg", "c", "ot", "og", "de", "dt", "ilb", "olb", "fs",
-            "ss", "db", "dil", "iolb", "fb", "ls", "h", "ps", "swr", "no", "wr",
+            "qb",
+            "rb",
+            "wr",
+            "te",
+            "ol",
+            "dl",
+            "lb",
+            "cb",
+            "s",
+            "p",
+            "k",
+            "ole",
+            "olg",
+            "c",
+            "ot",
+            "og",
+            "de",
+            "dt",
+            "ilb",
+            "olb",
+            "fs",
+            "ss",
+            "db",
+            "dil",
+            "iolb",
+            "fb",
+            "ls",
+            "h",
+            "ps",
+            "swr",
+            "no",
+            "wr",
         }
 
         for i, word in enumerate(words):
@@ -420,11 +481,7 @@ class ESPNTransactionsClient:
                     if not w:
                         continue
                     w_lower = w.lower()
-                    if (
-                        w_lower not in skip_words
-                        and w[0].isupper()
-                        and len(w) > 1
-                    ):
+                    if w_lower not in skip_words and w[0].isupper() and len(w) > 1:
                         name_parts.append(w)
                     elif w_lower in skip_words:
                         break

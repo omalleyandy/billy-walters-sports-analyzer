@@ -35,7 +35,9 @@ class HistoricalNCAAFCollector:
         """Build ESPN team statistics URL"""
         return f"https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/{team_id}"
 
-    async def fetch_team_stats(self, team_id: str, team_name: str, season: int) -> Optional[Dict]:
+    async def fetch_team_stats(
+        self, team_id: str, team_name: str, season: int
+    ) -> Optional[Dict]:
         """Fetch team statistics from ESPN for a given season"""
         if not self.session:
             await self.connect()
@@ -152,7 +154,9 @@ class HistoricalNCAAFCollector:
         for season in seasons:
             season_data = await self.collect_season(season, teams)
             self.save_season_data(season_data)
-            print(f"[OK] {season} season complete: {season_data['success_count']}/{season_data['total_teams']}")
+            print(
+                f"[OK] {season} season complete: {season_data['success_count']}/{season_data['total_teams']}"
+            )
 
         await self.close()
 
@@ -162,12 +166,25 @@ async def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Collect historical NCAAF data")
-    parser.add_argument("--seasons", type=int, nargs="+", default=[2005, 2010, 2015, 2020, 2025],
-                       help="Seasons to collect (default: 2005 2010 2015 2020 2025)")
-    parser.add_argument("--teams-file", type=str, default="data/current/espn_teams.json",
-                       help="Teams reference file")
-    parser.add_argument("--output-dir", type=str, default="data/historical",
-                       help="Output directory for historical data")
+    parser.add_argument(
+        "--seasons",
+        type=int,
+        nargs="+",
+        default=[2005, 2010, 2015, 2020, 2025],
+        help="Seasons to collect (default: 2005 2010 2015 2020 2025)",
+    )
+    parser.add_argument(
+        "--teams-file",
+        type=str,
+        default="data/current/espn_teams.json",
+        help="Teams reference file",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="data/historical",
+        help="Output directory for historical data",
+    )
 
     args = parser.parse_args()
 

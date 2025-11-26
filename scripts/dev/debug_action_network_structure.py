@@ -77,7 +77,7 @@ async def debug_page_structure():
         print(f"  Found {len(game_info)} best-odds__game-info divs")
 
         for i, info in enumerate(game_info[:3]):
-            print(f"\n  Game {i+1}:")
+            print(f"\n  Game {i + 1}:")
             text = await info.inner_text()
             print(f"    Text: {text}")
 
@@ -100,7 +100,9 @@ async def debug_page_structure():
 
         output_dir = "output/debug"
         os.makedirs(output_dir, exist_ok=True)
-        with open(f"{output_dir}/action_network_nfl_odds.html", "w", encoding="utf-8") as f:
+        with open(
+            f"{output_dir}/action_network_nfl_odds.html", "w", encoding="utf-8"
+        ) as f:
             f.write(html)
         print(f"  Saved to {output_dir}/action_network_nfl_odds.html")
 

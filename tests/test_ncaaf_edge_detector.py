@@ -239,9 +239,7 @@ class TestNCAAFInjuryImpacts:
     @pytest.mark.asyncio
     async def test_calculate_impact_no_injuries(self, injury_calc):
         """Test impact calculation with no injuries"""
-        impact = await injury_calc.calculate_impact(
-            "Ohio State", "Michigan", {}
-        )
+        impact = await injury_calc.calculate_impact("Ohio State", "Michigan", {})
         assert impact == 0.0
 
     @pytest.mark.asyncio
@@ -256,9 +254,7 @@ class TestNCAAFInjuryImpacts:
                 }
             ]
         }
-        impact = await injury_calc.calculate_impact(
-            "Ohio State", "Michigan", injuries
-        )
+        impact = await injury_calc.calculate_impact("Ohio State", "Michigan", injuries)
         # Positive impact = away team hurt more (favors home)
         assert impact > 0.0
 
@@ -274,9 +270,7 @@ class TestNCAAFInjuryImpacts:
                 }
             ]
         }
-        impact = await injury_calc.calculate_impact(
-            "Ohio State", "Michigan", injuries
-        )
+        impact = await injury_calc.calculate_impact("Ohio State", "Michigan", injuries)
         # Negative impact = home team hurt (favors away)
         assert impact < 0.0
 
@@ -356,6 +350,7 @@ class TestBettingEdgeDataclass:
         )
 
         from dataclasses import asdict
+
         edge_dict = asdict(edge)
 
         assert isinstance(edge_dict, dict)

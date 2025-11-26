@@ -286,9 +286,11 @@ class ESPNNFLScoreboardClient:
             return None
 
     async def save_week_scores(
-        self, games: list[dict[str, Any]], week: int,
+        self,
+        games: list[dict[str, Any]],
+        week: int,
         output_dir: Optional[Path] = None,
-        league: str = "nfl"
+        league: str = "nfl",
     ) -> Path:
         """
         Save week scores to JSON file.
@@ -305,14 +307,18 @@ class ESPNNFLScoreboardClient:
         if output_dir is None:
             # NEW: Use organized structure output/espn/scores/{league}/
             output_dir = (
-                Path(__file__).parent.parent.parent / "output" / "espn" /
-                "scores" / league.lower()
+                Path(__file__).parent.parent.parent
+                / "output"
+                / "espn"
+                / "scores"
+                / league.lower()
             )
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # NEW: Use timestamped filename matching other scrapers
         from datetime import datetime
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"scores_{league.lower()}_{timestamp}.json"
         filepath = output_dir / filename
@@ -324,9 +330,7 @@ class ESPNNFLScoreboardClient:
 
         # Backward compatibility: Create symlink in old location
         try:
-            old_location = (
-                Path(__file__).parent.parent.parent / "output" / "nfl_scores"
-            )
+            old_location = Path(__file__).parent.parent.parent / "output" / "nfl_scores"
             old_location.mkdir(parents=True, exist_ok=True)
             old_filename = f"scores_2025_week_{week:02d}.json"
             old_filepath = old_location / old_filename
@@ -340,14 +344,11 @@ class ESPNNFLScoreboardClient:
             except OSError:
                 # Windows fallback: copy instead of symlink
                 import shutil
+
                 shutil.copy2(filepath, old_filepath)
-                logger.info(
-                    f"Copied to legacy location for backward compatibility"
-                )
+                logger.info(f"Copied to legacy location for backward compatibility")
         except Exception as e:
-            logger.warning(
-                f"Could not create backward compatibility link: {e}"
-            )
+            logger.warning(f"Could not create backward compatibility link: {e}")
 
         return filepath
 
@@ -369,14 +370,18 @@ class ESPNNFLScoreboardClient:
         if output_dir is None:
             # NEW: Use organized structure
             output_dir = (
-                Path(__file__).parent.parent.parent / "output" / "espn" /
-                "scores" / "nfl"
+                Path(__file__).parent.parent.parent
+                / "output"
+                / "espn"
+                / "scores"
+                / "nfl"
             )
 
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # NEW: Use timestamped filename
         from datetime import datetime
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"scores_nfl_all_weeks_{timestamp}.json"
         filepath = output_dir / filename

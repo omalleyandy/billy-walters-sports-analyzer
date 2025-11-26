@@ -11,9 +11,12 @@ Adds:
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
+
 
 def create_data_sources_table(conn, cursor):
     """Create data_sources reference table."""
@@ -33,23 +36,26 @@ def create_data_sources_table(conn, cursor):
 
     # Insert common sources
     sources = [
-        ('massey', 'ratings', 'Massey Ratings Composite Rankings'),
-        ('espn', 'ratings', 'ESPN Team Statistics and Ratings'),
-        ('nfl_com', 'schedule', 'Official NFL.com Schedule'),
-        ('ncaa_com', 'schedule', 'Official NCAA.com Schedule'),
-        ('action_network', 'odds', 'Action Network Public Betting Data'),
-        ('covers', 'odds', 'Covers Sportsbook Consensus Odds'),
-        ('vegas_insider', 'odds', 'Vegas Insider Consensus Lines'),
-        ('overtime_ag', 'odds', 'Overtime.ag Betting Lines'),
-        ('pinnacle', 'odds', 'Pinnacle Sportsbook Odds'),
+        ("massey", "ratings", "Massey Ratings Composite Rankings"),
+        ("espn", "ratings", "ESPN Team Statistics and Ratings"),
+        ("nfl_com", "schedule", "Official NFL.com Schedule"),
+        ("ncaa_com", "schedule", "Official NCAA.com Schedule"),
+        ("action_network", "odds", "Action Network Public Betting Data"),
+        ("covers", "odds", "Covers Sportsbook Consensus Odds"),
+        ("vegas_insider", "odds", "Vegas Insider Consensus Lines"),
+        ("overtime_ag", "odds", "Overtime.ag Betting Lines"),
+        ("pinnacle", "odds", "Pinnacle Sportsbook Odds"),
     ]
 
     for source_name, source_type, description in sources:
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO data_sources (name, source_type, description)
             VALUES (%s, %s, %s)
             ON CONFLICT (name) DO NOTHING;
-        """, (source_name, source_type, description))
+        """,
+            (source_name, source_type, description),
+        )
 
     conn.commit()
     print("[OK] data_sources table created with 9 sources")
@@ -67,7 +73,7 @@ def add_data_source_to_games(conn, cursor):
         conn.commit()
         print("[OK] data_source column added to games")
     except Exception as e:
-        if 'already exists' in str(e):
+        if "already exists" in str(e):
             print("[SKIP] data_source column already exists in games")
             conn.rollback()
         else:
@@ -109,7 +115,7 @@ def add_data_source_to_odds(conn, cursor):
         conn.commit()
         print("[OK] data_collection_source column added to odds")
     except Exception as e:
-        if 'already exists' in str(e):
+        if "already exists" in str(e):
             print("[SKIP] data_collection_source column already exists in odds")
             conn.rollback()
         else:
@@ -227,6 +233,7 @@ def main():
     except Exception as e:
         print(f"\n[ERROR] Migration failed: {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
     finally:

@@ -40,7 +40,7 @@ async def main():
         browser = await p.chromium.launch(headless=False)
         context = await browser.new_context(
             viewport={"width": 1280, "height": 720},
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         )
         page = await context.new_page()
 
@@ -50,7 +50,7 @@ async def main():
             await page.goto(
                 "https://www.actionnetwork.com/login",
                 wait_until="domcontentloaded",
-                timeout=60000
+                timeout=60000,
             )
         except Exception as e:
             print(f"[!] Initial navigation warning: {e}")
@@ -87,17 +87,24 @@ async def main():
             "user_avatar": await page.query_selector('img[alt*="avatar"]'),
         }
 
-        logged_in = any([
-            login_indicators["account_link"],
-            login_indicators["profile_link"],
-            login_indicators["logout_button"],
-            login_indicators["user_avatar"],
-        ]) and not login_indicators["email_input"]
+        logged_in = (
+            any(
+                [
+                    login_indicators["account_link"],
+                    login_indicators["profile_link"],
+                    login_indicators["logout_button"],
+                    login_indicators["user_avatar"],
+                ]
+            )
+            and not login_indicators["email_input"]
+        )
 
         print(f"\nLogin detected: {logged_in}")
         print("\nLogin indicators found:")
         for name, element in login_indicators.items():
-            status = "[OK]" if (element if name != "email_input" else not element) else "[ ]"
+            status = (
+                "[OK]" if (element if name != "email_input" else not element) else "[ ]"
+            )
             print(f"  {status} {name}: {'found' if element else 'not found'}")
 
         # Capture visible elements for debugging
@@ -110,14 +117,17 @@ async def main():
             text = await btn.inner_text()
             classes = await btn.get_attribute("class") or ""
             if text.strip():
-                print(f"  {i+1}. '{text.strip()[:40]}' class='{classes[:50]}'")
+                print(f"  {i + 1}. '{text.strip()[:40]}' class='{classes[:50]}'")
 
         # Get all links
         links = await page.query_selector_all("a[href]")
         print(f"\nFound {len(links)} links, checking for account-related:")
         for link in links:
             href = await link.get_attribute("href") or ""
-            if any(x in href.lower() for x in ["account", "profile", "user", "settings", "logout"]):
+            if any(
+                x in href.lower()
+                for x in ["account", "profile", "user", "settings", "logout"]
+            ):
                 text = await link.inner_text()
                 print(f"  - '{text.strip()[:30]}' -> {href}")
 

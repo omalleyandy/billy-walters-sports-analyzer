@@ -9,8 +9,9 @@ for comprehensive backfill from Week 1 to current week.
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -31,12 +32,12 @@ def analyze_data(db):
 
     games_by_league = {}
     for row in result:
-        league = row['league']
+        league = row["league"]
         if league not in games_by_league:
             games_by_league[league] = {}
-        games_by_league[league][row['week']] = row['count']
+        games_by_league[league][row["week"]] = row["count"]
 
-    for league in ['NFL', 'NCAAF']:
+    for league in ["NFL", "NCAAF"]:
         if league in games_by_league:
             weeks = sorted(games_by_league[league].keys())
             total = sum(games_by_league[league].values())
@@ -61,24 +62,21 @@ def analyze_data(db):
 
     ratings_by_league = {}
     for row in result:
-        league = row['league']
-        week = row['week']
-        source = row['source']
+        league = row["league"]
+        week = row["week"]
+        source = row["source"]
 
         if league not in ratings_by_league:
             ratings_by_league[league] = {}
         if week not in ratings_by_league[league]:
             ratings_by_league[league][week] = {}
 
-        ratings_by_league[league][week][source] = row['count']
+        ratings_by_league[league][week][source] = row["count"]
 
-    for league in ['NFL', 'NCAAF']:
+    for league in ["NFL", "NCAAF"]:
         if league in ratings_by_league:
             weeks = sorted(ratings_by_league[league].keys())
-            total = sum(
-                sum(ratings_by_league[league][w].values())
-                for w in weeks
-            )
+            total = sum(sum(ratings_by_league[league][w].values()) for w in weeks)
             print(f"\n{league}: {total} ratings across {len(weeks)} weeks")
             for week in weeks:
                 sources = ratings_by_league[league][week]
@@ -93,7 +91,7 @@ def analyze_data(db):
     result = db.execute_query("""
         SELECT COUNT(*) as count FROM odds
     """)
-    odds_count = result[0]['count']
+    odds_count = result[0]["count"]
 
     result = db.execute_query("""
         SELECT sportsbook, COUNT(*) as count

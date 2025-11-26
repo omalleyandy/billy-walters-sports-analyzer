@@ -12,9 +12,13 @@ from datetime import datetime
 import argparse
 
 
-def load_power_ratings(system: str = "massey_composite", week: int = 13, season: int = 2025):
+def load_power_ratings(
+    system: str = "massey_composite", week: int = 13, season: int = 2025
+):
     """Load power ratings into ncaaf_power_ratings table"""
-    print(f"[INFO] Loading NCAAF power ratings ({system}) for Week {week}, Season {season}...")
+    print(
+        f"[INFO] Loading NCAAF power ratings ({system}) for Week {week}, Season {season}..."
+    )
 
     # Database connection
     try:
@@ -23,7 +27,7 @@ def load_power_ratings(system: str = "massey_composite", week: int = 13, season:
             user="postgres",
             password="postgres",
             host="localhost",
-            port="5432"
+            port="5432",
         )
         cur = conn.cursor()
         print("[OK] Connected to PostgreSQL")
@@ -34,8 +38,10 @@ def load_power_ratings(system: str = "massey_composite", week: int = 13, season:
     # Load ratings file
     try:
         ratings_file = (
-            Path(__file__).parent.parent.parent / "data" / "current" /
-            "massey_ratings_ncaaf.json"
+            Path(__file__).parent.parent.parent
+            / "data"
+            / "current"
+            / "massey_ratings_ncaaf.json"
         )
         with open(ratings_file) as f:
             ratings_data = json.load(f)
@@ -109,7 +115,7 @@ def load_power_ratings(system: str = "massey_composite", week: int = 13, season:
     try:
         cur.execute(
             "SELECT COUNT(*) FROM ncaaf_power_ratings WHERE rating_system = %s",
-            (system,)
+            (system,),
         )
         count = cur.fetchone()[0]
         print(f"[OK] Verified: {count} rating records in database")
@@ -124,10 +130,18 @@ def load_power_ratings(system: str = "massey_composite", week: int = 13, season:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Load NCAAF power ratings")
-    parser.add_argument("--system", type=str, default="massey_composite",
-                       help="Rating system name (default: massey_composite)")
-    parser.add_argument("--week", type=int, default=13, help="Week number (default: 13)")
-    parser.add_argument("--season", type=int, default=2025, help="Season year (default: 2025)")
+    parser.add_argument(
+        "--system",
+        type=str,
+        default="massey_composite",
+        help="Rating system name (default: massey_composite)",
+    )
+    parser.add_argument(
+        "--week", type=int, default=13, help="Week number (default: 13)"
+    )
+    parser.add_argument(
+        "--season", type=int, default=2025, help="Season year (default: 2025)"
+    )
 
     args = parser.parse_args()
     success = load_power_ratings(args.system, args.week, args.season)

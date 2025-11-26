@@ -139,9 +139,7 @@ class NFLScoreboardScraper:
         """Context manager exit."""
         await self.close()
 
-    async def get_week_scores(
-        self, season: int, week: int
-    ) -> List[NFLGameResult]:
+    async def get_week_scores(self, season: int, week: int) -> List[NFLGameResult]:
         """
         Fetch scores for a specific week.
 
@@ -296,7 +294,9 @@ class NFLScoreboardScraper:
         logger.info(f"Fetched scores for {len(results)} weeks")
         return results
 
-    async def get_current_week_scores(self, season: int) -> Dict[int, List[NFLGameResult]]:
+    async def get_current_week_scores(
+        self, season: int
+    ) -> Dict[int, List[NFLGameResult]]:
         """
         Fetch scores for weeks up to current week.
 

@@ -91,7 +91,8 @@ class NFLWeekDetector:
             ),
             "season_start": cls.WEEK_1_START.isoformat(),
             "regular_season_end": (
-                cls.WEEK_1_START + timedelta(days=(cls.REGULAR_SEASON_WEEKS - 1) * 7 + 6)
+                cls.WEEK_1_START
+                + timedelta(days=(cls.REGULAR_SEASON_WEEKS - 1) * 7 + 6)
             ).isoformat(),
             "playoff_start": cls.FIRST_PLAYOFF_DATE.isoformat(),
             "super_bowl_date": cls.SUPER_BOWL_DATE.isoformat(),
@@ -118,7 +119,9 @@ if __name__ == "__main__":
 
     if season_info["current_week"]:
         print(f"\n[OK] Current week: {season_info['current_week']}")
-        print(f"[OK] Week dates: {season_info['week_start']} to {season_info['week_end']}")
+        print(
+            f"[OK] Week dates: {season_info['week_start']} to {season_info['week_end']}"
+        )
     else:
         if season_info["is_offseason"]:
             print("\n[INFO] Currently in offseason")

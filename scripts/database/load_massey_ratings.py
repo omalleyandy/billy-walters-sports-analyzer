@@ -15,8 +15,9 @@ import json
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 
@@ -37,10 +38,10 @@ class MasseyRatingsLoader:
     def parse_ratings_file(self, file_path: Path) -> list[dict]:
         """Parse ratings file and extract team data."""
         try:
-            with open(file_path, 'r') as f:
+            with open(file_path, "r") as f:
                 data = json.load(f)
 
-            teams = data.get('teams', [])
+            teams = data.get("teams", [])
             if not teams:
                 print(f"  [WARNING] No teams found in {file_path.name}")
                 return []
@@ -65,11 +66,11 @@ class MasseyRatingsLoader:
         # [9] Other ranking + other rating
         # [10-11] Additional metrics
 
-        raw_data = team_data.get('rawData', [])
+        raw_data = team_data.get("rawData", [])
 
         # Parse record (format: "wins-losses" or "wins-losses-ties")
-        record_str = team_data.get('record', '0-0')
-        record_parts = record_str.split('-')
+        record_str = team_data.get("record", "0-0")
+        record_parts = record_str.split("-")
         wins = int(record_parts[0]) if len(record_parts) > 0 else 0
         losses = int(record_parts[1]) if len(record_parts) > 1 else 0
         ties = int(record_parts[2]) if len(record_parts) > 2 else 0
@@ -81,7 +82,7 @@ class MasseyRatingsLoader:
         defense_rating = None
 
         if len(raw_data) > 4:
-            parts = raw_data[4].split('\n')
+            parts = raw_data[4].split("\n")
             if len(parts) > 1:
                 try:
                     power_rating = float(parts[1])
@@ -89,7 +90,7 @@ class MasseyRatingsLoader:
                     pass
 
         if len(raw_data) > 5:
-            parts = raw_data[5].split('\n')
+            parts = raw_data[5].split("\n")
             if len(parts) > 1:
                 try:
                     offense_rating = float(parts[1])
@@ -97,7 +98,7 @@ class MasseyRatingsLoader:
                     pass
 
         if len(raw_data) > 6:
-            parts = raw_data[6].split('\n')
+            parts = raw_data[6].split("\n")
             if len(parts) > 1:
                 try:
                     defense_rating = float(parts[1])
@@ -105,22 +106,20 @@ class MasseyRatingsLoader:
                     pass
 
         return {
-            'team': team_data.get('team', ''),
-            'ranking': int(team_data.get('rank', 0)) if team_data.get(
-                'rank'
-            ) else 0,
-            'rating': float(team_data.get('rating', 0)) if team_data.get(
-                'rating'
-            ) else 0.0,
-            'power_rating': power_rating or float(
-                team_data.get('powerRating', 0)
-            ) if team_data.get('powerRating') else 0.0,
-            'offense_rating': offense_rating or 0.0,
-            'defense_rating': defense_rating or 0.0,
-            'sos_rating': 0.0,  # Strength of schedule - not clearly in data
-            'wins': wins,
-            'losses': losses,
-            'ties': ties,
+            "team": team_data.get("team", ""),
+            "ranking": int(team_data.get("rank", 0)) if team_data.get("rank") else 0,
+            "rating": float(team_data.get("rating", 0))
+            if team_data.get("rating")
+            else 0.0,
+            "power_rating": power_rating or float(team_data.get("powerRating", 0))
+            if team_data.get("powerRating")
+            else 0.0,
+            "offense_rating": offense_rating or 0.0,
+            "defense_rating": defense_rating or 0.0,
+            "sos_rating": 0.0,  # Strength of schedule - not clearly in data
+            "wins": wins,
+            "losses": losses,
+            "ties": ties,
         }
 
     def load_ratings_for_league(self, league: str) -> tuple[int, int]:
@@ -145,7 +144,7 @@ class MasseyRatingsLoader:
         skipped = 0
 
         # Determine league code and week from file
-        league_code = 'NFL' if league.lower() == 'nfl' else 'NCAAF'
+        league_code = "NFL" if league.lower() == "nfl" else "NCAAF"
         # For now, use week 12 as we're loading current week data
         week = 12
         season = 2025
@@ -154,7 +153,8 @@ class MasseyRatingsLoader:
             try:
                 extracted = self.extract_team_data(team_data)
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO massey_ratings
                     (season, week, league, team, ranking, rating,
                      offense_rating, defense_rating, sos_rating,
@@ -162,14 +162,23 @@ class MasseyRatingsLoader:
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s,
                             %s, %s, %s, %s, NOW())
                     ON CONFLICT (season, week, league, team) DO NOTHING;
-                """, (
-                    season, week, league_code, extracted['team'],
-                    extracted['ranking'], extracted['rating'],
-                    extracted['offense_rating'], extracted['defense_rating'],
-                    extracted['sos_rating'],
-                    extracted['wins'], extracted['losses'], extracted['ties'],
-                    'massey'
-                ))
+                """,
+                    (
+                        season,
+                        week,
+                        league_code,
+                        extracted["team"],
+                        extracted["ranking"],
+                        extracted["rating"],
+                        extracted["offense_rating"],
+                        extracted["defense_rating"],
+                        extracted["sos_rating"],
+                        extracted["wins"],
+                        extracted["losses"],
+                        extracted["ties"],
+                        "massey",
+                    ),
+                )
 
                 if cursor.rowcount > 0:
                     inserted += 1
@@ -177,8 +186,7 @@ class MasseyRatingsLoader:
                     skipped += 1
 
             except Exception as e:
-                print(f"  [WARNING] Failed to insert {team_data.get('team')}: "
-                      f"{str(e)}")
+                print(f"  [WARNING] Failed to insert {team_data.get('team')}: {str(e)}")
                 skipped += 1
 
         conn.commit()
@@ -200,7 +208,7 @@ class MasseyRatingsLoader:
 
         total = 0
         for row in result:
-            count = row['count']
+            count = row["count"]
             total += count
             print(f"  {row['league']}: {count} teams")
 
@@ -215,10 +223,8 @@ class MasseyRatingsLoader:
 
         try:
             # Load NFL and NCAAF ratings
-            nfl_inserted, nfl_skipped = self.load_ratings_for_league('nfl')
-            ncaaf_inserted, ncaaf_skipped = self.load_ratings_for_league(
-                'ncaaf'
-            )
+            nfl_inserted, nfl_skipped = self.load_ratings_for_league("nfl")
+            ncaaf_inserted, ncaaf_skipped = self.load_ratings_for_league("ncaaf")
 
             # Verify
             total = self.verify_data()
@@ -228,8 +234,7 @@ class MasseyRatingsLoader:
             print("=" * 70)
             print(f"\nSummary:")
             print(f"  NFL:   {nfl_inserted} inserted, {nfl_skipped} skipped")
-            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} "
-                  f"skipped")
+            print(f"  NCAAF: {ncaaf_inserted} inserted, {ncaaf_skipped} skipped")
             print(f"  Total: {total} teams in database")
             print("\nNext steps:")
             print("  1. Build ESPN schedule parser")
@@ -242,6 +247,7 @@ class MasseyRatingsLoader:
         except Exception as e:
             print(f"\n[ERROR] Load failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return False
         finally:

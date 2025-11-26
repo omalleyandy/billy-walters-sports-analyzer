@@ -19,8 +19,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 from src.db import get_db_connection
 from src.walters_analyzer.valuation.custom_power_rating_engine import (
@@ -45,7 +46,8 @@ class CustomPowerRatingGenerator:
         """Load team statistics from espn_team_stats table."""
         print(f"\n[LOAD] ESPN Team Statistics ({league.upper()})...")
 
-        result = self.db.execute_query(f"""
+        result = self.db.execute_query(
+            f"""
             SELECT team, week, season,
                    points_per_game, total_yards_per_game,
                    passing_yards_per_game, rushing_yards_per_game,
@@ -61,11 +63,13 @@ class CustomPowerRatingGenerator:
             FROM espn_team_stats
             WHERE league = %s
             ORDER BY week DESC, team
-        """, (league.upper(),))
+        """,
+            (league.upper(),),
+        )
 
         stats_by_team = {}
         for row in result:
-            team = row['team']
+            team = row["team"]
             # Use most recent week data
             if team not in stats_by_team:
                 stats_by_team[team] = row
@@ -77,31 +81,36 @@ class CustomPowerRatingGenerator:
         """Load injury data from espn_injuries table."""
         print(f"\n[LOAD] ESPN Injury Data ({league.upper()})...")
 
-        result = self.db.execute_query(f"""
+        result = self.db.execute_query(
+            f"""
             SELECT team, week, season,
                    player_name, position, status, severity,
                    impact_estimate
             FROM espn_injuries
             WHERE league = %s AND status NOT IN ('ACTIVE', 'LIKELY')
             ORDER BY week DESC, team, impact_estimate DESC
-        """, (league.upper(),))
+        """,
+            (league.upper(),),
+        )
 
         injuries_by_team = {}
         for row in result:
-            team = row['team']
+            team = row["team"]
             if team not in injuries_by_team:
                 injuries_by_team[team] = []
             injuries_by_team[team].append(row)
 
-        print(f"  Loaded injury data for {len(injuries_by_team)} "
-              f"{league.upper()} teams")
+        print(
+            f"  Loaded injury data for {len(injuries_by_team)} {league.upper()} teams"
+        )
         return injuries_by_team
 
     def load_team_standings(self, league: str) -> dict:
         """Load team standings from espn_standings table."""
         print(f"\n[LOAD] ESPN Standings ({league.upper()})...")
 
-        result = self.db.execute_query(f"""
+        result = self.db.execute_query(
+            f"""
             SELECT team, week, season,
                    wins, losses, ties,
                    home_wins, home_losses,
@@ -110,39 +119,44 @@ class CustomPowerRatingGenerator:
             FROM espn_standings
             WHERE league = %s
             ORDER BY week DESC, team
-        """, (league.upper(),))
+        """,
+            (league.upper(),),
+        )
 
         standings_by_team = {}
         for row in result:
-            team = row['team']
+            team = row["team"]
             # Use most recent week data
             if team not in standings_by_team:
                 standings_by_team[team] = row
 
-        print(f"  Loaded standings for {len(standings_by_team)} "
-              f"{league.upper()} teams")
+        print(f"  Loaded standings for {len(standings_by_team)} {league.upper()} teams")
         return standings_by_team
 
     def load_massey_ratings(self, league: str) -> dict:
         """Load Massey ratings for comparison."""
         print(f"\n[LOAD] Massey Ratings ({league.upper()}) for Comparison...")
 
-        result = self.db.execute_query(f"""
+        result = self.db.execute_query(
+            f"""
             SELECT team, week, season, rating
             FROM massey_ratings
             WHERE league = %s
             ORDER BY week DESC, team
-        """, (league.upper(),))
+        """,
+            (league.upper(),),
+        )
 
         massey_by_team = {}
         for row in result:
-            team = row['team']
+            team = row["team"]
             # Use most recent week data
             if team not in massey_by_team:
-                massey_by_team[team] = row['rating']
+                massey_by_team[team] = row["rating"]
 
-        print(f"  Loaded Massey ratings for {len(massey_by_team)} "
-              f"{league.upper()} teams")
+        print(
+            f"  Loaded Massey ratings for {len(massey_by_team)} {league.upper()} teams"
+        )
         return massey_by_team
 
     def calculate_injury_impact(
@@ -157,9 +171,9 @@ class CustomPowerRatingGenerator:
         impact = InjuryImpact()
 
         for injury in injuries:
-            position = injury.get('position', 'UNKNOWN')
-            severity = injury.get('severity', 'BACKUP')
-            impact_estimate = injury.get('impact_estimate', 0.0)
+            position = injury.get("position", "UNKNOWN")
+            severity = injury.get("severity", "BACKUP")
+            impact_estimate = injury.get("impact_estimate", 0.0)
 
             # Count by tier
             if severity == "ELITE":
@@ -199,17 +213,15 @@ class CustomPowerRatingGenerator:
         massey_ratings = self.load_massey_ratings(league)
 
         # Select engine
-        engine = (
-            self.nfl_engine if league == "NFL" else self.ncaaf_engine
-        )
+        engine = self.nfl_engine if league == "NFL" else self.ncaaf_engine
 
         # Get reference week and season
         ref_week = 1
         ref_season = 2025
         if team_stats:
             sample = next(iter(team_stats.values()))
-            ref_week = sample.get('week', 1)
-            ref_season = sample.get('season', 2025)
+            ref_week = sample.get("week", 1)
+            ref_season = sample.get("season", 2025)
 
         print(f"  Generating ratings for Week {ref_week}, Season {ref_season}")
 
@@ -223,63 +235,52 @@ class CustomPowerRatingGenerator:
             try:
                 # Build offensive metrics
                 offensive = OffensiveMetrics(
-                    points_per_game=stats.get('points_per_game'),
-                    total_yards_per_game=stats.get('total_yards_per_game'),
-                    passing_yards_per_game=stats.get(
-                        'passing_yards_per_game'
-                    ),
-                    rushing_yards_per_game=stats.get(
-                        'rushing_yards_per_game'
-                    ),
-                    completion_percentage=stats.get('completion_percentage'),
-                    yards_per_attempt=stats.get('yards_per_attempt'),
-                    touchdowns_passing=stats.get('touchdowns_passing'),
-                    touchdowns_rushing=stats.get('touchdowns_rushing'),
-                    interceptions=stats.get('interceptions'),
-                    fumbles=stats.get('fumbles'),
+                    points_per_game=stats.get("points_per_game"),
+                    total_yards_per_game=stats.get("total_yards_per_game"),
+                    passing_yards_per_game=stats.get("passing_yards_per_game"),
+                    rushing_yards_per_game=stats.get("rushing_yards_per_game"),
+                    completion_percentage=stats.get("completion_percentage"),
+                    yards_per_attempt=stats.get("yards_per_attempt"),
+                    touchdowns_passing=stats.get("touchdowns_passing"),
+                    touchdowns_rushing=stats.get("touchdowns_rushing"),
+                    interceptions=stats.get("interceptions"),
+                    fumbles=stats.get("fumbles"),
                 )
 
                 # Build defensive metrics
                 defensive = DefensiveMetrics(
-                    points_allowed_per_game=stats.get(
-                        'points_allowed_per_game'
-                    ),
-                    yards_allowed_per_game=stats.get(
-                        'yards_allowed_per_game'
-                    ),
+                    points_allowed_per_game=stats.get("points_allowed_per_game"),
+                    yards_allowed_per_game=stats.get("yards_allowed_per_game"),
                     passing_yards_allowed_per_game=stats.get(
-                        'passing_yards_allowed_per_game'
+                        "passing_yards_allowed_per_game"
                     ),
                     rushing_yards_allowed_per_game=stats.get(
-                        'rushing_yards_allowed_per_game'
+                        "rushing_yards_allowed_per_game"
                     ),
-                    sacks=stats.get('sacks'),
-                    interceptions_gained=stats.get('interceptions_gained'),
-                    fumbles_recovered=stats.get('fumbles_recovered'),
-                    turnover_margin=stats.get('turnover_margin'),
-                    third_down_percentage=stats.get('third_down_percentage'),
-                    fourth_down_percentage=stats.get(
-                        'fourth_down_percentage'
-                    ),
-                    red_zone_percentage=stats.get('red_zone_percentage'),
+                    sacks=stats.get("sacks"),
+                    interceptions_gained=stats.get("interceptions_gained"),
+                    fumbles_recovered=stats.get("fumbles_recovered"),
+                    turnover_margin=stats.get("turnover_margin"),
+                    third_down_percentage=stats.get("third_down_percentage"),
+                    fourth_down_percentage=stats.get("fourth_down_percentage"),
+                    red_zone_percentage=stats.get("red_zone_percentage"),
                 )
 
                 # Build injury impact
                 team_injuries = injury_data.get(team, [])
-                injury = self.calculate_injury_impact(team, team_injuries,
-                                                       league)
+                injury = self.calculate_injury_impact(team, team_injuries, league)
 
                 # Build team status
                 team_standing = standings.get(team, {})
                 status = TeamStatus(
-                    wins=team_standing.get('wins', 0),
-                    losses=team_standing.get('losses', 0),
-                    streak_type=team_standing.get('streak_type', ''),
-                    streak_count=team_standing.get('streak_count', 0),
-                    home_wins=team_standing.get('home_wins', 0),
-                    home_losses=team_standing.get('home_losses', 0),
-                    away_wins=team_standing.get('away_wins', 0),
-                    away_losses=team_standing.get('away_losses', 0),
+                    wins=team_standing.get("wins", 0),
+                    losses=team_standing.get("losses", 0),
+                    streak_type=team_standing.get("streak_type", ""),
+                    streak_count=team_standing.get("streak_count", 0),
+                    home_wins=team_standing.get("home_wins", 0),
+                    home_losses=team_standing.get("home_losses", 0),
+                    away_wins=team_standing.get("away_wins", 0),
+                    away_losses=team_standing.get("away_losses", 0),
                 )
 
                 # Calculate rating
@@ -296,7 +297,8 @@ class CustomPowerRatingGenerator:
                 )
 
                 # Store in database
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO power_ratings
                     (season, week, league, team, rating, source,
                      raw_rating, confidence, created_at)
@@ -306,16 +308,18 @@ class CustomPowerRatingGenerator:
                         rating = EXCLUDED.rating,
                         raw_rating = EXCLUDED.raw_rating,
                         updated_at = NOW()
-                """, (
-                    power_rating.season,
-                    power_rating.week,
-                    power_rating.league.value,
-                    power_rating.team,
-                    power_rating.overall_rating,
-                    power_rating.data_source,
-                    power_rating.overall_rating,
-                    power_rating.confidence_score,
-                ))
+                """,
+                    (
+                        power_rating.season,
+                        power_rating.week,
+                        power_rating.league.value,
+                        power_rating.team,
+                        power_rating.overall_rating,
+                        power_rating.data_source,
+                        power_rating.overall_rating,
+                        power_rating.confidence_score,
+                    ),
+                )
 
                 inserted += 1
 
@@ -345,9 +349,11 @@ class CustomPowerRatingGenerator:
         """)
 
         for row in result:
-            print(f"  {row['league']} (Custom): {row['count']} teams, "
-                  f"Avg={row['avg_rating']:.2f}, "
-                  f"Range={row['min_rating']:.2f}-{row['max_rating']:.2f}")
+            print(
+                f"  {row['league']} (Custom): {row['count']} teams, "
+                f"Avg={row['avg_rating']:.2f}, "
+                f"Range={row['min_rating']:.2f}-{row['max_rating']:.2f}"
+            )
 
         # Show top 3 teams
         result = self.db.execute_query("""
@@ -362,8 +368,8 @@ class CustomPowerRatingGenerator:
             print("\n  Top Teams (Custom Ratings):")
             current_league = None
             for row in result:
-                if row['league'] != current_league:
-                    current_league = row['league']
+                if row["league"] != current_league:
+                    current_league = row["league"]
                     print(f"    {current_league}:")
                 print(f"      {row['team']}: {row['rating']:.2f}")
 
@@ -375,12 +381,10 @@ class CustomPowerRatingGenerator:
 
         try:
             # Generate NFL ratings
-            nfl_inserted, nfl_skipped = self.generate_ratings_for_league('NFL')
+            nfl_inserted, nfl_skipped = self.generate_ratings_for_league("NFL")
 
             # Generate NCAAF ratings
-            ncaaf_inserted, ncaaf_skipped = self.generate_ratings_for_league(
-                'NCAAF'
-            )
+            ncaaf_inserted, ncaaf_skipped = self.generate_ratings_for_league("NCAAF")
 
             # Verify
             self.verify_ratings()
@@ -402,6 +406,7 @@ class CustomPowerRatingGenerator:
         except Exception as e:
             print(f"\n[ERROR] Generation failed: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return False
         finally:

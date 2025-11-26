@@ -127,7 +127,9 @@ Examples:
                 )
 
                 if not args.quiet:
-                    category_count = len(stats_data.get("stats", {}).get("categories", []))
+                    category_count = len(
+                        stats_data.get("stats", {}).get("categories", [])
+                    )
                     print(f"[OK] Saved raw stats: {raw_file}")
                     print(f"     Categories: {category_count}")
 
@@ -186,10 +188,7 @@ Examples:
                 if result is None:
                     continue
                 if result.get("success"):
-                    print(
-                        f"{league.upper()}: Success - "
-                        f"{result['raw_file']}"
-                    )
+                    print(f"{league.upper()}: Success - {result['raw_file']}")
                     if result.get("leaders") > 0:
                         print(f"         - {result['leaders']} extracted leaders")
                 else:

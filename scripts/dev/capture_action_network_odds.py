@@ -39,7 +39,7 @@ async def main():
         browser = await p.chromium.launch(headless=False)
         context = await browser.new_context(
             viewport={"width": 1280, "height": 720},
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         )
         page = await context.new_page()
 
@@ -47,7 +47,7 @@ async def main():
         await page.goto(
             "https://www.actionnetwork.com/login",
             wait_until="domcontentloaded",
-            timeout=60000
+            timeout=60000,
         )
         await page.wait_for_load_state("load")
 
@@ -57,7 +57,9 @@ async def main():
             await page.get_by_role("textbox", name="Email").fill(username)
             await page.get_by_role("textbox", name="Password").click(timeout=5000)
             await page.get_by_role("textbox", name="Password").fill(password)
-            await page.get_by_role("button", name="Sign In", exact=True).click(timeout=5000)
+            await page.get_by_role("button", name="Sign In", exact=True).click(
+                timeout=5000
+            )
             await page.wait_for_load_state("load")
             await page.wait_for_timeout(2000)
             print("[OK] Login successful!")
@@ -87,7 +89,7 @@ async def main():
         for i, table in enumerate(tables):
             classes = await table.get_attribute("class") or ""
             id_attr = await table.get_attribute("id") or ""
-            print(f"  {i+1}. class='{classes}' id='{id_attr}'")
+            print(f"  {i + 1}. class='{classes}' id='{id_attr}'")
 
         # Capture divs with game-related classes
         print("\n[*] Looking for game-related containers...")
@@ -108,7 +110,7 @@ async def main():
         for i, link in enumerate(nav_links[:10]):
             href = await link.get_attribute("href") or ""
             text = (await link.inner_text()).strip()[:30]
-            print(f"  {i+1}. '{text}' -> {href}")
+            print(f"  {i + 1}. '{text}' -> {href}")
 
         # Look for article elements (common for game cards)
         articles = await page.query_selector_all("article")

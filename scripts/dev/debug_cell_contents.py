@@ -44,9 +44,9 @@ async def debug_cells():
             row = rows[row_idx]
             cells = await row.query_selector_all("td")
 
-            print(f"\n{'='*60}")
+            print(f"\n{'=' * 60}")
             print(f"ROW {row_idx + 1}: {len(cells)} cells")
-            print(f"{'='*60}")
+            print(f"{'=' * 60}")
 
             for i, cell in enumerate(cells[:8]):  # First 8 cells
                 cell_text = await cell.inner_text()
@@ -54,7 +54,9 @@ async def debug_cells():
 
                 # Check for specific classes
                 has_game_info = await cell.query_selector("div.best-odds__game-info")
-                has_open_container = await cell.query_selector("div.best-odds__open-container")
+                has_open_container = await cell.query_selector(
+                    "div.best-odds__open-container"
+                )
                 has_book_cell = await cell.query_selector("div.book-cell__odds")
 
                 text_preview = cell_text[:50].replace("\n", "|")
