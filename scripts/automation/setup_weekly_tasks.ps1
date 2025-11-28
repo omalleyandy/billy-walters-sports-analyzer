@@ -24,7 +24,10 @@ param(
     [string]$PythonExe = "C:\Users\omall\AppData\Local\Programs\Python\Python312\python.exe",
 
     [Parameter(Mandatory=$false)]
-    [switch]$Remove
+    [switch]$Remove,
+
+    [Parameter(Mandatory=$false)]
+    [switch]$Force
 )
 
 # Configuration
@@ -35,14 +38,14 @@ $Tasks = @(
         Description = "Collect NFL data and detect betting edges (Tuesday 2 PM)"
         Day = "Tuesday"
         Time = "14:00:00"
-        Script = "python scripts/analysis/edge_detector_production.py --nfl --full"
+        Script = "python scripts/analysis/edge_detector_production.py --nfl --verbose"
     },
     @{
         Name = "Weekly-NCAAF-Edges-Wednesday"
         Description = "Collect NCAAF data and detect betting edges (Wednesday 2 PM)"
         Day = "Wednesday"
         Time = "14:00:00"
-        Script = "python scripts/analysis/edge_detector_production.py --ncaaf --full"
+        Script = "python scripts/analysis/edge_detector_production.py --ncaaf --verbose"
     },
     @{
         Name = "Weekly-CLV-Tracking-Monday"
@@ -71,18 +74,38 @@ function Create-TaskSchedulerTask {
         [string]$Command
     )
 
-    # Parse time
-    $TimeParts = $Time -split ":"
-    $Hour = [int]$TimeParts[0]
-    $Minute = [int]$TimeParts[1]
+    # Remove existing task if it exists
+    try {
+        Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
+    }
+    catch {}
 
-    # Create trigger
-    $Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $Day -At "$($Hour):$($Minute)"
+    # Parse time and convert to DateTime format
+    $TimeObj = [datetime]::ParseExact($Time, "HH:mm:ss", $null)
+    $TimeString = $TimeObj.ToString("HH:mm")
 
-    # Create action
+    # Create trigger with proper time format
+    $Trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek $Day -At $TimeString
+
+    # Create a script file to avoid quote escaping issues
+    $ScriptDir = "$ProjectPath\scripts\temp"
+    if (-not (Test-Path $ScriptDir)) {
+        New-Item -ItemType Directory -Path $ScriptDir -Force | Out-Null
+    }
+
+    # Create command wrapper script
+    $ScriptFile = "$ScriptDir\task_$TaskName.ps1"
+    # Use 'uv run' for Python commands since project uses uv package manager
+    $CommandWithUv = $Command -replace "^python ", "uv run python "
+    Set-Content -Path $ScriptFile -Value @"
+Set-Location '$ProjectPath'
+$CommandWithUv
+"@
+
+    # Create action using script file (cleaner than inline command)
     $Action = New-ScheduledTaskAction `
         -Execute "powershell.exe" `
-        -Argument "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$ProjectPath'; $Command`""
+        -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$ScriptFile`""
 
     # Create settings
     $Settings = New-ScheduledTaskSettingsSet `
