@@ -492,7 +492,11 @@ class NCAAFEdgeDetector:
             home_rating = ratings.get(home_team, 75.0)
 
             # Get market odds
-            game_odds = odds.get(game_id, {})
+            # NOTE: odds dict is keyed by "{normalized_away}_{normalized_home}"
+            # from _load_odds, NOT by the ESPN game_id, so construct the key
+            # from normalized team names
+            odds_key = f"{away_team}_{home_team}"
+            game_odds = odds.get(odds_key, {})
             if not game_odds:
                 logger.debug(f"No odds found for {matchup}")
                 return None
