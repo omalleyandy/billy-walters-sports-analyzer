@@ -6,6 +6,7 @@ Connects NewsInjuryEFactorAggregator to actual data sources:
 - ESPN news client (Playwright-based)
 - NFL.com official injury reports
 - Transaction feeds
+- X (Twitter) official news and injury posts
 
 Handles data transformation, validation, and caching with source tracking.
 
@@ -105,6 +106,18 @@ class RealDataIntegrator:
                 reliability_score=0.98,
                 coverage_pct=0.98,
             ),
+            "x_news": DataSource(
+                name="X (Twitter) Official News & Injuries",
+                source_type="news",
+                reliability_score=0.92,
+                coverage_pct=1.0,
+            ),
+            "x_injuries": DataSource(
+                name="X (Twitter) Official Injury Reports",
+                source_type="injury",
+                reliability_score=0.94,
+                coverage_pct=1.0,
+            ),
         }
 
         # Data cache
@@ -117,6 +130,7 @@ class RealDataIntegrator:
         self.espn_news_client = None
         self.espn_transactions_client = None
         self.nfl_injury_scraper = None
+        self.x_news_scraper = None
 
     async def initialize(self) -> None:
         """Initialize data sources and clients."""
@@ -157,9 +171,21 @@ class RealDataIntegrator:
             )
 
             self.nfl_injury_scraper = NFLOfficialInjuryScraper()
-            logger.info("✓ NFL Official Injury Scraper initialized")
+            logger.info("[OK] NFL Official Injury Scraper initialized")
         except ImportError:
-            logger.warning("⚠ NFL Official Injury Scraper not available")
+            logger.warning("[WARNING] NFL Official Injury Scraper not available")
+
+        try:
+            # Import and initialize X News Scraper
+            from walters_analyzer.data_integration.x_news_scraper import (
+                XNewsScraper,
+            )
+
+            self.x_news_scraper = XNewsScraper()
+            await self.x_news_scraper.initialize()
+            logger.info("[OK] X News Scraper initialized")
+        except (ImportError, Exception) as e:
+            logger.warning(f"[WARNING] X News Scraper not available: {e}")
 
         logger.info("RealDataIntegrator initialized")
 
@@ -168,6 +194,12 @@ class RealDataIntegrator:
         if self.espn_news_client:
             try:
                 await self.espn_news_client.close()
+            except Exception:
+                pass
+
+        if self.x_news_scraper:
+            try:
+                await self.x_news_scraper.close()
             except Exception:
                 pass
 
@@ -309,16 +341,124 @@ class RealDataIntegrator:
                 )
                 results.append(sourced)
                 self._update_source_stats("espn_transactions", success=True)
-                logger.info(f"✓ Fetched {len(transactions)} transactions")
+                logger.info(f"[OK] Fetched {len(transactions)} transactions")
             except Exception as e:
                 logger.warning(f"ESPN transactions fetch failed: {e}")
                 self._update_source_stats("espn_transactions", success=False)
+
+        # Try X News Scraper
+        if self.x_news_scraper:
+            try:
+                # Get league-specific news (high relevance only)
+                x_news = await self.x_news_scraper.get_league_news(
+                    league, source_type="news", days=7, max_results=20
+                )
+                x_injuries = await self.x_news_scraper.get_league_news(
+                    league, source_type="injury", days=7, max_results=20
+                )
+
+                # Combine X posts into a single news item
+                all_posts = x_news + x_injuries
+                if all_posts:
+                    # Filter for high relevance (0.7+)
+                    high_relevance = [p for p in all_posts if p.relevance_score >= 0.7]
+
+                    if high_relevance:
+                        sourced = SourcedData(
+                            data={
+                                "posts": [
+                                    {
+                                        "author": p.author,
+                                        "text": p.text,
+                                        "type": p.source_type,
+                                        "relevance": p.relevance_score,
+                                        "engagement": p.likes + p.retweets,
+                                        "url": p.url,
+                                    }
+                                    for p in high_relevance
+                                ],
+                                "team": team,
+                                "league": league,
+                            },
+                            source_name="x_news",
+                            fetch_time=datetime.now(),
+                            reliability_score=self.sources["x_news"].reliability_score,
+                            confidence_pct=85.0,  # High relevance filtering
+                        )
+                        results.append(sourced)
+                        self._update_source_stats("x_news", success=True)
+                        logger.info(
+                            f"[OK] Fetched {len(high_relevance)} high-relevance X posts"
+                        )
+            except Exception as e:
+                logger.warning(f"X News Scraper fetch failed: {e}")
+                self._update_source_stats("x_news", success=False)
 
         # Cache first result
         if results:
             self.news_cache[cache_key] = results[0]
 
         return results
+
+    async def fetch_x_news(
+        self,
+        league: str = "nfl",
+        source_type: str = "all",
+        days: int = 7,
+        min_relevance: float = 0.7,
+    ) -> List[Dict[str, Any]]:
+        """
+        Fetch X (Twitter) news for a league.
+
+        Args:
+            league: League ("nfl" or "ncaaf")
+            source_type: "injury", "news", or "all"
+            days: Number of days to look back
+            min_relevance: Minimum relevance score (0.0-1.0)
+
+        Returns:
+            List of high-relevance X posts
+        """
+        if not self.x_news_scraper:
+            logger.warning("X News Scraper not available")
+            return []
+
+        try:
+            # Get posts from X scraper
+            posts = await self.x_news_scraper.get_league_news(
+                league, source_type=source_type, days=days, max_results=50
+            )
+
+            # Filter for high relevance
+            filtered = [p for p in posts if p.relevance_score >= min_relevance]
+
+            # Convert to dict format
+            results = [
+                {
+                    "author": p.author,
+                    "author_handle": p.author_handle,
+                    "text": p.text,
+                    "type": p.source_type,
+                    "relevance": p.relevance_score,
+                    "likes": p.likes,
+                    "retweets": p.retweets,
+                    "engagement": p.likes + p.retweets,
+                    "created_at": p.created_at.isoformat() if p.created_at else None,
+                    "url": p.url,
+                }
+                for p in filtered
+            ]
+
+            logger.info(
+                f"[OK] Fetched {len(results)} high-relevance X posts for {league}"
+            )
+            self._update_source_stats("x_news", success=True)
+            return results
+
+        except Exception as e:
+            logger.warning(f"X News fetch failed: {e}")
+            self._update_source_stats("x_news", success=False)
+            return []
 
     async def fetch_all_nfl_teams(
         self, data_type: str = "injuries"
@@ -548,7 +688,7 @@ class RealDataIntegrator:
         with open(output_file, "w") as f:
             json.dump(data, f, indent=2)
 
-        logger.info(f"✓ Exported E-Factor data to {output_file}")
+        logger.info(f"[OK] Exported E-Factor data to {output_file}")
         return output_file
 
 
@@ -561,20 +701,33 @@ async def main() -> None:
     print("\n=== Fetching Real Data ===")
     injuries = await integrator.fetch_nfl_injuries("DAL")
     if injuries:
-        print(f"✓ Injuries for DAL: {len(injuries.data.get('injuries', []))} found")
+        print(f"[OK] Injuries for DAL: {len(injuries.data.get('injuries', []))} found")
         print(f"  Source: {injuries.source_name}")
         print(f"  Confidence: {injuries.confidence_pct}%")
 
     # Fetch news
     news = await integrator.fetch_team_news("DAL", league="nfl")
     if news:
-        print(f"✓ News for DAL: {len(news[0].data.get('news', []))} articles")
+        print(f"[OK] News for DAL: {len(news[0].data.get('news', []))} articles")
         print(f"  Source: {news[0].source_name}")
+
+    # Fetch X News
+    print("\n=== X (Twitter) News ===")
+    x_news = await integrator.fetch_x_news(league="nfl", source_type="injury", days=7)
+    if x_news:
+        print(f"[OK] X posts for NFL: {len(x_news)} high-relevance posts found")
+        for post in x_news[:3]:  # Show top 3
+            print(f"  @{post['author_handle']}: {post['text'][:80]}...")
+            print(
+                f"    Relevance: {post['relevance']:.0%}, Engagement: {post['engagement']}"
+            )
+    else:
+        print("No high-relevance X posts found (API credentials may be missing)")
 
     # Get E-Factor inputs
     print("\n=== E-Factor Inputs ===")
     efactor = await integrator.get_efactor_inputs("DAL", league="nfl")
-    print(f"✓ E-Factor inputs generated:")
+    print("[OK] E-Factor inputs generated:")
     for key, value in efactor.items():
         if isinstance(value, (int, float)):
             print(f"  {key}: {value}")

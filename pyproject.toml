@@ -46,6 +46,7 @@ dependencies = [
     "psycopg2-binary>=2.9.11",
     "overtime-ag-client",
     "feedparser>=6.0.12",
+    "tweepy>=4.16.0",
 ]
 
 [project.scripts]
