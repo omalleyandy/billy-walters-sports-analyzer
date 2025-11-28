@@ -121,29 +121,80 @@ class NCAAFEdgeDetector:
         self.situational = NCAAFSituationalFactors()
         self.injury_calc = NCAAFInjuryImpacts()
 
-        # Team name mapping: ESPN display names -> Massey ratings names
-        self.team_name_map = {
-            "Ohio State": "Ohio St",
-            "Penn State": "Penn St",
-            "Mississippi State": "Mississippi St",
-            "Iowa State": "Iowa St",
-            "Arizona State": "Arizona St",
-            "Oklahoma State": "Oklahoma St",
-            "Texas State": "Texas St",
-            "San Jose State": "San Jose St",
-            "North Carolina State": "NC State",
-            "South Carolina State": "S.Carolina St",
-            "Colorado State": "Colorado St",
-            "Kansas State": "Kansas St",
-            "Utah State": "Utah St",
-            "Ball State": "Ball St",
-            "Arkansas State": "Arkansas St",
-            "Portland State": "Portland St",
-            "Toledo": "Toledo",
-            "Appalachian State": "App State",
-            "New Mexico State": "New Mexico St",
-            "South Dakota State": "South Dakota St",
+        # Load comprehensive team name mappings
+        self.team_name_map = self._load_team_mappings()
+
+    def _load_team_mappings(self) -> Dict[str, str]:
+        """
+        Load comprehensive team name mappings from Overtime.ag to Massey format.
+
+        Loads Overtime.ag -> Massey mappings and adds ESPN-specific overrides
+        for teams that have different names in different systems.
+
+        Returns:
+            Dictionary mapping team names to Massey rating format
+        """
+        mappings = {}
+
+        # Try to load from comprehensive mapping file first
+        mapping_file = (
+            self.project_root / "src" / "data" / "ncaaf_team_name_mapping.json"
+        )
+
+        if mapping_file.exists():
+            try:
+                with open(mapping_file, "r") as f:
+                    data = json.load(f)
+                    if "overtime_to_massey" in data:
+                        mappings = data["overtime_to_massey"].copy()
+                        logger.info(
+                            f"[OK] Loaded {len(mappings)} "
+                            "team mappings from comprehensive mapping file"
+                        )
+            except Exception as e:
+                logger.warning(f"Error loading team mappings: {e}")
+
+        # Add ESPN-specific overrides for teams with different display names
+        # These handle special cases where ESPN uses different names than Overtime.ag
+        espn_overrides = {
+            "Ole Miss": "Mississippi",  # ESPN: "Ole Miss Rebels" -> Massey: "Mississippi"
+            "Central Florida": "UCF",  # ESPN: "Central Florida Knights"
+            "Miami Florida": "Miami FL",
+            "Miami Ohio": "Miami OH",
         }
+
+        # Merge ESPN overrides into mappings (ESPN names may not be in Overtime map)
+        for espn_name, massey_name in espn_overrides.items():
+            if espn_name not in mappings:
+                mappings[espn_name] = massey_name
+
+        if not mappings:
+            # Fallback to basic ESPN -> Massey mappings if file not found
+            logger.info("Using fallback team name mappings")
+            mappings = {
+                "Ohio State": "Ohio St",
+                "Penn State": "Penn St",
+                "Mississippi State": "Mississippi St",
+                "Iowa State": "Iowa St",
+                "Arizona State": "Arizona St",
+                "Oklahoma State": "Oklahoma St",
+                "Texas State": "Texas St",
+                "San Jose State": "San Jose St",
+                "North Carolina State": "NC State",
+                "South Carolina State": "S.Carolina St",
+                "Colorado State": "Colorado St",
+                "Kansas State": "Kansas St",
+                "Utah State": "Utah St",
+                "Ball State": "Ball St",
+                "Arkansas State": "Arkansas St",
+                "Portland State": "Portland St",
+                "Appalachian State": "App State",
+                "New Mexico State": "New Mexico St",
+                "South Dakota State": "South Dakota St",
+                "Ole Miss": "Mississippi",
+            }
+
+        return mappings
 
     async def detect_edges(self, week: int) -> List[BettingEdge]:
         """
@@ -225,14 +276,39 @@ class NCAAFEdgeDetector:
                             team_data = competitor.get("team", {})
                             # Use displayName which has full team name (e.g., "Ohio State Buckeyes")
                             display_name = team_data.get("displayName", "")
-                            # Simply remove the last word (mascot) to get school name
-                            # "Ohio State Buckeyes" -> "Ohio State"
-                            # "Ole Miss Rebels" -> "Ole Miss"
-                            # "Georgia Bulldogs" -> "Georgia"
-                            team_parts = display_name.rsplit(" ", 1)  # Split from right, only once
-                            team_name = team_parts[0] if team_parts else display_name
-                            # Normalize to Massey format (e.g., "Ohio State" -> "Ohio St")
-                            team_name = self._normalize_team_name(team_name)
+
+                            # Strip known mascot suffixes (handles multi-word mascots)
+                            # First, try normalizing directly (for Overtime.ag style names)
+                            team_name = self._normalize_team_name(display_name)
+
+                            # If still unchanged after normalization, try stripping common suffixes
+                            if team_name == display_name:
+                                # List of common NCAAF team suffixes to strip
+                                # These are common word endings that appear in ESPN names
+                                suffixes_to_strip = [
+                                    "Yellow",
+                                    "Green",
+                                    "Red",
+                                    "Blue",
+                                    "White",
+                                    "Crimson",
+                                    "Orange",
+                                    "Purple",
+                                    "Gold",
+                                    "Silver",
+                                ]
+                                for suffix in suffixes_to_strip:
+                                    if display_name.endswith(f" {suffix}"):
+                                        stripped = display_name[
+                                            : -len(suffix) - 1
+                                        ].strip()
+                                        # Try normalizing with the stripped version
+                                        team_name = self._normalize_team_name(stripped)
+                                        if team_name != stripped:
+                                            break  # Found a match after stripping
+                                        # If still no match, keep the stripped version
+                                        if team_name == display_name:
+                                            team_name = stripped
 
                             if competitor.get("homeAway") == "home":
                                 home_team = team_name
@@ -251,7 +327,14 @@ class NCAAFEdgeDetector:
                             }
                             normalized_games.append(normalized_game)
 
-                logger.info(f"[OK] Normalized {len(normalized_games)} games from ESPN schedule")
+                logger.info(
+                    f"[OK] Normalized {len(normalized_games)} games from ESPN schedule"
+                )
+                # DEBUG: Log first few normalized games
+                for game in normalized_games[:3]:
+                    logger.debug(
+                        f"  Normalized game: {game['away_team']} @ {game['home_team']}"
+                    )
                 return normalized_games
 
             logger.warning(
@@ -283,7 +366,9 @@ class NCAAFEdgeDetector:
                     ratings_dict = {}
                     for team in data["teams"]:
                         team_name = team.get("team") or team.get("name", "")
-                        power_rating = team.get("powerRating") or team.get("rating", 75.0)
+                        power_rating = team.get("powerRating") or team.get(
+                            "rating", 75.0
+                        )
                         if team_name:
                             try:
                                 # Convert power rating to float if it's a string
@@ -327,26 +412,43 @@ class NCAAFEdgeDetector:
                 # NCAAF format: {"metadata": {...}, "games": [...]}
                 if isinstance(data, dict) and "games" in data:
                     for game in data["games"]:
-                        game_id = game.get("game_id", "")
-                        if game_id:
-                            # Normalize odds structure for edge detector
-                            normalized_game = {
-                                "game_id": game_id,
-                                "away_team": game.get("away_team", ""),
-                                "home_team": game.get("home_team", ""),
-                                "game_time": game.get("game_time", ""),
-                                # Handle nested spread structure (home team perspective)
-                                "spread": game.get("spread", {}).get("home", 0.0),
-                                # Handle nested total structure
-                                "total": game.get("total", {}).get("points", 0.0),
-                            }
-                            odds[game_id] = normalized_game
+                        away_team = game.get("away_team", "")
+                        home_team = game.get("home_team", "")
+
+                        if away_team and home_team:
+                            try:
+                                # Normalize team names to match Massey format
+                                # Odds uses Overtime.ag names which need mapping
+                                norm_away = self._normalize_team_name(away_team)
+                                norm_home = self._normalize_team_name(home_team)
+
+                                # Normalize odds structure for edge detector
+                                normalized_game = {
+                                    "game_id": game.get("game_id", ""),
+                                    "away_team": norm_away,
+                                    "home_team": norm_home,
+                                    "game_time": game.get("game_time", ""),
+                                    # Handle nested spread structure
+                                    "spread": game.get("spread", {}).get("home", 0.0),
+                                    # Handle nested total structure
+                                    "total": game.get("total", {}).get("points", 0.0),
+                                }
+                                # Key by normalized team matchup
+                                matchup_key = f"{norm_away}_{norm_home}"
+                                odds[matchup_key] = normalized_game
+                            except Exception as e:
+                                logger.debug(
+                                    f"Error normalizing odds game "
+                                    f"{away_team} @ {home_team}: {e}"
+                                )
                 elif isinstance(data, list):
                     # Handle JSONL-like format (list of games)
                     for game in data:
-                        game_id = game.get("game_id", "")
-                        if game_id:
-                            odds[game_id] = game
+                        away_team = game.get("away_team", "")
+                        home_team = game.get("home_team", "")
+                        if away_team and home_team:
+                            matchup_key = f"{away_team}_{home_team}"
+                            odds[matchup_key] = game
 
             logger.info(f"[OK] Loaded {len(odds)} games from odds file")
             return odds
@@ -526,22 +628,92 @@ class NCAAFEdgeDetector:
 
     def _normalize_team_name(self, team_name: str) -> str:
         """
-        Normalize ESPN team name to Massey ratings format.
+        Normalize ESPN/Overtime.ag team name to Massey ratings format.
 
+        Handles both ESPN names (with mascots) and Overtime.ag names:
         Examples:
-        - "Ohio State" -> "Ohio St"
-        - "Mississippi State" -> "Mississippi St"
-        - "Georgia" -> "Georgia"
+        - "Ole Miss Rebels" (ESPN) -> "Ole Miss" -> "Mississippi"
+        - "Mississippi" (Overtime.ag) -> "Mississippi"
+        - "Ohio State Buckeyes" (ESPN) -> "Ohio State" -> "Ohio St"
+        - "Ohio State" (Overtime.ag) -> "Ohio State" -> "Ohio St"
+        - "Georgia Bulldogs" (ESPN) -> "Georgia" -> "Georgia"
         """
-        # Check if we have explicit mapping
+        # First, try direct mapping (for Overtime.ag names already in map)
         if team_name in self.team_name_map:
             return self.team_name_map[team_name]
 
-        # Default handling: abbreviated states
-        if team_name.endswith(" State"):
-            return team_name.replace(" State", " St")
+        # Second, strip ESPN mascot suffix (e.g., "Ohio State Buckeyes" -> "Ohio State")
+        # Common NCAAF mascot suffixes (multi-word mascots first for proper matching)
+        mascots = [
+            # Multi-word mascots
+            "Crimson Tide",
+            "Scarlet Knights",
+            "Golden Eagles",
+            "Golden Gophers",
+            "Nittany Lions",
+            "Yellow Jackets",
+            "Demon Deacons",
+            "Blue Devils",
+            "Green Wave",
+            "Tar Heels",
+            "Fighting Illini",
+            "Sun Devils",  # Arizona State
+            # Single-word mascots
+            "Wildcats",
+            "Bulldogs",
+            "Tide",
+            "Tigers",
+            "Gators",
+            "Sooners",
+            "Longhorns",
+            "Cowboys",
+            "Aggies",
+            "Mavericks",
+            "Commodores",
+            "Vols",
+            "Volunteers",
+            "Rebels",
+            "Razorbacks",
+            "Gamecocks",
+            "Jayhawks",
+            "Utes",
+            "Buffaloes",
+            "Rams",
+            "Broncos",
+            "Falcons",
+            "Panthers",
+            "Hurricanes",
+            "Orange",
+            "Mountaineers",
+            "Hokies",
+            "Boilermakers",
+            "Hoosiers",
+            "Hawkeyes",
+            "Badgers",
+            "Spartans",
+            "Wolverines",
+            "Buckeyes",
+            "Terrapins",
+            "Bearcats",
+            "Cardinals",
+            "Cavaliers",
+        ]
 
-        return team_name
+        stripped = team_name
+        for mascot in mascots:
+            if team_name.endswith(f" {mascot}"):
+                stripped = team_name[: -len(mascot) - 1].strip()
+                break
+
+        # Try mapping again with stripped name
+        if stripped != team_name and stripped in self.team_name_map:
+            return self.team_name_map[stripped]
+
+        # Default handling: abbreviated states
+        if stripped.endswith(" State"):
+            return stripped.replace(" State", " St")
+
+        return stripped
 
     def _is_indoor_stadium(self, team: str) -> bool:
         """Check if team plays in indoor stadium"""
