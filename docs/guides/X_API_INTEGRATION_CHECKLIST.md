@@ -9,6 +9,7 @@
 ## Completed Work ✅
 
 ### Core Implementation
+
 - [x] **XNewsScraper class** - Full Tweepy v4 client with official sources
 - [x] **Free tier quota tracking** - Automatic quota enforcement (5 calls/day max)
 - [x] **24-hour caching** - Reduces API usage by ~95%
@@ -18,12 +19,14 @@
 - [x] **Code quality** - Ruff formatted, type-safe, fully tested
 
 ### Documentation
+
 - [x] **X_NEWS_SCRAPER_SETUP.md** - Complete API credential setup guide
 - [x] **X_API_FREE_TIER_GUIDE.md** - Free tier strategy and constraints
 - [x] **X_API_FREE_TIER_SUMMARY.md** - Implementation details and usage
 - [x] **X_EFACTOR_INTEGRATION.md** - E-Factor system integration guide
 
 ### Testing
+
 - [x] Quota status method works correctly
 - [x] Cache tracking functional
 - [x] Free tier mode enabled by default
@@ -35,8 +38,10 @@
 ## Next Steps (In Priority Order)
 
 ### STEP 1: Get X API Credentials ⚡ (CRITICAL)
+
 **Time**: 5-10 minutes
 **What to do**:
+
 1. Go to [https://developer.twitter.com/](https://developer.twitter.com/)
 2. Sign in with your X account (or create one)
 3. Create a new project
@@ -56,6 +61,7 @@
 ### STEP 2: Set Environment Variables (5 minutes)
 
 #### Option A: Add to .env file (Recommended)
+
 ```bash
 # .env file (in project root)
 X_API_KEY=your_api_key_here
@@ -67,6 +73,7 @@ X_ACCESS_TOKEN_SECRET=your_access_token_secret_here
 **Note**: .env is git-ignored, so secrets stay safe
 
 #### Option B: PowerShell Environment Variables
+
 ```powershell
 $env:X_API_KEY = "your_api_key_here"
 $env:X_API_SECRET = "your_api_secret_here"
@@ -93,6 +100,7 @@ uv run python scripts/scrapers/scrape_x_news.py --league nfl --type injury --day
 ```
 
 **What to look for**:
+
 - ✓ No "[ERROR] X API not configured" message
 - ✓ Posts appear from official sources
 - ✓ Relevance scores calculated (0.0-1.0)
@@ -207,11 +215,13 @@ X API Quota Status:
 ## Testing Checklist
 
 ### Phase 1: Credential Verification
+
 - [ ] X API credentials obtained from developer.twitter.com
 - [ ] Environment variables set (.env file or PowerShell)
 - [ ] Credentials verified (no "not configured" errors)
 
 ### Phase 2: Scraper Functionality
+
 - [ ] CLI tool runs: `uv run python scripts/scrapers/scrape_x_news.py --league nfl`
 - [ ] Posts retrieved from official sources
 - [ ] Relevance scores calculated correctly (0.0-1.0)
@@ -219,17 +229,20 @@ X API Quota Status:
 - [ ] Caching works: Second call uses cache (no API cost)
 
 ### Phase 3: Integration
+
 - [ ] RealDataIntegrator initializes X scraper without errors
 - [ ] `fetch_x_news()` returns posts
 - [ ] `fetch_team_news()` includes X posts in results
 - [ ] X news sources appear in source health report
 
 ### Phase 4: E-Factor Impact
+
 - [ ] /edge-detector shows E-Factor adjustments from X data
 - [ ] Edges change when X posts indicate major injuries
 - [ ] Edge changes are realistic (not excessive)
 
 ### Phase 5: Quota Management
+
 - [ ] Quota tracking shows correct daily usage
 - [ ] Cache prevents wasted API calls
 - [ ] Monthly budget stays within 100 post limit
@@ -239,7 +252,9 @@ X API Quota Status:
 ## Troubleshooting Quick Reference
 
 ### Issue: "X API credentials not found"
+
 **Solution**:
+
 ```bash
 # Check if variables are set
 echo $env:X_API_KEY  # PowerShell
@@ -250,15 +265,19 @@ X_API_KEY=your_key_here
 ```
 
 ### Issue: "API credentials not found. Set X_API_KEY..." warning
+
 **Solution**: Credentials weren't found. Check Step 2 above.
 
 ### Issue: No posts returned
+
 **Possible causes**:
+
 1. No recent posts from official sources (check X directly)
 2. Quota exhausted - wait 24 hours or check cache
 3. Free tier access tier too limited (rare)
 
 **Solution**:
+
 ```bash
 # Check quota
 uv run python -c "
@@ -269,6 +288,7 @@ print(scraper.get_quota_status())
 ```
 
 ### Issue: Rate limit 429 error
+
 **Why it happens**: Hit rate limit (1 request per 15 min)
 **Solution**: System auto-waits, then retries. Check logs.
 
@@ -279,16 +299,19 @@ print(scraper.get_quota_status())
 ### Where X Posts Feed Into System
 
 1. **RealDataIntegrator**
+
    - `fetch_x_news()` - Direct access to X posts
    - `fetch_team_news()` - X included in team news pipeline
    - Automatic initialization in `initialize()`
 
 2. **E-Factor System**
+
    - NewsDecayFunction applies time decay to X posts
    - SourceQualityTracker monitors X source reliability
    - IntegratedEdgeCalculator adjusts edges based on X news
 
 3. **Edge Detection**
+
    - `/edge-detector` automatically uses X data
    - Edges show E-Factor impact from X posts
    - Example: "DAL +3.5 → DAL +1.2 (Patrick Mahomes injury)"
@@ -333,6 +356,7 @@ OFFICIAL_SOURCES = {
 ### Daily Workflow
 
 **Tuesday 09:00 AM (EST)**:
+
 ```bash
 # Collect all data (includes X scraper)
 /collect-all-data
@@ -345,6 +369,7 @@ OFFICIAL_SOURCES = {
 ```
 
 **Expected X activity**:
+
 - 1 API call for NFL injuries (cache for 24h)
 - 1 API call for NCAAF injuries (cache for 24h)
 - Remaining 3 quota units available for breaking news
@@ -354,6 +379,7 @@ OFFICIAL_SOURCES = {
 ### Breaking News Scenario
 
 **Thursday 14:00 (Injury announced)**:
+
 ```bash
 # Quick check for latest news
 uv run python scripts/scrapers/scrape_x_news.py --league nfl --type injury --days 1
@@ -385,22 +411,23 @@ After completing all steps, you'll have:
 
 ## Timeline
 
-| Step | Task | Time | Status |
-|------|------|------|--------|
-| 1 | Get X API credentials | 5 min | ⏳ Pending |
-| 2 | Set environment variables | 5 min | ⏳ Pending |
-| 3 | Test CLI scraper | 2 min | ⏳ Pending |
-| 4 | Test RealDataIntegrator | 2 min | ⏳ Pending |
-| 5 | Add to daily workflow | 5 min | ⏳ Pending |
-| 6 | Verify E-Factor adjustments | 2 min | ⏳ Pending |
-| 7 | Monitor quota usage | 5 min | ⏳ Optional |
-| **Total** | - | **~26 min** | **- depends on user** |
+| Step      | Task                        | Time        | Status                |
+| --------- | --------------------------- | ----------- | --------------------- |
+| 1         | Get X API credentials       | 5 min       | ⏳ Pending            |
+| 2         | Set environment variables   | 5 min       | ⏳ Pending            |
+| 3         | Test CLI scraper            | 2 min       | ⏳ Pending            |
+| 4         | Test RealDataIntegrator     | 2 min       | ⏳ Pending            |
+| 5         | Add to daily workflow       | 5 min       | ⏳ Pending            |
+| 6         | Verify E-Factor adjustments | 2 min       | ⏳ Pending            |
+| 7         | Monitor quota usage         | 5 min       | ⏳ Optional           |
+| **Total** | -                           | **~26 min** | **- depends on user** |
 
 ---
 
 ## Summary
 
 **What's ready now**:
+
 - ✅ XNewsScraper fully implemented and tested
 - ✅ Integration with RealDataIntegrator complete
 - ✅ Free tier quota protection in place
@@ -409,6 +436,7 @@ After completing all steps, you'll have:
 - ✅ E-Factor system ready to use X data
 
 **What needs your action**:
+
 1. ⏳ Get X API credentials (5 min)
 2. ⏳ Set environment variables (5 min)
 3. ⏳ Test with live data (2-10 min)
@@ -421,6 +449,7 @@ After completing all steps, you'll have:
 ## Questions?
 
 Refer to:
+
 - **Setup**: [X_NEWS_SCRAPER_SETUP.md](X_NEWS_SCRAPER_SETUP.md)
 - **Free tier**: [X_API_FREE_TIER_GUIDE.md](X_API_FREE_TIER_GUIDE.md)
 - **Integration**: [X_EFACTOR_INTEGRATION.md](X_EFACTOR_INTEGRATION.md)
