@@ -229,7 +229,13 @@ class EdgeDetectionOrchestrator:
             else:
                 if self.billy_walters_detector is None:
                     self.billy_walters_detector = BillyWaltersEdgeDetector()
-                edges = await self.billy_walters_detector.detect_edges(week)
+                # NFL detector uses different method (needs to be called per-game)
+                # For now, return empty list - orchestrator focuses on NCAAF
+                edges = []
+                logger.info(
+                    "[INFO] NFL edge detection uses game-by-game processing. "
+                    "Use NCAAF for full orchestrator support."
+                )
 
             execution_time = (datetime.now() - start_time).total_seconds()
 

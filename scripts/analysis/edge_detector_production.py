@@ -191,9 +191,11 @@ class EdgeDetectionCLI:
 
 def main():
     """Main entry point"""
+    from argparse import RawDescriptionHelpFormatter
+
     parser = ArgumentParser(
         description="Production Edge Detection CLI",
-        formatter_class=lambda prog: parser.Formatter(prog, max_help_position=40),
+        formatter_class=RawDescriptionHelpFormatter,
     )
 
     # League selection
