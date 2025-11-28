@@ -59,7 +59,7 @@ This document contains critical information about working with the Billy Walters
 - **Quick CLI**: `python collect_action_network.py` for single scrape
 - Results: Complete sharp money pipeline ready for Week 13 analysis
 
-**📖 For detailed methodology, see**: [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
+**📖 For detailed methodology, see**: [docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md](docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md) and [docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md](docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md)
 
 ---
 
@@ -151,7 +151,7 @@ GITHUB_TOKEN=ghp_...
 
 **Key Insight**: Track ROI and Closing Line Value (CLV), not win percentage.
 
-**📖 For detailed methodology**: See [docs/guides/BILLY_WALTERS_METHODOLOGY.md](docs/guides/BILLY_WALTERS_METHODOLOGY.md)
+**📖 For detailed methodology**: See [docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md](docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md), [docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md](docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md), and [docs/guides/methodology/EFACTOR_INTEGRATION_GUIDE.md](docs/guides/methodology/EFACTOR_INTEGRATION_GUIDE.md)
 - Weather impact rules (temperature, wind, precipitation)
 - NFL vs NCAAF differences (power ratings, injuries, home field bonus)
 - Success metrics: ROI (primary), ATS (secondary), CLV (tertiary)
