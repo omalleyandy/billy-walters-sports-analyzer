@@ -48,7 +48,16 @@ Step 4: Injury Reports (CRITICAL Billy Walters Factor)
 - Position-specific impact calculations
 - Recovery timeline tracking
 
-Step 5: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
+Step 5: X (Twitter) News & Injuries - ✨ NEW (2025-11-28)
+- Official X sources: @NFL, @AdamSchefter, @FieldYates, @ESPNCollegeFB
+- Automatic injury updates and breaking news
+- Free tier implementation (5 calls/day, 24-hour caching)
+- Command: `uv run python scripts/scrapers/scrape_x_news_integrated.py --all`
+- Output: `output/x_news/integrated/x_news_*.json`
+- Integration: RealDataIntegrator with E-Factor system
+- Status: ✅ Ready for production
+
+Step 6: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
 - AccuWeather API (primary) - Now working correctly with async/await
 - OpenWeather API (fallback)
 - Game-time forecasts (real temperature, wind speed, conditions)
@@ -56,7 +65,7 @@ Step 5: Weather Forecasts (Game Context) - ✅ FIXED 2025-11-12
 - Uses your ACCUWEATHER_API_KEY from .env
 - ~8-10 API calls per run (only outdoor stadiums)
 
-Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-25**
+Step 7: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-25**
 - Overtime.ag API (primary) - Direct API access, no browser required
   - Method: scrape_overtime_api.py
   - Speed: ~5 seconds for NFL + NCAAF
@@ -98,7 +107,7 @@ Step 6: Odds Data & Sharp Action (Market Lines) - **UPDATED 2025-11-25**
   - Use case: Sunday live monitoring
   - Not needed for pre-game workflow
 
-Step 7: Billy Walters Analysis
+Step 8: Billy Walters Analysis
 - NFL edge detection (spreads) - uses billy_walters_edge_detector.py
 - NFL edge detection (totals) - separate totals analysis
 - NCAAF edge detection (NEW 2025-11-23) - uses ncaaf_edge_detector.py
