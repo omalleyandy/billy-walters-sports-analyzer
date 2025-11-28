@@ -280,9 +280,7 @@ class NCAAFEdgeDetector:
 
                             # Normalize to Overtime.ag format for odds matching
                             # This strips mascots and applies special mappings
-                            team_name = self._normalize_for_odds_matching(
-                                display_name
-                            )
+                            team_name = self._normalize_for_odds_matching(display_name)
 
                             if competitor.get("homeAway") == "home":
                                 home_team = team_name
