@@ -27,12 +27,17 @@ Usage:
 import asyncio
 import json
 import logging
+import os
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 
 import tweepy
+from dotenv import load_dotenv
+
+# Load .env file for credentials
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -174,28 +179,17 @@ class XNewsScraper:
 
     def __init__(
         self,
-        api_key: Optional[str] = None,
-        api_secret: Optional[str] = None,
-        access_token: Optional[str] = None,
-        access_secret: Optional[str] = None,
+        bearer_token: Optional[str] = None,
         output_dir: str = "output/x_news",
     ):
         """
         Initialize X scraper with API credentials.
 
         Args:
-            api_key: X API key (from environment if not provided)
-            api_secret: X API secret
-            access_token: X access token
-            access_secret: X access token secret
+            bearer_token: X Bearer Token (from environment if not provided)
             output_dir: Directory for caching posts
         """
-        import os
-
-        self.api_key = api_key or os.getenv("X_API_KEY")
-        self.api_secret = api_secret or os.getenv("X_API_SECRET")
-        self.access_token = access_token or os.getenv("X_ACCESS_TOKEN")
-        self.access_secret = access_secret or os.getenv("X_ACCESS_TOKEN_SECRET")
+        self.bearer_token = bearer_token or os.getenv("X_BEARER_TOKEN")
 
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -213,21 +207,15 @@ class XNewsScraper:
     async def initialize(self) -> bool:
         """Initialize X API client."""
         try:
-            if not all(
-                [self.api_key, self.api_secret, self.access_token, self.access_secret]
-            ):
+            if not self.bearer_token:
                 logger.warning(
-                    "X API credentials not found. Set X_API_KEY, X_API_SECRET, "
-                    "X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET environment variables."
+                    "X API credentials not found. Set X_BEARER_TOKEN environment variable."
                 )
                 return False
 
-            # Initialize Tweepy client with API v2
+            # Initialize Tweepy client with Bearer Token (OAuth 2.0)
             self.client = tweepy.Client(
-                consumer_key=self.api_key,
-                consumer_secret=self.api_secret,
-                access_token=self.access_token,
-                access_token_secret=self.access_secret,
+                bearer_token=self.bearer_token,
                 wait_on_rate_limit=True,
             )
 
@@ -339,59 +327,59 @@ class XNewsScraper:
                 logger.warning(f"No sources configured for {league} {source_type}")
                 return []
 
-            # Search for posts from official sources
-            search_query = self._build_search_query(league, source_type)
             start_time = datetime.utcnow() - timedelta(days=days)
 
             logger.info(
-                f"Searching {league.upper()} posts "
-                f"(source: {source_type}, days: {days})"
+                f"Fetching {league.upper()} {source_type} posts "
+                f"from official sources (days: {days})"
             )
 
-            # Use search_recent_tweets endpoint
+            # Fetch posts from each official source account (free tier compatible)
             try:
-                tweets = self.client.search_recent_tweets(
-                    query=search_query,
-                    start_time=start_time,
-                    max_results=min(max_results, 100),
-                    tweet_fields=["created_at", "author_id", "public_metrics"],
-                    expansions=["author_id"],
-                    user_fields=["username", "name"],
+                for source_handle in sources:
+                    # Get user by username (free tier works)
+                    user = self.client.get_user(username=source_handle.lstrip("@"))
+                    if not user.data:
+                        logger.warning(f"Could not find user {source_handle}")
+                        continue
+
+                    # Get user's recent tweets (free tier works)
+                    tweets_response = self.client.get_users_tweets(
+                        id=user.data.id,
+                        start_time=start_time,
+                        max_results=min(max_results // len(sources), 100),
+                        tweet_fields=["created_at", "public_metrics"],
+                    )
+
+                    if tweets_response.data:
+                        for tweet in tweets_response.data:
+                            post = XPost(
+                                post_id=tweet.id,
+                                author=user.data.name,
+                                author_handle=user.data.username,
+                                text=tweet.text,
+                                created_at=tweet.created_at,
+                                likes=tweet.public_metrics.get("like_count", 0),
+                                retweets=tweet.public_metrics.get("retweet_count", 0),
+                                source_type=source_type,
+                                league=league,
+                                url=f"https://x.com/{user.data.username}/status/{tweet.id}",
+                            )
+
+                            # Calculate relevance score
+                            post.relevance_score = self._calculate_relevance(
+                                post.text, source_type
+                            )
+                            # Only include high relevance posts
+                            if post.relevance_score >= 0.33:  # At least 1 keyword match
+                                posts.append(post)
+
+                logger.info(
+                    f"[OK] Found {len(posts)} relevant {league} {source_type} posts"
                 )
-
-                if tweets[0]:  # tweets[0] contains tweets, tweets[1] contains includes
-                    users = {u.id: u for u in tweets[1]["users"]}
-
-                    for tweet in tweets[0]:
-                        user = users.get(tweet.author_id)
-                        post = XPost(
-                            post_id=tweet.id,
-                            author=user.name if user else "Unknown",
-                            author_handle=user.username if user else "unknown",
-                            text=tweet.text,
-                            created_at=tweet.created_at,
-                            likes=tweet.public_metrics.get("like_count", 0),
-                            retweets=tweet.public_metrics.get("retweet_count", 0),
-                            source_type=source_type,
-                            league=league,
-                            url=f"https://x.com/{user.username}/status/{tweet.id}"
-                            if user
-                            else None,
-                        )
-
-                        # Calculate relevance score
-                        post.relevance_score = self._calculate_relevance(
-                            post.text, source_type
-                        )
-                        posts.append(post)
-
-                logger.info(f"[OK] Found {len(posts)} relevant {league} posts")
 
             except tweepy.TweepyException as e:
-                logger.warning(
-                    f"X API error (may need elevated access): {e}. "
-                    "Returning empty results."
-                )
+                logger.warning(f"X API error: {e}. Returning empty results.")
                 return []
 
             # Cache results and record API call (free tier tracking)
@@ -406,7 +394,7 @@ class XNewsScraper:
             return posts
 
         except Exception as e:
-            logger.error(f"Error fetching {league} news: {e}")
+            logger.error(f"Error fetching {league} {source_type} news: {e}")
             return []
 
     async def get_team_news(
