@@ -203,6 +203,13 @@ class XNewsScraper:
         self.client: Optional[tweepy.Client] = None
         self.cache: Dict[str, List[XPost]] = {}
 
+        # Free tier quota tracking (1 request per 15 min, 100 posts/month)
+        self.api_calls: List[Dict[str, Any]] = []
+        self.free_tier_mode = True  # Enforce free tier limits
+        self.daily_limit = 5  # Conservative: max 5 calls/day
+        self.cache_ttl_hours = 24  # Cache for 24 hours
+        self.cache_timestamps: Dict[str, datetime] = {}
+
     async def initialize(self) -> bool:
         """Initialize X API client."""
         try:
@@ -231,6 +238,61 @@ class XNewsScraper:
             logger.error(f"Failed to initialize X API client: {e}")
             return False
 
+    def _record_api_call(self, league: str, source_type: str) -> None:
+        """Record an API call for quota tracking."""
+        now = datetime.now()
+        self.api_calls.append(
+            {
+                "timestamp": now,
+                "league": league,
+                "type": source_type,
+            }
+        )
+
+        # Clean old calls (older than 24h)
+        cutoff = now - timedelta(hours=24)
+        self.api_calls = [c for c in self.api_calls if c["timestamp"] > cutoff]
+
+        remaining = max(0, self.daily_limit - len(self.api_calls))
+        logger.info(f"[OK] API calls today: {len(self.api_calls)}/{self.daily_limit}")
+        logger.info(f"[OK] Remaining quota: {remaining}")
+
+    def _api_quota_exhausted(self) -> bool:
+        """Check if daily quota exceeded (free tier protection)."""
+        # Clean old calls (older than 24h)
+        now = datetime.now()
+        cutoff = now - timedelta(hours=24)
+        self.api_calls = [c for c in self.api_calls if c["timestamp"] > cutoff]
+
+        exhausted = len(self.api_calls) >= self.daily_limit
+        if exhausted:
+            logger.warning(
+                "[WARNING] Daily API quota exhausted. "
+                "Using cached data. "
+                "Next quota reset in 24 hours."
+            )
+        return exhausted
+
+    def _is_cache_fresh(self, cache_key: str) -> bool:
+        """Check if cached data is still valid."""
+        if cache_key not in self.cache_timestamps:
+            return False
+
+        age_hours = (
+            datetime.now() - self.cache_timestamps[cache_key]
+        ).total_seconds() / 3600
+        return age_hours < self.cache_ttl_hours
+
+    def _get_cached_posts(self, cache_key: str) -> List[XPost]:
+        """Get cached posts if available."""
+        if self._is_cache_fresh(cache_key):
+            age_hours = (
+                datetime.now() - self.cache_timestamps[cache_key]
+            ).total_seconds() / 3600
+            logger.info(f"[OK] Using cached posts ({age_hours:.1f}h old)")
+            return self.cache.get(cache_key, [])
+        return []
+
     async def get_league_news(
         self,
         league: str,
@@ -256,6 +318,19 @@ class XNewsScraper:
 
         posts = []
         cache_key = f"{league}_{source_type}_{days}d"
+
+        # Free tier: Check cache first (24-hour TTL)
+        cached = self._get_cached_posts(cache_key)
+        if cached:
+            return cached
+
+        # Free tier: Check quota before making API call
+        if self.free_tier_mode and self._api_quota_exhausted():
+            logger.warning(
+                "[WARNING] Daily quota exhausted. "
+                "Returning empty list. Use cache if available."
+            )
+            return []
 
         try:
             # Get source accounts
@@ -319,8 +394,14 @@ class XNewsScraper:
                 )
                 return []
 
-            # Cache results
-            self.cache[cache_key] = posts
+            # Cache results and record API call (free tier tracking)
+            if posts:
+                self.cache[cache_key] = posts
+                self.cache_timestamps[cache_key] = datetime.now()
+                self._record_api_call(league, source_type)
+                logger.info(
+                    f"[OK] Cached {len(posts)} posts for {cache_key} (24-hour TTL)"
+                )
 
             return posts
 
@@ -432,6 +513,23 @@ class XNewsScraper:
 
         matches = sum(1 for kw in keywords if kw in text_lower)
         return min(1.0, matches / 3.0)  # 3+ keywords = 1.0
+
+    def get_quota_status(self) -> Dict[str, Any]:
+        """Get current free tier quota status."""
+        # Clean old calls (older than 24h)
+        now = datetime.now()
+        cutoff = now - timedelta(hours=24)
+        self.api_calls = [c for c in self.api_calls if c["timestamp"] > cutoff]
+
+        remaining = max(0, self.daily_limit - len(self.api_calls))
+        return {
+            "calls_today": len(self.api_calls),
+            "daily_limit": self.daily_limit,
+            "remaining": remaining,
+            "exhausted": len(self.api_calls) >= self.daily_limit,
+            "cache_ttl_hours": self.cache_ttl_hours,
+            "cached_items": len(self.cache),
+        }
 
     async def export_posts(
         self,
