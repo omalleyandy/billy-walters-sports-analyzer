@@ -1,0 +1,60 @@
+- Track day-to-day NFL news: injuries, transactions, depth chart changes, role/usage shifts, and key matchup storylines that matter for betting and modeling.
+- Track NCAAF FBS news: CFP rankings, rivalry week updates, major injuries, coaching moves, and any playoff or bowl implications.
+- Emphasize items with clear modeling impact: line movement context, QB/skill position availability, OL/defense health, and macro narratives that could move sentiment or odds.
+- NFL:
+    - League/club-owned properties such as NFL.com news pages and team sites (e.g., nfl.com, teamname.com subdomains like panthers.com).nfl+3​
+    - NFL Football Operations pages for rules, policy, and integrity-related updates.profootballwriters+2​
+- NCAAF FBS:
+    - NCAA.com’s FBS football section and related official NCAA pages.ncaa​
+    - The College Football Playoff’s official site and releases, plus school athletic department sites for team-specific news. (CFP and most schools publish under .com/.edu domains managed by the organization itself.)
+- Confirm the source and domain
+    - Only trust feeds hosted on official domains
+- Check feed security and validity
+​- Verify account authenticity for social feeds
+- Cross-check content and behavior
+- Source and ownership fields
+    - Domain and link fields
+- Publisher/author identity
+- Structural and identifier fields
+    - Stable item identifiers 
+        - guid (RSS) or id (Atom/JSON)
+- Descriptive feed metadata
+    - Title and description
+       - title and description should clearly identify the official property 
+- Integrity and transport metadata
+- Protocol and security
+    - Feed URLs should be HTTPS with valid certificates registered to the expected organization; HTTP-only or certificate mismatches are risk flags.
+- Practical verification pattern for your stack
+    - When onboarding or auditing an NFL or NCAAF feed, treat authenticity as:
+        - Domain + link alignment
+        - Consistent identity metadata
+        - Stable IDs and structure over time
+- Parse and schema-validate the feed
+- Enforce domain and URL rules
+- Parse all feed- and item-level URLs
+    - Use a feed parser (Python feedparser, Node rss-parser, etc.) to parse XML/JSON
+- Flag or reject items 
+- Alert on patterns like:
+    - Large proportion of GUIDs changing for previously seen URLs.
+    - Many items sharing the same GUID.
+    - GUIDs that are empty, missing, or look like random ad/tracking tokens.
+- Cross-check canonical links and redirects
+    - Issue HEAD/GET requests (rate-limited) for a sample of item link URLs and verify:
+        - They return 2xx and eventually resolve to a page on the same whitelisted domain.
+        - Redirect chains are short and stay within the league/team/school ecosystem.
+    - Optionally, scrape the <title> of the target page and compare against the feed item title with a fuzzy match threshold to catch completely mismatched destinations.
+- Monitor temporal and volume patterns
+- Track over time for each feed:
+    - Items per day/week, distribution of pubDate/updated, average lag between pubDate and lastBuildDate.
+- Add anomaly detection rules, e.g.:
+    - Sudden 10x spike in daily items.
+    - Feed stops updating for N days during the season.
+     - Many items with pubDate far in the past or future.
+- These checks can run as a small job (e.g., daily) that logs metrics and pushes alerts into whatever monitoring stack you’re using.
+- Build a test harness for onboarding/CI
+    - For each new or changed feed, run a “health check” script that:
+   -  Fetches the feed.
+    - Runs schema tests, domain/URL checks, ID behavior checks (on historical snapshot if possible).
+    - Outputs a pass/fail report and basic metrics.
+    - Integrate this harness into the CI/CD data pipeline 
+- Add official NFL/NCAAF domains to ALLOWED_DOMAINS

@@ -349,6 +349,184 @@ class EFactorCalculator:
 
         return (points, desc)
 
+    # ===== KEY PLAYER IMPACT (FROM INJURIES/NEWS) =====
+    @classmethod
+    def calculate_key_player_impact_factor(
+        cls,
+        key_player_out: bool = False,
+        key_player_position: Optional[str] = None,
+        key_player_tier: Optional[str] = None,
+        impact_points: float = 0.0,
+    ) -> tuple[float, str]:
+        """
+        Calculate impact of key player absence/presence.
+
+        Based on position, tier (elite/star/starter), and specific impact value.
+
+        Args:
+            key_player_out: Whether key player is out
+            key_player_position: Position (QB, RB, WR, EDGE, CB, etc.)
+            key_player_tier: Tier (elite, star, starter, backup)
+            impact_points: Direct impact value (-8.0 to 0.0)
+
+        Returns:
+            Tuple of (point_adjustment, description)
+            Negative = Team disadvantaged by injury
+        """
+        if not key_player_out or impact_points == 0.0:
+            return (0.0, "No key player impact")
+
+        tier_label = key_player_tier or "starter"
+        pos_label = key_player_position or "unknown"
+
+        if impact_points <= -6.0:
+            severity = "critical"
+        elif impact_points <= -4.0:
+            severity = "severe"
+        else:
+            severity = "moderate"
+
+        desc = (
+            f"Key player out: {pos_label} ({tier_label}) "
+            f"{severity} impact -> {impact_points:.1f}pts"
+        )
+
+        return (impact_points, desc)
+
+    @classmethod
+    def calculate_position_group_health_factor(
+        cls,
+        position_group_health: float = 1.0,
+        position_injuries_count: int = 0,
+    ) -> tuple[float, str]:
+        """
+        Calculate position group health impact (multiple injuries same position).
+
+        Args:
+            position_group_health: Health factor (0.6 to 1.0)
+            position_injuries_count: Count of injuries in same position group
+
+        Returns:
+            Tuple of (point_adjustment, description)
+        """
+        if position_group_health == 1.0:
+            return (0.0, "Position group fully healthy")
+
+        health_impact = (position_group_health - 1.0) * 2.0
+
+        if position_injuries_count >= 3:
+            severity = "multiple position group injuries"
+        elif position_injuries_count == 2:
+            severity = "position group depleted"
+        else:
+            severity = "position group affected"
+
+        desc = (
+            f"Position group compromise: {severity} "
+            f"health={position_group_health:.1%} -> {health_impact:.1f}pts"
+        )
+
+        return (health_impact, desc)
+
+    @classmethod
+    def calculate_personnel_change_factor(
+        cls,
+        recent_transaction: bool = False,
+        transaction_impact: float = 0.0,
+    ) -> tuple[float, str]:
+        """
+        Calculate morale/chemistry impact from trades/signings/releases.
+
+        Args:
+            recent_transaction: Whether there was a recent transaction
+            transaction_impact: Impact value (-4.0 to 2.0)
+
+        Returns:
+            Tuple of (point_adjustment, description)
+        """
+        if not recent_transaction or transaction_impact == 0.0:
+            return (0.0, "No recent personnel changes")
+
+        if transaction_impact < 0:
+            direction = "loss"
+            emoji = "📉"
+        else:
+            direction = "gain"
+            emoji = "📈"
+
+        desc = (
+            f"Personnel {direction}: transaction impact {emoji} "
+            f"{transaction_impact:+.1f}pts"
+        )
+
+        return (transaction_impact, desc)
+
+    @classmethod
+    def calculate_morale_shift_factor(
+        cls,
+        morale_shift: float = 0.0,
+    ) -> tuple[float, str]:
+        """
+        Calculate confidence/morale shift from news and recent events.
+
+        Args:
+            morale_shift: Morale shift value (-1.0 to 1.0)
+
+        Returns:
+            Tuple of (point_adjustment, description)
+        """
+        if morale_shift == 0.0:
+            return (0.0, "Neutral team morale")
+
+        # Convert morale shift to point adjustment
+        adjustment = morale_shift * 0.3
+
+        if morale_shift > 0.5:
+            mood = "elevated mood, confidence high"
+        elif morale_shift > 0.0:
+            mood = "slightly elevated"
+        elif morale_shift < -0.5:
+            mood = "low morale, confidence shaken"
+        else:
+            mood = "slightly demoralized"
+
+        desc = f"Team morale: {mood} -> {adjustment:+.2f}pts"
+
+        return (adjustment, desc)
+
+    @classmethod
+    def calculate_coaching_stability_factor(
+        cls,
+        coaching_stability_score: float = 1.0,
+    ) -> tuple[float, str]:
+        """
+        Calculate coaching stability impact (accounts for time since change).
+
+        Args:
+            coaching_stability_score: Score (0.6 to 1.0), 1.0 = stable
+
+        Returns:
+            Tuple of (point_adjustment, description)
+        """
+        if coaching_stability_score == 1.0:
+            return (0.0, "Coaching staff stable")
+
+        stability_impact = (coaching_stability_score - 1.0) * 0.5
+
+        if coaching_stability_score < 0.7:
+            concern = "significant disruption"
+        elif coaching_stability_score < 0.85:
+            concern = "moderate disruption"
+        else:
+            concern = "minimal disruption"
+
+        desc = (
+            f"Coaching stability: {concern} "
+            f"score={coaching_stability_score:.1%} -> {stability_impact:.2f}pts"
+        )
+
+        return (stability_impact, desc)
+
     @classmethod
     def calculate_all_e_factors(
         cls,
@@ -366,6 +544,17 @@ class EFactorCalculator:
         playoff_position: str = "none",
         games_won: int = 0,
         games_lost: int = 0,
+        # NEW: News/Injury parameters
+        key_player_out: bool = False,
+        key_player_position: Optional[str] = None,
+        key_player_tier: Optional[str] = None,
+        key_player_impact: float = 0.0,
+        position_group_health: float = 1.0,
+        position_group_injuries: int = 0,
+        recent_transaction: bool = False,
+        transaction_impact: float = 0.0,
+        morale_shift: float = 0.0,
+        coaching_stability_score: float = 1.0,
     ) -> EFactorResult:
         """
         Calculate all E-Factors for a team in a specific game.
@@ -387,6 +576,16 @@ class EFactorCalculator:
             playoff_position: Current playoff standing
             games_won: Current winning streak length
             games_lost: Current losing streak length
+            key_player_out: Whether key player is injured/out
+            key_player_position: Position of injured player
+            key_player_tier: Tier of injured player (elite, star, starter)
+            key_player_impact: Point impact of key injury (-8.0 to 0.0)
+            position_group_health: Health of position group (0.6 to 1.0)
+            position_group_injuries: Count of injuries in position group
+            recent_transaction: Whether there was recent trade/signing/release
+            transaction_impact: Impact of transaction (-4.0 to 2.0)
+            morale_shift: Team morale change (-1.0 to 1.0)
+            coaching_stability_score: Coaching staff stability (0.6 to 1.0)
 
         Returns:
             EFactorResult with total points and breakdown
@@ -394,6 +593,7 @@ class EFactorCalculator:
         total_points = 0.0
         breakdown = {}
 
+        # Original 7 E-Factors
         # Revenge game factor
         revenge_pts, _ = cls.calculate_revenge_game_factor(
             played_earlier, earlier_loss_margin
@@ -439,9 +639,43 @@ class EFactorCalculator:
         total_points += losing_pts
         breakdown["losing_streak"] = losing_pts
 
+        # NEW: News/Injury E-Factors (from news feed aggregator)
+        # Key player impact factor
+        key_player_pts, _ = cls.calculate_key_player_impact_factor(
+            key_player_out, key_player_position, key_player_tier, key_player_impact
+        )
+        total_points += key_player_pts
+        breakdown["key_player_impact"] = key_player_pts
+
+        # Position group health factor
+        position_health_pts, _ = cls.calculate_position_group_health_factor(
+            position_group_health, position_group_injuries
+        )
+        total_points += position_health_pts
+        breakdown["position_group_health"] = position_health_pts
+
+        # Personnel change factor
+        personnel_pts, _ = cls.calculate_personnel_change_factor(
+            recent_transaction, transaction_impact
+        )
+        total_points += personnel_pts
+        breakdown["personnel_change"] = personnel_pts
+
+        # Morale shift factor
+        morale_pts, _ = cls.calculate_morale_shift_factor(morale_shift)
+        total_points += morale_pts
+        breakdown["morale_shift"] = morale_pts
+
+        # Coaching stability factor
+        stability_pts, _ = cls.calculate_coaching_stability_factor(
+            coaching_stability_score
+        )
+        total_points += stability_pts
+        breakdown["coaching_stability"] = stability_pts
+
         return EFactorResult(
             total_points=total_points,
-            adjustment=total_points,  # E-Factors applied directly (0.2 per factor)
+            adjustment=total_points,  # E-Factors applied directly
             breakdown=breakdown,
         )
 

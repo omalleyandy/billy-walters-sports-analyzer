@@ -45,6 +45,7 @@ dependencies = [
     "torch>=2.9.0",
     "psycopg2-binary>=2.9.11",
     "overtime-ag-client",
+    "feedparser>=6.0.12",
 ]
 
 [project.scripts]
