@@ -23,7 +23,7 @@ from . import monitor
 
 __all__ = [
     "analyze",
-    "scrape", 
+    "scrape",
     "clv",
     "status",
     "power_ratings",

@@ -23,40 +23,43 @@ console = Console()
 
 def run_status_check(verbose: bool = False, check_data: bool = True):
     """Run comprehensive status check."""
-    
-    console.print(Panel(
-        "[bold]Billy Walters System Status[/bold]",
-        title="🔍 Health Check",
-        border_style="blue",
-    ))
-    
+
+    console.print(
+        Panel(
+            "[bold]Billy Walters System Status[/bold]",
+            title="🔍 Health Check",
+            border_style="blue",
+        )
+    )
+
     checks = []
-    
+
     # 1. Check configuration
     console.print("\n[bold]Configuration:[/bold]")
     try:
         from walters_analyzer.config import get_settings
+
         settings = get_settings()
         console.print("  [green]✓[/green] Settings loaded")
         checks.append(("Configuration", True))
-        
+
         if verbose:
             console.print(f"    Project root: {settings.project_root}")
             console.print(f"    Data directory: {settings.data_dir}")
     except Exception as e:
         console.print(f"  [red]✗[/red] Settings failed: {e}")
         checks.append(("Configuration", False))
-    
+
     # 2. Check database connection
     console.print("\n[bold]Database:[/bold]")
     try:
         import psycopg2
         from dotenv import load_dotenv
         import os
-        
+
         load_dotenv()
         db_url = os.getenv("DATABASE_URL")
-        
+
         if db_url:
             # Try to connect
             conn = psycopg2.connect(db_url)
@@ -72,13 +75,14 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
     except Exception as e:
         console.print(f"  [red]✗[/red] Database error: {e}")
         checks.append(("Database", False))
-    
+
     # 3. Check API keys
     console.print("\n[bold]API Keys:[/bold]")
     from dotenv import load_dotenv
     import os
+
     load_dotenv()
-    
+
     api_keys = [
         ("ANTHROPIC_API_KEY", "Anthropic"),
         ("OPENWEATHER_API_KEY", "OpenWeather"),
@@ -86,7 +90,7 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
         ("HIGHLIGHTLY_API_KEY", "Highlightly"),
         ("FIRECRAWL_API_KEY", "Firecrawl"),
     ]
-    
+
     for env_var, name in api_keys:
         value = os.getenv(env_var)
         if value:
@@ -94,11 +98,11 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
             console.print(f"  [green]✓[/green] {name}: {masked}")
         else:
             console.print(f"  [yellow]○[/yellow] {name}: not configured")
-    
+
     # 4. Check data freshness
     if check_data:
         console.print("\n[bold]Data Freshness:[/bold]")
-        
+
         data_paths = [
             ("data/odds/nfl", "NFL Odds"),
             ("data/odds/ncaaf", "NCAAF Odds"),
@@ -106,7 +110,7 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
             ("data/power_ratings", "Power Ratings"),
             ("data/clv/bets.json", "CLV Tracking"),
         ]
-        
+
         for path_str, name in data_paths:
             path = Path(path_str)
             if path.exists():
@@ -116,14 +120,16 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
                     # Get most recent file in directory
                     files = list(path.glob("*.*"))
                     if files:
-                        mtime = max(datetime.fromtimestamp(f.stat().st_mtime) for f in files)
+                        mtime = max(
+                            datetime.fromtimestamp(f.stat().st_mtime) for f in files
+                        )
                     else:
                         console.print(f"  [yellow]○[/yellow] {name}: empty directory")
                         continue
-                
+
                 age = datetime.now() - mtime
                 age_str = format_age(age)
-                
+
                 if age < timedelta(hours=24):
                     console.print(f"  [green]✓[/green] {name}: {age_str} ago")
                     checks.append((name, True))
@@ -135,11 +141,12 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
                     checks.append((name, False))
             else:
                 console.print(f"  [dim]○[/dim] {name}: not found")
-    
+
     # 5. Check current week/season context
     console.print("\n[bold]Season Context:[/bold]")
     try:
         from walters_analyzer.utils.nfl_calendar import get_current_week
+
         week_info = get_current_week()
         console.print(f"  Current Week: {week_info.get('week', 'Unknown')}")
         console.print(f"  Season: {week_info.get('season', 'Unknown')}")
@@ -153,28 +160,34 @@ def run_status_check(verbose: bool = False, check_data: bool = True):
             console.print(f"  Season: {season} (estimated)")
         else:
             console.print("  [dim]Off-season[/dim]")
-    
+
     # Summary
     console.print("\n" + "=" * 50)
     passed = sum(1 for _, status in checks if status is True)
     failed = sum(1 for _, status in checks if status is False)
     skipped = sum(1 for _, status in checks if status is None)
-    
+
     if failed == 0:
-        console.print(f"[green]✓ All checks passed ({passed} ok, {skipped} skipped)[/green]")
+        console.print(
+            f"[green]✓ All checks passed ({passed} ok, {skipped} skipped)[/green]"
+        )
     else:
-        console.print(f"[red]✗ {failed} checks failed[/red] ({passed} ok, {skipped} skipped)")
-    
+        console.print(
+            f"[red]✗ {failed} checks failed[/red] ({passed} ok, {skipped} skipped)"
+        )
+
     # Recommendations
     if verbose:
         console.print("\n[bold]Recommendations:[/bold]")
-        
+
         # Check for stale data
         stale_checks = [name for name, status in checks if status is None]
         if stale_checks:
-            console.print(f"  [yellow]→[/yellow] Update stale data: {', '.join(stale_checks)}")
+            console.print(
+                f"  [yellow]→[/yellow] Update stale data: {', '.join(stale_checks)}"
+            )
             console.print("    Run: walters scrape all --sport nfl")
-        
+
         failed_checks = [name for name, status in checks if status is False]
         if failed_checks:
             console.print(f"  [red]→[/red] Fix failures: {', '.join(failed_checks)}")
@@ -202,11 +215,13 @@ def format_age(delta: timedelta) -> str:
 def status_default(
     ctx: typer.Context,
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Show detailed status"),
-    check_data: bool = typer.Option(True, "--check-data/--no-check-data", help="Check data freshness"),
+    check_data: bool = typer.Option(
+        True, "--check-data/--no-check-data", help="Check data freshness"
+    ),
 ):
     """
     Check system health and data freshness.
-    
+
     Example:
         walters status
         walters status --verbose

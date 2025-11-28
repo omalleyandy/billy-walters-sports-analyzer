@@ -9,7 +9,13 @@ from typing import Optional
 from datetime import datetime
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    TaskProgressColumn,
+)
 
 console = Console()
 
@@ -17,7 +23,7 @@ console = Console()
 def run_quickstart(sport: str = "nfl", week: Optional[int] = None):
     """
     Run the complete weekly analysis workflow.
-    
+
     Steps:
     1. Check system status
     2. Scrape latest odds (Overtime.ag)
@@ -25,14 +31,16 @@ def run_quickstart(sport: str = "nfl", week: Optional[int] = None):
     4. Find betting edges
     5. Generate recommendations
     """
-    console.print(Panel(
-        f"[bold]Weekly Analysis Workflow[/bold]\n\n"
-        f"Sport: {sport.upper()}\n"
-        f"Week: {week or 'Auto-detect'}",
-        title="🚀 Quick Start",
-        border_style="green",
-    ))
-    
+    console.print(
+        Panel(
+            f"[bold]Weekly Analysis Workflow[/bold]\n\n"
+            f"Sport: {sport.upper()}\n"
+            f"Week: {week or 'Auto-detect'}",
+            title="🚀 Quick Start",
+            border_style="green",
+        )
+    )
+
     steps = [
         ("Checking system status", check_status),
         ("Scraping latest odds", scrape_odds),
@@ -40,7 +48,7 @@ def run_quickstart(sport: str = "nfl", week: Optional[int] = None):
         ("Finding betting edges", find_edges),
         ("Generating recommendations", generate_recommendations),
     ]
-    
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -48,13 +56,12 @@ def run_quickstart(sport: str = "nfl", week: Optional[int] = None):
         TaskProgressColumn(),
         console=console,
     ) as progress:
-        
         main_task = progress.add_task("Running workflow...", total=len(steps))
         results = {}
-        
+
         for step_name, step_func in steps:
             progress.update(main_task, description=f"{step_name}...")
-            
+
             try:
                 result = step_func(sport=sport, week=week)
                 results[step_name] = {"status": "success", "data": result}
@@ -62,9 +69,9 @@ def run_quickstart(sport: str = "nfl", week: Optional[int] = None):
             except Exception as e:
                 results[step_name] = {"status": "error", "error": str(e)}
                 console.print(f"  [red]✗[/red] {step_name}: {e}")
-            
+
             progress.advance(main_task)
-    
+
     # Summary
     console.print("\n")
     display_summary(results, sport, week)
@@ -78,13 +85,14 @@ def check_status(sport: str, week: Optional[int]) -> dict:
         "database": True,
         "api_keys": True,
     }
-    
+
     try:
         from walters_analyzer.config import get_settings
+
         get_settings()
     except:
         checks["config"] = False
-    
+
     return checks
 
 
@@ -128,36 +136,38 @@ def generate_recommendations(sport: str, week: Optional[int]) -> dict:
 
 def display_summary(results: dict, sport: str, week: Optional[int]):
     """Display workflow summary."""
-    
+
     # Count successes/failures
     successes = sum(1 for r in results.values() if r["status"] == "success")
     failures = sum(1 for r in results.values() if r["status"] == "error")
-    
+
     if failures == 0:
         status_msg = "[green]All steps completed successfully[/green]"
     else:
         status_msg = f"[yellow]{successes} passed, {failures} failed[/yellow]"
-    
+
     # Get edge results
     edge_data = results.get("Finding betting edges", {}).get("data", {})
     opportunities = edge_data.get("opportunities", [])
-    
+
     # Get recommendation results
     rec_data = results.get("Generating recommendations", {}).get("data", {})
     recommendations = rec_data.get("recommendations", [])
-    
-    console.print(Panel(
-        f"[bold]Workflow Complete[/bold]\n\n"
-        f"Status: {status_msg}\n\n"
-        f"[bold]Results:[/bold]\n"
-        f"  Opportunities Found: {len(opportunities)}\n"
-        f"  Recommendations: {len(recommendations)}\n"
-        f"  Total Risk: {rec_data.get('total_risk', 0):.1f}%\n\n"
-        f"[dim]Run 'walters analyze edges --sport {sport}' for details[/dim]",
-        title="📊 Summary",
-        border_style="blue",
-    ))
-    
+
+    console.print(
+        Panel(
+            f"[bold]Workflow Complete[/bold]\n\n"
+            f"Status: {status_msg}\n\n"
+            f"[bold]Results:[/bold]\n"
+            f"  Opportunities Found: {len(opportunities)}\n"
+            f"  Recommendations: {len(recommendations)}\n"
+            f"  Total Risk: {rec_data.get('total_risk', 0):.1f}%\n\n"
+            f"[dim]Run 'walters analyze edges --sport {sport}' for details[/dim]",
+            title="📊 Summary",
+            border_style="blue",
+        )
+    )
+
     # Show next steps
     console.print("\n[bold]Next Steps:[/bold]")
     if len(opportunities) > 0:

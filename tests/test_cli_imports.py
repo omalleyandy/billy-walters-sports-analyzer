@@ -3,18 +3,20 @@
 
 import sys
 
+
 def test_imports():
     """Test all CLI module imports."""
     errors = []
-    
+
     # Test main CLI
     try:
         from walters_analyzer.cli.main import app, cli
+
         print("✓ Main CLI imports OK")
     except ImportError as e:
         errors.append(f"Main CLI: {e}")
         print(f"✗ Main CLI: {e}")
-    
+
     # Test command modules
     modules = [
         ("analyze", "walters_analyzer.cli.commands.analyze"),
@@ -26,7 +28,7 @@ def test_imports():
         ("monitor", "walters_analyzer.cli.commands.monitor"),
         ("quickstart", "walters_analyzer.cli.commands.quickstart"),
     ]
-    
+
     for name, module_path in modules:
         try:
             __import__(module_path)
@@ -34,7 +36,7 @@ def test_imports():
         except ImportError as e:
             errors.append(f"{name}: {e}")
             print(f"✗ {name}: {e}")
-    
+
     if errors:
         print(f"\n{len(errors)} import errors found!")
         return 1

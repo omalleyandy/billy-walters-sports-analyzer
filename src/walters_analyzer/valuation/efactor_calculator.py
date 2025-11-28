@@ -36,9 +36,7 @@ class EFactorResult:
 
     def __str__(self) -> str:
         """String representation of E-Factor result."""
-        return (
-            f"E-Factors: {self.total_points:.2f} pts -> {self.adjustment:.2f} adjustment"
-        )
+        return f"E-Factors: {self.total_points:.2f} pts -> {self.adjustment:.2f} adjustment"
 
 
 class EFactorCalculator:
@@ -176,9 +174,7 @@ class EFactorCalculator:
             desc = f"Moderate lookahead: Next opponent +{next_opponent_strength} -> +{points}"
         else:
             points = cls.LOOKAHEAD_SLIGHT
-            desc = (
-                f"Slight lookahead: Next opponent +{next_opponent_strength} -> +{points}"
-            )
+            desc = f"Slight lookahead: Next opponent +{next_opponent_strength} -> +{points}"
 
         return (points, desc)
 

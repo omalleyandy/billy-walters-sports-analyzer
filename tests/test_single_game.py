@@ -12,6 +12,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
+
 async def main():
     """Test single game stats extraction."""
     client = NFLGameStatsClient(headless=False)  # Show browser for debugging
@@ -20,9 +21,7 @@ async def main():
         await client.connect()
 
         # Test single game (latest game URL from Week 12)
-        game_url = (
-            "https://www.nfl.com/games/bills-at-texans-2025-reg-12?tab=stats"
-        )
+        game_url = "https://www.nfl.com/games/bills-at-texans-2025-reg-12?tab=stats"
 
         print("\n" + "=" * 70)
         print("Testing Single Game Stats Extraction")
@@ -52,6 +51,7 @@ async def main():
     except Exception as e:
         print(f"\nERROR: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
