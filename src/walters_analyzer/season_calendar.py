@@ -34,10 +34,11 @@ NFL_2025_PLAYOFF_START = date(2026, 1, 10)  # Wild Card Weekend
 NFL_2025_SUPER_BOWL = date(2026, 2, 8)  # Super Bowl LX
 
 # NCAAF FBS 2025 Season Key Dates
-# Week 0 starts Saturday, August 23, 2025 (some teams)
-# Week 1 starts Saturday, August 30, 2025 (full slate)
-NCAAF_2025_WEEK_0_START = date(2025, 8, 23)
-NCAAF_2025_WEEK_1_START = date(2025, 8, 30)
+# Week 0 starts Saturday, August 16, 2025 (some teams)
+# Week 1 starts Saturday, August 23, 2025 (full slate begins)
+# Note: This aligns with ESPN/media week numbering where Nov 22-28 = Week 14 (Rivalry Week)
+NCAAF_2025_WEEK_0_START = date(2025, 8, 16)
+NCAAF_2025_WEEK_1_START = date(2025, 8, 23)
 NCAAF_2025_REGULAR_SEASON_WEEKS = 14  # Through Week 14
 NCAAF_2025_CONFERENCE_CHAMPIONSHIP_WEEK = date(2025, 12, 6)
 NCAAF_2025_PLAYOFF_START = date(2025, 12, 20)  # First Round

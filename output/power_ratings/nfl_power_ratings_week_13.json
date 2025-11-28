@@ -1,0 +1,297 @@
+{
+  "week": 13,
+  "league": "nfl",
+  "generated": "2025-11-27T23:06:40.960527",
+  "methodology": "Billy Walters 70-100 scale",
+  "formula": "Base 85 + (Net Margin * 0.5) + (TO Margin * 0.3)",
+  "ratings": [
+    {
+      "team": "Los Angeles Rams",
+      "rating": 94.4,
+      "tier": "ELITE",
+      "ppg": 27.818,
+      "papg": 16.273,
+      "net_margin": 11.5,
+      "to_margin": 12.0
+    },
+    {
+      "team": "Indianapolis Colts",
+      "rating": 91.3,
+      "tier": "ELITE",
+      "ppg": 31.0,
+      "papg": 20.818,
+      "net_margin": 10.2,
+      "to_margin": 4.0
+    },
+    {
+      "team": "Houston Texans",
+      "rating": 90.8,
+      "tier": "ELITE",
+      "ppg": 22.091,
+      "papg": 16.545,
+      "net_margin": 5.5,
+      "to_margin": 10.0
+    },
+    {
+      "team": "Chicago Bears",
+      "rating": 89.7,
+      "tier": "GOOD",
+      "ppg": 26.273,
+      "papg": 26.545,
+      "net_margin": -0.3,
+      "to_margin": 16.0
+    },
+    {
+      "team": "Detroit Lions",
+      "rating": 89.7,
+      "tier": "GOOD",
+      "ppg": 29.167,
+      "papg": 22.833,
+      "net_margin": 6.3,
+      "to_margin": 5.0
+    },
+    {
+      "team": "Green Bay Packers",
+      "rating": 89.0,
+      "tier": "GOOD",
+      "ppg": 24.5,
+      "papg": 18.833,
+      "net_margin": 5.7,
+      "to_margin": 4.0
+    },
+    {
+      "team": "New England Patriots",
+      "rating": 88.8,
+      "tier": "GOOD",
+      "ppg": 26.5,
+      "papg": 18.833,
+      "net_margin": 7.7,
+      "to_margin": 0
+    },
+    {
+      "team": "Kansas City Chiefs",
+      "rating": 88.6,
+      "tier": "GOOD",
+      "ppg": 25.417,
+      "papg": 19.333,
+      "net_margin": 6.1,
+      "to_margin": 2.0
+    },
+    {
+      "team": "Philadelphia Eagles",
+      "rating": 88.2,
+      "tier": "GOOD",
+      "ppg": 23.182,
+      "papg": 20.455,
+      "net_margin": 2.7,
+      "to_margin": 6.0
+    },
+    {
+      "team": "Pittsburgh Steelers",
+      "rating": 87.9,
+      "tier": "GOOD",
+      "ppg": 24.909,
+      "papg": 23.909,
+      "net_margin": 1.0,
+      "to_margin": 8.0
+    },
+    {
+      "team": "Seattle Seahawks",
+      "rating": 87.8,
+      "tier": "GOOD",
+      "ppg": 29.455,
+      "papg": 19.727,
+      "net_margin": 9.7,
+      "to_margin": -7.0
+    },
+    {
+      "team": "Buffalo Bills",
+      "rating": 87.1,
+      "tier": "GOOD",
+      "ppg": 28.273,
+      "papg": 22.909,
+      "net_margin": 5.4,
+      "to_margin": -2.0
+    },
+    {
+      "team": "Denver Broncos",
+      "rating": 87.1,
+      "tier": "GOOD",
+      "ppg": 23.364,
+      "papg": 17.455,
+      "net_margin": 5.9,
+      "to_margin": -3.0
+    },
+    {
+      "team": "Jacksonville Jaguars",
+      "rating": 87.0,
+      "tier": "GOOD",
+      "ppg": 24.273,
+      "papg": 22.727,
+      "net_margin": 1.5,
+      "to_margin": 4.0
+    },
+    {
+      "team": "Tampa Bay Buccaneers",
+      "rating": 86.0,
+      "tier": "GOOD",
+      "ppg": 23.545,
+      "papg": 25.818,
+      "net_margin": -2.3,
+      "to_margin": 7.0
+    },
+    {
+      "team": "Atlanta Falcons",
+      "rating": 85.1,
+      "tier": "GOOD",
+      "ppg": 19.909,
+      "papg": 22.636,
+      "net_margin": -2.7,
+      "to_margin": 5.0
+    },
+    {
+      "team": "Los Angeles Chargers",
+      "rating": 85.1,
+      "tier": "GOOD",
+      "ppg": 22.364,
+      "papg": 21.636,
+      "net_margin": 0.7,
+      "to_margin": -1.0
+    },
+    {
+      "team": "Arizona Cardinals",
+      "rating": 84.6,
+      "tier": "AVERAGE",
+      "ppg": 22.545,
+      "papg": 25.727,
+      "net_margin": -3.2,
+      "to_margin": 4.0
+    },
+    {
+      "team": "San Francisco 49ers",
+      "rating": 84.0,
+      "tier": "AVERAGE",
+      "ppg": 23.417,
+      "papg": 21.75,
+      "net_margin": 1.7,
+      "to_margin": -6.0
+    },
+    {
+      "team": "Dallas Cowboys",
+      "rating": 83.9,
+      "tier": "AVERAGE",
+      "ppg": 29.25,
+      "papg": 28.5,
+      "net_margin": 0.8,
+      "to_margin": -5.0
+    },
+    {
+      "team": "Baltimore Ravens",
+      "rating": 83.6,
+      "tier": "AVERAGE",
+      "ppg": 24.083,
+      "papg": 24.417,
+      "net_margin": -0.3,
+      "to_margin": -4.0
+    },
+    {
+      "team": "Cleveland Browns",
+      "rating": 83.0,
+      "tier": "AVERAGE",
+      "ppg": 16.909,
+      "papg": 22.182,
+      "net_margin": -5.3,
+      "to_margin": 2.0
+    },
+    {
+      "team": "Carolina Panthers",
+      "rating": 81.9,
+      "tier": "AVERAGE",
+      "ppg": 18.0,
+      "papg": 22.417,
+      "net_margin": -4.4,
+      "to_margin": -3.0
+    },
+    {
+      "team": "Miami Dolphins",
+      "rating": 81.5,
+      "tier": "AVERAGE",
+      "ppg": 20.545,
+      "papg": 24.455,
+      "net_margin": -3.9,
+      "to_margin": -5.0
+    },
+    {
+      "team": "New York Giants",
+      "rating": 80.3,
+      "tier": "AVERAGE",
+      "ppg": 22.0,
+      "papg": 27.833,
+      "net_margin": -5.8,
+      "to_margin": -6.0
+    },
+    {
+      "team": "Cincinnati Bengals",
+      "rating": 80.2,
+      "tier": "AVERAGE",
+      "ppg": 23.333,
+      "papg": 31.167,
+      "net_margin": -7.8,
+      "to_margin": -3.0
+    },
+    {
+      "team": "Minnesota Vikings",
+      "rating": 80.0,
+      "tier": "BELOW AVG",
+      "ppg": 20.364,
+      "papg": 23.182,
+      "net_margin": -2.8,
+      "to_margin": -12.0
+    },
+    {
+      "team": "Washington Commanders",
+      "rating": 79.9,
+      "tier": "BELOW AVG",
+      "ppg": 21.455,
+      "papg": 26.909,
+      "net_margin": -5.5,
+      "to_margin": -8.0
+    },
+    {
+      "team": "Las Vegas Raiders",
+      "rating": 79.0,
+      "tier": "BELOW AVG",
+      "ppg": 15.0,
+      "papg": 25.182,
+      "net_margin": -10.2,
+      "to_margin": -3.0
+    },
+    {
+      "team": "New Orleans Saints",
+      "rating": 78.8,
+      "tier": "BELOW AVG",
+      "ppg": 15.0,
+      "papg": 24.909,
+      "net_margin": -9.9,
+      "to_margin": -4.0
+    },
+    {
+      "team": "New York Jets",
+      "rating": 77.8,
+      "tier": "BELOW AVG",
+      "ppg": 19.909,
+      "papg": 26.455,
+      "net_margin": -6.5,
+      "to_margin": -13.0
+    },
+    {
+      "team": "Tennessee Titans",
+      "rating": 77.6,
+      "tier": "BELOW AVG",
+      "ppg": 15.182,
+      "papg": 27.545,
+      "net_margin": -12.4,
+      "to_margin": -4.0
+    }
+  ]
+}

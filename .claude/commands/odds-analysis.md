@@ -1,17 +1,27 @@
-﻿Analyze betting odds and line movements for a game.
+﻿---
+description: Comprehensive odds analysis for current NFL and NCAAF weeks
+---
 
-Usage: /odds-analysis [game_id]
+Analyze betting odds and edges across all current week games for both NFL and NCAAF.
 
-This command will:
-1. Show current betting lines (spread, total, moneyline)
-2. Track line movements since opening
-3. Identify sharp action indicators
-4. Calculate implied probabilities
-5. Find value opportunities (positive EV)
+This command automatically detects the current week and provides:
 
-Metrics included:
-- Opening vs current lines
-- Line movement percentage
-- Public betting percentages
-- Sharp money indicators
-- Historical closing line value
+```bash
+cd scripts && uv run python analysis/comprehensive_odds_analysis.py
+```
+
+Analysis includes:
+1. **Edge Detection** - Identifies betting edges by strength tier (MAX BET, STRONG, MODERATE, LEAN)
+2. **Market Efficiency** - Assesses how efficiently the market is pricing games
+3. **Top Opportunities** - Ranks best bets by edge size and confidence
+4. **Week Adaptation** - Automatically detects current NFL Week and NCAAF Week from system date
+5. **Data Quality** - Shows which data sources are current and which need refresh
+
+Output includes:
+- Total games analyzed and teams matched
+- Edge strength distribution (count and average edge)
+- Top 5 highest-confidence plays with power ratings and odds
+- Data freshness assessment
+- Recommendations for next steps
+
+Key Principle: **Follow the money, not the tickets!** (Billy Walters)
