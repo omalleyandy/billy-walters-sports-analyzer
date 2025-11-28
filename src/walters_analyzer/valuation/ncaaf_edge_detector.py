@@ -274,41 +274,15 @@ class NCAAFEdgeDetector:
                         away_team = ""
                         for competitor in competitors:
                             team_data = competitor.get("team", {})
-                            # Use displayName which has full team name (e.g., "Ohio State Buckeyes")
+                            # ESPN displayName has full team name with mascot
+                            # (e.g., "Ohio State Buckeyes")
                             display_name = team_data.get("displayName", "")
 
-                            # Strip known mascot suffixes (handles multi-word mascots)
-                            # First, try normalizing directly (for Overtime.ag style names)
-                            team_name = self._normalize_team_name(display_name)
-
-                            # If still unchanged after normalization, try stripping common suffixes
-                            if team_name == display_name:
-                                # List of common NCAAF team suffixes to strip
-                                # These are common word endings that appear in ESPN names
-                                suffixes_to_strip = [
-                                    "Yellow",
-                                    "Green",
-                                    "Red",
-                                    "Blue",
-                                    "White",
-                                    "Crimson",
-                                    "Orange",
-                                    "Purple",
-                                    "Gold",
-                                    "Silver",
-                                ]
-                                for suffix in suffixes_to_strip:
-                                    if display_name.endswith(f" {suffix}"):
-                                        stripped = display_name[
-                                            : -len(suffix) - 1
-                                        ].strip()
-                                        # Try normalizing with the stripped version
-                                        team_name = self._normalize_team_name(stripped)
-                                        if team_name != stripped:
-                                            break  # Found a match after stripping
-                                        # If still no match, keep the stripped version
-                                        if team_name == display_name:
-                                            team_name = stripped
+                            # Normalize to Overtime.ag format for odds matching
+                            # This strips mascots and applies special mappings
+                            team_name = self._normalize_for_odds_matching(
+                                display_name
+                            )
 
                             if competitor.get("homeAway") == "home":
                                 home_team = team_name
@@ -417,10 +391,10 @@ class NCAAFEdgeDetector:
 
                         if away_team and home_team:
                             try:
-                                # Normalize team names to match Massey format
-                                # Odds uses Overtime.ag names which need mapping
-                                norm_away = self._normalize_team_name(away_team)
-                                norm_home = self._normalize_team_name(home_team)
+                                # Normalize team names to Overnight.ag format for
+                                # consistent key construction with _load_schedule()
+                                norm_away = self._normalize_for_odds_matching(away_team)
+                                norm_home = self._normalize_for_odds_matching(home_team)
 
                                 # Normalize odds structure for edge detector
                                 normalized_game = {
@@ -433,7 +407,8 @@ class NCAAFEdgeDetector:
                                     # Handle nested total structure
                                     "total": game.get("total", {}).get("points", 0.0),
                                 }
-                                # Key by normalized team matchup
+                                # Key by normalized team matchup (same format as
+                                # schedule for consistent matching)
                                 matchup_key = f"{norm_away}_{norm_home}"
                                 odds[matchup_key] = normalized_game
                             except Exception as e:
@@ -630,24 +605,16 @@ class NCAAFEdgeDetector:
             logger.debug(f"Error calculating weather adjustment: {e}")
             return 0.0
 
-    def _normalize_team_name(self, team_name: str) -> str:
+    def _strip_mascot(self, team_name: str) -> str:
         """
-        Normalize ESPN/Overtime.ag team name to Massey ratings format.
+        Strip ESPN mascot suffix from team name.
 
-        Handles both ESPN names (with mascots) and Overtime.ag names:
         Examples:
-        - "Ole Miss Rebels" (ESPN) -> "Ole Miss" -> "Mississippi"
-        - "Mississippi" (Overtime.ag) -> "Mississippi"
-        - "Ohio State Buckeyes" (ESPN) -> "Ohio State" -> "Ohio St"
-        - "Ohio State" (Overtime.ag) -> "Ohio State" -> "Ohio St"
-        - "Georgia Bulldogs" (ESPN) -> "Georgia" -> "Georgia"
+        - "Ohio State Buckeyes" -> "Ohio State"
+        - "Georgia Bulldogs" -> "Georgia"
+        - "Utah Utes" -> "Utah"
         """
-        # First, try direct mapping (for Overtime.ag names already in map)
-        if team_name in self.team_name_map:
-            return self.team_name_map[team_name]
-
-        # Second, strip ESPN mascot suffix (e.g., "Ohio State Buckeyes" -> "Ohio State")
-        # Common NCAAF mascot suffixes (multi-word mascots first for proper matching)
+        # Common NCAAF mascots (multi-word first for proper matching)
         mascots = [
             # Multi-word mascots
             "Crimson Tide",
@@ -661,7 +628,7 @@ class NCAAFEdgeDetector:
             "Green Wave",
             "Tar Heels",
             "Fighting Illini",
-            "Sun Devils",  # Arizona State
+            "Sun Devils",
             # Single-word mascots
             "Wildcats",
             "Bulldogs",
@@ -701,13 +668,81 @@ class NCAAFEdgeDetector:
             "Bearcats",
             "Cardinals",
             "Cavaliers",
+            "49ers",
+            "Knights",
+            "Bears",
+            "Fighting Irish",
         ]
 
-        stripped = team_name
         for mascot in mascots:
             if team_name.endswith(f" {mascot}"):
-                stripped = team_name[: -len(mascot) - 1].strip()
-                break
+                return team_name[: -len(mascot) - 1].strip()
+
+        return team_name
+
+    def _normalize_for_odds_matching(self, team_name: str) -> str:
+        """
+        Normalize team name to Overtime.ag format for odds matching.
+
+        This converts ESPN display names to match Overtime.ag format:
+        - Strip ESPN mascots first
+        - Apply any special mappings for teams with unique names
+        - Keep base team names (e.g., "Ohio State" not "Ohio St")
+
+        Examples:
+        - "Ohio State Buckeyes" -> "Ohio State"
+        - "Ole Miss Rebels" -> "Ole Miss"
+        - "San Jose State Spartans" -> "San Jose State"
+        - "Kent State Golden Flashes" -> "Kent"
+        - "Northern Illinois Huskies" -> "Northern Illinois"
+        """
+        # First strip the mascot
+        stripped = self._strip_mascot(team_name)
+
+        # Special case mappings for teams with unique Overtime.ag names
+        special_mappings = {
+            "Kent State": "Kent",
+            "Northern Illinois": "Northern Illinois",
+            "Central Michigan": "Central Michigan",
+            "Western Michigan": "Western Michigan",
+            "Eastern Michigan": "Eastern Michigan",
+            "Ball State": "Ball State",
+            "Miami (OH)": "Miami OH",
+            "Miami (FL)": "Miami FL",
+            "San Diego State": "San Diego State",
+            "San Jose State": "San Jose State",
+            "Florida Atlantic": "Florida Atlantic",
+            "Florida International": "Florida International",
+            "UL Monroe": "UL Monroe",
+            "South Alabama": "South Alabama",
+            "Arkansas State": "Arkansas State",
+            "Texas State": "Texas State",
+            "New Mexico State": "New Mexico State",
+            "Louisiana Tech": "Louisiana Tech",
+        }
+
+        if stripped in special_mappings:
+            return special_mappings[stripped]
+
+        return stripped
+
+    def _normalize_team_name(self, team_name: str) -> str:
+        """
+        Normalize ESPN/Overtime.ag team name to Massey ratings format.
+
+        Handles both ESPN names (with mascots) and Overtime.ag names:
+        Examples:
+        - "Ole Miss Rebels" (ESPN) -> "Ole Miss" -> "Mississippi"
+        - "Mississippi" (Overtime.ag) -> "Mississippi"
+        - "Ohio State Buckeyes" (ESPN) -> "Ohio State" -> "Ohio St"
+        - "Ohio State" (Overtime.ag) -> "Ohio State" -> "Ohio St"
+        """
+        # First, try direct mapping (for Overtime.ag names already in map)
+        if team_name in self.team_name_map:
+            return self.team_name_map[team_name]
+
+        # Strip mascot if present
+        stripped = self._strip_mascot(team_name)
 
         # Try mapping again with stripped name
         if stripped != team_name and stripped in self.team_name_map:
