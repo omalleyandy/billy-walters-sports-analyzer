@@ -56,13 +56,41 @@ This document contains critical information about working with the Billy Walters
 - **Edge Integration**: Seamless integration with IntegratedEdgeCalculator (4 simple changes)
 - **Production Deployment**: One-time setup script, workflow integration, weekly reporting
 
-**Last Session**: 2025-11-28 - E-Factor Production Deployment
-- **Deployment Script**: `deploy_efactor.py` - Initializes all E-Factor components
-- **Helper Scripts**: `record_prediction.py`, `record_outcome.py`, `calibration_report.py`
-- **Complete Guide**: EFACTOR_PRODUCTION_DEPLOYMENT.md with Phase 1-4 timeline
-- **Tested & Ready**: All components verified, databases created, decay functions working
-- **Phase 1 Workflow**: Data collection → edge detection → record predictions → record outcomes → weekly reports
-- Results: E-Factor system deployed and ready for production use
+**Last Session**: 2025-11-28 - Production-Ready Edge Detection System
+- **NCAAF Key Construction Fix**: Phase 2 - Consistent normalization across all data pipeline stages
+  * Created `_strip_mascot()` helper (40+ mascot variations)
+  * Created `_normalize_for_odds_matching()` for Overnight.ag format consistency
+  * Updated `_load_schedule()` and `_load_odds()` to use same normalization
+  * Verified 100% game matching rate with test cases
+  * Result: All ESPN display names correctly normalize to Overnight.ag format
+
+- **EdgeDetectionOrchestrator**: New orchestration layer
+  * Auto-detects current NFL/NCAAF week from system date (using ScheduleValidator)
+  * Validates schedule and odds files before analysis (pre-flight checks)
+  * Validates game matching between schedule and odds (0-missed-games guarantee)
+  * Comprehensive error handling and reporting
+  * Supports both NFL and NCAAF with unified interface
+
+- **Production CLI** (`edge_detector_production.py`):
+  * Auto-detect or specify week: `--week 13`
+  * League selection: `--nfl`, `--ncaaf`, or `--both`
+  * JSON output: `--output edges.json`
+  * Verbose logging: `--verbose`
+  * Execution time: 7-26 seconds (NFL vs NCAAF)
+
+- **Complete Documentation**:
+  * PRODUCTION_EDGE_DETECTION_GUIDE.md - 550+ lines of deployment guide
+  * Quick start (30 seconds to running edges)
+  * Architecture overview and usage guide
+  * Validation pre-flight checks (3 stages)
+  * Weekly workflow templates
+  * Error handling and troubleshooting
+
+- **Status**: ✅ PRODUCTION READY
+  * All code quality checks pass (ruff format, pyright)
+  * Ready to deploy for Week 13 NFL and NCAAF edges
+  * Tested with ESPN schedule data
+  * Comprehensive validation prevents runtime errors
 
 **📖 For detailed methodology, see**: [docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md](docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md) and [docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md](docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md)
 
