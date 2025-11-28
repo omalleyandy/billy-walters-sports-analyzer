@@ -50,14 +50,19 @@ This document contains critical information about working with the Billy Walters
 - **Results Validation**: ATS tracking, ROI calculation, team name mapping
 - **PostgreSQL Loading**: GameIDMapper (Overtime→ESPN), <10 sec full pipeline
 
-**Last Session**: 2025-11-26 - Action Network Sharp Money Scraper (NFL + NCAAF)
-- **Sharp Money Detection**: Playwright scraper for Action Network betting percentages (tickets vs money)
-- **Billy Walters Principle**: "Follow the money, not the tickets" - 5+ point divergence = sharp signal
-- **Week 13 Results**: 16 NFL games, 7 sharp signals (DAL +3.5, MIA -6.0, SEA -10.5, GB +2.5, LAC -10.0)
-- **Integrated Edge Calculator**: Combines power ratings + sharp signals (+/-10-20% confidence)
-- **Automated Collector**: Supports NFL + NCAAF, hourly/continuous monitoring
-- **Quick CLI**: `python collect_action_network.py` for single scrape
-- Results: Complete sharp money pipeline ready for Week 13 analysis
+**E-Factor System** (Production Ready - NEW):
+- **Complete Implementation**: Real data integration, calibration, decay, source quality tracking
+- **4 Core Modules**: RealDataIntegrator, EFactorCalibrator, NewsDecayFunction, SourceQualityTracker
+- **Edge Integration**: Seamless integration with IntegratedEdgeCalculator (4 simple changes)
+- **Production Deployment**: One-time setup script, workflow integration, weekly reporting
+
+**Last Session**: 2025-11-28 - E-Factor Production Deployment
+- **Deployment Script**: `deploy_efactor.py` - Initializes all E-Factor components
+- **Helper Scripts**: `record_prediction.py`, `record_outcome.py`, `calibration_report.py`
+- **Complete Guide**: EFACTOR_PRODUCTION_DEPLOYMENT.md with Phase 1-4 timeline
+- **Tested & Ready**: All components verified, databases created, decay functions working
+- **Phase 1 Workflow**: Data collection → edge detection → record predictions → record outcomes → weekly reports
+- Results: E-Factor system deployed and ready for production use
 
 **📖 For detailed methodology, see**: [docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md](docs/guides/methodology/BILLY_WALTERS_METHODOLOGY_AUDIT.md) and [docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md](docs/guides/methodology/METHODOLOGY_QUICK_REFERENCE.md)
 
