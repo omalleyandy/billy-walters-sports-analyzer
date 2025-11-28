@@ -121,6 +121,30 @@ class NCAAFEdgeDetector:
         self.situational = NCAAFSituationalFactors()
         self.injury_calc = NCAAFInjuryImpacts()
 
+        # Team name mapping: ESPN display names -> Massey ratings names
+        self.team_name_map = {
+            "Ohio State": "Ohio St",
+            "Penn State": "Penn St",
+            "Mississippi State": "Mississippi St",
+            "Iowa State": "Iowa St",
+            "Arizona State": "Arizona St",
+            "Oklahoma State": "Oklahoma St",
+            "Texas State": "Texas St",
+            "San Jose State": "San Jose St",
+            "North Carolina State": "NC State",
+            "South Carolina State": "S.Carolina St",
+            "Colorado State": "Colorado St",
+            "Kansas State": "Kansas St",
+            "Utah State": "Utah St",
+            "Ball State": "Ball St",
+            "Arkansas State": "Arkansas St",
+            "Portland State": "Portland St",
+            "Toledo": "Toledo",
+            "Appalachian State": "App State",
+            "New Mexico State": "New Mexico St",
+            "South Dakota State": "South Dakota St",
+        }
+
     async def detect_edges(self, week: int) -> List[BettingEdge]:
         """
         Detect all NCAAF edges for a given week.
@@ -178,7 +202,57 @@ class NCAAFEdgeDetector:
             schedule_file = self.data_dir / f"ncaaf_week_{week}_games.json"
             if schedule_file.exists():
                 with open(schedule_file, "r") as f:
-                    return json.load(f)
+                    raw_games = json.load(f)
+
+                # Normalize ESPN format to edge detector format
+                normalized_games = []
+                for game in raw_games:
+                    # Extract game info from ESPN structure
+                    game_id = game.get("id", "")
+                    game_name = game.get("name", "")
+                    short_name = game.get("shortName", "")
+
+                    # Extract teams from competitions
+                    comps = game.get("competitions", [])
+                    if comps:
+                        comp = comps[0]
+                        competitors = comp.get("competitors", [])
+
+                        # Find home and away teams
+                        home_team = ""
+                        away_team = ""
+                        for competitor in competitors:
+                            team_data = competitor.get("team", {})
+                            # Use displayName which has full team name (e.g., "Ohio State Buckeyes")
+                            display_name = team_data.get("displayName", "")
+                            # Simply remove the last word (mascot) to get school name
+                            # "Ohio State Buckeyes" -> "Ohio State"
+                            # "Ole Miss Rebels" -> "Ole Miss"
+                            # "Georgia Bulldogs" -> "Georgia"
+                            team_parts = display_name.rsplit(" ", 1)  # Split from right, only once
+                            team_name = team_parts[0] if team_parts else display_name
+                            # Normalize to Massey format (e.g., "Ohio State" -> "Ohio St")
+                            team_name = self._normalize_team_name(team_name)
+
+                            if competitor.get("homeAway") == "home":
+                                home_team = team_name
+                            elif competitor.get("homeAway") == "away":
+                                away_team = team_name
+
+                        game_time = comp.get("date", "")
+
+                        if home_team and away_team:
+                            normalized_game = {
+                                "game_id": game_id,
+                                "away_team": away_team,
+                                "home_team": home_team,
+                                "matchup": f"{away_team} @ {home_team}",
+                                "game_time": game_time,
+                            }
+                            normalized_games.append(normalized_game)
+
+                logger.info(f"[OK] Normalized {len(normalized_games)} games from ESPN schedule")
+                return normalized_games
 
             logger.warning(
                 f"Schedule file not found: {schedule_file}. "
@@ -205,9 +279,20 @@ class NCAAFEdgeDetector:
                 if "ratings" in data:
                     return data["ratings"]
                 elif "teams" in data:
-                    return {
-                        team["name"]: team.get("rating", 75.0) for team in data["teams"]
-                    }
+                    # Handle Massey format: teams list with "team" and "powerRating" keys
+                    ratings_dict = {}
+                    for team in data["teams"]:
+                        team_name = team.get("team") or team.get("name", "")
+                        power_rating = team.get("powerRating") or team.get("rating", 75.0)
+                        if team_name:
+                            try:
+                                # Convert power rating to float if it's a string
+                                if isinstance(power_rating, str):
+                                    power_rating = float(power_rating)
+                                ratings_dict[team_name] = power_rating
+                            except (ValueError, TypeError):
+                                ratings_dict[team_name] = 75.0
+                    return ratings_dict
                 else:
                     # Assume flat structure {team_name: rating, ...}
                     return {
@@ -238,17 +323,32 @@ class NCAAFEdgeDetector:
 
             odds = {}
             with open(latest_odds, "r") as f:
-                for line in f:
-                    if not line.strip():
-                        continue
-                    try:
-                        game = json.loads(line)
+                data = json.load(f)
+                # NCAAF format: {"metadata": {...}, "games": [...]}
+                if isinstance(data, dict) and "games" in data:
+                    for game in data["games"]:
+                        game_id = game.get("game_id", "")
+                        if game_id:
+                            # Normalize odds structure for edge detector
+                            normalized_game = {
+                                "game_id": game_id,
+                                "away_team": game.get("away_team", ""),
+                                "home_team": game.get("home_team", ""),
+                                "game_time": game.get("game_time", ""),
+                                # Handle nested spread structure (home team perspective)
+                                "spread": game.get("spread", {}).get("home", 0.0),
+                                # Handle nested total structure
+                                "total": game.get("total", {}).get("points", 0.0),
+                            }
+                            odds[game_id] = normalized_game
+                elif isinstance(data, list):
+                    # Handle JSONL-like format (list of games)
+                    for game in data:
                         game_id = game.get("game_id", "")
                         if game_id:
                             odds[game_id] = game
-                    except json.JSONDecodeError:
-                        continue
 
+            logger.info(f"[OK] Loaded {len(odds)} games from odds file")
             return odds
         except Exception as e:
             logger.error(f"Error loading odds: {e}")
@@ -423,6 +523,25 @@ class NCAAFEdgeDetector:
         except Exception as e:
             logger.debug(f"Error calculating weather adjustment: {e}")
             return 0.0
+
+    def _normalize_team_name(self, team_name: str) -> str:
+        """
+        Normalize ESPN team name to Massey ratings format.
+
+        Examples:
+        - "Ohio State" -> "Ohio St"
+        - "Mississippi State" -> "Mississippi St"
+        - "Georgia" -> "Georgia"
+        """
+        # Check if we have explicit mapping
+        if team_name in self.team_name_map:
+            return self.team_name_map[team_name]
+
+        # Default handling: abbreviated states
+        if team_name.endswith(" State"):
+            return team_name.replace(" State", " St")
+
+        return team_name
 
     def _is_indoor_stadium(self, team: str) -> bool:
         """Check if team plays in indoor stadium"""
