@@ -508,7 +508,7 @@ def analyze_game(
         async def fetch_market_odds():
             """Fetch current market odds from Overtime.ag API."""
             league_name = "NFL" if sport_lower == "nfl" else "College Football"
-            client = OvertimeApiClient()
+            client = OvertimeApiClient()  # Overtime.ag API client
             games = await client.fetch_games(
                 sport_type="Football",
                 sport_sub_type=league_name,
@@ -601,8 +601,10 @@ def analyze_game(
 
     if spread is not None:
         console.print("\n[bold]Line Analysis:[/bold]")
-        console.print(f"  [dim]Source: Overnight.ag API[/dim]")
-        console.print(f"  Market Spread: {spread:+.1f} (Total: {total:.1f})")
+        console.print("  [dim]Source: Overtime.ag API[/dim]")
+        console.print(
+            f"  Market Spread: {spread:+.1f} (Total: {total:.1f})"
+        )
         console.print(f"  Our Calculated Line: {predicted_spread:+.1f}")
         edge_value = predicted_spread - spread
         console.print(f"  Edge vs Market: {edge_value:+.1f} pts")
@@ -611,9 +613,17 @@ def analyze_game(
                 f"  Strength: {edge.edge_strength.upper()}"
             )
             if edge.recommended_bet:
-                bet_symbol = "[green]>>> BET[/green]" if edge.edge_points >= 3.5 else "[yellow]~ LEAN[/yellow]"
-                bet_team = edge.away_team if edge.recommended_bet == "away" else edge.home_team
-                console.print(f"  Recommendation: {bet_symbol} {bet_team}")
+                symbol = (
+                    "[green]>>> BET[/green]"
+                    if edge.edge_points >= 3.5
+                    else "[yellow]~ LEAN[/yellow]"
+                )
+                bet_team = (
+                    edge.away_team
+                    if edge.recommended_bet == "away"
+                    else edge.home_team
+                )
+                console.print(f"  Recommendation: {symbol} {bet_team}")
         else:
             console.print("  Edge: No edge >= 3.5 pts")
 
