@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Update**: 2025-11-28 - SQLite Migration Complete: PostgreSQL → SQLite, 19 raw data tables, gap analysis finished
+**Last Update**: 2025-11-29 - Phase 4 & 5.1 Complete: 4 data population scripts + 80+ CRUD tests for TIER 1 tables
 
 ---
 
@@ -138,6 +138,45 @@ This index provides quick navigation to all project documentation organized by t
   - ✅ Cross-validates all data sources before analysis
   - ✅ Clear warnings for week mismatches
   - ✅ Prevents analyzing wrong week's games
+
+#### TIER 1 Critical Tables (NEW - 2025-11-29)
+**Phase 4 & 5.1 Complete - Data Population & Testing**
+
+**📊 TIER 1 Tables** (Enhanced Billy Walters edge detection):
+- `player_valuations` - Player injury impact values (points)
+- `practice_reports` - Wednesday practice signals
+- `game_swe_factors` - Weather, emotional, special adjustments
+- `team_trends` - Streaks, desperation, emotional state
+
+**✅ Phase 4: Data Population Scripts**
+All 4 scripts created and tested:
+1. `populate_team_trends.py` - Streaks, desperation, playoff context (HIGHEST PRIORITY)
+2. `populate_swe_weather.py` - Temperature, wind, precipitation adjustments (SECOND)
+3. `scrape_practice_reports.py` - NFL.com practice reports scraper (THIRD)
+4. `populate_player_valuations_baseline.py` - Baseline from depth charts (FOURTH)
+
+**Usage**:
+```bash
+# Populate team trends for NFL Week 13
+python scripts/data_population/populate_team_trends.py --league nfl --week 13 --season 2025
+
+# Populate weather SWE factors
+python scripts/data_population/populate_swe_weather.py --league nfl --week 13 --season 2025
+```
+
+**✅ Phase 5.1: CRUD Test Suite**
+80+ comprehensive test cases across 4 files:
+- `test_player_valuations_crud.py` (20 tests)
+- `test_practice_reports_crud.py` (17 tests)
+- `test_game_swe_factors_crud.py` (22 tests)
+- `test_team_trends_crud.py` (21 tests)
+
+**Test Coverage**: Insert, query, update, constraints, validation, performance
+
+**📅 Roadmap**:
+- Phase 5.2: Integration tests (6+ scenarios)
+- Phase 5.3: End-to-end workflows
+- Phase 5.4: Performance benchmarks
 
 #### Other Analysis Tools
 - [NCAAF Edge Detection Design](features/ncaaf/NCAAF_EDGE_DETECTION_DESIGN.md) - Architecture and implementation plan for college football edges
