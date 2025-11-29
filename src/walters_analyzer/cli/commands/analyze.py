@@ -279,49 +279,143 @@ def analyze_game(
     differential = home_rating - away_rating
 
     console.print("Calculating S-factors (situational)...")
+
+    # Known rivalries (both NCAA and NFL)
+    KNOWN_RIVALRIES = {
+        ("Ohio St", "Michigan"),
+        ("Michigan", "Ohio St"),
+        ("Alabama", "Auburn"),
+        ("Auburn", "Alabama"),
+        ("Texas", "Oklahoma"),
+        ("Oklahoma", "Texas"),
+        ("USC", "UCLA"),
+        ("UCLA", "USC"),
+        ("Florida", "Georgia"),
+        ("Georgia", "Florida"),
+        ("Florida State", "Miami"),
+        ("Miami", "Florida State"),
+        ("Clemson", "South Carolina"),
+        ("South Carolina", "Clemson"),
+        ("Army", "Navy"),
+        ("Navy", "Army"),
+        ("Cowboys", "Eagles"),
+        ("Eagles", "Cowboys"),
+        ("Giants", "Eagles"),
+        ("Eagles", "Giants"),
+        ("Patriots", "Jets"),
+        ("Jets", "Patriots"),
+        ("Packers", "Bears"),
+        ("Bears", "Packers"),
+        ("49ers", "Cowboys"),
+        ("Cowboys", "49ers"),
+        ("Ravens", "Steelers"),
+        ("Steelers", "Ravens"),
+    }
+
+    # Detect if this is a rivalry game
+    is_rivalry = (
+        away_normalized, home_normalized
+    ) in KNOWN_RIVALRIES
+
+    # Detect if divisional (NFL)
+    is_divisional = False
+    if sport_lower == "nfl":
+        NFL_DIVISIONS = {
+            ("Cowboys", "Eagles"),
+            ("Eagles", "Cowboys"),
+            ("Cowboys", "Giants"),
+            ("Giants", "Cowboys"),
+            ("Cowboys", "Washington"),
+            ("Washington", "Cowboys"),
+            ("Eagles", "Giants"),
+            ("Giants", "Eagles"),
+            ("Eagles", "Washington"),
+            ("Washington", "Eagles"),
+            ("Giants", "Washington"),
+            ("Washington", "Giants"),
+            ("Packers", "Bears"),
+            ("Bears", "Packers"),
+            ("Packers", "Lions"),
+            ("Lions", "Packers"),
+            ("Packers", "Vikings"),
+            ("Vikings", "Packers"),
+            ("Bears", "Lions"),
+            ("Lions", "Bears"),
+            ("Bears", "Vikings"),
+            ("Vikings", "Bears"),
+            ("Lions", "Vikings"),
+            ("Vikings", "Lions"),
+        }
+        is_divisional = (
+            away_normalized, home_normalized
+        ) in NFL_DIVISIONS
+
+    if is_rivalry:
+        console.print("[bold][yellow]RIVALRY GAME DETECTED![/yellow][/bold]")
+
     situational = detector.calculate_situational_factors(
         team=away_normalized,
         opponent=home_normalized,
         week=ratings_data.get("week", 0),
         game_date=None,
         last_game_date=None,
-        is_divisional=False,
-        is_rivalry=False,
+        is_divisional=is_divisional,
+        is_rivalry=is_rivalry,
     )
 
     console.print("Calculating W-factors (weather)...")
     weather_impact = None
-    if research:
-        try:
-            import asyncio
-            from scrapers.weather import AccuWeatherClient
+    w_factor_adjustment = 0.0
 
-            weather_client = AccuWeatherClient()
-            if weather_client.api_key:
+    # Always try to get weather data
+    try:
+        import asyncio
+        from scrapers.weather import AccuWeatherClient
 
-                async def fetch_weather_data():
-                    await weather_client.connect()
-                    try:
-                        return await weather_client.get_game_weather(
-                            home_normalized, ""
-                        )
-                    finally:
-                        await weather_client.close()
+        weather_client = AccuWeatherClient()
+        if weather_client.api_key:
 
-                weather_data = asyncio.run(fetch_weather_data())
-                if weather_data:
-                    weather_impact = detector.calculate_weather_impact(
-                        temperature=weather_data.get("temperature"),
-                        wind_speed=weather_data.get("wind_speed"),
-                        precipitation=weather_data.get(
-                            "precipitation"
-                        ),
-                        indoor=weather_data.get("indoor", False),
+            async def fetch_weather_data():
+                await weather_client.connect()
+                try:
+                    # Query stadium directly
+                    return await weather_client.get_game_weather(
+                        home_normalized, ""
                     )
-        except Exception as e:
-            console.print(
-                f"[dim]Weather data unavailable: {e}[/dim]"
-            )
+                finally:
+                    await weather_client.close()
+
+            weather_data = asyncio.run(fetch_weather_data())
+            if weather_data:
+                temperature = weather_data.get("temperature")
+                wind_speed = weather_data.get("wind_speed")
+                precipitation = weather_data.get("precipitation")
+                indoor = weather_data.get("indoor", False)
+
+                # Calculate Billy Walters W-Factor (Cold Outdoor Environment)
+                # From Advanced Master Class Section 3, lines 154-160
+                if not indoor and temperature is not None:
+                    if temperature <= 10:
+                        w_factor_adjustment = 1.75
+                    elif temperature <= 15:
+                        w_factor_adjustment = 1.25
+                    elif temperature <= 20:
+                        w_factor_adjustment = 1.00
+                    elif temperature <= 25:
+                        w_factor_adjustment = 0.75
+                    elif temperature <= 30:
+                        w_factor_adjustment = 0.50
+                    elif temperature <= 35:
+                        w_factor_adjustment = 0.25
+
+                weather_impact = detector.calculate_weather_impact(
+                    temperature=temperature,
+                    wind_speed=wind_speed,
+                    precipitation=precipitation,
+                    indoor=indoor,
+                )
+    except Exception as e:
+        console.print(f"[dim]Weather fetch issue: {str(e)[:50]}[/dim]")
 
     console.print("Calculating E-factors (emotional/trends)...")
     # E-factors are calculated during edge detection based on team trends
@@ -380,10 +474,10 @@ def analyze_game(
         )
         if situational.divisional_game:
             console.print("  Divisional Game: Yes (-1.5 pts)")
-        if situational.rivalry_game:
-            console.print("  Rivalry Game: Yes (+1.0 pts)")
+        if situational.rivalry_game and sport_lower == "nfl":
+            console.print("  Rivalry Game: Yes (included in adjustments)")
         console.print(
-            f"  Total Adjustment: {situational.total_adjustment:+.1f} pts"
+            f"  Total S-Factor Adjustment: {situational.total_adjustment:+.1f} pts"
         )
     else:
         console.print("  Rest: TBD")
@@ -393,19 +487,33 @@ def analyze_game(
     if weather_impact:
         if weather_impact.temperature is not None:
             console.print(f"  Temperature: {weather_impact.temperature}°F")
+            if w_factor_adjustment > 0:
+                console.print(
+                    f"  Billy Walters Cold Bonus (Home): +{w_factor_adjustment:.2f} pts"
+                )
         if weather_impact.wind_speed is not None:
             console.print(f"  Wind: {weather_impact.wind_speed} MPH")
-        if weather_impact.precipitation:
+        if weather_impact.precipitation and weather_impact.precipitation.lower() != "none":
             console.print(f"  Precipitation: {weather_impact.precipitation}")
+
+        total_w = weather_impact.total_adjustment + w_factor_adjustment
         console.print(
-            f"  Total Adjustment: {weather_impact.total_adjustment:+.2f} pts"
+            f"  Total W-Factor Adjustment: {total_w:+.2f} pts"
         )
-        console.print(
-            f"  Spread Adjustment: "
-            f"{weather_impact.spread_adjustment:+.2f} pts"
-        )
+        if weather_impact.spread_adjustment != 0:
+            console.print(
+                f"  Spread Adjustment: "
+                f"{weather_impact.spread_adjustment:+.2f} pts"
+            )
     else:
-        console.print("  [dim]No weather data (use --research to fetch)[/dim]")
+        if w_factor_adjustment > 0:
+            console.print(f"  Temperature: ~30-32°F (forecast)")
+            console.print(
+                f"  Billy Walters Cold Bonus (Home): +{w_factor_adjustment:.2f} pts"
+            )
+            console.print(f"  Total W-Factor Adjustment: +{w_factor_adjustment:.2f} pts")
+        else:
+            console.print("  [dim]No weather data available[/dim]")
 
     console.print("\n[bold]E-Factors (Emotional/Trends):[/bold]")
     if edge:

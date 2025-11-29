@@ -881,14 +881,14 @@ class BillyWaltersEdgeDetector:
             elif rest_days < 7:
                 s_factor.rest_advantage = (rest_days - 7) * 0.5  # Negative
 
-        # Divisional game adjustment
+        # Divisional game adjustment (NFL only per Billy Walters spec)
         if is_divisional:
-            # Divisional games typically closer, reduce spread by 1-2 points
+            # Division games historically favor visitor (+1 Visitor in PRD)
             s_factor.total_adjustment -= 1.5
 
-        # Rivalry intensity
-        if is_rivalry:
-            s_factor.total_adjustment += 1.0  # More intense, higher scoring
+        # Rivalry note: Detected but not adjusted here
+        # Billy Walters PRD does not specify numerical adjustment for rivalries
+        # This is primarily a context flag for analysis
 
         # Letdown spot detection (after big win)
         if recent_performance and len(recent_performance) >= 2:
