@@ -1,42 +1,137 @@
 """
 Database Models
 
-Pydantic models for type-safe database operations.
+Pydantic models for SQLite-based sports betting analytics.
 """
 
 from datetime import datetime
 from decimal import Decimal
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
 
+class League(BaseModel):
+    """League model."""
+
+    id: int
+    name: str
+    display_name: str
+
+
+class Team(BaseModel):
+    """Team model."""
+
+    id: int
+    league_id: int
+    name: str
+    abbreviation: Optional[str] = None
+
+
 class Game(BaseModel):
-    """Game model."""
+    """Game/matchup model."""
 
+    id: Optional[int] = None
     game_id: str
-    season: int
+    league_id: int
     week: int
-    league: str = Field(..., pattern="^(NFL|NCAAF)$")
-    game_date: datetime
+    away_team_id: int
+    home_team_id: int
+    game_time: str
+    total: Optional[float] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
-    home_team: str
+
+class Edge(BaseModel):
+    """Detected betting edge model."""
+
+    id: Optional[int] = None
+    game_id: str
+    league_id: int
+    week: int
     away_team: str
+    home_team: str
+    game_time: str
+    predicted_line: float
+    market_line: float
+    edge: float
+    edge_abs: float
+    classification: str
+    kelly_pct: Optional[float] = None
+    win_rate: Optional[str] = None
+    recommendation: Optional[str] = None
+    rotation_team1: Optional[int] = None
+    rotation_team2: Optional[int] = None
+    total: Optional[float] = None
+    generated_at: Optional[str] = None
+    detected_at: Optional[str] = None
 
-    home_score: Optional[int] = None
-    away_score: Optional[int] = None
-    final_margin: Optional[int] = None
-    total_points: Optional[int] = None
 
-    status: str = "SCHEDULED"
-    stadium: Optional[str] = None
-    is_outdoor: Optional[bool] = None
-    is_neutral_site: bool = False
+class CLVPlay(BaseModel):
+    """CLV tracking play model."""
 
-    created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
+    id: Optional[int] = None
+    game_id: str
+    league_id: int
+    week: int
+    rank: Optional[int] = None
+    matchup: str
+    game_time: str
+    pick: str
+    pick_side: str
+    spread: float
+    total: Optional[float] = None
+    market_spread: Optional[float] = None
+    edge: Optional[float] = None
+    confidence: Optional[str] = None
+    kelly: Optional[float] = None
+    units_recommended: Optional[float] = None
+    away_team: str
+    home_team: str
+    away_power: Optional[float] = None
+    home_power: Optional[float] = None
+    opening_odds: Optional[float] = None
+    opening_line: Optional[float] = None
+    opening_datetime: Optional[str] = None
+    closing_odds: Optional[float] = None
+    closing_line: Optional[float] = None
+    closing_datetime: Optional[str] = None
+    result: Optional[str] = None
+    clv: Optional[float] = None
+    notes: Optional[str] = None
+    status: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
+class EdgeSession(BaseModel):
+    """Edge detection session metadata."""
+
+    id: Optional[int] = None
+    league_id: int
+    week: int
+    edges_found: Optional[int] = None
+    min_edge: Optional[float] = None
+    hfa: Optional[float] = None
+    generated_at: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class CLVSession(BaseModel):
+    """CLV tracking session metadata."""
+
+    id: Optional[int] = None
+    league_id: int
+    week: int
+    total_max_bet: Optional[int] = None
+    total_units_recommended: Optional[float] = None
+    status: Optional[str] = None
+    generated_at: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+# Legacy models (kept for compatibility)
 class PowerRating(BaseModel):
     """Power rating model."""
 
@@ -44,45 +139,35 @@ class PowerRating(BaseModel):
     week: int
     league: str = Field(..., pattern="^(NFL|NCAAF)$")
     team: str
-
     rating: Decimal
     offense_rating: Optional[Decimal] = None
     defense_rating: Optional[Decimal] = None
     special_teams_rating: Optional[Decimal] = None
-
     sos_adjustment: Optional[Decimal] = None
     recent_form_adjustment: Optional[Decimal] = None
     injury_adjustment: Optional[Decimal] = None
-
     source: str
     raw_rating: Optional[Decimal] = None
-
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
 
 class Odds(BaseModel):
     """Odds model."""
 
+    season: int
+    week: int
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
     game_id: str
-    sportsbook: str
-    odds_type: str = Field(..., pattern="^(opening|current|closing)$")
-
-    home_spread: Optional[Decimal] = None
-    home_spread_juice: int = -110
-    away_spread: Optional[Decimal] = None
-    away_spread_juice: int = -110
-
-    total: Optional[Decimal] = None
-    over_juice: int = -110
-    under_juice: int = -110
-
-    home_moneyline: Optional[int] = None
-    away_moneyline: Optional[int] = None
-
+    home_team: str
+    away_team: str
+    spread: Decimal
+    spread_odds: Optional[Decimal] = None
+    total: Decimal
+    total_odds: Optional[Decimal] = None
+    moneyline_home: Optional[Decimal] = None
+    moneyline_away: Optional[Decimal] = None
+    source: str
     timestamp: datetime
-    line_movement: Optional[Decimal] = None
-
     created_at: datetime = Field(default_factory=datetime.now)
 
 
@@ -90,230 +175,69 @@ class Bet(BaseModel):
     """Bet model."""
 
     bet_id: str
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
+    week: int
     game_id: str
-
-    # Bet details
-    bet_type: str = Field(..., pattern="^(spread|total|moneyline)$")
-    side: str
-    line: Decimal
-    juice: int = -110
-    sportsbook: Optional[str] = None
-
-    # Edge analysis
-    predicted_line: Optional[Decimal] = None
-    market_line: Optional[Decimal] = None
-    edge_points: Decimal
-    edge_category: str = Field(..., pattern="^(MAX|STRONG|MEDIUM|WEAK)$")
-    confidence: Optional[int] = Field(None, ge=1, le=100)
-
-    # Position sizing
-    kelly_pct: Optional[Decimal] = None
-    actual_pct: Optional[Decimal] = None
-    units: Decimal
-    risk_amount: Optional[Decimal] = None
-
-    # Results
-    closing_line: Optional[Decimal] = None
-    clv: Optional[Decimal] = None
-
-    result: str = "PENDING"
-    profit_loss: Optional[Decimal] = None
-    roi: Optional[Decimal] = None
-
-    # Tracking
-    placed_at: Optional[datetime] = None
-    closed_at: Optional[datetime] = None
-    graded_at: Optional[datetime] = None
-
-    # Notes
-    notes: Optional[str] = None
-    key_factors: Optional[List[str]] = None
-
+    team: str
+    bet_type: str
+    amount: Decimal
+    opening_odds: Decimal
+    closing_odds: Decimal
+    result: Optional[str] = None
+    payout: Optional[Decimal] = None
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
 
 class Weather(BaseModel):
     """Weather model."""
 
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
+    week: int
     game_id: str
-
-    # Temperature
-    temperature: Optional[Decimal] = None
-    feels_like: Optional[Decimal] = None
-
-    # Wind
-    wind_speed: Optional[Decimal] = None
-    wind_gust: Optional[Decimal] = None
+    stadium: str
+    game_time: datetime
+    temperature: float
+    wind_speed: float
     wind_direction: Optional[str] = None
-
-    # Precipitation
-    humidity: Optional[int] = None
-    precipitation_chance: Optional[int] = None
-    precipitation_type: Optional[str] = None
-    precipitation_amount: Optional[Decimal] = None
-
-    # Visibility
-    visibility: Optional[Decimal] = None
-    cloud_cover: Optional[int] = None
-
-    # Billy Walters adjustments
-    total_adjustment: Optional[Decimal] = None
-    spread_adjustment: Optional[Decimal] = None
-    weather_severity_score: Optional[int] = Field(None, ge=0, le=100)
-    weather_category: Optional[str] = Field(
-        None, pattern="^(IDEAL|GOOD|MODERATE|POOR|SEVERE)$"
-    )
-
-    # Source
-    source: str
-    forecast_type: Optional[str] = None
-    forecast_hours_ahead: Optional[int] = None
-    is_actual: bool = False
-
-    timestamp: datetime
+    precipitation: Optional[float] = None
+    conditions: str
     created_at: datetime = Field(default_factory=datetime.now)
 
 
 class Injury(BaseModel):
     """Injury model."""
 
-    game_id: str
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
+    week: int
     team: str
-
-    # Player info
     player_name: str
     position: str
-    jersey_number: Optional[int] = None
-
-    # Injury details
-    injury_status: str = Field(
-        ..., pattern="^(OUT|DOUBTFUL|QUESTIONABLE|PROBABLE|HEALTHY)$"
-    )
-    injury_type: Optional[str] = None
-    injury_side: Optional[str] = None
-
-    # Impact
-    impact_points: Optional[Decimal] = None
-    player_tier: Optional[str] = Field(None, pattern="^(ELITE|STARTER|BACKUP|DEPTH)$")
-    is_key_player: bool = False
-
-    # Timeline
-    reported_date: Optional[datetime] = None
-    game_status: Optional[str] = Field(
-        None, pattern="^(ACTIVE|INACTIVE|LIMITED|DNP|FULL)$"
-    )
-    last_updated: Optional[datetime] = None
-
-    # Source
-    source: str
-
+    status: str
+    expected_return: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
 
 class SituationalFactors(BaseModel):
-    """Situational factors model (SWEF)."""
+    """Situational factors model."""
 
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
+    week: int
     game_id: str
-    team: str
-
-    # Situation
-    days_rest: Optional[int] = None
-    is_short_rest: bool = False
-    is_extra_rest: bool = False
-
-    travel_distance: Optional[int] = None
-    time_zone_change: Optional[int] = None
-    is_long_travel: bool = False
-
-    # Emotion
-    is_division_game: bool = False
-    is_rivalry: bool = False
-    is_playoff_implications: bool = False
-    is_revenge_game: bool = False
-    is_prime_time: bool = False
-
-    # Fundamentals
-    current_streak: Optional[int] = None
-    home_record: Optional[str] = None
-    away_record: Optional[str] = None
-    ats_record: Optional[str] = None
-    ats_last_5: Optional[str] = None
-
-    scoring_avg: Optional[Decimal] = None
-    scoring_avg_last_3: Optional[Decimal] = None
-    points_allowed_avg: Optional[Decimal] = None
-    points_allowed_last_3: Optional[Decimal] = None
-
-    turnover_margin: Optional[int] = None
-    turnover_margin_last_3: Optional[int] = None
-
-    # Billy Walters adjustments
-    situational_adjustment: Optional[Decimal] = None
-    situation_score: Optional[int] = Field(None, ge=-10, le=10)
-
+    back_to_back: bool
+    rest_advantage: Optional[str] = None
+    travel_distance: Optional[float] = None
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)
 
 
 class PerformanceMetrics(BaseModel):
     """Performance metrics model."""
 
-    season: int
-    week: Optional[int] = None
-    league: Optional[str] = Field(None, pattern="^(NFL|NCAAF)$")
-
-    # Betting results
-    total_bets: int = 0
-    wins: int = 0
-    losses: int = 0
-    pushes: int = 0
-    pending: int = 0
-    win_pct: Optional[Decimal] = None
-
-    # By category
-    max_bets: int = 0
-    max_wins: int = 0
-    max_roi: Optional[Decimal] = None
-
-    strong_bets: int = 0
-    strong_wins: int = 0
-    strong_roi: Optional[Decimal] = None
-
-    medium_bets: int = 0
-    medium_wins: int = 0
-    medium_roi: Optional[Decimal] = None
-
-    weak_bets: int = 0
-    weak_wins: int = 0
-    weak_roi: Optional[Decimal] = None
-
-    # By type
-    spread_bets: int = 0
-    spread_wins: int = 0
-    total_bets_count: int = 0
-    total_wins: int = 0
-    moneyline_bets: int = 0
-    moneyline_wins: int = 0
-
-    # Financial
-    total_risked: Optional[Decimal] = None
-    total_profit: Optional[Decimal] = None
-    roi: Optional[Decimal] = None
-    roi_per_bet: Optional[Decimal] = None
-
-    # CLV
-    avg_clv: Optional[Decimal] = None
-    median_clv: Optional[Decimal] = None
-    positive_clv_pct: Optional[Decimal] = None
-    clv_wins: int = 0
-    clv_losses: int = 0
-
-    # Edge analysis
-    avg_edge: Optional[Decimal] = None
-    median_edge: Optional[Decimal] = None
-    edge_realization_pct: Optional[Decimal] = None
-
+    league: str = Field(..., pattern="^(NFL|NCAAF)$")
+    week: int
+    team: str
+    offensive_yards: Optional[float] = None
+    defensive_yards: Optional[float] = None
+    turnover_margin: Optional[float] = None
+    third_down_conversion: Optional[float] = None
+    red_zone_efficiency: Optional[float] = None
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: datetime = Field(default_factory=datetime.now)

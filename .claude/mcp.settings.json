@@ -12,6 +12,10 @@
     },
     "commandResolve": "firstExists"
   },
+  "windows": {
+    "shell": "cmd",
+    "shellArgs": ["/c"]
+  },
   "mcpServers": {
     "chrome-devtools": {
       "commandCandidates": [
@@ -61,12 +65,23 @@
       ],
       "transport": "stdio",
       "disabled": false
+    },
+    "sqlite": {
+      "commandCandidates": [
+        "${workspaceRoot}/node_modules/.bin/mcp-server-sqlite.cmd",
+        "mcp-server-sqlite"
+      ],
+      "args": [
+        "${workspaceRoot}/data/walters.db"
+      ],
+      "transport": "stdio",
+      "disabled": false
     }
   },
   "projects": {
-    "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer": {
+    "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer": {
       "variables": {
-        "projectRoot": "C:\\Users\\omall\\Documents\\python_projects\\billy-walters-sports-analyzer"
+        "projectRoot": "C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer"
       },
       "mcpServers": {
         "filesystem": {
@@ -83,6 +98,11 @@
             "--headless",
             "--isolated",
             "--remote-debugging-port=0"
+          ]
+        },
+        "sqlite": {
+          "args": [
+            "${projectRoot}/data/walters.db"
           ]
         }
       }
