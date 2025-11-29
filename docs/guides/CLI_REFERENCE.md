@@ -3,13 +3,25 @@
 This document provides comprehensive reference for all CLI commands in the Billy Walters Sports Analyzer.
 
 ## Table of Contents
+
+### Analysis Commands
 - [analyze-game](#analyze-game) - NEW! Full Billy Walters game analysis
 - [wk-card](#wk-card) - Week card betting workflow
+
+### Data Collection Commands
 - [scrape-overtime](#scrape-overtime) - Scrape odds from overtime.ag
 - [scrape-injuries](#scrape-injuries) - Scrape injury reports
 - [scrape-highlightly](#scrape-highlightly) - Scrape data from Highlightly API
+
+### Data Management Commands
 - [view-odds](#view-odds) - View scraped odds data
 - [monitor-sharp](#monitor-sharp) - Monitor sharp money movements
+
+### TIER 1 Data Population Scripts
+- [populate-team-trends](#populate-team-trends) - Calculate team streaks and desperation levels
+- [populate-swe-weather](#populate-swe-weather) - Calculate weather-based SWE adjustments
+- [scrape-practice-reports](#scrape-practice-reports) - Collect practice reports for Wednesday signal
+- [populate-player-valuations](#populate-player-valuations) - Generate baseline player point values
 
 ---
 
@@ -337,6 +349,388 @@ uv run walters-analyzer monitor-sharp \
 | `--duration` | int | - | 120 | Duration in minutes |
 | `--interval` | int | - | settings | Check interval in seconds |
 | `--test` | flag | - | false | Test API connection |
+
+---
+
+## TIER 1 Data Population Scripts
+
+### Overview
+
+The following scripts populate TIER 1 critical tables in the database. These tables enhance edge detection with:
+- **Team Trends**: Streaks, desperation levels, emotional factors
+- **Weather SWE Factors**: Special/Weather/Emotional adjustments
+- **Practice Reports**: Wednesday signal for injury tracking
+- **Player Valuations**: Baseline point values for injury impact calculation
+
+These scripts are designed to work with existing data (game results, weather data) and can be run independently or as part of the full data pipeline.
+
+---
+
+## populate-team-trends
+
+Calculate team streaks, desperation levels, and emotional state from game results and standings.
+
+### Purpose
+
+Populates the `team_trends` table with:
+- Win/loss streaks (direction and length)
+- Recent form percentage (0.0-1.0)
+- Playoff position and ranking
+- Desperation level (0-10 scale)
+- Emotional state inference (confident, neutral, desperate)
+
+### Usage
+
+```bash
+# Populate NFL team trends for current week
+uv run python scripts/data_population/populate_team_trends.py --league nfl --season 2025
+
+# Populate specific week (Week 13)
+uv run python scripts/data_population/populate_team_trends.py \
+  --league nfl \
+  --week 13 \
+  --season 2025
+
+# Populate NCAAF with verbose output
+uv run python scripts/data_population/populate_team_trends.py \
+  --league ncaaf \
+  --season 2025 \
+  --verbose
+```
+
+### Arguments
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--league` | string | Yes | - | League: nfl or ncaaf |
+| `--week` | int | No | current | Week number (1-18 NFL, 1-15 NCAAF) |
+| `--season` | int | No | 2025 | Season year |
+| `--verbose` | flag | No | false | Show detailed progress |
+
+### Data Calculated
+
+| Field | Calculation | Range | Example |
+|-------|-----------|-------|---------|
+| `streak_direction` | W/L from last 6 games | W or L | W |
+| `streak_length` | Consecutive wins/losses | 1-6 | 3 |
+| `recent_form_pct` | Wins/(Wins+Losses) last 4 | 0.0-1.0 | 0.75 |
+| `playoff_position` | Current standings rank | 1-16 | 2 |
+| `desperation_level` | 0=clinched, 10=must-win | 0-10 | 5 |
+| `emotional_state` | confident/neutral/desperate | string | confident |
+
+### Example Output
+
+```
+Populating team trends for NFL Season 2025 Week 13
+  Kansas City Chiefs (Team ID 1):
+    - Streak: W3 (recent form: 0.75)
+    - Playoff: Position 1 (Clinched)
+    - Emotional: Confident (Desperation: 0)
+  Buffalo Bills (Team ID 2):
+    - Streak: L2 (recent form: 0.25)
+    - Playoff: Position 7 (Edge)
+    - Emotional: Neutral (Desperation: 5)
+
+Completed: 32 teams processed, 32 trends inserted
+```
+
+### Dependencies
+
+- **Requires**: `game_results` table with ATS data
+- **Requires**: `team_standings` table with current playoff position
+- **Uses**: Last 6 games to calculate streaks
+
+---
+
+## populate-swe-weather
+
+Calculate weather-based Special/Weather/Emotional (SWE) adjustments for games.
+
+### Purpose
+
+Populates the `game_swe_factors` table with weather impact on game outcomes:
+- Temperature impact (-2.0 to +1.0 pts)
+- Wind impact (-1.5 to 0.0 pts)
+- Precipitation impact (-2.0 to 0.0 pts)
+- Total adjustment clamped to -3.0 to +1.0 pts
+- Confidence level (0.9 - weather is measurable)
+
+### Usage
+
+```bash
+# Populate weather factors for NFL current week
+uv run python scripts/data_population/populate_swe_weather.py --league nfl --season 2025
+
+# Populate specific week
+uv run python scripts/data_population/populate_swe_weather.py \
+  --league nfl \
+  --week 13 \
+  --season 2025 \
+  --verbose
+
+# Process past weeks (backfill)
+uv run python scripts/data_population/populate_swe_weather.py \
+  --league nfl \
+  --week 1 \
+  --weeks 13 \
+  --season 2025
+```
+
+### Arguments
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--league` | string | Yes | - | League: nfl or ncaaf |
+| `--week` | int | No | current | Starting week |
+| `--weeks` | int | No | 1 | Number of weeks to process |
+| `--season` | int | No | 2025 | Season year |
+| `--verbose` | flag | No | false | Show detailed calculations |
+
+### Weather Impact Rules
+
+| Factor | Condition | Impact | Example |
+|--------|-----------|--------|---------|
+| Temperature | <20°F | -2.0 to -1.5 | Extreme cold |
+| | 20-50°F | -1.5 to 0.0 | Cold |
+| | 50-85°F | 0.0 | Comfortable |
+| | >85°F | +0.5 to +1.0 | Hot |
+| Wind | 0-10 mph | 0.0 to -0.5 | Light |
+| | 10-20 mph | -0.5 to -1.5 | Moderate |
+| | >20 mph | -1.5 to -2.5 | Strong |
+| Precipitation | Clear | 0.0 | No impact |
+| | Light rain/snow | -0.5 to -1.0 | Slight |
+| | Heavy rain/snow | -1.5 to -2.0 | Significant |
+
+### Example Output
+
+```
+Processing weather factors for NFL Season 2025 Week 13
+
+Game: Kansas City @ Buffalo (2025-11-30)
+  Temperature: 15°F → Impact: -1.5 pts
+  Wind: 18 mph → Impact: -1.0 pts
+  Precipitation: Light snow → Impact: -0.5 pts
+  Total Adjustment: -3.0 pts (clamped from -3.0)
+  Confidence: 0.90
+
+Game: Dallas @ Philadelphia (2025-12-01)
+  Temperature: 48°F → Impact: -0.5 pts
+  Wind: 8 mph → Impact: 0.0 pts
+  Precipitation: Clear → Impact: 0.0 pts
+  Total Adjustment: -0.5 pts
+  Confidence: 0.90
+
+Completed: 14 games processed, 14 SWE factors inserted
+```
+
+### Dependencies
+
+- **Requires**: `game_schedules` table with game dates/venues
+- **Requires**: AccuWeather API for historical weather data
+- **Optional**: Weather data in `weather_data` table (fallback to API)
+
+---
+
+## scrape-practice-reports
+
+Collect practice participation reports from NFL.com for Wednesday signal detection.
+
+### Purpose
+
+Populates the `practice_reports` table with player participation data:
+- Full Participation (FP), Limited (LP), Did Not Practice (DNP)
+- Tracks changes day-by-day (Mon-Fri)
+- Detects trends (improving, declining, stable)
+- Wednesday participation is Billy Walters' key signal
+
+### Usage
+
+```bash
+# Scrape current week practice reports
+uv run python scripts/scrapers/scrape_practice_reports.py --week 13 --season 2025
+
+# Scrape multiple weeks
+uv run python scripts/scrapers/scrape_practice_reports.py \
+  --week 1 \
+  --weeks 13 \
+  --season 2025
+
+# Verbose output with detailed logging
+uv run python scripts/scrapers/scrape_practice_reports.py \
+  --week 13 \
+  --season 2025 \
+  --verbose
+```
+
+### Arguments
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--week` | int | No | current | Starting week |
+| `--weeks` | int | No | 1 | Number of weeks to process |
+| `--season` | int | No | 2025 | Season year |
+| `--verbose` | flag | No | false | Show detailed scraping progress |
+
+### Participation Status Mapping
+
+| Status | Code | Severity | Sessions | Impact |
+|--------|------|----------|----------|--------|
+| Full Participation | FP | mild | 3/3 | Healthy |
+| Limited Participation | LP | moderate | 2/3 | Questionable |
+| Did Not Practice | DNP | severe | 0/3 | Probable/Out |
+
+### Example Output
+
+```
+Scraping practice reports for NFL Week 13 Season 2025
+
+Kansas City Chiefs:
+  Patrick Mahomes (QB):
+    Wed (2025-11-26): FP (Full Participation) - Mild
+    Trend: stable
+  Isiah Pacheco (RB):
+    Mon (2025-11-24): DNP (Did Not Practice) - Severe
+    Tue (2025-11-25): LP (Limited Participation) - Moderate
+    Wed (2025-11-26): FP (Full Participation) - Mild
+    Trend: improving ← KEY SIGNAL
+
+Dallas Cowboys:
+  Dak Prescott (QB):
+    Wed (2025-11-26): LP (Limited Participation) - Moderate
+    Trend: declining ← CAUTION
+
+Completed: 32 teams, 285 players, 423 practice reports
+Output: output/practice_reports/nfl/week_13_practices.json
+```
+
+### Implementation Status
+
+- **Current**: Placeholder with NFL.com parsing logic
+- **Next**: Playwright browser automation for live scraping
+- **Data Flow**: NFL.com → JSON → practice_reports table
+
+### Dependencies
+
+- **Requires**: Schedule data with game dates (for dating practice reports)
+- **Optional**: Playwright for live scraping (not required for current version)
+
+---
+
+## populate-player-valuations
+
+Generate baseline player point values based on position and depth chart position.
+
+### Purpose
+
+Populates the `player_valuations` table with baseline impact values:
+- Position tiers: elite, above_average, average
+- Point values: 0.4 (reserve) to 4.5 (elite QB)
+- Snap count: 100% (baseline assumption)
+- Ready for weekly updates with actual snap counts
+
+### Usage
+
+```bash
+# Generate baseline valuations for current season
+uv run python scripts/data_population/populate_player_valuations_baseline.py \
+  --league nfl \
+  --season 2025
+
+# Generate for NCAAF
+uv run python scripts/data_population/populate_player_valuations_baseline.py \
+  --league ncaaf \
+  --season 2025
+
+# Verbose output
+uv run python scripts/data_population/populate_player_valuations_baseline.py \
+  --league nfl \
+  --season 2025 \
+  --verbose
+```
+
+### Arguments
+
+| Argument | Type | Required | Default | Description |
+|----------|------|----------|---------|-------------|
+| `--league` | string | Yes | - | League: nfl or ncaaf |
+| `--season` | int | No | 2025 | Season year |
+| `--verbose` | flag | No | false | Show detailed progress |
+
+### Position Point Values
+
+| Position | Elite | Above Average | Average | Use Case |
+|----------|-------|----------------|---------|----------|
+| QB | 4.5 | 3.5 | 2.5 | Tier 1 impact |
+| RB | 2.0 | 1.8 | 1.2 | Starter advantage |
+| WR | 1.5 | 1.2 | 0.8 | Group impact |
+| TE | 1.5 | 1.2 | 0.8 | Premier value |
+| OL | 1.0 | 0.8 | 0.5 | Cumulative |
+| DL | 1.2 | 1.0 | 0.6 | Pass rush |
+| LB | 1.0 | 0.8 | 0.5 | Run defense |
+| DB | 0.8 | 0.6 | 0.4 | Coverage |
+| K/P | 1.0/0.8 | 0.8/0.6 | 0.5/0.4 | Situational |
+
+### Depth Chart Position Mapping
+
+| Depth Position | Tier | Point Value | Notes |
+|---|---|---|---|
+| 1 | Elite | Position × elite factor | Starter |
+| 2 | Above Average | Position × above_avg factor | Backup |
+| 3+ | Average | Position × average factor | Third string |
+
+### Example Output
+
+```
+Populating baseline player valuations for NFL 2025
+
+Kansas City Chiefs (32 players):
+  Patrick Mahomes (QB, Depth 1) → Point Value: 4.5
+  Isiah Pacheco (RB, Depth 1) → Point Value: 2.0
+  JuJu Smith-Schuster (WR, Depth 1) → Point Value: 1.5
+  Travis Kelce (TE, Depth 1) → Point Value: 1.5
+
+Dallas Cowboys (28 players):
+  Dak Prescott (QB, Depth 1) → Point Value: 4.5
+  Ezekiel Elliott (RB, Depth 2) → Point Value: 1.8
+  CeeDee Lamb (WR, Depth 1) → Point Value: 1.5
+
+Completed: 32 teams, 896 players
+Output: All 896 player valuations inserted to database
+```
+
+### Data Model
+
+```json
+{
+  "league_id": 1,
+  "team_id": 1,
+  "player_id": "mahomes_pat",
+  "player_name": "Patrick Mahomes",
+  "position": "QB",
+  "season": 2025,
+  "point_value": 4.5,
+  "snap_count_pct": 100.0,
+  "impact_rating": 4.5,
+  "is_starter": true,
+  "depth_chart_position": 1,
+  "source": "depth_chart_baseline",
+  "notes": "Baseline from 1 depth chart position"
+}
+```
+
+### Integration with Injury Reports
+
+When a player is injured:
+1. Look up `point_value` from `player_valuations` table
+2. Multiply by injury severity (0.5-1.0)
+3. Add to total injury impact for the team
+4. Use in edge detection adjustment (±10-20% confidence)
+
+### Dependencies
+
+- **Requires**: ESPN depth charts (currently mocked)
+- **Optional**: Future integration with ESPN/PFF live depth charts
+- **Updates**: Weekly snap counts will overlay this baseline
 
 ---
 
