@@ -416,11 +416,33 @@ def analyze_game(
         from data.espn_weather_scraper import (
             ESPNWeatherLinkScraper,
         )
+        from data.stadium_accuweather_keys import get_location_key
         from scrapers.weather import AccuWeatherClient
 
         async def fetch_weather_with_location_key():
-            """Fetch weather using AccuWeather location key from ESPN."""
-            # Get location keys from ESPN schedule
+            """Fetch weather using authoritative AccuWeather location key."""
+            # First, try authoritative stadium mapping
+            location_key = get_location_key(
+                home_normalized, sport_lower
+            )
+
+            if location_key:
+                console.print(
+                    f"[dim]Using authoritative location key: {location_key}[/dim]"
+                )
+                client = AccuWeatherClient()
+                if client.api_key:
+                    await client.connect()
+                    try:
+                        return (
+                            await client.get_weather_by_location_key(
+                                location_key
+                            )
+                        )
+                    finally:
+                        await client.close()
+
+            # Fallback: Get location keys from ESPN schedule
             sport_name = "cfb" if sport_lower == "ncaaf" else "nfl"
             locations = (
                 await ESPNWeatherLinkScraper.get_location_keys(
@@ -438,7 +460,7 @@ def analyze_game(
             for stadium_name, location_key in locations.items():
                 if home_normalized.lower() in stadium_name.lower():
                     console.print(
-                        f"[dim]Found: {stadium_name}[/dim]"
+                        f"[dim]Found: {stadium_name} (ESPN)[/dim]"
                     )
                     # Use AccuWeather with location key
                     client = AccuWeatherClient()
