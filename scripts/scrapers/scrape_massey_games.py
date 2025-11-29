@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from data.massey_ratings_scraper import MasseyRatingsScraper
+from scrapers.massey.ratings_scraper import MasseyRatingsScraper
 
 
 async def scrape_games(league: str):
