@@ -12,7 +12,7 @@ import asyncio
 import os
 from datetime import datetime, timedelta
 
-from src.data.openweather_client import OpenWeatherClient
+from scrapers.weather import OpenWeatherClient
 from src.walters_analyzer.valuation.weather_alert_mapper import (
     WeatherAlertMapper,
     WeatherAlert,

@@ -10,7 +10,7 @@ import pytest
 from pathlib import Path
 from datetime import datetime
 
-from src.data.action_network_sitemap_scraper import (
+from data.action_network_sitemap_scraper import (
     ActionNetworkSitemapScraper,
 )
 

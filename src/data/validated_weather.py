@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .weather_client import WeatherClient
+from scrapers.weather import WeatherClient
 
 logger = logging.getLogger(__name__)
 

@@ -95,6 +95,7 @@ class WebFetchClient:
         "www.covers.com",
         "actionnetwork.com",
         "www.actionnetwork.com",
+        "api.actionnetwork.com",
         "vegasinsider.com",
         "www.vegasinsider.com",
         "accuweather.com",

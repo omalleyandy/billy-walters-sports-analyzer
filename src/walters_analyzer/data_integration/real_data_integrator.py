@@ -136,7 +136,7 @@ class RealDataIntegrator:
         """Initialize data sources and clients."""
         try:
             # Import and initialize ESPN injury scraper
-            from src.data.espn_injury_scraper import ESPNInjuryScraper
+            from scrapers.espn import ESPNInjuryScraper
 
             self.espn_injury_scraper = ESPNInjuryScraper()
             logger.info("✓ ESPN Injury Scraper initialized")
@@ -145,7 +145,7 @@ class RealDataIntegrator:
 
         try:
             # Import and initialize ESPN news client
-            from src.data.espn_news_client import ESPNNewsClient
+            from scrapers.espn import ESPNNewsClient
 
             self.espn_news_client = ESPNNewsClient()
             await self.espn_news_client.connect()
@@ -155,9 +155,7 @@ class RealDataIntegrator:
 
         try:
             # Import and initialize ESPN transactions client
-            from src.data.espn_transactions_client import (
-                ESPNTransactionsClient,
-            )
+            from scrapers.espn import ESPNTransactionsClient
 
             self.espn_transactions_client = ESPNTransactionsClient()
             logger.info("✓ ESPN Transactions Client initialized")
@@ -166,9 +164,7 @@ class RealDataIntegrator:
 
         try:
             # Import and initialize NFL injury scraper
-            from src.data.nfl_official_injury_scraper import (
-                NFLOfficialInjuryScraper,
-            )
+            from scrapers.nfl_com import NFLOfficialInjuryScraper
 
             self.nfl_injury_scraper = NFLOfficialInjuryScraper()
             logger.info("[OK] NFL Official Injury Scraper initialized")

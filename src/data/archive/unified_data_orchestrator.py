@@ -15,8 +15,8 @@ from typing import Dict, List
 from dotenv import load_dotenv
 
 # Import our custom clients
-from src.data.espn_api_client import ESPNAPIClient
-from src.data.overtime_signalr_manual import SignalR1xClient
+from data.espn_api_client import ESPNAPIClient
+from data.overtime_signalr_manual import SignalR1xClient
 
 # Load environment
 load_dotenv()

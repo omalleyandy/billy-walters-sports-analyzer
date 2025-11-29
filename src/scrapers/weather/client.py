@@ -9,8 +9,8 @@ import logging
 from datetime import datetime
 from typing import Any
 
-from .accuweather_client import AccuWeatherClient
-from .openweather_client import OpenWeatherClient
+from .accuweather import AccuWeatherClient
+from .openweather import OpenWeatherClient
 
 logger = logging.getLogger(__name__)
 
