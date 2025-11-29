@@ -23,8 +23,8 @@ Fetch and update power ratings for all NFL teams.
 
 ```bash
 /power-ratings              # Current week, all sources
-/power-ratings 13 massey    # Week 11, Massey only
-/power-ratings 13 all       # Week 11, all sources
+/power-ratings 13 massey    # Week 13, Massey only
+/power-ratings 13 all       # Week 13, all sources
 ```
 
 **What it does:**
@@ -512,7 +512,7 @@ Validate all data sources for quality and completeness.
 
 ```bash
 /validate-data                      # All sources
-/validate-data odds 13             # Odds data, week 11
+/validate-data odds 13             # Odds data, week 13
 /validate-data injuries             # Injury reports only
 /validate-data all --detailed       # Full detailed report
 ```

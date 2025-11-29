@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "source": "nfl.com",
+    "season": 2025,
+    "week": 13,
+    "scrape_date": "2025-11-29T01:26:58.607701",
+    "practice_week_start": "2025-11-26T00:00:00",
+    "practice_week_end": "2025-11-28T00:00:00",
+    "teams_scraped": 32
+  },
+  "practices": []
+}
