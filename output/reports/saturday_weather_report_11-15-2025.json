@@ -1,114 +1,115 @@
 [
   {
-    "home_team": "USC",
-    "location": "Los Angeles, CA",
+    "home_team": "Illinois",
+    "location": "Champaign, IL",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 58.0,
-      "wind_speed": 2.4,
-      "precipitation_prob": 100,
-      "description": "Rain"
+      "temperature": 22.0,
+      "wind_speed": 5.0,
+      "precipitation_prob": 0,
+      "description": "Sunny"
     },
     "impact": {
       "total_adjustment": -3.0,
-      "spread_adjustment": 0.0,
+      "spread_adjustment": -0.4,
       "notes": [
-        "Rain likely (100%): -3 pts total"
+        "Very cold (22.0\u00b0F): -3 pts total, -0.4 spread"
       ],
       "severity": "HIGH"
     },
-    "away_team": "Iowa",
+    "away_team": "Maryland",
     "spread": {
-      "away": 6.5,
-      "home": -6.5,
+      "away": 16.0,
+      "home": -16.0,
       "away_odds": -110,
       "home_odds": -110
     },
     "total": {
-      "points": 49.0,
+      "points": 51.5,
+      "over_odds": -115,
+      "under_odds": -105
+    }
+  },
+  {
+    "home_team": "Missouri",
+    "location": "Columbia, MO",
+    "game_time": "11/15/2025 19:45",
+    "hours_until": -298.6,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 21.0,
+      "wind_speed": 0.6,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -3.0,
+      "spread_adjustment": -0.4,
+      "notes": [
+        "Very cold (21.0\u00b0F): -3 pts total, -0.4 spread"
+      ],
+      "severity": "HIGH"
+    },
+    "away_team": "Mississippi State",
+    "spread": {
+      "away": 7.0,
+      "home": -7.0,
+      "away_odds": -115,
+      "home_odds": -105
+    },
+    "total": {
+      "points": 51.5,
       "over_odds": -110,
       "under_odds": -110
     }
   },
   {
-    "home_team": "Western Kentucky",
-    "location": "Bowling Green, KY",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "home_team": "Washington State",
+    "location": "Pullman, WA",
+    "game_time": "11/15/2025 22:00",
+    "hours_until": -296.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 77.0,
-      "wind_speed": 17.3,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": -3.0,
-      "spread_adjustment": -0.3,
-      "notes": [
-        "Strong wind (17.3 mph): -3 pts total, -0.3 spread"
-      ],
-      "severity": "HIGH"
-    },
-    "away_team": "Middle Tennessee State",
-    "spread": {
-      "away": 13.5,
-      "home": -13.5,
-      "away_odds": -107,
-      "home_odds": -113
-    },
-    "total": {
-      "points": 52.5,
-      "over_odds": -105,
-      "under_odds": -115
-    }
-  },
-  {
-    "home_team": "UNLV",
-    "location": "Las Vegas, NV",
-    "game_time": "11/15/2025 19:00",
-    "hours_until": 6.8,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 65.0,
-      "wind_speed": 4.5,
+      "temperature": 37.0,
+      "wind_speed": 8.1,
       "precipitation_prob": 100,
       "description": "Light rain"
     },
     "impact": {
-      "total_adjustment": -3.0,
-      "spread_adjustment": 0.0,
+      "total_adjustment": -4.0,
+      "spread_adjustment": -0.1,
       "notes": [
+        "Chilly (37.0\u00b0F): -1 pt total, -0.1 spread",
         "Rain likely (100%): -3 pts total"
       ],
       "severity": "HIGH"
     },
-    "away_team": "Utah State",
+    "away_team": "Louisiana Tech",
     "spread": {
-      "away": 6.0,
-      "home": -6.0,
-      "away_odds": -108,
-      "home_odds": -112
+      "away": 7.5,
+      "home": -7.5,
+      "away_odds": 100,
+      "home_odds": -120
     },
     "total": {
-      "points": 68.0,
-      "over_odds": -110,
-      "under_odds": -110
+      "points": 43.0,
+      "over_odds": -120,
+      "under_odds": 100
     }
   },
   {
     "home_team": "Fresno State",
     "location": "Fresno, CA",
     "game_time": "11/15/2025 22:30",
-    "hours_until": 10.3,
+    "hours_until": -295.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 55.0,
-      "wind_speed": 3.5,
+      "temperature": 48.0,
+      "wind_speed": 0.0,
       "precipitation_prob": 100,
-      "description": "Rain"
+      "description": "Drizzle"
     },
     "impact": {
       "total_adjustment": -3.0,
@@ -132,47 +133,47 @@
     }
   },
   {
-    "home_team": "San Diego State",
-    "location": "San Diego, CA",
-    "game_time": "11/15/2025 22:30",
-    "hours_until": 10.3,
+    "home_team": "New Mexico",
+    "location": "Albuquerque, NM",
+    "game_time": "11/15/2025 15:00",
+    "hours_until": -303.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 62.0,
-      "wind_speed": 4.6,
-      "precipitation_prob": 100,
-      "description": "Rain"
+      "temperature": 34.0,
+      "wind_speed": 0.0,
+      "precipitation_prob": 0,
+      "description": "Mostly sunny"
     },
     "impact": {
-      "total_adjustment": -3.0,
-      "spread_adjustment": 0.0,
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
       "notes": [
-        "Rain likely (100%): -3 pts total"
+        "Chilly (34.0\u00b0F): -1 pt total, -0.1 spread"
       ],
-      "severity": "HIGH"
+      "severity": "MODERATE"
     },
-    "away_team": "Boise State",
+    "away_team": "Colorado State",
     "spread": {
-      "away": 2.0,
-      "home": -2.0,
-      "away_odds": -112,
-      "home_odds": -108
+      "away": 16.0,
+      "home": -16.0,
+      "away_odds": -115,
+      "home_odds": -105
     },
     "total": {
-      "points": 40.5,
-      "over_odds": -125,
-      "under_odds": 105
+      "points": 53.5,
+      "over_odds": -115,
+      "under_odds": -105
     }
   },
   {
     "home_team": "Missouri St",
     "location": "Springfield, MO",
     "game_time": "11/15/2025 15:00",
-    "hours_until": 2.8,
+    "hours_until": -303.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 76.0,
-      "wind_speed": 11.5,
+      "temperature": 32.0,
+      "wind_speed": 5.8,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
@@ -180,7 +181,7 @@
       "total_adjustment": -1.0,
       "spread_adjustment": -0.1,
       "notes": [
-        "Moderate wind (11.5 mph): -1 pt total, -0.1 spread"
+        "Chilly (32.0\u00b0F): -1 pt total, -0.1 spread"
       ],
       "severity": "MODERATE"
     },
@@ -198,47 +199,81 @@
     }
   },
   {
-    "home_team": "Texas Tech",
-    "location": "Lubbock, TX",
+    "home_team": "James Madison",
+    "location": "Harrisonburg, VA",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 88.0,
-      "wind_speed": 10.8,
+      "temperature": 31.0,
+      "wind_speed": 6.9,
       "precipitation_prob": 0,
-      "description": "Sunny"
+      "description": "Cloudy"
     },
     "impact": {
-      "total_adjustment": -1.0,
-      "spread_adjustment": -0.1,
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
       "notes": [
-        "Moderate wind (10.8 mph): -1 pt total, -0.1 spread"
+        "Cold (31.0\u00b0F): -2 pts total, -0.3 spread"
       ],
       "severity": "MODERATE"
     },
-    "away_team": "Central Florida",
+    "away_team": "Appalachian State",
     "spread": {
-      "away": 24.0,
-      "home": -24.0,
-      "away_odds": -110,
-      "home_odds": -110
+      "away": 21.0,
+      "home": -21.0,
+      "away_odds": -105,
+      "home_odds": -115
     },
     "total": {
-      "points": 48.5,
+      "points": 53.5,
       "over_odds": -110,
       "under_odds": -110
     }
   },
   {
-    "home_team": "Illinois",
-    "location": "Champaign, IL",
+    "home_team": "Boston College",
+    "location": "Chestnut Hill, MA",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 74.0,
-      "wind_speed": 11.9,
+      "temperature": 37.0,
+      "wind_speed": 11.5,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.2,
+      "notes": [
+        "Chilly (37.0\u00b0F): -1 pt total, -0.1 spread",
+        "Moderate wind (11.5 mph): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Georgia Tech",
+    "spread": {
+      "away": -16.5,
+      "home": 16.5,
+      "away_odds": -113,
+      "home_odds": -107
+    },
+    "total": {
+      "points": 61.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Duke",
+    "location": "Durham, NC",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 36.0,
+      "wind_speed": 3.6,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
@@ -246,32 +281,131 @@
       "total_adjustment": -1.0,
       "spread_adjustment": -0.1,
       "notes": [
-        "Moderate wind (11.9 mph): -1 pt total, -0.1 spread"
+        "Chilly (36.0\u00b0F): -1 pt total, -0.1 spread"
       ],
       "severity": "MODERATE"
     },
-    "away_team": "Maryland",
+    "away_team": "Virginia",
     "spread": {
-      "away": 16.0,
-      "home": -16.0,
-      "away_odds": -110,
-      "home_odds": -110
+      "away": 4.5,
+      "home": -4.5,
+      "away_odds": -104,
+      "home_odds": -116
     },
     "total": {
-      "points": 51.5,
+      "points": 60.0,
       "over_odds": -115,
       "under_odds": -105
     }
   },
   {
-    "home_team": "Sam Houston St",
-    "location": "Huntsville, TX",
-    "game_time": "11/15/2025 19:00",
-    "hours_until": 6.8,
+    "home_team": "Michigan State",
+    "location": "East Lansing, MI",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 83.0,
-      "wind_speed": 11.5,
+      "temperature": 28.0,
+      "wind_speed": 7.3,
+      "precipitation_prob": 0,
+      "description": "Mostly sunny"
+    },
+    "impact": {
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
+      "notes": [
+        "Cold (28.0\u00b0F): -2 pts total, -0.3 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Penn State",
+    "spread": {
+      "away": -7.0,
+      "home": 7.0,
+      "away_odds": -111,
+      "home_odds": -109
+    },
+    "total": {
+      "points": 48.5,
+      "over_odds": -115,
+      "under_odds": -105
+    }
+  },
+  {
+    "home_team": "Alabama",
+    "location": "Tuscaloosa, AL",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 32.0,
+      "wind_speed": 1.2,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Chilly (32.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Oklahoma",
+    "spread": {
+      "away": 6.5,
+      "home": -6.5,
+      "away_odds": -110,
+      "home_odds": -110
+    },
+    "total": {
+      "points": 46.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Southern Miss",
+    "location": "Hattiesburg, MS",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 38.0,
+      "wind_speed": 1.8,
+      "precipitation_prob": 0,
+      "description": "Mostly sunny"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Chilly (38.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Texas State",
+    "spread": {
+      "away": 2.5,
+      "home": -2.5,
+      "away_odds": 105,
+      "home_odds": -125
+    },
+    "total": {
+      "points": 65.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "UL Monroe",
+    "location": "Monroe, LA",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 38.0,
+      "wind_speed": 0.7,
       "precipitation_prob": 0,
       "description": "Partly sunny"
     },
@@ -279,7 +413,205 @@
       "total_adjustment": -1.0,
       "spread_adjustment": -0.1,
       "notes": [
-        "Moderate wind (11.5 mph): -1 pt total, -0.1 spread"
+        "Chilly (38.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "South Alabama",
+    "spread": {
+      "away": -4.0,
+      "home": 4.0,
+      "away_odds": -110,
+      "home_odds": -110
+    },
+    "total": {
+      "points": 49.5,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Western Kentucky",
+    "location": "Bowling Green, KY",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 30.0,
+      "wind_speed": 5.8,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
+      "notes": [
+        "Cold (30.0\u00b0F): -2 pts total, -0.3 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Middle Tennessee State",
+    "spread": {
+      "away": 13.5,
+      "home": -13.5,
+      "away_odds": -107,
+      "home_odds": -113
+    },
+    "total": {
+      "points": 52.5,
+      "over_odds": -105,
+      "under_odds": -115
+    }
+  },
+  {
+    "home_team": "Nevada",
+    "location": "Reno, NV",
+    "game_time": "11/15/2025 15:30",
+    "hours_until": -302.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 37.0,
+      "wind_speed": 2.6,
+      "precipitation_prob": 0,
+      "description": "Clear"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Chilly (37.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "San Jose State",
+    "spread": {
+      "away": -9.5,
+      "home": 9.5,
+      "away_odds": -115,
+      "home_odds": -105
+    },
+    "total": {
+      "points": 50.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "East Carolina",
+    "location": "Greenville, NC",
+    "game_time": "11/15/2025 16:00",
+    "hours_until": -302.3,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 38.0,
+      "wind_speed": 3.7,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Chilly (38.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "Memphis",
+    "spread": {
+      "away": 3.0,
+      "home": -3.0,
+      "away_odds": -107,
+      "home_odds": -113
+    },
+    "total": {
+      "points": 58.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Tennessee",
+    "location": "Knoxville, TN",
+    "game_time": "11/15/2025 16:15",
+    "hours_until": -302.0,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 30.0,
+      "wind_speed": 1.8,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
+      "notes": [
+        "Cold (30.0\u00b0F): -2 pts total, -0.3 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "New Mexico State",
+    "spread": {
+      "away": 41.5,
+      "home": -41.5,
+      "away_odds": -105,
+      "home_odds": -115
+    },
+    "total": {
+      "points": 60.5,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Wake Forest",
+    "location": "Winston-Salem, NC",
+    "game_time": "11/15/2025 16:30",
+    "hours_until": -301.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 33.0,
+      "wind_speed": 6.9,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Chilly (33.0\u00b0F): -1 pt total, -0.1 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "North Carolina",
+    "spread": {
+      "away": 4.5,
+      "home": -4.5,
+      "away_odds": -115,
+      "home_odds": -105
+    },
+    "total": {
+      "points": 38.0,
+      "over_odds": -110,
+      "under_odds": -110
+    }
+  },
+  {
+    "home_team": "Sam Houston St",
+    "location": "Huntsville, TX",
+    "game_time": "11/15/2025 19:00",
+    "hours_until": -299.3,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 49.0,
+      "wind_speed": 10.4,
+      "precipitation_prob": 0,
+      "description": "Sunny"
+    },
+    "impact": {
+      "total_adjustment": -1.0,
+      "spread_adjustment": -0.1,
+      "notes": [
+        "Moderate wind (10.4 mph): -1 pt total, -0.1 spread"
       ],
       "severity": "MODERATE"
     },
@@ -300,19 +632,19 @@
     "home_team": "Mississippi",
     "location": "Oxford, MS",
     "game_time": "11/15/2025 19:00",
-    "hours_until": 6.8,
+    "hours_until": -299.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 77.0,
-      "wind_speed": 15.0,
+      "temperature": 28.0,
+      "wind_speed": 0.0,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
     "impact": {
-      "total_adjustment": -1.0,
-      "spread_adjustment": -0.1,
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
       "notes": [
-        "Moderate wind (15.0 mph): -1 pt total, -0.1 spread"
+        "Cold (28.0\u00b0F): -2 pts total, -0.3 spread"
       ],
       "severity": "MODERATE"
     },
@@ -330,173 +662,115 @@
     }
   },
   {
-    "home_team": "Washington State",
-    "location": "Pullman, WA",
-    "game_time": "11/15/2025 22:00",
-    "hours_until": 9.8,
+    "home_team": "Georgia",
+    "location": "Athens, GA",
+    "game_time": "11/15/2025 19:30",
+    "hours_until": -298.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 54.0,
-      "wind_speed": 10.4,
+      "temperature": 38.0,
+      "wind_speed": 5.1,
       "precipitation_prob": 0,
-      "description": "Cloudy"
+      "description": "Sunny"
     },
     "impact": {
       "total_adjustment": -1.0,
       "spread_adjustment": -0.1,
       "notes": [
-        "Moderate wind (10.4 mph): -1 pt total, -0.1 spread"
+        "Chilly (38.0\u00b0F): -1 pt total, -0.1 spread"
       ],
       "severity": "MODERATE"
     },
-    "away_team": "Louisiana Tech",
+    "away_team": "Texas",
     "spread": {
-      "away": 7.5,
-      "home": -7.5,
-      "away_odds": 100,
-      "home_odds": -120
-    },
-    "total": {
-      "points": 43.0,
-      "over_odds": -120,
-      "under_odds": 100
-    }
-  },
-  {
-    "home_team": "New Mexico",
-    "location": "Albuquerque, NM",
-    "game_time": "11/15/2025 15:00",
-    "hours_until": 2.8,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 67.0,
-      "wind_speed": 5.8,
-      "precipitation_prob": 0,
-      "description": "Mostly sunny"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Colorado State",
-    "spread": {
-      "away": 16.0,
-      "home": -16.0,
-      "away_odds": -115,
-      "home_odds": -105
-    },
-    "total": {
-      "points": 53.5,
-      "over_odds": -115,
-      "under_odds": -105
-    }
-  },
-  {
-    "home_team": "James Madison",
-    "location": "Harrisonburg, VA",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 64.0,
-      "wind_speed": 5.6,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Appalachian State",
-    "spread": {
-      "away": 21.0,
-      "home": -21.0,
+      "away": 4.5,
+      "home": -4.5,
       "away_odds": -105,
       "home_odds": -115
     },
     "total": {
-      "points": 53.5,
+      "points": 49.0,
       "over_odds": -110,
       "under_odds": -110
     }
   },
   {
-    "home_team": "Boston College",
-    "location": "Chestnut Hill, MA",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "home_team": "Ohio State",
+    "location": "Columbus, OH",
+    "game_time": "11/15/2025 19:30",
+    "hours_until": -298.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 45.0,
-      "wind_speed": 6.9,
+      "temperature": 28.0,
+      "wind_speed": 4.6,
+      "precipitation_prob": 0,
+      "description": "Partly sunny"
+    },
+    "impact": {
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
+      "notes": [
+        "Cold (28.0\u00b0F): -2 pts total, -0.3 spread"
+      ],
+      "severity": "MODERATE"
+    },
+    "away_team": "UCLA",
+    "spread": {
+      "away": 34.0,
+      "home": -34.0,
+      "away_odds": -110,
+      "home_odds": -110
+    },
+    "total": {
+      "points": 47.0,
+      "over_odds": -115,
+      "under_odds": -105
+    }
+  },
+  {
+    "home_team": "Jacksonville State",
+    "location": "Jacksonville, AL",
+    "game_time": "11/15/2025 20:00",
+    "hours_until": -298.3,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 30.0,
+      "wind_speed": 1.2,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
     "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
+      "total_adjustment": -2.0,
+      "spread_adjustment": -0.3,
+      "notes": [
+        "Cold (30.0\u00b0F): -2 pts total, -0.3 spread"
+      ],
+      "severity": "MODERATE"
     },
-    "away_team": "Georgia Tech",
+    "away_team": "Kennesaw State",
     "spread": {
-      "away": -16.5,
-      "home": 16.5,
-      "away_odds": -113,
-      "home_odds": -107
+      "away": -3.0,
+      "home": 3.0,
+      "away_odds": -110,
+      "home_odds": -110
     },
     "total": {
-      "points": 61.0,
+      "points": 56.0,
       "over_odds": -110,
       "under_odds": -110
-    }
-  },
-  {
-    "home_team": "Duke",
-    "location": "Durham, NC",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 72.0,
-      "wind_speed": 3.5,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Virginia",
-    "spread": {
-      "away": 4.5,
-      "home": -4.5,
-      "away_odds": -104,
-      "home_odds": -116
-    },
-    "total": {
-      "points": 60.0,
-      "over_odds": -115,
-      "under_odds": -105
     }
   },
   {
     "home_team": "Miami Florida",
     "location": "Miami, FL",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 79.0,
-      "wind_speed": 4.3,
+      "temperature": 63.0,
+      "wind_speed": 6.7,
       "precipitation_prob": 0,
-      "description": "Partly sunny"
+      "description": "Cloudy"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -518,14 +792,14 @@
     }
   },
   {
-    "home_team": "Michigan State",
-    "location": "East Lansing, MI",
+    "home_team": "Texas Tech",
+    "location": "Lubbock, TX",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 63.0,
-      "wind_speed": 9.8,
+      "temperature": 49.0,
+      "wind_speed": 6.2,
       "precipitation_prob": 0,
       "description": "Cloudy"
     },
@@ -535,30 +809,30 @@
       "notes": [],
       "severity": "NONE"
     },
-    "away_team": "Penn State",
+    "away_team": "Central Florida",
     "spread": {
-      "away": -7.0,
-      "home": 7.0,
-      "away_odds": -111,
-      "home_odds": -109
+      "away": 24.0,
+      "home": -24.0,
+      "away_odds": -110,
+      "home_odds": -110
     },
     "total": {
       "points": 48.5,
-      "over_odds": -115,
-      "under_odds": -105
+      "over_odds": -110,
+      "under_odds": -110
     }
   },
   {
-    "home_team": "Alabama",
-    "location": "Tuscaloosa, AL",
+    "home_team": "USC",
+    "location": "Los Angeles, CA",
     "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
+    "hours_until": -302.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 78.0,
-      "wind_speed": 6.0,
+      "temperature": 51.0,
+      "wind_speed": 2.7,
       "precipitation_prob": 0,
-      "description": "Sunny"
+      "description": "Fog"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -566,7 +840,7 @@
       "notes": [],
       "severity": "NONE"
     },
-    "away_team": "Oklahoma",
+    "away_team": "Iowa",
     "spread": {
       "away": 6.5,
       "home": -6.5,
@@ -574,131 +848,7 @@
       "home_odds": -110
     },
     "total": {
-      "points": 46.0,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "Southern Miss",
-    "location": "Hattiesburg, MS",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 77.0,
-      "wind_speed": 5.9,
-      "precipitation_prob": 0,
-      "description": "Mostly sunny"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Texas State",
-    "spread": {
-      "away": 2.5,
-      "home": -2.5,
-      "away_odds": 105,
-      "home_odds": -125
-    },
-    "total": {
-      "points": 65.0,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "UL Monroe",
-    "location": "Monroe, LA",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 81.0,
-      "wind_speed": 7.6,
-      "precipitation_prob": 0,
-      "description": "Sunny"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "South Alabama",
-    "spread": {
-      "away": -4.0,
-      "home": 4.0,
-      "away_odds": -110,
-      "home_odds": -110
-    },
-    "total": {
-      "points": 49.5,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "Nevada",
-    "location": "Reno, NV",
-    "game_time": "11/15/2025 15:30",
-    "hours_until": 3.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 60.0,
-      "wind_speed": 5.7,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "San Jose State",
-    "spread": {
-      "away": -9.5,
-      "home": 9.5,
-      "away_odds": -115,
-      "home_odds": -105
-    },
-    "total": {
-      "points": 50.0,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "East Carolina",
-    "location": "Greenville, NC",
-    "game_time": "11/15/2025 16:00",
-    "hours_until": 3.8,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 75.0,
-      "wind_speed": 4.5,
-      "precipitation_prob": 0,
-      "description": "Sunny"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Memphis",
-    "spread": {
-      "away": 3.0,
-      "home": -3.0,
-      "away_odds": -107,
-      "home_odds": -113
-    },
-    "total": {
-      "points": 58.0,
+      "points": 49.0,
       "over_odds": -110,
       "under_odds": -110
     }
@@ -707,13 +857,13 @@
     "home_team": "Tulane",
     "location": "New Orleans, LA",
     "game_time": "11/15/2025 16:00",
-    "hours_until": 3.8,
+    "hours_until": -302.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 80.0,
-      "wind_speed": 3.2,
+      "temperature": 49.0,
+      "wind_speed": 5.6,
       "precipitation_prob": 0,
-      "description": "Partly sunny"
+      "description": "Sunny"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -735,78 +885,16 @@
     }
   },
   {
-    "home_team": "Tennessee",
-    "location": "Knoxville, TN",
-    "game_time": "11/15/2025 16:15",
-    "hours_until": 4.0,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 70.0,
-      "wind_speed": 4.6,
-      "precipitation_prob": 0,
-      "description": "Cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "New Mexico State",
-    "spread": {
-      "away": 41.5,
-      "home": -41.5,
-      "away_odds": -105,
-      "home_odds": -115
-    },
-    "total": {
-      "points": 60.5,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "Wake Forest",
-    "location": "Winston-Salem, NC",
-    "game_time": "11/15/2025 16:30",
-    "hours_until": 4.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 70.0,
-      "wind_speed": 6.9,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "North Carolina",
-    "spread": {
-      "away": 4.5,
-      "home": -4.5,
-      "away_odds": -115,
-      "home_odds": -105
-    },
-    "total": {
-      "points": 38.0,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
     "home_team": "Florida International",
     "location": "Miami, FL",
     "game_time": "11/15/2025 17:00",
-    "hours_until": 4.8,
+    "hours_until": -301.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 79.0,
-      "wind_speed": 4.3,
+      "temperature": 63.0,
+      "wind_speed": 6.7,
       "precipitation_prob": 0,
-      "description": "Partly sunny"
+      "description": "Cloudy"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -831,11 +919,11 @@
     "home_team": "Georgia Southern",
     "location": "Statesboro, GA",
     "game_time": "11/15/2025 18:00",
-    "hours_until": 5.8,
+    "hours_until": -300.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 77.0,
-      "wind_speed": 7.2,
+      "temperature": 42.0,
+      "wind_speed": 4.5,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
@@ -862,13 +950,13 @@
     "home_team": "Baylor",
     "location": "Waco, TX",
     "game_time": "11/15/2025 19:00",
-    "hours_until": 6.8,
+    "hours_until": -299.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 84.0,
-      "wind_speed": 7.2,
+      "temperature": 50.0,
+      "wind_speed": 4.6,
       "precipitation_prob": 0,
-      "description": "Sunny"
+      "description": "Mostly cloudy"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -893,13 +981,13 @@
     "home_team": "Washington",
     "location": "Seattle, WA",
     "game_time": "11/15/2025 19:00",
-    "hours_until": 6.8,
+    "hours_until": -299.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 56.0,
-      "wind_speed": 1.7,
+      "temperature": 46.0,
+      "wind_speed": 2.9,
       "precipitation_prob": 0,
-      "description": "Cloudy"
+      "description": "Mostly cloudy"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -921,16 +1009,16 @@
     }
   },
   {
-    "home_team": "Georgia",
-    "location": "Athens, GA",
-    "game_time": "11/15/2025 19:30",
-    "hours_until": 7.3,
+    "home_team": "UNLV",
+    "location": "Las Vegas, NV",
+    "game_time": "11/15/2025 19:00",
+    "hours_until": -299.3,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 76.0,
-      "wind_speed": 5.6,
+      "temperature": 46.0,
+      "wind_speed": 3.3,
       "precipitation_prob": 0,
-      "description": "Sunny"
+      "description": "Clear"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -938,15 +1026,15 @@
       "notes": [],
       "severity": "NONE"
     },
-    "away_team": "Texas",
+    "away_team": "Utah State",
     "spread": {
-      "away": 4.5,
-      "home": -4.5,
-      "away_odds": -105,
-      "home_odds": -115
+      "away": 6.0,
+      "home": -6.0,
+      "away_odds": -108,
+      "home_odds": -112
     },
     "total": {
-      "points": 49.0,
+      "points": 68.0,
       "over_odds": -110,
       "under_odds": -110
     }
@@ -955,11 +1043,11 @@
     "home_team": "Florida State",
     "location": "Tallahassee, FL",
     "game_time": "11/15/2025 19:30",
-    "hours_until": 7.3,
+    "hours_until": -298.8,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 80.0,
-      "wind_speed": 3.8,
+      "temperature": 46.0,
+      "wind_speed": 5.1,
       "precipitation_prob": 0,
       "description": "Sunny"
     },
@@ -983,109 +1071,16 @@
     }
   },
   {
-    "home_team": "Ohio State",
-    "location": "Columbus, OH",
-    "game_time": "11/15/2025 19:30",
-    "hours_until": 7.3,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 65.0,
-      "wind_speed": 5.6,
-      "precipitation_prob": 0,
-      "description": "Cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "UCLA",
-    "spread": {
-      "away": 34.0,
-      "home": -34.0,
-      "away_odds": -110,
-      "home_odds": -110
-    },
-    "total": {
-      "points": 47.0,
-      "over_odds": -115,
-      "under_odds": -105
-    }
-  },
-  {
-    "home_team": "Missouri",
-    "location": "Columbia, MO",
-    "game_time": "11/15/2025 19:45",
-    "hours_until": 7.5,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 73.0,
-      "wind_speed": 7.6,
-      "precipitation_prob": 0,
-      "description": "Sunny"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Mississippi State",
-    "spread": {
-      "away": 7.0,
-      "home": -7.0,
-      "away_odds": -115,
-      "home_odds": -105
-    },
-    "total": {
-      "points": 51.5,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
-    "home_team": "Jacksonville State",
-    "location": "Jacksonville, AL",
-    "game_time": "11/15/2025 20:00",
-    "hours_until": 7.8,
-    "forecast_type": "Forecast",
-    "weather": {
-      "temperature": 74.0,
-      "wind_speed": 8.2,
-      "precipitation_prob": 0,
-      "description": "Mostly cloudy"
-    },
-    "impact": {
-      "total_adjustment": 0.0,
-      "spread_adjustment": 0.0,
-      "notes": [],
-      "severity": "NONE"
-    },
-    "away_team": "Kennesaw State",
-    "spread": {
-      "away": -3.0,
-      "home": 3.0,
-      "away_odds": -110,
-      "home_odds": -110
-    },
-    "total": {
-      "points": 56.0,
-      "over_odds": -110,
-      "under_odds": -110
-    }
-  },
-  {
     "home_team": "BYU",
     "location": "Provo, UT",
     "game_time": "11/15/2025 22:15",
-    "hours_until": 10.0,
+    "hours_until": -296.1,
     "forecast_type": "Forecast",
     "weather": {
-      "temperature": 62.0,
-      "wind_speed": 2.7,
+      "temperature": 42.0,
+      "wind_speed": 4.5,
       "precipitation_prob": 0,
-      "description": "Mostly cloudy"
+      "description": "Cloudy"
     },
     "impact": {
       "total_adjustment": 0.0,
@@ -1104,6 +1099,37 @@
       "points": 51.0,
       "over_odds": -115,
       "under_odds": -105
+    }
+  },
+  {
+    "home_team": "San Diego State",
+    "location": "San Diego, CA",
+    "game_time": "11/15/2025 22:30",
+    "hours_until": -295.8,
+    "forecast_type": "Forecast",
+    "weather": {
+      "temperature": 48.0,
+      "wind_speed": 0.0,
+      "precipitation_prob": 0,
+      "description": "Mostly clear"
+    },
+    "impact": {
+      "total_adjustment": 0.0,
+      "spread_adjustment": 0.0,
+      "notes": [],
+      "severity": "NONE"
+    },
+    "away_team": "Boise State",
+    "spread": {
+      "away": 2.0,
+      "home": -2.0,
+      "away_odds": -112,
+      "home_odds": -108
+    },
+    "total": {
+      "points": 40.5,
+      "over_odds": -125,
+      "under_odds": 105
     }
   }
 ]

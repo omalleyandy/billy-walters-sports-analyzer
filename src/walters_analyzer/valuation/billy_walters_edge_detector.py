@@ -313,19 +313,27 @@ class BillyWaltersEdgeDetector:
 
     def normalize_team_name(self, team_name: str) -> str:
         """
-        Normalize team name from Action Network to Massey format
+        Normalize team name from Overtime.ag/Action Network to Massey format
 
         Args:
-            team_name: Team name from Action Network
+            team_name: Team name (e.g., "Chicago Bears", "Bears", "Chicago")
 
         Returns:
-            Normalized team name for Massey lookup
+            Normalized team name for Massey lookup (e.g., "Chicago")
         """
-        # Try direct mapping first
+        # Try full name mapping first (e.g., "Chicago Bears" -> "Chicago")
+        if team_name in self.NFL_FULL_NAME_MAP:
+            return self.NFL_FULL_NAME_MAP[team_name]
+
+        # Try mascot-only mapping (e.g., "Bears" -> "Chicago")
         if team_name in self.TEAM_NAME_MAP:
             return self.TEAM_NAME_MAP[team_name]
 
-        # Try case-insensitive search
+        # Try case-insensitive search in both maps
+        for full_name, massey_name in self.NFL_FULL_NAME_MAP.items():
+            if full_name.lower() == team_name.lower():
+                return massey_name
+
         for action_name, massey_name in self.TEAM_NAME_MAP.items():
             if action_name.lower() == team_name.lower():
                 return massey_name

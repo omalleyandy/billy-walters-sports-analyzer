@@ -209,6 +209,12 @@ class NCAAFEdgeDetector:
         try:
             logger.info(f"Detecting NCAAF edges for Week {week}...")
 
+            # Initialize weather client for weather adjustments
+            try:
+                await self.weather_client.connect()
+            except Exception as e:
+                logger.warning(f"Weather client init failed (weather adjustments disabled): {e}")
+
             # Load all required data
             games = await self._load_schedule(week)
             if not games:
@@ -246,6 +252,12 @@ class NCAAFEdgeDetector:
         except Exception as e:
             logger.error(f"Error detecting NCAAF edges: {e}")
             raise
+        finally:
+            # Clean up weather client
+            try:
+                await self.weather_client.close()
+            except Exception:
+                pass  # Ignore cleanup errors
 
     async def _load_schedule(self, week: int) -> List[Dict]:
         """Load NCAAF schedule for given week"""
@@ -614,11 +626,13 @@ class NCAAFEdgeDetector:
         """
         # Common NCAAF mascots (multi-word first for proper matching)
         mascots = [
-            # Multi-word mascots
+            # Multi-word mascots (check these first - order matters!)
             "Crimson Tide",
             "Scarlet Knights",
             "Golden Eagles",
             "Golden Gophers",
+            "Golden Bears",  # California
+            "Golden Flashes",  # Kent State
             "Nittany Lions",
             "Yellow Jackets",
             "Demon Deacons",
@@ -626,7 +640,9 @@ class NCAAFEdgeDetector:
             "Green Wave",
             "Tar Heels",
             "Fighting Illini",
+            "Fighting Irish",  # Notre Dame
             "Sun Devils",
+            "Red Raiders",  # Texas Tech
             # Single-word mascots
             "Wildcats",
             "Bulldogs",
@@ -665,11 +681,18 @@ class NCAAFEdgeDetector:
             "Terrapins",
             "Bearcats",
             "Cardinals",
+            "Cardinal",  # Stanford (singular)
             "Cavaliers",
             "49ers",
             "Knights",
             "Bears",
-            "Fighting Irish",
+            "Cougars",  # BYU, Houston, Washington State
+            "Ducks",  # Oregon
+            "Huskies",  # Washington, UConn
+            "Trojans",  # USC
+            "Bruins",  # UCLA
+            "Mustangs",  # SMU
+            "Beavers",  # Oregon State
         ]
 
         for mascot in mascots:
@@ -698,7 +721,14 @@ class NCAAFEdgeDetector:
         stripped = self._strip_mascot(team_name)
 
         # Special case mappings for teams with unique Overtime.ag names
+        # Maps ESPN names (after mascot stripping) to Overtime.ag names
         special_mappings = {
+            # ESPN -> Overtime.ag format differences
+            "Ole Miss": "Mississippi",  # Overtime uses full state name
+            "UCF": "Central Florida",  # Overtime uses full name
+            "Miami": "Miami Florida",  # Distinguish from Miami OH
+            "Miami Hurricanes": "Miami Florida",  # If mascot not stripped
+            # Standard mappings
             "Kent State": "Kent",
             "Northern Illinois": "Northern Illinois",
             "Central Michigan": "Central Michigan",
