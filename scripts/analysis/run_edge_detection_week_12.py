@@ -349,6 +349,7 @@ def main():
             game_time=game_time_str,
             weather=weather_impact,
             sharp_action=sharp,
+            season=2025,  # 2025 season
         )
 
         if edge:

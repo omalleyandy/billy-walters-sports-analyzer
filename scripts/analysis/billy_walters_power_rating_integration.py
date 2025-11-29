@@ -391,6 +391,7 @@ class BillyWaltersPowerRatingIntegration:
                     week=self.week,
                     game_time=game_data.get("game_time", ""),
                     best_odds=-110,
+                    season=2025,  # 2025 season
                 )
 
                 if edge:
