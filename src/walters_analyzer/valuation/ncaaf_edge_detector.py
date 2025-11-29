@@ -110,8 +110,13 @@ class NCAAFEdgeDetector:
         "drizzle": -0.5,
     }
 
-    def __init__(self):
-        """Initialize NCAAF edge detector"""
+    def __init__(self, db_ops=None):
+        """
+        Initialize NCAAF edge detector
+
+        Args:
+            db_ops: Optional RawDataOperations instance for database queries
+        """
         self.project_root = Path(__file__).parent.parent.parent.parent
         self.data_dir = self.project_root / "data" / "current"
         self.output_dir = self.project_root / "output" / "edge_detection"
@@ -121,8 +126,236 @@ class NCAAFEdgeDetector:
         self.situational = NCAAFSituationalFactors()
         self.injury_calc = NCAAFInjuryImpacts()
 
+        # Database operations (optional)
+        self.db_ops = db_ops
+
         # Load comprehensive team name mappings
         self.team_name_map = self._load_team_mappings()
+
+    async def get_player_value_for_injury(
+        self, player_id: str, team_id: int, season: int, week: int, position: str
+    ) -> float:
+        """
+        Get player value from database for injury impact calculation.
+        Falls back to default NCAAF injury impact if not found.
+
+        Args:
+            player_id: Player ID
+            team_id: Team ID
+            season: Season year
+            week: Week number
+            position: Player position (fallback)
+
+        Returns:
+            Player point value (0.5-5.0)
+        """
+        if not self.db_ops or not player_id or not team_id:
+            # Return default NCAAF injury impact for position
+            default_impacts = {
+                "QB": 5.0,  # NCAAF: Higher than NFL 4.5
+                "RB": 2.0,
+                "WR": 1.5,
+                "TE": 1.2,
+                "OL": 1.0,
+                "DL": 1.5,
+                "LB": 1.3,
+                "DB": 1.2,
+            }
+            return default_impacts.get(position.upper(), 1.0)
+
+        try:
+            valuation = self.db_ops.get_player_valuation(
+                league_id=2,  # NCAAF
+                team_id=team_id,
+                player_id=player_id,
+                season=season,
+                week=week,
+            )
+            if valuation:
+                return float(valuation.point_value)
+        except Exception:
+            pass  # Silently fall back
+
+        # Default for position
+        default_impacts = {
+            "QB": 5.0,
+            "RB": 2.0,
+            "WR": 1.5,
+            "TE": 1.2,
+            "OL": 1.0,
+            "DL": 1.5,
+            "LB": 1.3,
+            "DB": 1.2,
+        }
+        return default_impacts.get(position.upper(), 1.0)
+
+    async def check_wednesday_signal_ncaaf(
+        self, team_id: int, team_name: str, season: int, week: int
+    ) -> tuple[bool, float]:
+        """
+        Check Wednesday practice status for NCAAF team.
+
+        Billy Walters: "Wednesday practice = Sunday play"
+        For college: Check practice participation for key players.
+
+        Args:
+            team_id: Team ID
+            team_name: Team name
+            season: Season year
+            week: Week number
+
+        Returns:
+            Tuple of (signal_detected, confidence_multiplier)
+        """
+        if not self.db_ops or not team_id:
+            return (False, 1.0)
+
+        try:
+            wednesday_reports = self.db_ops.get_wednesday_practice_status(
+                league_id=2,  # NCAAF
+                team_id=team_id,
+                season=season,
+                week=week,
+            )
+
+            if not wednesday_reports:
+                return (False, 1.0)
+
+            fully_participating = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "FP" and report.impact_rating >= 2.5
+            )
+            limited_participating = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "LP" and report.impact_rating >= 2.0
+            )
+            did_not_participate = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "DNP" and report.impact_rating >= 2.5
+            )
+
+            # Positive signal: Key players practicing
+            if fully_participating >= 2 or (fully_participating + limited_participating) >= 3:
+                return (True, 1.15)  # +15% confidence
+
+            # Negative signal: Key player didn't participate
+            if did_not_participate >= 1:
+                return (True, 0.95)  # -5% confidence
+
+        except Exception:
+            pass  # Silently fall back
+
+        return (False, 1.0)
+
+    async def get_game_swe_adjustments_ncaaf(
+        self, game_id: str, season: int, week: int
+    ) -> dict:
+        """
+        Get S-W-E (Special/Weather/Emotional) adjustments for NCAAF game.
+
+        Args:
+            game_id: Game identifier
+            season: Season year
+            week: Week number
+
+        Returns:
+            Dictionary with special, weather, emotional adjustments
+        """
+        if not self.db_ops:
+            return {
+                "special": 0.0,
+                "weather": 0.0,
+                "emotional": 0.0,
+                "total": 0.0,
+                "confidence_impact": 1.0,
+            }
+
+        try:
+            swe_factors = self.db_ops.get_game_swe_factors(
+                league_id=2,  # NCAAF
+                game_id=game_id,
+                season=season,
+                week=week,
+            )
+
+            if swe_factors:
+                return {
+                    "special": swe_factors.special_adjustment or 0.0,
+                    "weather": swe_factors.weather_adjustment or 0.0,
+                    "emotional": swe_factors.emotional_adjustment or 0.0,
+                    "total": swe_factors.total_adjustment or 0.0,
+                    "confidence_impact": swe_factors.confidence_level or 1.0,
+                }
+
+        except Exception:
+            pass  # Silently fall back
+
+        return {
+            "special": 0.0,
+            "weather": 0.0,
+            "emotional": 0.0,
+            "total": 0.0,
+            "confidence_impact": 1.0,
+        }
+
+    async def calculate_team_trend_adjustment_ncaaf(
+        self, team_id: int, season: int, week: int
+    ) -> float:
+        """
+        Calculate confidence adjustment based on NCAAF team trends.
+
+        Args:
+            team_id: Team ID
+            season: Season year
+            week: Week number
+
+        Returns:
+            Confidence multiplier (0.8-1.2)
+        """
+        if not self.db_ops or not team_id:
+            return 1.0
+
+        try:
+            team_trends = self.db_ops.get_team_trends(
+                league_id=2,  # NCAAF
+                team_id=team_id,
+                season=season,
+                week=week,
+            )
+
+            if not team_trends:
+                return 1.0
+
+            confidence_adj = 1.0
+
+            # Streak impact
+            if team_trends.streak_length and team_trends.streak_length >= 2:
+                if team_trends.streak_direction == "W":
+                    confidence_adj += 0.05
+                elif team_trends.streak_direction == "L":
+                    confidence_adj -= 0.05
+
+            # Desperation (playoff/bowl implications)
+            if team_trends.desperation_level and team_trends.desperation_level >= 7:
+                confidence_adj += 0.10
+
+            # Revenge factor
+            if team_trends.revenge_factor:
+                confidence_adj += 0.05
+
+            # Rest advantage
+            if team_trends.rest_advantage and team_trends.rest_advantage >= 2:
+                confidence_adj += 0.05
+
+            return max(0.8, min(1.2, confidence_adj))
+
+        except Exception:
+            pass  # Silently fall back
+
+        return 1.0
 
     def _load_team_mappings(self) -> Dict[str, str]:
         """
@@ -506,6 +739,17 @@ class NCAAFEdgeDetector:
                 away_team, home_team, injuries
             )
 
+            # Apply TIER 1 database-driven adjustments (SWE factors)
+            swe_adjustments = await self.get_game_swe_adjustments_ncaaf(
+                game_id, 2025, week  # Using 2025 as default season
+            )
+
+            # Use database-driven adjustments if available, else use calculated ones
+            if swe_adjustments["total"] != 0.0:
+                situational_adj = swe_adjustments["special"] or situational_adj
+                weather_adj = swe_adjustments["weather"] or weather_adj
+                emotional_adj = swe_adjustments["emotional"] or emotional_adj
+
             # Combined edge
             total_edge = (
                 edge_points + situational_adj + weather_adj + emotional_adj + injury_adj
@@ -518,6 +762,31 @@ class NCAAFEdgeDetector:
             recommended_bet = "away" if predicted_spread > market_spread else "home"
             kelly = min(abs(total_edge) / 20.0, self.MAX_KELLY)
             confidence = min(abs(total_edge) * 10.5, 100.0)
+
+            # Apply SWE confidence impact
+            confidence = min(confidence * swe_adjustments["confidence_impact"], 100.0)
+
+            # Apply Wednesday signal confidence adjustment
+            away_wed_signal_detected, away_wed_multiplier = await self.check_wednesday_signal_ncaaf(
+                1, away_team, 2025, week  # team_id=1 is placeholder (would need actual ID)
+            )
+            home_wed_signal_detected, home_wed_multiplier = await self.check_wednesday_signal_ncaaf(
+                1, home_team, 2025, week  # team_id=1 is placeholder
+            )
+
+            if recommended_bet == "away" and away_wed_signal_detected:
+                confidence = min(confidence * away_wed_multiplier, 100.0)
+            elif recommended_bet == "home" and home_wed_signal_detected:
+                confidence = min(confidence * home_wed_multiplier, 100.0)
+
+            # Apply team trend adjustments
+            trend_adj_away = await self.calculate_team_trend_adjustment_ncaaf(1, 2025, week)
+            trend_adj_home = await self.calculate_team_trend_adjustment_ncaaf(1, 2025, week)
+
+            if recommended_bet == "away":
+                confidence = min(confidence * trend_adj_away, 100.0)
+            elif recommended_bet == "home":
+                confidence = min(confidence * trend_adj_home, 100.0)
 
             # Determine edge strength
             edge_strength = self._classify_edge(abs(total_edge))
