@@ -20,6 +20,10 @@ from .raw_data_models import (
     InjuryReport,
     NewsArticle,
     CollectionSession,
+    PlayerValuation,
+    PracticeReport,
+    GameSWEFactors,
+    TeamTrends,
 )
 
 
@@ -555,3 +559,420 @@ class RawDataOperations:
         """
         results = self.db.execute_query(query, (league_id, limit))
         return [dict(row) for row in results] if results else []
+
+    # ============================================================
+    # TIER 1 CRITICAL TABLES (Billy Walters Methodology Support)
+    # ============================================================
+
+    # PLAYER VALUATIONS
+    # ============================================================
+
+    def insert_player_valuation(self, valuation: PlayerValuation) -> None:
+        """Insert player valuation."""
+        query = """
+            INSERT OR REPLACE INTO player_valuations (
+                league_id, team_id, player_id, player_name, position,
+                season, week, point_value, snap_count_pct, impact_rating,
+                is_starter, depth_chart_position, notes, source
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self.db.execute_query(
+            query,
+            (
+                valuation.league_id,
+                valuation.team_id,
+                valuation.player_id,
+                valuation.player_name,
+                valuation.position,
+                valuation.season,
+                valuation.week,
+                valuation.point_value,
+                valuation.snap_count_pct,
+                valuation.impact_rating,
+                valuation.is_starter,
+                valuation.depth_chart_position,
+                valuation.notes,
+                valuation.source,
+            ),
+            fetch=False,
+        )
+
+    def get_player_valuation(
+        self,
+        league_id: int,
+        team_id: int,
+        season: int,
+        week: Optional[int] = None,
+        player_id: Optional[str] = None,
+    ) -> Optional[Dict]:
+        """Get player valuation by league, team, season, week, player."""
+        if player_id and week:
+            query = """
+                SELECT * FROM player_valuations
+                WHERE league_id = ? AND team_id = ? AND season = ?
+                AND week = ? AND player_id = ?
+            """
+            results = self.db.execute_query(
+                query, (league_id, team_id, season, week, player_id)
+            )
+        else:
+            query = """
+                SELECT * FROM player_valuations
+                WHERE league_id = ? AND team_id = ? AND season = ?
+            """
+            results = self.db.execute_query(query, (league_id, team_id, season))
+
+        return dict(results[0]) if results else None
+
+    def get_team_valuations_by_week(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> List[Dict]:
+        """Get all player valuations for a team in a week."""
+        query = """
+            SELECT * FROM player_valuations
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+            ORDER BY point_value DESC
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def get_starters_by_position(
+        self, league_id: int, team_id: int, season: int, week: int, position: str
+    ) -> List[Dict]:
+        """Get starters at a specific position."""
+        query = """
+            SELECT * FROM player_valuations
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+            AND position = ? AND is_starter = 1
+            ORDER BY point_value DESC
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week, position)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def update_player_snap_count(
+        self, league_id: int, team_id: int, player_id: str, snap_count_pct: float
+    ) -> None:
+        """Update player snap count percentage."""
+        query = """
+            UPDATE player_valuations
+            SET snap_count_pct = ?
+            WHERE league_id = ? AND team_id = ? AND player_id = ?
+        """
+        self.db.execute_query(
+            query, (snap_count_pct, league_id, team_id, player_id), fetch=False
+        )
+
+    # PRACTICE REPORTS
+    # ============================================================
+
+    def insert_practice_report(self, report: PracticeReport) -> None:
+        """Insert practice report."""
+        query = """
+            INSERT OR REPLACE INTO practice_reports (
+                league_id, team_id, player_id, player_name, season, week,
+                practice_date, day_of_week, participation, severity, notes,
+                trend, sessions_participated, source, reported_date
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self.db.execute_query(
+            query,
+            (
+                report.league_id,
+                report.team_id,
+                report.player_id,
+                report.player_name,
+                report.season,
+                report.week,
+                report.practice_date,
+                report.day_of_week,
+                report.participation,
+                report.severity,
+                report.notes,
+                report.trend,
+                report.sessions_participated,
+                report.source,
+                None,  # reported_date set to NOW by DB
+            ),
+            fetch=False,
+        )
+
+    def get_practice_reports_by_week(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> List[Dict]:
+        """Get practice reports for a team in a week."""
+        query = """
+            SELECT * FROM practice_reports
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+            ORDER BY practice_date DESC
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def get_player_practice_history(
+        self,
+        league_id: int,
+        team_id: int,
+        player_id: str,
+        season: int,
+        week_start: int,
+        week_end: int,
+    ) -> List[Dict]:
+        """Get practice history for a player across multiple weeks."""
+        query = """
+            SELECT * FROM practice_reports
+            WHERE league_id = ? AND team_id = ? AND player_id = ?
+            AND season = ? AND week BETWEEN ? AND ?
+            ORDER BY practice_date DESC
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, player_id, season, week_start, week_end)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def get_wednesday_status(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> List[Dict]:
+        """Get Wednesday practice status (Billy's key signal)."""
+        query = """
+            SELECT * FROM practice_reports
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+            AND day_of_week = 2
+            ORDER BY player_name
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def update_practice_trend(
+        self,
+        league_id: int,
+        team_id: int,
+        player_id: str,
+        season: int,
+        week: int,
+        trend: str,
+    ) -> None:
+        """Update practice trend for a player."""
+        query = """
+            UPDATE practice_reports
+            SET trend = ?
+            WHERE league_id = ? AND team_id = ? AND player_id = ?
+            AND season = ? AND week = ?
+        """
+        self.db.execute_query(
+            query, (trend, league_id, team_id, player_id, season, week),
+            fetch=False,
+        )
+
+    # GAME SWE FACTORS
+    # ============================================================
+
+    def insert_game_swe_factors(self, factors: GameSWEFactors) -> None:
+        """Insert game SWE factors."""
+        query = """
+            INSERT OR REPLACE INTO game_swe_factors (
+                league_id, game_id, season, week, away_team_id, home_team_id,
+                special_factor_description, special_adjustment, special_examples,
+                weather_factor_description, weather_adjustment, temperature_impact,
+                wind_impact, precipitation_impact,
+                emotional_factor_description, emotional_adjustment,
+                motivation_level, momentum_direction,
+                total_adjustment, confidence_level, notes, source
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                     ?, ?, ?, ?)
+        """
+        self.db.execute_query(
+            query,
+            (
+                factors.league_id,
+                factors.game_id,
+                factors.season,
+                factors.week,
+                factors.away_team_id,
+                factors.home_team_id,
+                factors.special_factor_description,
+                factors.special_adjustment,
+                factors.special_examples,
+                factors.weather_factor_description,
+                factors.weather_adjustment,
+                factors.temperature_impact,
+                factors.wind_impact,
+                factors.precipitation_impact,
+                factors.emotional_factor_description,
+                factors.emotional_adjustment,
+                factors.motivation_level,
+                factors.momentum_direction,
+                factors.total_adjustment,
+                factors.confidence_level,
+                factors.notes,
+                factors.source,
+            ),
+            fetch=False,
+        )
+
+    def get_game_swe_factors(
+        self, league_id: int, game_id: str
+    ) -> Optional[Dict]:
+        """Get SWE factors for a game."""
+        query = """
+            SELECT * FROM game_swe_factors
+            WHERE league_id = ? AND game_id = ?
+        """
+        results = self.db.execute_query(query, (league_id, game_id))
+        return dict(results[0]) if results else None
+
+    def get_swe_factors_by_week(
+        self, league_id: int, season: int, week: int
+    ) -> List[Dict]:
+        """Get SWE factors for all games in a week."""
+        query = """
+            SELECT * FROM game_swe_factors
+            WHERE league_id = ? AND season = ? AND week = ?
+            ORDER BY game_id
+        """
+        results = self.db.execute_query(
+            query, (league_id, season, week)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def get_weather_impact(self, league_id: int, game_id: str) -> Optional[float]:
+        """Get weather adjustment for a game."""
+        query = """
+            SELECT weather_adjustment FROM game_swe_factors
+            WHERE league_id = ? AND game_id = ?
+        """
+        results = self.db.execute_query(query, (league_id, game_id))
+        return results[0]["weather_adjustment"] if results else None
+
+    def get_emotional_factors(
+        self, league_id: int, team_id: int, week: int
+    ) -> Optional[Dict]:
+        """Get emotional factors for a team in a week."""
+        query = """
+            SELECT emotional_factor_description, emotional_adjustment,
+                   motivation_level, momentum_direction
+            FROM game_swe_factors
+            WHERE league_id = ? AND week = ?
+            AND (away_team_id = ? OR home_team_id = ?)
+        """
+        results = self.db.execute_query(
+            query, (league_id, week, team_id, team_id)
+        )
+        return dict(results[0]) if results else None
+
+    # TEAM TRENDS
+    # ============================================================
+
+    def insert_team_trends(self, trends: TeamTrends) -> None:
+        """Insert team trends."""
+        query = """
+            INSERT OR REPLACE INTO team_trends (
+                league_id, team_id, season, week,
+                streak_direction, streak_length, recent_form_pct,
+                playoff_position, playoff_probability, divisional_rank,
+                conference_rank, emotional_state, desperation_level,
+                revenge_factor, rest_advantage, home_field_consistency,
+                situational_strength, notes, source
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        self.db.execute_query(
+            query,
+            (
+                trends.league_id,
+                trends.team_id,
+                trends.season,
+                trends.week,
+                trends.streak_direction,
+                trends.streak_length,
+                trends.recent_form_pct,
+                trends.playoff_position,
+                trends.playoff_probability,
+                trends.divisional_rank,
+                trends.conference_rank,
+                trends.emotional_state,
+                trends.desperation_level,
+                trends.revenge_factor,
+                trends.rest_advantage,
+                trends.home_field_consistency,
+                trends.situational_strength,
+                trends.notes,
+                trends.source,
+            ),
+            fetch=False,
+        )
+
+    def get_team_trends(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> Optional[Dict]:
+        """Get team trends for a specific week."""
+        query = """
+            SELECT * FROM team_trends
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return dict(results[0]) if results else None
+
+    def get_streak_info(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> Optional[Dict]:
+        """Get streak information for a team."""
+        query = """
+            SELECT streak_direction, streak_length, recent_form_pct
+            FROM team_trends
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return dict(results[0]) if results else None
+
+    def get_playoff_context(
+        self, league_id: int, season: int, week: int
+    ) -> List[Dict]:
+        """Get playoff context for all teams in a week."""
+        query = """
+            SELECT team_id, playoff_position, playoff_probability,
+                   divisional_rank, conference_rank
+            FROM team_trends
+            WHERE league_id = ? AND season = ? AND week = ?
+            ORDER BY playoff_probability DESC
+        """
+        results = self.db.execute_query(
+            query, (league_id, season, week)
+        )
+        return [dict(row) for row in results] if results else []
+
+    def calculate_desperation(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> Optional[int]:
+        """Get desperation level for a team (must-win detection)."""
+        query = """
+            SELECT desperation_level FROM team_trends
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return results[0]["desperation_level"] if results else None
+
+    def get_recent_form(
+        self, league_id: int, team_id: int, season: int, week: int
+    ) -> Optional[float]:
+        """Get recent form percentage for a team."""
+        query = """
+            SELECT recent_form_pct FROM team_trends
+            WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
+        """
+        results = self.db.execute_query(
+            query, (league_id, team_id, season, week)
+        )
+        return results[0]["recent_form_pct"] if results else None

@@ -356,3 +356,120 @@ class CollectionSession(BaseModel):
 
     status: Optional[str] = None
     error_messages: Optional[str] = None
+
+
+# ============================================================
+# TIER 1 CRITICAL TABLES (Billy Walters Methodology Support)
+# ============================================================
+
+
+class PlayerValuation(BaseModel):
+    """Player valuation model (point spread impact by player)."""
+
+    league_id: int
+    team_id: int
+    player_id: Optional[str] = None
+    player_name: str
+    position: str
+    season: int
+    week: Optional[int] = None
+
+    point_value: float
+    snap_count_pct: Optional[float] = None
+    impact_rating: Optional[float] = None
+    is_starter: bool = True
+    depth_chart_position: Optional[int] = None
+
+    notes: Optional[str] = None
+    source: Optional[str] = None
+
+
+class PracticeReport(BaseModel):
+    """Practice report model (Wednesday practice status tracking)."""
+
+    league_id: int
+    team_id: int
+    player_id: Optional[str] = None
+    player_name: str
+    season: int
+    week: int
+
+    practice_date: str
+    day_of_week: Optional[int] = None
+    participation: str
+    severity: Optional[str] = None
+    notes: Optional[str] = None
+
+    trend: Optional[str] = None
+    sessions_participated: Optional[int] = None
+
+    source: Optional[str] = None
+
+
+class GameSWEFactors(BaseModel):
+    """Game SWE factors model (Special, Weather, Emotional adjustments)."""
+
+    league_id: int
+    game_id: str
+    season: int
+    week: int
+
+    away_team_id: Optional[int] = None
+    home_team_id: Optional[int] = None
+
+    # Special Factors
+    special_factor_description: Optional[str] = None
+    special_adjustment: Optional[float] = None
+    special_examples: Optional[str] = None
+
+    # Weather Factors
+    weather_factor_description: Optional[str] = None
+    weather_adjustment: Optional[float] = None
+    temperature_impact: Optional[float] = None
+    wind_impact: Optional[float] = None
+    precipitation_impact: Optional[float] = None
+
+    # Emotional Factors
+    emotional_factor_description: Optional[str] = None
+    emotional_adjustment: Optional[float] = None
+    motivation_level: Optional[str] = None
+    momentum_direction: Optional[str] = None
+
+    total_adjustment: Optional[float] = None
+    confidence_level: Optional[float] = None
+
+    notes: Optional[str] = None
+    source: Optional[str] = None
+
+
+class TeamTrends(BaseModel):
+    """Team trends model (streaks, playoff position, emotional state)."""
+
+    league_id: int
+    team_id: int
+    season: int
+    week: int
+
+    # Streaks
+    streak_direction: Optional[str] = None
+    streak_length: Optional[int] = None
+    recent_form_pct: Optional[float] = None
+
+    # Playoff context
+    playoff_position: Optional[int] = None
+    playoff_probability: Optional[float] = None
+    divisional_rank: Optional[int] = None
+    conference_rank: Optional[int] = None
+
+    # Emotional
+    emotional_state: Optional[str] = None
+    desperation_level: Optional[int] = None
+    revenge_factor: Optional[bool] = None
+    rest_advantage: Optional[float] = None
+
+    # Contextual
+    home_field_consistency: Optional[float] = None
+    situational_strength: Optional[str] = None
+
+    notes: Optional[str] = None
+    source: Optional[str] = None

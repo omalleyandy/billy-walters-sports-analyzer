@@ -583,6 +583,151 @@ CREATE TABLE IF NOT EXISTS collection_sessions (
 );
 
 -- ============================================================
+-- TIER 1 CRITICAL TABLES (Billy Walters Methodology Support)
+-- ============================================================
+
+-- Player valuations (point spread impact by player)
+CREATE TABLE IF NOT EXISTS player_valuations (
+  id INTEGER PRIMARY KEY,
+  league_id INTEGER NOT NULL,
+  team_id INTEGER NOT NULL,
+  player_id TEXT,
+  player_name TEXT NOT NULL,
+  position TEXT NOT NULL,
+  season INTEGER NOT NULL,
+  week INTEGER,
+
+  -- Valuation metrics
+  point_value REAL NOT NULL,
+  snap_count_pct REAL,
+  impact_rating REAL,
+  is_starter BOOLEAN DEFAULT 1,
+  depth_chart_position INTEGER,
+
+  -- Context
+  notes TEXT,
+  source TEXT,
+  last_updated TIMESTAMP,
+  collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (league_id) REFERENCES leagues(id),
+  FOREIGN KEY (team_id) REFERENCES teams(id),
+  UNIQUE(league_id, team_id, season, week, player_id)
+);
+
+-- Practice reports (Wednesday practice status tracking)
+CREATE TABLE IF NOT EXISTS practice_reports (
+  id INTEGER PRIMARY KEY,
+  league_id INTEGER NOT NULL,
+  team_id INTEGER NOT NULL,
+  player_id TEXT,
+  player_name TEXT NOT NULL,
+  season INTEGER NOT NULL,
+  week INTEGER NOT NULL,
+
+  -- Practice tracking
+  practice_date DATE NOT NULL,
+  day_of_week INTEGER,
+  participation TEXT NOT NULL,
+  severity TEXT,
+  notes TEXT,
+
+  -- Trend analysis
+  trend TEXT,
+  sessions_participated INTEGER,
+
+  source TEXT,
+  reported_date TIMESTAMP,
+  collected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (league_id) REFERENCES leagues(id),
+  FOREIGN KEY (team_id) REFERENCES teams(id),
+  UNIQUE(league_id, team_id, season, week, player_id, practice_date)
+);
+
+-- Game SWE factors (Special, Weather, Emotional adjustments)
+CREATE TABLE IF NOT EXISTS game_swe_factors (
+  id INTEGER PRIMARY KEY,
+  league_id INTEGER NOT NULL,
+  game_id TEXT NOT NULL,
+  season INTEGER NOT NULL,
+  week INTEGER NOT NULL,
+
+  away_team_id INTEGER,
+  home_team_id INTEGER,
+
+  -- Special Factors
+  special_factor_description TEXT,
+  special_adjustment REAL,
+  special_examples TEXT,
+
+  -- Weather Factors
+  weather_factor_description TEXT,
+  weather_adjustment REAL,
+  temperature_impact REAL,
+  wind_impact REAL,
+  precipitation_impact REAL,
+
+  -- Emotional Factors
+  emotional_factor_description TEXT,
+  emotional_adjustment REAL,
+  motivation_level TEXT,
+  momentum_direction TEXT,
+
+  -- Overall calculation
+  total_adjustment REAL,
+  confidence_level REAL,
+
+  notes TEXT,
+  source TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (league_id) REFERENCES leagues(id),
+  FOREIGN KEY (away_team_id) REFERENCES teams(id),
+  FOREIGN KEY (home_team_id) REFERENCES teams(id),
+  UNIQUE(league_id, game_id, season, week)
+);
+
+-- Team trends (streaks, playoff position, emotional state)
+CREATE TABLE IF NOT EXISTS team_trends (
+  id INTEGER PRIMARY KEY,
+  league_id INTEGER NOT NULL,
+  team_id INTEGER NOT NULL,
+  season INTEGER NOT NULL,
+  week INTEGER NOT NULL,
+
+  -- Streak information
+  streak_direction TEXT,
+  streak_length INTEGER,
+  recent_form_pct REAL,
+
+  -- Playoff context
+  playoff_position INTEGER,
+  playoff_probability REAL,
+  divisional_rank INTEGER,
+  conference_rank INTEGER,
+
+  -- Emotional state
+  emotional_state TEXT,
+  desperation_level INTEGER,
+  revenge_factor BOOLEAN,
+  rest_advantage REAL,
+
+  -- Contextual factors
+  home_field_consistency REAL,
+  situational_strength TEXT,
+
+  notes TEXT,
+  source TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (league_id) REFERENCES leagues(id),
+  FOREIGN KEY (team_id) REFERENCES teams(id),
+  UNIQUE(league_id, team_id, season, week)
+);
+
+-- ============================================================
 -- INDEXES FOR PERFORMANCE
 -- ============================================================
 
@@ -632,6 +777,27 @@ CREATE INDEX IF NOT EXISTS idx_news_team
   ON news_articles(league_id, team_id);
 CREATE INDEX IF NOT EXISTS idx_news_published
   ON news_articles(published_at DESC);
+
+-- Indexes for TIER 1 critical tables
+CREATE INDEX IF NOT EXISTS idx_player_valuations_league_team_season
+  ON player_valuations(league_id, team_id, season, week);
+CREATE INDEX IF NOT EXISTS idx_player_valuations_position
+  ON player_valuations(position, season);
+
+CREATE INDEX IF NOT EXISTS idx_practice_reports_league_team_week
+  ON practice_reports(league_id, team_id, week);
+CREATE INDEX IF NOT EXISTS idx_practice_reports_player_date
+  ON practice_reports(player_id, practice_date);
+
+CREATE INDEX IF NOT EXISTS idx_game_swe_factors_league_week
+  ON game_swe_factors(league_id, week);
+CREATE INDEX IF NOT EXISTS idx_game_swe_factors_game_id
+  ON game_swe_factors(game_id);
+
+CREATE INDEX IF NOT EXISTS idx_team_trends_league_season
+  ON team_trends(league_id, season, week);
+CREATE INDEX IF NOT EXISTS idx_team_trends_team_week
+  ON team_trends(team_id, week);
 
 -- ============================================================
 -- INSERT BASE DATA

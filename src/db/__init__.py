@@ -35,6 +35,10 @@ from .raw_data_models import (
     InjuryReport,
     NewsArticle,
     CollectionSession,
+    PlayerValuation,
+    PracticeReport,
+    GameSWEFactors,
+    TeamTrends,
 )
 from .raw_data_operations import RawDataOperations
 
@@ -65,6 +69,11 @@ __all__ = [
     "InjuryReport",
     "NewsArticle",
     "CollectionSession",
+    # TIER 1 Critical tables
+    "PlayerValuation",
+    "PracticeReport",
+    "GameSWEFactors",
+    "TeamTrends",
     # Legacy models
     "Odds",
     "Bet",
