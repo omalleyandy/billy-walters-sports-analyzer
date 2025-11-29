@@ -144,7 +144,7 @@ def analyze_game(
     home: str = typer.Argument(..., help="Home team name"),
     away: str = typer.Argument(..., help="Away team name"),
     spread: Optional[float] = typer.Option(
-        None, "--spread", "-l", help="Current spread (home perspective)"
+        None, "--spread", "-l", help="Current spread"
     ),
     total: Optional[float] = typer.Option(None, "--total", "-t", help="Current total"),
     venue: Optional[str] = typer.Option(
@@ -201,7 +201,7 @@ def analyze_game(
 
     if spread:
         console.print(f"\n[bold]Line Analysis:[/bold]")
-        console.print(f"  Market Spread: {home} {spread:+.1f}")
+        console.print(f"  Current Spread: {spread:+.1f}")
         console.print(f"  Our Line: [yellow]TBD[/yellow]")
         console.print(f"  Edge: [green]TBD[/green]")
 

@@ -65,7 +65,7 @@ class NFLGameResult(BaseModel):
 
     @property
     def cover_result(self, spread: float) -> Optional[str]:
-        """Did team cover spread? (home perspective)"""
+        """Did team cover spread?"""
         if self.spread is None:
             return None
         if self.margin > self.spread:

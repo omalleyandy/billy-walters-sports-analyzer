@@ -283,7 +283,7 @@ class AgentDataLoader:
             OrigMoneyLine2: home ML
 
         Agent format:
-            game_id, home_team, away_team, spread (home perspective),
+            game_id, home_team, away_team, spread,
             total, home_rating, away_rating, home_field_advantage, etc.
         """
         try:
@@ -301,7 +301,7 @@ class AgentDataLoader:
             away_rating = power_ratings.get(away_team, 0.0)
             home_rating = power_ratings.get(home_team, 0.0)
 
-            # Spread is from home perspective (negative means home favored)
+            # Get spread from data source
             home_spread = overtime_game.get("Spread2", 0)
             total = overtime_game.get("TotalPoints1", 0)
 
