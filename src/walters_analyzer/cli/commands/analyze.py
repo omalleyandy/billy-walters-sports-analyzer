@@ -141,16 +141,20 @@ def analyze_edges(
 
 @app.command("game")
 def analyze_game(
-    home: str = typer.Argument(..., help="Home team name"),
     away: str = typer.Argument(..., help="Away team name"),
+    home: str = typer.Argument(..., help="Home team name"),
     spread: Optional[float] = typer.Option(
         None, "--spread", "-l", help="Current spread"
     ),
-    total: Optional[float] = typer.Option(None, "--total", "-t", help="Current total"),
+    total: Optional[float] = typer.Option(
+        None, "--total", "-t", help="Current total"
+    ),
     venue: Optional[str] = typer.Option(
         None, "--venue", "-v", help="Stadium/venue name"
     ),
-    bankroll: float = typer.Option(20000.0, "--bankroll", "-b", help="Bankroll amount"),
+    bankroll: float = typer.Option(
+        20000.0, "--bankroll", "-b", help="Bankroll amount"
+    ),
     research: bool = typer.Option(
         False, "--research", "-r", help="Fetch live injury/weather data"
     ),
@@ -162,9 +166,16 @@ def analyze_game(
     Analyze a single game using full Billy Walters methodology.
 
     Example:
-        walters analyze game "Ohio State Buckeyes" "Michigan Wolverines" \\
+        walters analyze game "Ohio State" "Michigan" \\
           --spread -10 --total 43.5 --venue "Michigan Stadium" --research
     """
+    import json
+    import glob
+    from walters_analyzer.valuation.billy_walters_edge_detector import (
+        BillyWaltersEdgeDetector,
+        PowerRating,
+    )
+
     game_title = f"[bold]{away} @ {home}[/bold]"
     if venue:
         game_title += f"\n[dim]{venue}[/dim]"
@@ -177,49 +188,207 @@ def analyze_game(
         )
     )
 
+    # Initialize detector
+    detector = BillyWaltersEdgeDetector()
+
+    # Find and load latest power ratings
+    console.print("Loading power ratings...")
+    ratings_files = sorted(
+        glob.glob("data/power_ratings/nfl_2025_week_*.json")
+    )
+    if not ratings_files:
+        console.print(
+            "[red][ERROR] No power rating files found. "
+            "Run: uv run python scripts/analysis/"
+            "update_power_ratings_from_massey.py[/red]"
+        )
+        return
+
+    latest_ratings_file = ratings_files[-1]
+    try:
+        with open(latest_ratings_file) as f:
+            ratings_data = json.load(f)
+        detector.power_ratings = {}
+        for team_name, rating in ratings_data.get("ratings", {}).items():
+            detector.power_ratings[team_name] = PowerRating(
+                team=team_name,
+                rating=float(rating),
+                offensive_rating=0.0,
+                defensive_rating=0.0,
+                home_field_advantage=2.5,
+                source="proprietary_90_10",
+            )
+        console.print(
+            f"[green]Loaded {len(detector.power_ratings)} power ratings "
+            f"(Week {ratings_data.get('week')})[/green]"
+        )
+    except Exception as e:
+        console.print(f"[red][ERROR] Failed to load power ratings: {e}[/red]")
+        return
+
+    # Normalize team names
+    away_normalized = detector.normalize_team_name(away)
+    home_normalized = detector.normalize_team_name(home)
+
+    # Check if teams exist in power ratings
+    if away_normalized not in detector.power_ratings:
+        sample_teams = ", ".join(
+            list(detector.power_ratings.keys())[:5]
+        )
+        console.print(
+            f"[yellow][WARNING] Away team '{away}' not found. "
+            f"Try: {sample_teams}...[/yellow]"
+        )
+        return
+    if home_normalized not in detector.power_ratings:
+        sample_teams = ", ".join(
+            list(detector.power_ratings.keys())[:5]
+        )
+        console.print(
+            f"[yellow][WARNING] Home team '{home}' not found. "
+            f"Try: {sample_teams}...[/yellow]"
+        )
+        return
+
     console.print("Analyzing game...")
+
+    # Load injury data if available
     if research:
-        console.print("Fetching injury data...")
-        # TODO: Implement research data fetching
+        console.print("Loading injury data...")
+        detector.load_injury_data()
 
-        console.print("Fetching weather data...")
-        # TODO: Implement weather data fetching
-
+    # Calculate power ratings
     console.print("Calculating power ratings...")
-    # TODO: Implement power rating lookup
+    away_rating = detector.power_ratings[away_normalized].rating
+    home_rating = detector.power_ratings[home_normalized].rating
+    hfa = (
+        detector.power_ratings[home_normalized].home_field_advantage
+    )
+    predicted_spread = home_rating - away_rating + hfa
+    differential = home_rating - away_rating
 
     console.print("Applying S-factors...")
-    # TODO: Implement S-factor calculation
+
+    # Detect edge
+    if spread is not None:
+        edge = detector.detect_edge(
+            game_id=f"{away_normalized}_{home_normalized}",
+            away_team=away_normalized,
+            home_team=home_normalized,
+            market_spread=spread,
+            market_total=total or 47.0,
+            week=ratings_data.get("week", 0),
+            game_time="",
+        )
+    else:
+        edge = None
 
     console.print("[green][OK] Analysis complete[/green]")
 
     # Display results
     console.print("\n[bold]Power Ratings:[/bold]")
-    console.print(f"  {home}: [cyan]TBD[/cyan]")
-    console.print(f"  {away}: [cyan]TBD[/cyan]")
-    console.print(f"  Differential: [green]TBD[/green]")
+    console.print(f"  {away}: {away_rating:.2f}")
+    console.print(f"  {home}: {home_rating:.2f}")
+    favored_team = home if differential > 0 else away
+    console.print(
+        f"  Differential: {abs(differential):+.2f} pts "
+        f"({favored_team} favored)"
+    )
 
-    if spread:
-        console.print(f"\n[bold]Line Analysis:[/bold]")
-        console.print(f"  Current Spread: {spread:+.1f}")
-        console.print(f"  Our Line: [yellow]TBD[/yellow]")
-        console.print(f"  Edge: [green]TBD[/green]")
+    if spread is not None:
+        console.print("\n[bold]Line Analysis:[/bold]")
+        console.print(f"  Current Market Spread: {spread:+.1f}")
+        console.print(f"  Our Calculated Line: {predicted_spread:+.1f}")
+        if edge:
+            console.print(
+                f"  Edge: {edge.edge_points:.1f} pts "
+                f"({edge.edge_strength.upper()})"
+            )
+        else:
+            console.print("  Edge: No significant edge detected")
 
     console.print("\n[bold]S-Factors:[/bold]")
-    console.print("  Travel: TBD")
-    console.print("  Rest: TBD")
-    console.print("  Weather: TBD")
-    console.print("  Motivation: TBD")
+    if edge:
+        console.print(
+            f"  Situational: {edge.situational_adjustment:+.1f} pts"
+        )
+        console.print(f"  Weather: {edge.weather_adjustment:+.1f} pts")
+        console.print(
+            f"  Emotional: {edge.emotional_adjustment:+.1f} pts"
+        )
+        console.print(
+            f"  Injury Impact: {edge.injury_adjustment:+.1f} pts"
+        )
+    else:
+        console.print("  Situational: TBD")
+        console.print("  Weather: TBD")
+        console.print("  Emotional: TBD")
+        console.print("  Injury Impact: TBD")
+
+    # Build recommendation panel
+    if edge and edge.recommended_bet:
+        bet_team = (
+            edge.away_team
+            if edge.recommended_bet == "away"
+            else edge.home_team
+        )
+        bet_display = f"BET {edge.recommended_bet.upper()}: {bet_team}"
+        bet_amount = int(bankroll * edge.kelly_fraction)
+        bet_odds = edge.best_odds
+
+        # Calculate potential win/loss
+        potential_win = bet_amount * (abs(bet_odds) / 100)
+        potential_loss = bet_amount
+
+        recommendation_text = (
+            f"[bold]{bet_display}[/bold]\n\n"
+            f"Kelly Sizing: {edge.kelly_fraction * 100:.1f}% of bankroll\n"
+            f"Suggested Bet: ${bet_amount:,.0f}\n"
+            f"Odds: {bet_odds:+d}\n"
+            f"Potential Win: ${potential_win:,.0f}\n"
+            f"Potential Loss: ${potential_loss:,.0f}\n"
+            f"Confidence: {edge.confidence_score:.0f}/100"
+        )
+        border_color = (
+            "green"
+            if edge.edge_strength in ["strong", "very_strong"]
+            else "yellow"
+        )
+    else:
+        recommendation_text = (
+            "[yellow]No significant edge detected[/yellow]\n"
+            "Pass on this game."
+        )
+        border_color = "yellow"
 
     console.print(
         Panel(
-            "[bold]RECOMMENDATION[/bold]\n\n"
-            "[yellow]Implementation in progress...[/yellow]\n"
-            "This will show bet recommendation with Kelly sizing.",
+            recommendation_text,
             title="[OK] Verdict",
-            border_style="green" if spread else "yellow",
+            border_style=border_color,
         )
     )
+
+    # Verbose output
+    if verbose and edge:
+        console.print("\n[bold]Detailed Breakdown:[/bold]")
+        console.print(f"  Edge Type: {edge.edge_type}")
+        if edge.crosses_key_number:
+            console.print(
+                f"  [KEY] Crosses key number: {edge.key_number_value}"
+            )
+        if edge.away_injuries and edge.away_injuries.total_impact != 0:
+            console.print(
+                f"  {edge.away_team} injuries: "
+                f"{edge.away_injuries.total_impact:+.1f} pts "
+                f"({edge.away_injuries.severity})"
+            )
+        if edge.home_injuries and edge.home_injuries.total_impact != 0:
+            console.print(
+                f"  {edge.home_team} injuries: "
+                f"{edge.home_injuries.total_impact:+.1f} pts "
+                f"({edge.home_injuries.severity})"
+            )
 
 
 @app.command("injuries")
