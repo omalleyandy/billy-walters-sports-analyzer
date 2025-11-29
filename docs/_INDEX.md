@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Update**: 2025-11-25 (Late) - NFL.com Client Consolidation: Merged proxy support into single client class
+**Last Update**: 2025-11-28 - Overtime.ag API Client v2.1.0: Added UTC datetime parsing, week extraction, timezone info
 
 ---
 
@@ -161,12 +161,16 @@ This index provides quick navigation to all project documentation organized by t
 
 ### Scrapers & APIs
 - [API Integration Details](api/API_INTEGRATION_DETAILS.md) - **COMPREHENSIVE** - All API technical details (Weather, ESPN, Overtime, Action Network)
-- [Overtime.ag Hybrid Scraper](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md) - **PRIMARY** odds source (Playwright + SignalR)
+- **Overtime.ag API Client (v2.1.0)** - **PRIMARY** odds source (direct API, no browser, ~2-3 sec/league)
+  - Location: `src/data/overtime_api_client.py`
+  - Features: UTC datetime parsing, week extraction, timezone info
+  - Output: `output/overtime/{league}/pregame/api_walters_*.json`
+- [Overtime.ag Hybrid Scraper](data_sources/overtime/OVERTIME_HYBRID_SCRAPER.md) - **BACKUP** odds source (Playwright + SignalR, for real-time)
 - [ESPN Documentation](api/espn/) - ESPN API integration (22 documents)
 - [Action Network Quality Report](api/action_network/ACTION_NETWORK_DATA_QUALITY_REPORT.md) - ✅ Data assurance (512 records, 100% quality)
 - [Action Network Setup](api/ACTION_NETWORK_SETUP.md) - Integration guide
 - [API Integration Guide](api/API_INTEGRATION_GUIDE.md) - General API integration
-- **Quick Reference**: CLAUDE.md § "Environment Variables & API Keys" for credentials setup
+- **Quick Reference**: CLAUDE.md § "Data Sources & APIs" for Overtime.ag client details
 
 ### Action Network Live Odds Scraper ✨ NEW (2025-11-25)
 **Complete live odds extraction with spread, totals (O/U), and moneyline data.**

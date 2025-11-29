@@ -150,30 +150,22 @@ class WeeklyWorkflowOrchestrator:
 
         # Stage 1: Data Collection
         if collect_data:
-            await self._run_stage(
-                WorkflowStage.DATA_COLLECTION, self._collect_data
-            )
+            await self._run_stage(WorkflowStage.DATA_COLLECTION, self._collect_data)
 
         # Stage 2: Edge Detection
         if detect_edges:
-            await self._run_stage(
-                WorkflowStage.EDGE_DETECTION, self._detect_edges
-            )
+            await self._run_stage(WorkflowStage.EDGE_DETECTION, self._detect_edges)
 
         # Stage 3: Results Checking (from previous week)
         if check_results:
-            await self._run_stage(
-                WorkflowStage.RESULTS_CHECKING, self._check_results
-            )
+            await self._run_stage(WorkflowStage.RESULTS_CHECKING, self._check_results)
 
         # Stage 4: CLV Tracking
         if track_clv:
             await self._run_stage(WorkflowStage.CLV_TRACKING, self._track_clv)
 
         # Stage 5: Sharp Money Integration
-        await self._run_stage(
-            WorkflowStage.SHARP_MONEY, self._integrate_sharp_money
-        )
+        await self._run_stage(WorkflowStage.SHARP_MONEY, self._integrate_sharp_money)
 
         # Stage 6: Dynamic Adjustments
         await self._run_stage(
@@ -186,9 +178,7 @@ class WeeklyWorkflowOrchestrator:
         # Compile final report
         return self._compile_final_report()
 
-    async def _run_stage(
-        self, stage: WorkflowStage, handler
-    ) -> Tuple[bool, str]:
+    async def _run_stage(self, stage: WorkflowStage, handler) -> Tuple[bool, str]:
         """
         Run a single workflow stage with error handling.
 
@@ -269,9 +259,7 @@ class WeeklyWorkflowOrchestrator:
         logger.info("Checking results from previous week...")
         prev_week = self.current_week - 1
         # Check results using BettingResultsChecker
-        results = self.results_checker.fetch_scores(
-            league=self.league, week=prev_week
-        )
+        results = self.results_checker.fetch_scores(league=self.league, week=prev_week)
         return {
             "message": f"Checked results for {len(results) if results else 0} games",
             "data": {
@@ -396,16 +384,12 @@ class WeeklyWorkflowOrchestrator:
 
 async def main():
     """Main CLI entry point."""
-    parser = ArgumentParser(
-        description="Weekly Production Workflow Orchestrator"
-    )
+    parser = ArgumentParser(description="Weekly Production Workflow Orchestrator")
 
     # League selection
     league_group = parser.add_mutually_exclusive_group(required=True)
     league_group.add_argument("--nfl", action="store_true", help="Run NFL workflow")
-    league_group.add_argument(
-        "--ncaaf", action="store_true", help="Run NCAAF workflow"
-    )
+    league_group.add_argument("--ncaaf", action="store_true", help="Run NCAAF workflow")
 
     # Workflow components
     parser.add_argument(

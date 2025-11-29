@@ -103,9 +103,7 @@ class SharpMoneyIntegrator:
     def __init__(self, project_root: Optional[Path] = None):
         """Initialize integrator."""
         self.project_root = project_root or Path(__file__).parent.parent.parent.parent
-        self.action_network_dir = (
-            self.project_root / "output" / "action_network"
-        )
+        self.action_network_dir = self.project_root / "output" / "action_network"
         self.thresholds = None
 
     def load_sharp_signals(
@@ -222,23 +220,19 @@ class SharpMoneyIntegrator:
             # Sharp confirms our edge - boost confidence
             adjustment = self._get_adjustment_for_strength(signal.signal_strength, +1)
             reasoning = (
-                f"Sharp signal CONFIRMS edge "
-                f"({signal.divergence:.1f}% divergence)"
+                f"Sharp signal CONFIRMS edge ({signal.divergence:.1f}% divergence)"
             )
         elif agreement == SignalAgreement.CONTRADICTION:
             # Sharp contradicts our edge - reduce confidence
             adjustment = self._get_adjustment_for_strength(signal.signal_strength, -1)
             reasoning = (
-                f"Sharp signal CONTRADICTS edge "
-                f"({signal.divergence:.1f}% divergence)"
+                f"Sharp signal CONTRADICTS edge ({signal.divergence:.1f}% divergence)"
             )
         else:
             adjustment = 0.0
             reasoning = "Edge and sharp signal target different outcomes"
 
-        adjusted_confidence = max(
-            0.0, min(100.0, edge.confidence_score + adjustment)
-        )
+        adjusted_confidence = max(0.0, min(100.0, edge.confidence_score + adjustment))
 
         return AdjustedEdge(
             original_edge=edge,
@@ -246,9 +240,7 @@ class SharpMoneyIntegrator:
             signal_agreement=agreement,
             confidence_adjustment=adjustment,
             adjusted_confidence=adjusted_confidence,
-            adjusted_edge_points=self._adjust_edge_points(
-                edge.edge_points, adjustment
-            ),
+            adjusted_edge_points=self._adjust_edge_points(edge.edge_points, adjustment),
             reasoning=reasoning,
         )
 
@@ -257,7 +249,9 @@ class SharpMoneyIntegrator:
     ) -> SignalAgreement:
         """Check if edge and signal recommend the same side."""
         edge_side = edge.recommended_bet.lower()  # "home", "away", etc.
-        signal_side = signal.recommended_side.lower() if signal.recommended_side else None
+        signal_side = (
+            signal.recommended_side.lower() if signal.recommended_side else None
+        )
 
         if not signal_side:
             return SignalAgreement.NONE
@@ -378,9 +372,7 @@ class SharpMoneyIntegrator:
             logger.debug(f"Failed to parse game: {str(e)}")
             return None
 
-    def generate_sharp_money_report(
-        self, adjusted_edges: List[AdjustedEdge]
-    ) -> Dict:
+    def generate_sharp_money_report(self, adjusted_edges: List[AdjustedEdge]) -> Dict:
         """Generate report on sharp money signal integration."""
         with_signals = [a for a in adjusted_edges if a.sharp_signal is not None]
         confirmed = [

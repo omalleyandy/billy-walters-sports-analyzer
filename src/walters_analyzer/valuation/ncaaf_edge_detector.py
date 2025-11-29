@@ -213,7 +213,9 @@ class NCAAFEdgeDetector:
             try:
                 await self.weather_client.connect()
             except Exception as e:
-                logger.warning(f"Weather client init failed (weather adjustments disabled): {e}")
+                logger.warning(
+                    f"Weather client init failed (weather adjustments disabled): {e}"
+                )
 
             # Load all required data
             games = await self._load_schedule(week)

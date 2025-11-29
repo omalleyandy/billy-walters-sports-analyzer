@@ -39,9 +39,23 @@ output/
 ├── clv_tracking/             # Betting records and CLV metrics
 ├── action_network/           # Sharp money signals (Action Network)
 ├── espn/nfl/ & /ncaaf/       # Team statistics
-├── overtime/nfl/ & /ncaaf/   # Pregame and live odds
+├── overtime/nfl/ & /ncaaf/   # Pregame odds (API client v2.1.0)
 ├── weather/nfl/ & /ncaaf/    # Stadium weather data
 └── massey/                   # Power ratings
+```
+
+### Fetch Fresh Odds (Optional - Auto-fetched by Edge Detection)
+```bash
+# Fetch latest odds from Overtime.ag (fast API, no browser needed)
+uv run python -c "
+import asyncio
+from src.data.overtime_api_client import OvertimeApiClient
+async def fetch():
+    client = OvertimeApiClient()
+    await client.scrape_nfl()
+    await client.scrape_ncaaf()
+asyncio.run(fetch())
+"
 ```
 
 ---
@@ -366,89 +380,103 @@ cd C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer
 
 ---
 
-**Last Updated**: 2025-11-28 (Session Complete)
+**Last Updated**: 2025-11-28 (Session 2 Complete)
 **Status**: ✅ PRODUCTION READY
 
 ---
 
-## Session Summary: 2025-11-28
+## Data Sources & APIs
+
+### Overtime.ag API Client (v2.1.0)
+The internal `OvertimeApiClient` is the primary odds source:
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Direct API (no browser) | ✅ | POST to `Offering.asmx/GetSportOffering` |
+| Speed | ~2-3 sec/league | vs ~70 sec for browser scraper |
+| Auth Required | No | Public API endpoint |
+| UTC DateTime | ✅ | Parsed from .NET timestamp |
+| Week Extraction | ✅ | From NFL comments field |
+| Timezone Info | ✅ | America/New_York (ET) |
+
+**Output Format** (`output/overtime/{league}/pregame/api_walters_*.json`):
+```json
+{
+  "metadata": {"source": "overtime.ag", "week": 13, "converter_version": "2.1.0"},
+  "games": [{
+    "away_team": "Arizona Cardinals",
+    "home_team": "Tampa Bay Buccaneers",
+    "game_datetime_utc": "2025-11-30T18:00:01+00:00",
+    "game_datetime_et": "2025-11-30T13:00:01-05:00",
+    "timezone": "America/New_York",
+    "week": 13,
+    "spread": {"home": -3.5, "home_odds": -113},
+    "total": {"points": 44.5}
+  }]
+}
+```
+
+---
+
+## Session Summary: 2025-11-28 (Session 2)
 
 ### What Was Accomplished
 
-**Weekly Task Automation - COMPLETE**
-1. ✅ Created PowerShell setup script for Windows Task Scheduler
-2. ✅ Generated wrapper scripts to avoid quoting issues
-3. ✅ Fixed edge detector commands (`--full` → `--verbose`)
-4. ✅ Added proper `uv run` environment wrapping
-5. ✅ Tested all 3 tasks successfully
-6. ✅ Deployed to production (all tasks verified working)
+**Overtime.ag API Client Enhancement - COMPLETE**
+1. ✅ Enhanced `OvertimeApiClient` (v2.0.0 → v2.1.0)
+2. ✅ Added proper UTC datetime parsing from .NET timestamps
+3. ✅ Added Eastern Time conversion for display
+4. ✅ Added timezone info field (`America/New_York`)
+5. ✅ Added week extraction from NFL comments
+6. ✅ Maintained backward compatibility with edge detector
 
-**Documentation - STREAMLINED**
-1. ✅ Reduced CLAUDE.md from 1222 → 371 lines (-66%)
-2. ✅ Kept all essential automation info
-3. ✅ Organized by functional priority (automation first)
-4. ✅ Added quick reference command table
-5. ✅ Delegated detailed docs to docs/_INDEX.md
-6. ✅ Improved navigation and usability
+**Integration Decision**
+- ✅ Chose internal API client over external browser-based client
+- Internal: ~2-3 sec, no auth, reliable
+- External: ~70 sec, requires login, has timeout bugs
 
-### Three Automated Tasks Now Running
+**Production Validation**
+- ✅ NFL Week 13: 8 edges detected
+- ✅ NCAAF Week 14: 11 edges detected
+- ✅ Full pipeline tested end-to-end
 
-| Task | Schedule | Status | Output |
-|------|----------|--------|--------|
-| **NFL Edges** | Tuesday 2:00 PM | ✅ Exit Code 0 | `output/edge_detection/` |
-| **NCAAF Edges** | Wednesday 2:00 PM | ✅ Tested | `output/edge_detection/` |
-| **CLV Tracking** | Monday 3:00 PM | ✅ Ready | Results logs |
+### Edge Detection Results (Current Week)
 
-### Key Files Modified/Created
+**NFL Week 13** (8 edges):
+| # | Matchup | Edge | Strength | Bet |
+|---|---------|------|----------|-----|
+| 1 | New Orleans @ Miami | 9.6 pts | VERY_STRONG | HOME |
+| 2 | NY Giants @ New England | 8.9 pts | VERY_STRONG | HOME |
+| 3 | San Francisco @ Cleveland | 8.1 pts | VERY_STRONG | AWAY |
+| 4 | Chicago @ Philadelphia | 8.0 pts | VERY_STRONG | HOME |
+| 5 | Denver @ Washington | 7.3 pts | VERY_STRONG | AWAY |
 
-**Scripts**:
-- `scripts/automation/setup_weekly_tasks.ps1` - Task Scheduler setup (fixed time parsing, wrapper generation)
-- `scripts/automation/cleanup_tasks.ps1` - Task removal utility
-- `scripts/temp/task_*.ps1` - 3 wrapper scripts (auto-generated, uv-wrapped)
+**NCAAF Week 14** (11 edges):
+| # | Matchup | Edge | Strength | Bet |
+|---|---------|------|----------|-----|
+| 1 | Central Florida @ BYU | 19.4 pts | VERY_STRONG | AWAY |
+| 2 | Arizona @ Arizona State | 16.5 pts | VERY_STRONG | HOME |
+| 3 | Ohio State @ Michigan | 11.9 pts | VERY_STRONG | HOME |
+| 4 | Mississippi @ Miss State | 11.8 pts | VERY_STRONG | HOME |
+| 5 | Texas Tech @ West Virginia | 10.0 pts | VERY_STRONG | HOME |
+
+### Key Files Modified
+
+**Enhanced**:
+- `src/data/overtime_api_client.py` - Added datetime/week parsing (v2.1.0)
 
 **Documentation**:
-- `CLAUDE.md` - Streamlined development guidelines (this file)
-
-### Git Commits This Session
-
-1. `fix: correct task scheduler edge detector commands and add uv run wrapper`
-   - Fixed `--full` → `--verbose` flag
-   - Added `uv run` prepending
-   - Created wrapper script system
-   - Tested all tasks
-
-2. `docs: streamline CLAUDE.md to essential automation and development info`
-   - Reduced from 1222 → 371 lines
-   - Reorganized by priority
-   - Added quick reference
-   - Delegated detailed docs
-
-### Next Steps for Future Sessions
-
-1. **Monitor First Week of Automation** (Week 13-14)
-   - Verify tasks execute on schedule
-   - Check output in `output/edge_detection/`
-   - Validate edge detection accuracy
-
-2. **Weekly Operations** (Ongoing)
-   - Tuesday 2:00 PM: NFL edges auto-generated
-   - Wednesday 2:00 PM: NCAAF edges auto-generated
-   - Monday 3:00 PM: CLV results auto-tracked
-
-3. **If Issues Arise**
-   - Check `CLAUDE.md` → Troubleshooting section
-   - Use `schtasks` to verify task status
-   - Manually trigger task: `Start-ScheduledTask -TaskName "BillyWalters-Weekly-NFL-Edges-Tuesday"`
-   - Review wrapper scripts in `scripts/temp/`
+- `CLAUDE.md` - Added API client docs and current edges
 
 ### Production Checklist
 
-- ✅ Automated edge detection (NFL & NCAAF)
-- ✅ CLV tracking (Monday results)
-- ✅ Windows Task Scheduler integration
-- ✅ Proper environment wrapping (uv run)
-- ✅ Pre-flight validation (schedule & odds files)
-- ✅ Clean documentation
-- ✅ Git history clean and committed
+- ✅ Overtime.ag API client enhanced (v2.1.0)
+- ✅ Proper UTC/ET datetime parsing
+- ✅ Week extraction working (NFL)
+- ✅ Edge detection pipeline validated
+- ✅ NFL Week 13: 8 edges
+- ✅ NCAAF Week 14: 11 edges
+- ✅ Automated tasks configured
+- ✅ Documentation updated
 
 **System Ready for Production Use**

@@ -140,6 +140,7 @@ def main():
     except Exception as e:
         print(f"\n[ERROR] Unexpected error: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 

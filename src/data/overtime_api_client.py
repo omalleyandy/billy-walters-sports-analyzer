@@ -20,9 +20,11 @@ Date: 2025-11-11
 """
 
 import json
-from datetime import datetime
+import re
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import httpx
 
@@ -31,6 +33,49 @@ class OvertimeApiClient:
     """Client for Overtime.ag API (reverse-engineered endpoint)."""
 
     BASE_URL = "https://overtime.ag/sports/Api/Offering.asmx/GetSportOffering"
+    # US Eastern timezone - Overtime.ag displays times in ET
+    EASTERN_TZ = ZoneInfo("America/New_York")
+
+    @staticmethod
+    def parse_dotnet_timestamp(timestamp_str: str | None) -> datetime | None:
+        """
+        Parse .NET JSON timestamp format to UTC datetime.
+
+        Args:
+            timestamp_str: Format like "/Date(1764525601000)/" (ms since epoch)
+
+        Returns:
+            UTC datetime or None if parsing fails
+        """
+        if not timestamp_str:
+            return None
+        try:
+            # Extract milliseconds from /Date(1234567890000)/
+            match = re.search(r"/Date\((\d+)\)/", timestamp_str)
+            if match:
+                ms = int(match.group(1))
+                return datetime.fromtimestamp(ms / 1000, tz=timezone.utc)
+        except (ValueError, TypeError):
+            pass
+        return None
+
+    @staticmethod
+    def extract_week_from_comments(comments: str | None) -> int | None:
+        """
+        Extract week number from game comments.
+
+        Args:
+            comments: String like "NFL WEEK 13 Sunday, November 30th"
+
+        Returns:
+            Week number or None if not found
+        """
+        if not comments:
+            return None
+        match = re.search(r"WEEK\s+(\d+)", comments, re.IGNORECASE)
+        if match:
+            return int(match.group(1))
+        return None
 
     def __init__(self, output_dir: str | Path = "output/overtime"):
         """
@@ -136,15 +181,33 @@ class OvertimeApiClient:
             over_odds = int(game.get("TtlPtsAdj1", -110))
             under_odds = int(game.get("TtlPtsAdj2", -110))
 
-            # Parse game time
-            game_time_str = game.get("GameDateTimeString", "")
+            # Parse game time - use .NET timestamp for accurate UTC datetime
+            game_time_str = game.get("GameDateTimeString", "")  # ET display time
+            game_datetime_utc = self.parse_dotnet_timestamp(game.get("GameDateTime"))
+
+            # Convert to Eastern for display
+            game_datetime_et = None
+            if game_datetime_utc:
+                game_datetime_et = game_datetime_utc.astimezone(self.EASTERN_TZ)
+
+            # Extract week from comments
+            comments = game.get("Comments", "")
+            week = self.extract_week_from_comments(comments)
 
             converted_game = {
                 "game_id": str(game.get("GameNum", "")),
                 "league": league,
                 "away_team": away_team,
                 "home_team": home_team,
-                "game_time": game_time_str,
+                "game_time": game_time_str,  # Original ET string (backward compat)
+                "game_datetime_utc": (
+                    game_datetime_utc.isoformat() if game_datetime_utc else None
+                ),
+                "game_datetime_et": (
+                    game_datetime_et.isoformat() if game_datetime_et else None
+                ),
+                "timezone": "America/New_York",
+                "week": week,
                 "spread": {
                     "away": away_spread,
                     "home": home_spread,
@@ -163,9 +226,15 @@ class OvertimeApiClient:
                 },
                 "status": game.get("Status", ""),
                 "period": game.get("PeriodDescription", "Game"),
+                "comments": comments,
             }
 
             converted_games.append(converted_game)
+
+        # Extract week from first game (they should all be same week)
+        detected_week = None
+        if converted_games:
+            detected_week = converted_games[0].get("week")
 
         # Build final response
         return {
@@ -173,12 +242,14 @@ class OvertimeApiClient:
                 "source": "overtime.ag",
                 "method": "api",
                 "league": league,
-                "converted_at": datetime.now().isoformat(),
-                "converter_version": "2.0.0",
+                "week": detected_week,
+                "converted_at": datetime.now(timezone.utc).isoformat(),
+                "converter_version": "2.1.0",  # Added datetime/week parsing
             },
             "games": converted_games,
             "summary": {
                 "total_games": len(converted_games),
+                "week": detected_week,
                 "conversion_rate": "100%",
             },
         }

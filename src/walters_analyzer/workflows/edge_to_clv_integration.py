@@ -141,7 +141,9 @@ class EdgeToCLVIntegrator:
                 records.append(record)
                 total_edge += edge.edge_points
 
-                logger.debug(f"Created record: {record.matchup} ({record.edge_points:.1f}pt edge)")
+                logger.debug(
+                    f"Created record: {record.matchup} ({record.edge_points:.1f}pt edge)"
+                )
 
             except Exception as e:
                 error_msg = f"Failed to convert edge for {edge.matchup}: {str(e)}"
@@ -215,7 +217,9 @@ class EdgeToCLVIntegrator:
             pick=pick,
             opening_odds=opening_odds,
             opening_spread=opening_spread,
-            confidence=edge.confidence_score if hasattr(edge, "confidence_score") else 0.0,
+            confidence=edge.confidence_score
+            if hasattr(edge, "confidence_score")
+            else 0.0,
             edge_points=edge.edge_points,
             kelly_fraction=self._calculate_kelly(edge.edge_points),
             units_bet=self._calculate_units(edge.edge_points),
@@ -328,9 +332,7 @@ class EdgeToCLVIntegrator:
 
         return records
 
-    def generate_clv_report(
-        self, records: List[BettingRecord]
-    ) -> Dict:
+    def generate_clv_report(self, records: List[BettingRecord]) -> Dict:
         """Generate CLV performance report."""
         if not records:
             return {

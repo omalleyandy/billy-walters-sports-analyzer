@@ -149,17 +149,11 @@ class InjuryAdjustment:
             reasons.append(f"Replacement impact: {self.replacement_level_impact:.1f}pt")
 
         # Determine if favors home or away
-        if (
-            self.away_or_home.lower() == "away"
-            and adjustment < 0
-        ):
+        if self.away_or_home.lower() == "away" and adjustment < 0:
             # Away team injuries hurt them (home team advantage)
             adjustment *= 1.2
             reasons.append("Away team injuries amplified")
-        elif (
-            self.away_or_home.lower() == "home"
-            and adjustment < 0
-        ):
+        elif self.away_or_home.lower() == "home" and adjustment < 0:
             # Home team injuries help away team slightly
             adjustment *= 0.8
             reasons.append("Home team injuries slightly offset")
@@ -216,7 +210,9 @@ class SituationalAdjustment:
             travel_adj = -(self.travel_distance_miles / 1000.0) * 0.5
             travel_adj = max(travel_adj, -2.0)  # Cap at -2.0pt
             adjustment += travel_adj
-            reasons.append(f"Travel ({self.travel_distance_miles}mi): {travel_adj:.1f}pt")
+            reasons.append(
+                f"Travel ({self.travel_distance_miles}mi): {travel_adj:.1f}pt"
+            )
 
         # Altitude adjustment
         if self.altitude_change and self.altitude_change > 5000:
@@ -285,7 +281,9 @@ class DynamicAdjustmentResult:
 
         if self.line_movement_adjustment != 0:
             adjustments.append(self.line_movement_adjustment)
-            self.adjustment_reasons.append(f"Line movement: {self.line_movement_adjustment:+.1f}pt")
+            self.adjustment_reasons.append(
+                f"Line movement: {self.line_movement_adjustment:+.1f}pt"
+            )
 
         self.total_adjustment = sum(adjustments)
         self.adjusted_edge_points = (
@@ -293,7 +291,9 @@ class DynamicAdjustmentResult:
         )
 
         # Confidence adjustment: larger adjustments reduce confidence
-        confidence_impact = abs(self.total_adjustment) * 5  # 1pt adjustment = 5% confidence
+        confidence_impact = (
+            abs(self.total_adjustment) * 5
+        )  # 1pt adjustment = 5% confidence
         self.adjusted_confidence = max(
             0.0, self.original_edge.confidence_score - confidence_impact
         )
@@ -372,11 +372,9 @@ class DynamicAdjustmentEngine:
                 )
                 home_injury_adj.calculate_adjustment()
                 # Use whichever has bigger impact
-                if (
-                    not result.injury_adjustment
-                    or abs(home_injury_adj.adjustment)
-                    > abs(result.injury_adjustment.adjustment)
-                ):
+                if not result.injury_adjustment or abs(
+                    home_injury_adj.adjustment
+                ) > abs(result.injury_adjustment.adjustment):
                     result.injury_adjustment = home_injury_adj
 
         # Apply situational adjustment
@@ -387,7 +385,9 @@ class DynamicAdjustmentEngine:
                 travel_distance_miles=situational.get("travel_distance_miles"),
                 altitude_change=situational.get("altitude_change"),
                 is_rivalry=situational.get("is_rivalry", False),
-                is_playoff_implications=situational.get("is_playoff_implications", False),
+                is_playoff_implications=situational.get(
+                    "is_playoff_implications", False
+                ),
                 motivation=situational.get("motivation", "neutral"),
             )
             sit_adj.calculate_adjustment()
@@ -451,9 +451,7 @@ def main():
     # Apply adjustments
     import asyncio
 
-    result = asyncio.run(
-        engine.apply_adjustments(edge, weather, injuries, situational)
-    )
+    result = asyncio.run(engine.apply_adjustments(edge, weather, injuries, situational))
 
     print(f"Original edge: {edge.edge_points:.1f}pt")
     print(f"Total adjustment: {result.total_adjustment:+.1f}pt")
