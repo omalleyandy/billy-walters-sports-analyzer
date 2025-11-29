@@ -4,8 +4,12 @@ Based on Billy Walters' methodology for quantifying player impact on point sprea
 """
 
 from enum import Enum
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
 from .config import get_position_values
+
+if TYPE_CHECKING:
+    from src.db.raw_data_operations import RawDataOperations
 
 
 class PlayerPosition(Enum):
@@ -268,3 +272,50 @@ class PlayerValuation:
 
         else:
             return "average"
+
+    def get_player_value_from_db(
+        self,
+        player_id: str,
+        team_id: int,
+        season: int,
+        week: int,
+        position: str,
+        db_ops: "RawDataOperations",
+    ) -> float:
+        """
+        Get player value from database, falling back to position defaults
+
+        Billy Walters Principle: Use actual player impact data when available
+        Rather than generic position-based defaults.
+
+        Args:
+            player_id: Player ID
+            team_id: Team ID
+            season: Season year
+            week: Week number
+            position: Player position (fallback)
+            db_ops: Database operations instance
+
+        Returns:
+            Player point spread impact value (0.5-5.0)
+        """
+        try:
+            # Query database for actual player valuation
+            valuation = db_ops.get_player_valuation(
+                league_id=1,  # NFL - hardcoded for now
+                team_id=team_id,
+                player_id=player_id,
+                season=season,
+                week=week,
+            )
+
+            if valuation:
+                # Use actual database-driven value (0.5-5.0 range)
+                return float(valuation.point_value)
+
+        except Exception:
+            # Silently fall back if database query fails
+            pass
+
+        # Fall back to position-based default
+        return self.calculate_player_value(position)

@@ -286,8 +286,14 @@ class BillyWaltersEdgeDetector:
         "Washington Commanders": "Washington",
     }
 
-    def __init__(self, output_dir: str = "output/edge_detection"):
-        """Initialize edge detector"""
+    def __init__(self, output_dir: str = "output/edge_detection", db_ops=None):
+        """
+        Initialize edge detector
+
+        Args:
+            output_dir: Output directory for edge detection results
+            db_ops: Optional RawDataOperations instance for database queries
+        """
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
 
@@ -296,6 +302,9 @@ class BillyWaltersEdgeDetector:
         self.situational_factors: Dict[str, SituationalFactor] = {}
         self.weather_data: Dict[str, WeatherImpact] = {}
         self.injury_data: Dict[str, List[Dict]] = {}  # team -> list of injuries
+
+        # Database operations (optional)
+        self.db_ops = db_ops
 
         # ESPN integration
         self.espn_loader = ESPNDataLoader()
@@ -309,6 +318,230 @@ class BillyWaltersEdgeDetector:
         self.player_valuation = PlayerValuation(sport="NFL")
 
         logger.info("Billy Walters Edge Detector initialized")
+
+    def check_wednesday_signal(
+        self, team_id: int, team_name: str, season: int, week: int
+    ) -> tuple[bool, float]:
+        """
+        Check Wednesday practice status for key players.
+
+        Billy Walters Rule: "Wednesday practice = Sunday play"
+        - If key player practices Wednesday (FP/LP) → high confidence they play
+        - If key player DNP Wednesday → high confidence they don't play
+
+        Args:
+            team_id: Team ID
+            team_name: Team name (for fallback)
+            season: Season year
+            week: Week number
+
+        Returns:
+            Tuple of (is_signal_detected, confidence_multiplier)
+            - is_signal_detected: Whether Wednesday status indicates strong signal
+            - confidence_multiplier: 1.15 if positive signal, 1.0 if none, 0.95 if negative
+        """
+        if not self.db_ops or not team_id:
+            return (False, 1.0)
+
+        try:
+            # Query Wednesday practice reports for team
+            wednesday_reports = self.db_ops.get_wednesday_practice_status(
+                league_id=1,  # NFL
+                team_id=team_id,
+                season=season,
+                week=week,
+            )
+
+            if not wednesday_reports:
+                return (False, 1.0)
+
+            # Count key players by practice status
+            fully_participating = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "FP" and report.impact_rating >= 3.0
+            )
+            limited_participating = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "LP" and report.impact_rating >= 2.0
+            )
+            did_not_participate = sum(
+                1
+                for report in wednesday_reports
+                if report.participation == "DNP" and report.impact_rating >= 3.0
+            )
+
+            # Positive signal: Multiple key players practicing
+            if fully_participating >= 2 or (fully_participating + limited_participating) >= 3:
+                logger.info(
+                    f"{team_name}: Wednesday signal POSITIVE "
+                    f"({fully_participating} FP, {limited_participating} LP)"
+                )
+                return (True, 1.15)  # 15% confidence boost
+
+            # Negative signal: Key player didn't participate
+            if did_not_participate >= 1:
+                logger.info(
+                    f"{team_name}: Wednesday signal NEGATIVE ({did_not_participate} DNP)"
+                )
+                return (True, 0.95)  # 5% confidence reduction
+
+        except Exception as e:
+            logger.debug(f"Error checking Wednesday signal for {team_name}: {e}")
+
+        return (False, 1.0)
+
+    def get_swe_adjustments(
+        self, game_id: str, season: int, week: int
+    ) -> dict:
+        """
+        Retrieve S-W-E (Special/Weather/Emotional) factors from database.
+
+        Billy Walters Methodology: Consolidate all non-power-rating adjustments
+        into Special, Weather, and Emotional factor categories.
+
+        Args:
+            game_id: Game identifier
+            season: Season year
+            week: Week number
+
+        Returns:
+            Dictionary with:
+            - special: Special circumstance adjustment (points)
+            - weather: Weather impact adjustment (points)
+            - emotional: Emotional/momentum adjustment (points)
+            - total: Total combined adjustment (points)
+            - confidence_impact: Multiplier for confidence score (0.8-1.2)
+        """
+        if not self.db_ops:
+            return {
+                "special": 0.0,
+                "weather": 0.0,
+                "emotional": 0.0,
+                "total": 0.0,
+                "confidence_impact": 1.0,
+            }
+
+        try:
+            # Query database for game SWE factors
+            swe_factors = self.db_ops.get_game_swe_factors(
+                league_id=1,  # NFL
+                game_id=game_id,
+                season=season,
+                week=week,
+            )
+
+            if swe_factors:
+                return {
+                    "special": swe_factors.special_adjustment or 0.0,
+                    "weather": swe_factors.weather_adjustment or 0.0,
+                    "emotional": swe_factors.emotional_adjustment or 0.0,
+                    "total": swe_factors.total_adjustment or 0.0,
+                    "confidence_impact": swe_factors.confidence_level or 1.0,
+                }
+
+        except Exception as e:
+            logger.debug(f"Error retrieving SWE factors for game {game_id}: {e}")
+
+        # Return defaults if not found or error
+        return {
+            "special": 0.0,
+            "weather": 0.0,
+            "emotional": 0.0,
+            "total": 0.0,
+            "confidence_impact": 1.0,
+        }
+
+    def calculate_trend_confidence_adjustment(
+        self, team_id: int, opponent_id: int, season: int, week: int
+    ) -> float:
+        """
+        Calculate confidence adjustment based on team trends.
+
+        Billy Walters Principle: Context matters - streaks, desperation, and
+        emotional factors affect team performance beyond base power ratings.
+
+        Args:
+            team_id: Team ID (the team we're betting on)
+            opponent_id: Opponent team ID
+            season: Season year
+            week: Week number
+
+        Returns:
+            Confidence multiplier (0.8 to 1.2)
+            - 1.2 = +20% confidence (hot team, must-win situation)
+            - 1.0 = neutral (no trend signals)
+            - 0.8 = -20% confidence (cold team, no motivation)
+        """
+        if not self.db_ops or not team_id:
+            return 1.0
+
+        try:
+            # Get team trends
+            team_trends = self.db_ops.get_team_trends(
+                league_id=1,  # NFL
+                team_id=team_id,
+                season=season,
+                week=week,
+            )
+
+            if not team_trends:
+                return 1.0
+
+            confidence_adj = 1.0
+
+            # Winning streak (+5%) vs losing streak (-5%)
+            if team_trends.streak_length and team_trends.streak_length >= 3:
+                if team_trends.streak_direction == "W":
+                    confidence_adj += 0.05  # Hot team = more confidence
+                    logger.info(
+                        f"Team {team_id}: Winning streak ({team_trends.streak_length}) "
+                        f"+5% confidence"
+                    )
+                elif team_trends.streak_direction == "L":
+                    confidence_adj -= 0.05  # Cold team = less confidence
+                    logger.info(
+                        f"Team {team_id}: Losing streak ({team_trends.streak_length}) "
+                        f"-5% confidence"
+                    )
+
+            # Desperation factor (+10%) - must-win games in playoff race
+            if team_trends.desperation_level and team_trends.desperation_level >= 8:
+                confidence_adj += 0.10
+                logger.info(
+                    f"Team {team_id}: High desperation (level {team_trends.desperation_level}) "
+                    f"+10% confidence"
+                )
+
+            # Revenge factor (+5%) - playing team that previously beat them
+            if team_trends.revenge_factor:
+                confidence_adj += 0.05
+                logger.info(f"Team {team_id}: Revenge factor +5% confidence")
+
+            # Rest advantage (+5%)
+            if team_trends.rest_advantage and team_trends.rest_advantage >= 3:
+                confidence_adj += 0.05
+                logger.info(
+                    f"Team {team_id}: Rest advantage (+{team_trends.rest_advantage} days) "
+                    f"+5% confidence"
+                )
+
+            # Cap between 0.8 and 1.2
+            final_multiplier = max(0.8, min(1.2, confidence_adj))
+
+            if final_multiplier != 1.0:
+                logger.info(
+                    f"Team {team_id}: Trend adjustment = {final_multiplier:.2f}x "
+                    f"({(final_multiplier - 1) * 100:+.0f}%)"
+                )
+
+            return final_multiplier
+
+        except Exception as e:
+            logger.debug(f"Error calculating trend adjustment for team {team_id}: {e}")
+
+        return 1.0
 
     def normalize_team_name(self, team_name: str) -> str:
         """
@@ -839,12 +1072,15 @@ class BillyWaltersEdgeDetector:
             logger.error(f"Error loading injury data: {e}")
             return {}
 
-    def calculate_team_injury_impact(self, team_name: str) -> InjuryImpact:
+    def calculate_team_injury_impact(self, team_name: str, team_id: int = None, season: int = None, week: int = None) -> InjuryImpact:
         """
         Calculate total injury impact for a team
 
         Args:
             team_name: Team name (normalized)
+            team_id: Team ID (optional, for database lookups)
+            season: Season year (optional, for database lookups)
+            week: Week number (optional, for database lookups)
 
         Returns:
             InjuryImpact object with detailed breakdown
@@ -863,18 +1099,31 @@ class BillyWaltersEdgeDetector:
             position = injury.get("position", "")
             injury_type_str = injury.get("injury_type", "")
             game_status = injury.get("game_status", "Questionable")
+            player_id = injury.get("player_id", "")
+            player_name = injury.get("player_name", "")
 
             # Parse injury type
             injury_type = self.injury_calculator.parse_injury_status(
                 game_status, injury_type_str
             )
 
-            # Get player value based on position
-            player_value = self.player_valuation.calculate_player_value(position)
+            # Get player value: database-driven if available, else position default
+            if self.db_ops and team_id and season and week and player_id:
+                player_value = self.player_valuation.get_player_value_from_db(
+                    player_id=player_id,
+                    team_id=team_id,
+                    season=season,
+                    week=week,
+                    position=position,
+                    db_ops=self.db_ops,
+                )
+            else:
+                # Fall back to position-based default
+                player_value = self.player_valuation.calculate_player_value(position)
 
             injured_players.append(
                 {
-                    "name": injury.get("player_name", ""),
+                    "name": player_name,
                     "position": position,
                     "value": player_value,
                     "injury_type": injury_type,
@@ -1050,16 +1299,39 @@ class BillyWaltersEdgeDetector:
         weather: Optional[WeatherImpact] = None,
         sharp_action: Optional[SharpAction] = None,
         best_odds: int = -110,
+        season: int = None,
+        away_team_id: int = None,
+        home_team_id: int = None,
     ) -> Optional[BettingEdge]:
         """
         Detect betting edge following Billy Walters principles
+
+        Args:
+            game_id: Game identifier
+            away_team: Away team name
+            home_team: Home team name
+            market_spread: Posted spread
+            market_total: Posted total
+            week: Week number
+            game_time: Game time
+            situational: Optional situational factors
+            weather: Optional weather impact
+            sharp_action: Optional sharp action signals
+            best_odds: Best odds available
+            season: Season year (for database queries)
+            away_team_id: Away team ID (for database queries)
+            home_team_id: Home team ID (for database queries)
 
         Returns:
             BettingEdge if edge >= 3.5 points, else None
         """
         # Calculate injury impacts for both teams
-        away_injury_impact = self.calculate_team_injury_impact(away_team)
-        home_injury_impact = self.calculate_team_injury_impact(home_team)
+        away_injury_impact = self.calculate_team_injury_impact(
+            away_team, team_id=away_team_id, season=season, week=week
+        )
+        home_injury_impact = self.calculate_team_injury_impact(
+            home_team, team_id=home_team_id, season=season, week=week
+        )
 
         # Net injury adjustment (away injuries hurt away team, home injuries hurt home)
         # Positive = favors home, Negative = favors away
@@ -1078,9 +1350,21 @@ class BillyWaltersEdgeDetector:
             f"(favors {'home' if injury_adj > 0 else 'away'})"
         )
 
-        # Calculate other adjustments
-        sit_adj = situational.total_adjustment if situational else 0.0
-        weather_adj = weather.spread_adjustment if weather else 0.0
+        # Get S-W-E (Special/Weather/Emotional) adjustments from database
+        # Falls back to parameter-based adjustments if database query fails
+        swe_adjustments = self.get_swe_adjustments(game_id, season, week)
+
+        # Use database-driven adjustments, fallback to parameters
+        sit_adj = swe_adjustments["special"]
+        if situational and sit_adj == 0.0:
+            sit_adj = situational.total_adjustment
+
+        weather_adj = swe_adjustments["weather"]
+        if weather and weather_adj == 0.0:
+            weather_adj = weather.spread_adjustment
+
+        emotional_adj = swe_adjustments["emotional"]
+        swe_confidence_impact = swe_adjustments["confidence_impact"]
 
         # Get predicted spread with all adjustments
         predicted_spread, away_rating, home_rating = self.calculate_predicted_spread(
@@ -1153,6 +1437,37 @@ class BillyWaltersEdgeDetector:
         if sharp_action and sharp_action.reverse_line_movement:
             confidence = min(confidence * 1.2, 100)
 
+        # Apply SWE (Special/Weather/Emotional) factor confidence impact
+        confidence = min(confidence * swe_confidence_impact, 100)
+
+        # Apply Wednesday signal confidence adjustments
+        # Billy Walters: "Wednesday practice = Sunday play" is a strong indicator
+        away_wed_signal_detected, away_wed_multiplier = self.check_wednesday_signal(
+            away_team_id, away_team, season, week
+        )
+        home_wed_signal_detected, home_wed_multiplier = self.check_wednesday_signal(
+            home_team_id, home_team, season, week
+        )
+
+        # Apply the appropriate team's signal based on recommendation
+        if recommended_bet == "away" and away_wed_signal_detected:
+            confidence = min(confidence * away_wed_multiplier, 100)
+        elif recommended_bet == "home" and home_wed_signal_detected:
+            confidence = min(confidence * home_wed_multiplier, 100)
+
+        # Apply team trend confidence adjustments
+        # Billy Walters: Consider team momentum, desperation, rest, and revenge factors
+        if recommended_bet == "away":
+            trend_multiplier = self.calculate_trend_confidence_adjustment(
+                away_team_id, home_team_id, season, week
+            )
+            confidence = min(confidence * trend_multiplier, 100)
+        elif recommended_bet == "home":
+            trend_multiplier = self.calculate_trend_confidence_adjustment(
+                home_team_id, away_team_id, season, week
+            )
+            confidence = min(confidence * trend_multiplier, 100)
+
         # Determine edge type
         edge_type = EdgeType.POWER_RATING.value
         if sharp_action and sharp_action.reverse_line_movement:
@@ -1181,7 +1496,7 @@ class BillyWaltersEdgeDetector:
             edge_strength=edge_strength,
             situational_adjustment=sit_adj,
             weather_adjustment=weather_adj,
-            emotional_adjustment=0.0,  # Can add later
+            emotional_adjustment=emotional_adj,
             injury_adjustment=injury_adj,
             away_injuries=away_injury_impact,
             home_injuries=home_injury_impact,
