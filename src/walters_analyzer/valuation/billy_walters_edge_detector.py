@@ -896,7 +896,7 @@ class BillyWaltersEdgeDetector:
                 s_factor.letdown_spot = True
                 s_factor.total_adjustment -= 1.0
 
-        s_factor.total_adjustment = s_factor.rest_advantage + s_factor.travel_penalty
+        s_factor.total_adjustment += s_factor.rest_advantage + s_factor.travel_penalty
 
         return s_factor
 
