@@ -976,3 +976,176 @@ class RawDataOperations:
             query, (league_id, team_id, season, week)
         )
         return results[0]["recent_form_pct"] if results else None
+
+    # ============================================================
+    # BILLY WALTERS METHODOLOGY REFERENCE TABLES (Read-Only Lookups)
+    # ============================================================
+
+    def get_point_value_percentage(self, point_spread: float) -> Optional[float]:
+        """Get value percentage for a point spread.
+
+        From Billy Walters' Advanced Master Class - The Value of Points.
+        Example: 3-point spread = 8% value, 7-point spread = 6% value.
+
+        Args:
+            point_spread: The point spread (1-21)
+
+        Returns:
+            Value percentage (e.g., 0.08 for 8%)
+        """
+        query = """
+            SELECT value_percentage FROM lookup_point_values
+            WHERE point_spread = ?
+        """
+        results = self.db.execute_query(query, (point_spread,))
+        if results:
+            return results[0]["value_percentage"] / 100.0
+        return None
+
+    def get_all_point_values(self) -> List[Dict]:
+        """Get all point value data for reference."""
+        query = "SELECT * FROM lookup_point_values ORDER BY point_spread"
+        results = self.db.execute_query(query, ())
+        return [dict(row) for row in results] if results else []
+
+    def get_play_strength(self, edge_percentage: float) -> Optional[float]:
+        """Get play strength (stars) for a calculated edge percentage.
+
+        From Billy Walters' Strength of Play Guidelines - maps edge % to stars.
+        Example: 7% edge = 1.0 star, 15% edge = 3.0 stars.
+
+        Args:
+            edge_percentage: Total calculated edge as percentage (e.g., 0.14 for 14%)
+
+        Returns:
+            Star rating (0.5 to 3.0), or None if below minimum
+        """
+        pct = edge_percentage * 100  # Convert to percentage
+
+        query = """
+            SELECT play_strength_stars FROM lookup_play_strength_guidelines
+            WHERE min_percentage <= ?
+            ORDER BY min_percentage DESC
+            LIMIT 1
+        """
+        results = self.db.execute_query(query, (pct,))
+        return results[0]["play_strength_stars"] if results else None
+
+    def get_play_strength_table(self) -> List[Dict]:
+        """Get complete play strength guidelines table."""
+        query = """
+            SELECT * FROM lookup_play_strength_guidelines
+            ORDER BY min_percentage
+        """
+        results = self.db.execute_query(query, ())
+        return [dict(row) for row in results] if results else []
+
+    def get_odds_adjusted_spread(
+        self, posted_spread: float, bet_price: str
+    ) -> Optional[float]:
+        """Get effective spread at 110/100 vig for given odds.
+
+        From Billy Walters' odds adjustment table - accounts for different vig levels.
+        Example: 3-point spread @ -120 = 3.25 effective spread.
+
+        Args:
+            posted_spread: The posted point spread
+            bet_price: Odds string (e.g., '-115', '+105', '100')
+
+        Returns:
+            Effective implied spread at standard 110/100 vig
+        """
+        query = """
+            SELECT implied_spread_at_110 FROM lookup_odds_to_spread_conversion
+            WHERE posted_spread = ? AND bet_price_text = ?
+        """
+        results = self.db.execute_query(query, (posted_spread, bet_price))
+        if results:
+            return results[0]["implied_spread_at_110"]
+        return None
+
+    def get_odds_conversion_table(self) -> List[Dict]:
+        """Get complete odds to spread conversion table."""
+        query = """
+            SELECT * FROM lookup_odds_to_spread_conversion
+            ORDER BY posted_spread, bet_price_text
+        """
+        results = self.db.execute_query(query, ())
+        return [dict(row) for row in results] if results else []
+
+    def get_moneyline(self, point_spread: float) -> Optional[tuple]:
+        """Get moneyline equivalents (favorite, dog) for a point spread.
+
+        From Billy Walters' Moneyline Conversion Table.
+        Example: 3-point spread = -170 favorite, +141 dog.
+
+        Args:
+            point_spread: The point spread
+
+        Returns:
+            Tuple of (favorite_moneyline, dog_moneyline), or None
+        """
+        query = """
+            SELECT favorite_moneyline, dog_moneyline
+            FROM lookup_moneyline_conversion
+            WHERE point_spread = ?
+        """
+        results = self.db.execute_query(query, (point_spread,))
+        if results:
+            return (
+                results[0]["favorite_moneyline"],
+                results[0]["dog_moneyline"],
+            )
+        return None
+
+    def get_moneyline_table(self) -> List[Dict]:
+        """Get complete moneyline conversion table."""
+        query = """
+            SELECT * FROM lookup_moneyline_conversion
+            ORDER BY point_spread
+        """
+        results = self.db.execute_query(query, ())
+        return [dict(row) for row in results] if results else []
+
+    def calculate_edge_percentage(self, spreads: List[float]) -> float:
+        """Calculate cumulative edge percentage from point spreads.
+
+        Adds up the value percentages for each spread point.
+        Example: spreads [5, 6, 7] = 3% + 5% + 6% = 14%
+
+        Args:
+            spreads: List of point spreads to sum
+
+        Returns:
+            Total edge percentage (0-100)
+        """
+        total_pct = 0.0
+        for spread in spreads:
+            val = self.get_point_value_percentage(spread)
+            if val is not None:
+                total_pct += val * 100
+
+        return total_pct
+
+    def get_buying_power_cost(
+        self, point_spread: float
+    ) -> Optional[str]:
+        """Get the recommended max cost to buy a half point.
+
+        From Billy Walters' Buying Points section.
+        Most valuable for points 3 and 7.
+
+        Args:
+            point_spread: The point spread
+
+        Returns:
+            Cost description (e.g., '$20 off tie, $22 on to tie' for 3)
+        """
+        query = """
+            SELECT dollar_value_buy_half_point FROM lookup_point_values
+            WHERE point_spread = ?
+        """
+        results = self.db.execute_query(query, (point_spread,))
+        if results:
+            return results[0]["dollar_value_buy_half_point"]
+        return None

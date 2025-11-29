@@ -800,6 +800,41 @@ CREATE INDEX IF NOT EXISTS idx_team_trends_team_week
   ON team_trends(team_id, week);
 
 -- ============================================================
+-- BILLY WALTERS METHODOLOGY REFERENCE TABLES
+-- ============================================================
+
+-- Lookup: Point spread value percentages (NFL data since 1974)
+CREATE TABLE IF NOT EXISTS lookup_point_values (
+  point_spread REAL PRIMARY KEY,
+  chance_of_hitting_pct REAL NOT NULL,
+  dollar_value_buy_half_point TEXT,
+  value_percentage REAL NOT NULL
+);
+
+-- Lookup: Play strength guidelines (star rating system)
+CREATE TABLE IF NOT EXISTS lookup_play_strength_guidelines (
+  min_percentage REAL PRIMARY KEY,
+  play_strength_stars REAL NOT NULL,
+  description TEXT
+);
+
+-- Lookup: Odds to implied spread conversion (at 110/100 vig)
+CREATE TABLE IF NOT EXISTS lookup_odds_to_spread_conversion (
+  posted_spread REAL NOT NULL,
+  bet_price_text TEXT NOT NULL,
+  implied_spread_at_110 REAL NOT NULL,
+  PRIMARY KEY (posted_spread, bet_price_text)
+);
+
+-- Lookup: Moneyline conversion table
+CREATE TABLE IF NOT EXISTS lookup_moneyline_conversion (
+  point_spread REAL PRIMARY KEY,
+  favorite_moneyline INTEGER NOT NULL,
+  dog_moneyline INTEGER NOT NULL,
+  description TEXT
+);
+
+-- ============================================================
 -- INSERT BASE DATA
 -- ============================================================
 
@@ -807,3 +842,101 @@ CREATE INDEX IF NOT EXISTS idx_team_trends_team_week
 INSERT OR IGNORE INTO leagues (id, name, display_name) VALUES
   (1, 'NFL', 'National Football League'),
   (2, 'NCAAF', 'College Football');
+
+-- Insert lookup: Point Values (The Value of Points table)
+INSERT OR IGNORE INTO lookup_point_values (point_spread, chance_of_hitting_pct, dollar_value_buy_half_point, value_percentage) VALUES
+  (1, 3, '6', 3.0),
+  (2, 3, '6', 3.0),
+  (3, 8, '20 off tie, 22 on to tie', 8.0),
+  (4, 3, '6', 3.0),
+  (5, 3, '6', 3.0),
+  (6, 5, '10', 5.0),
+  (7, 6, '13', 6.0),
+  (8, 3, '6', 3.0),
+  (9, 2, '3', 2.0),
+  (10, 4, '9', 4.0),
+  (11, 2, '5', 2.0),
+  (12, 2, '4', 2.0),
+  (13, 2, '5', 2.0),
+  (14, 5, '11', 5.0),
+  (15, 2, '5', 2.0),
+  (16, 3, '6', 3.0),
+  (17, 3, '6', 3.0),
+  (18, 3, '6', 3.0),
+  (21, 3, '6', 3.0);
+
+-- Insert lookup: Play Strength Guidelines (star system)
+INSERT OR IGNORE INTO lookup_play_strength_guidelines (min_percentage, play_strength_stars, description) VALUES
+  (5.5, 0.5, 'Minimum qualifier - lean play'),
+  (7.0, 1.0, 'Standard play'),
+  (9.0, 1.5, 'Strong play'),
+  (11.0, 2.0, 'Very strong play'),
+  (13.0, 2.5, 'Excellent play'),
+  (15.0, 3.0, 'Premium play - max bet');
+
+-- Insert lookup: Odds to Spread Conversion Table
+INSERT OR IGNORE INTO lookup_odds_to_spread_conversion (posted_spread, bet_price_text, implied_spread_at_110) VALUES
+  (2.5, '-115', 2.625),
+  (3.0, '+105', 2.625),
+  (2.5, '-120', 2.75),
+  (3.0, '100', 3.0),
+  (2.5, '-125', 2.875),
+  (3.0, '-105', 3.0),
+  (3.0, '-110', 3.0),
+  (3.0, '-115', 3.125),
+  (3.5, '+105', 3.125),
+  (3.0, '-120', 3.25),
+  (3.5, '100', 3.25),
+  (3.0, '-125', 3.375),
+  (3.5, '-105', 3.375),
+  (7.0, '100', 6.75),
+  (6.5, '-115', 6.75),
+  (7.0, '-105', 6.875),
+  (6.5, '-120', 6.875),
+  (7.0, '-110', 7.0),
+  (7.5, '100', 7.25),
+  (7.0, '-115', 7.25),
+  (7.5, '-105', 7.375),
+  (7.0, '-120', 7.375);
+
+-- Insert lookup: Moneyline Conversion Table (part 1)
+INSERT OR IGNORE INTO lookup_moneyline_conversion (point_spread, favorite_moneyline, dog_moneyline, description) VALUES
+  (1.0, 116, -104, 'Light favorite'),
+  (1.5, 123, -102, NULL),
+  (2.0, 130, -108, NULL),
+  (2.5, 137, -113, NULL),
+  (3.0, -170, 141, 'Strong consensus point'),
+  (3.5, -197, 163, NULL),
+  (4.0, -210, 174, NULL),
+  (4.5, -222, 184, NULL),
+  (5.0, -237, 196, NULL),
+  (5.5, -252, 208, NULL),
+  (6.0, -277, 229, NULL),
+  (6.5, -299, 247, NULL),
+  (7.0, -335, 277, 'Strong favorite point'),
+  (7.5, -368, 305, NULL),
+  (8.0, -397, 328, NULL),
+  (8.5, -427, 353, NULL),
+  (9.0, -441, 365, NULL),
+  (9.5, -456, 377, NULL),
+  (10.0, -510, 422, NULL),
+  (10.5, -561, 464, NULL),
+  (11.0, -595, 492, NULL),
+  (11.5, -631, 522, NULL),
+  (12.0, -657, 543, NULL),
+  (12.5, -681, 564, NULL),
+  (13.0, -730, 604, NULL),
+  (13.5, -781, 646, NULL),
+  (14.0, -904, 748, NULL),
+  (14.5, -1024, 847, NULL),
+  (15.0, -1086, 898, NULL),
+  (15.5, -1147, 949, NULL),
+  (16.0, -1223, 1012, NULL),
+  (16.5, -1300, 1076, NULL),
+  (17.0, -1418, 1173, NULL),
+  (17.5, -1520, 1257, NULL),
+  (18.0, -1664, 1377, NULL),
+  (18.5, -1803, 1492, NULL),
+  (19.0, -1985, 1642, NULL),
+  (19.5, -2182, 1805, NULL),
+  (20.0, -2390, 1977, NULL);
