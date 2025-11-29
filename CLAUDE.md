@@ -145,28 +145,27 @@ uv run ruff check . --fix
 
 ## Git Workflow
 
-### Daily Development
-```bash
-# Start session
-git pull origin main --rebase
+### Automated Git Management
+**You don't touch git. Claude handles it completely.**
 
-# During session (every 30-60 min)
-git add .
-git commit -m "type(scope): brief description"
-git push origin main
+- After every code change, Claude automatically commits to `main`
+- Commits follow conventional commit format with clear, descriptive messages
+- Pushes happen immediately after each commit
+- No feature branches - everything goes direct to `main`
+
+### Commit Format (Automated)
 ```
+type(scope): description
 
-### Commit Format
-```
-type(scope): brief description (50 chars max)
-
-Detailed explanation if needed.
+Detailed explanation of changes.
 
 Generated with Claude Code
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Types**: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `style`
+
+Just ask for changes. Git happens automatically.
 
 ---
 
@@ -313,7 +312,18 @@ uv sync --all-extras --dev
 
 ## Recent Updates
 
-### Session: 2025-11-28 - Weekly Task Automation Complete
+### Session: 2025-11-28 (Session 4) - Automated Git Management Configured
+
+**Status**: ✅ AUTOMATIC GIT WORKFLOWS ENABLED - All commits handled by Claude
+
+**Changes**:
+- Removed feature branch workflow
+- Enabled auto-commit to `main` after every code change
+- Updated CLAUDE.md to document automated git management
+- Cleaned up all old remote GitHub sessions (4 branches deleted)
+- User no longer manages git operations - fully automated
+
+### Previous: Session 2025-11-28 - Weekly Task Automation Complete
 
 **Status**: ✅ PRODUCTION READY - All three automated tasks configured and tested
 
