@@ -312,6 +312,55 @@ uv sync --all-extras --dev
 
 ## Recent Updates
 
+### Session: 2025-11-29 (Session 5) - CLI Enhancements & Documentation Cleanup
+
+**Status**: ✅ COMPLETED - CLI fixed for Windows, spread assumption removed, docs updated
+
+**Changes**:
+
+1. **Fixed Windows Console Compatibility**
+   - Removed emoji characters (🏈, 🎯, 📊, 💰) that cause UnicodeEncodeError
+   - Replaced with safe ASCII markers ([OK], [WARNING], etc.)
+   - Removed Progress/SpinnerColumn Unicode animations
+   - Commands now run cleanly on Windows console
+
+2. **Added Venue Parameter to Game Analysis**
+   - New `--venue` / `-v` option for stadium/venue name
+   - Venue displayed in game header for context
+   - Fixed parameter conflict (--verbose now uses `-vb` instead of `-v`)
+   - Updated command signature with all 6 parameters
+
+3. **Removed "Home Perspective" Spread Assumption**
+   - Removed "(home perspective)" from spread documentation
+   - Changed display from "Market Spread: {team} {value}" → "Current Spread: {value}"
+   - Updated 3 files: analyze.py, agent_data_loader.py, scoreboard.py
+   - Spread now treated as neutral value without enforced perspective
+
+4. **Updated Documentation**
+   - **CLI_REFERENCE.md**: Updated analyze-game examples (now `walters analyze game`)
+   - **CLI_REFERENCE.md**: Updated argument table with correct defaults
+   - Removed outdated example output, added current framework output
+   - Updated usage examples to show venue parameter
+
+**Command Signature** (Finalized):
+```bash
+uv run walters analyze game "Away Team" "Home Team" \
+  --spread VALUE \
+  --total VALUE \
+  --venue "Stadium" \
+  --bankroll AMOUNT \
+  --research \
+  --verbose
+```
+
+**Files Changed**: 5 files (analyze.py, agent_data_loader.py, scoreboard.py, CLI_REFERENCE.md)
+**Tests**: All existing tests pass
+**Git**: 3 commits with detailed messages
+
+**Next**: Implement actual Billy Walters analysis logic (power ratings, S-factors, edge detection)
+
+---
+
 ### Session: 2025-11-28 (Session 4) - SQLite Migration & Raw Data Pipeline Complete
 
 **Status**: ✅ DATABASE MIGRATION COMPLETE - PostgreSQL → SQLite, 19 tables implemented

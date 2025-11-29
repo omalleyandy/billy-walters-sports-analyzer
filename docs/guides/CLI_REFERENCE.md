@@ -45,100 +45,86 @@ This document provides comprehensive reference for all CLI commands in the Billy
 ### Usage
 
 ```bash
-# Basic analysis with spread
-uv run walters-analyzer analyze-game \
-  --home "Philadelphia Eagles" \
-  --away "Dallas Cowboys" \
-  --spread -3.0
+# Basic analysis with spread and venue
+uv run walters analyze game "Away Team" "Home Team" \
+  --spread -3.0 \
+  --venue "Stadium Name"
 
 # Full analysis with research integration
-uv run walters-analyzer analyze-game \
-  --home "Kansas City Chiefs" \
-  --away "Buffalo Bills" \
-  --spread -2.5 \
-  --home-price -105 \
-  --away-price -115 \
-  --venue "Arrowhead Stadium" \
-  --date 2025-11-10 \
+uv run walters analyze game "Ohio State Buckeyes" "Michigan Wolverines" \
+  --spread -10 \
+  --total 43.5 \
+  --venue "Michigan Stadium" \
   --bankroll 10000 \
+  --research
+
+# NCAAF example
+uv run walters analyze game "Alabama" "Georgia" \
+  --spread -7.5 \
+  --venue "Sanford Stadium" \
   --research
 ```
 
 ### Arguments
 
-| Argument       | Type   | Required | Default | Description                       |
-| -------------- | ------ | -------- | ------- | --------------------------------- |
-| `--home`       | string | Yes      | -       | Home team name                    |
-| `--away`       | string | Yes      | -       | Away team name                    |
-| `--spread`     | float  | No       | -       | Current spread (home perspective) |
-| `--total`      | float  | No       | -       | Current total                     |
-| `--home-price` | int    | No       | -110    | Home spread price (American odds) |
-| `--away-price` | int    | No       | -110    | Away spread price (American odds) |
-| `--venue`      | string | No       | -       | Stadium/venue for weather lookup  |
-| `--date`       | string | No       | -       | Game date (YYYY-MM-DD format)     |
-| `--bankroll`   | float  | No       | 10000.0 | Starting bankroll amount          |
-| `--research`   | flag   | No       | false   | Fetch live injury/weather data    |
+| Argument       | Short | Type   | Required | Default | Description                |
+| -------------- | ----- | ------ | -------- | ------- | -------------------------- |
+| `home`         | -     | string | Yes      | -       | Home team name (positional)|
+| `away`         | -     | string | Yes      | -       | Away team name (positional)|
+| `--spread`     | `-l`  | float  | No       | -       | Current spread             |
+| `--total`      | `-t`  | float  | No       | -       | Current total              |
+| `--venue`      | `-v`  | string | No       | -       | Stadium/venue name         |
+| `--bankroll`   | `-b`  | float  | No       | 20000.0 | Starting bankroll amount   |
+| `--research`   | `-r`  | flag   | No       | false   | Fetch live injury/weather  |
+| `--verbose`    | `-vb` | flag   | No       | false   | Show detailed breakdown    |
 
 ### Example Output
 
 ```
-================================================================================
-BILLY WALTERS GAME ANALYSIS
-================================================================================
++---------------------------- [OK] Game Analysis ----------------------------+
+| Ohio State Buckeyes @ Michigan Wolverines                                   |
+| Michigan Stadium                                                            |
++-----------------------------------------------------------------------------+
+Analyzing game...
+Fetching injury data...
+Fetching weather data...
+Calculating power ratings...
+Applying S-factors...
+[OK] Analysis complete
 
-Matchup:  Dallas Cowboys @ Philadelphia Eagles
-Spread:   Philadelphia Eagles -3.0 (-110/-110)
+Power Ratings:
+  Michigan Wolverines: TBD
+  Ohio State Buckeyes: TBD
+  Differential: TBD
 
-HOME TEAM INJURIES:
-  Total Impact: +0.4 pts
-  • Player Name (QB): -2.5 pts
-  • Player Name (WR): -1.2 pts
+Line Analysis:
+  Current Spread: -10.0
+  Our Line: TBD
+  Edge: TBD
 
-AWAY TEAM INJURIES:
-  Total Impact: +0.5 pts
-  • Player Name (CB): -1.8 pts
-  • Player Name (LB): -0.7 pts
+S-Factors:
+  Travel: TBD
+  Rest: TBD
+  Weather: TBD
+  Motivation: TBD
 
-ANALYSIS:
-  Predicted Spread: +0.1
-  Market Spread:    -3.0
-  Edge:             +3.1 pts
-  Confidence:       High Confidence
-
-KEY NUMBER ALERTS:
-  [!] Projection crosses 3 (moving toward the underdog)
-
-================================================================================
-RECOMMENDATION: High Confidence
-================================================================================
-Bet Type:      SPREAD
-Team:          Philadelphia Eagles
-Edge:          +3.1 pts
-Win Prob:      64.0%
-Stake:         3.00% ($300.00)
-
-Notes:
-  • Net injury advantage: +0.1 pts
-  • Predicted spread +0.1 vs market -3.0
-  • Projection crosses 3 (moving toward the underdog)
++------------------------------- [OK] Verdict --------------------------------+
+| RECOMMENDATION                                                              |
+|                                                                             |
+| Implementation in progress...                                               |
+| This will show bet recommendation with Kelly sizing.                        |
++-----------------------------------------------------------------------------+
 ```
 
-### Confidence Levels
-
-| Edge (pts) | Confidence Level    | Kelly Stake |
-| ---------- | ------------------- | ----------- |
-| < 1.0      | No Play             | 0%          |
-| 1.0-1.9    | Slight Edge         | 0.5-1.5%    |
-| 2.0-2.9    | Elevated Confidence | 1.5-3.0%    |
-| ≥ 3.0      | High Confidence     | 3.0% (max)  |
+**Note**: Power ratings, S-factors, and recommendations are currently under implementation. Framework is complete and ready for Billy Walters analysis logic.
 
 ### Research Integration
 
 When `--research` flag is used:
 
-1. **Injury Data**: Fetches from ProFootballDoc cache or live scraping
+1. **Injury Data**: Fetches from ESPN and injury report APIs
 2. **Weather Data**: Queries AccuWeather API for venue conditions
-3. **Point Values**: Each injury assigned point impact based on position/status
+3. **S-Factors**: Analyzes travel, rest, situational factors
 
 ---
 
