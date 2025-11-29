@@ -143,12 +143,6 @@ def analyze_edges(
 def analyze_game(
     away: str = typer.Argument(..., help="Away team name"),
     home: str = typer.Argument(..., help="Home team name"),
-    spread: Optional[float] = typer.Option(
-        None, "--spread", "-l", help="Current spread"
-    ),
-    total: Optional[float] = typer.Option(
-        None, "--total", "-t", help="Current total"
-    ),
     venue: Optional[str] = typer.Option(
         None, "--venue", "-v", help="Stadium/venue name"
     ),
@@ -168,13 +162,15 @@ def analyze_game(
     """
     Analyze a single game using full Billy Walters methodology.
 
+    Odds are automatically fetched from Overtime.ag API.
+    Power ratings are automatically loaded from local data files.
+    Weather is automatically fetched from ESPN->AccuWeather.
+
     Examples:
-        walters analyze game "Detroit" "Chicago" \\
-          --spread 2.5 --total 44.5 --sport nfl --verbose
+        walters analyze game "Detroit" "Chicago" --sport nfl --verbose
 
         walters analyze game "Ohio State" "Michigan" \\
-          --spread -10 --total 43.5 --venue "Michigan Stadium" \\
-          --sport ncaaf --verbose
+          --venue "Michigan Stadium" --sport ncaaf --verbose
     """
     import json
     import glob
@@ -237,29 +233,76 @@ def analyze_game(
         console.print(f"[red][ERROR] Failed to load power ratings: {e}[/red]")
         return
 
-    # Normalize team names
-    away_normalized = detector.normalize_team_name(away)
-    home_normalized = detector.normalize_team_name(home)
+    # Normalize team names with flexible matching
+    def find_team_in_ratings(input_name):
+        """Find best matching team name in power ratings."""
+        input_lower = input_name.lower().strip()
 
-    # Check if teams exist in power ratings
-    if away_normalized not in detector.power_ratings:
+        # Direct match
+        for team in detector.power_ratings.keys():
+            if team.lower() == input_lower:
+                return team
+
+        # Check for common abbreviations
+        common_abbrevs = {
+            "ohio state": "Ohio St",
+            "ohio st": "Ohio St",
+            "michigan state": "Michigan St",
+            "michigan st": "Michigan St",
+            "penn state": "Penn St",
+            "penn st": "Penn St",
+            "san diego state": "San Diego St",
+            "nc state": "NC State",
+            "florida state": "Florida St",
+            "iowa state": "Iowa St",
+            "boise state": "Boise St",
+            "app state": "Appalachian St",
+            "appalachian state": "Appalachian St",
+        }
+
+        if input_lower in common_abbrevs:
+            return common_abbrevs[input_lower]
+
+        # Fuzzy match: check if input is contained in any team name
+        for team in detector.power_ratings.keys():
+            if input_lower in team.lower():
+                return team
+
+        # Reverse: check if any team name is contained in input
+        for team in detector.power_ratings.keys():
+            if team.lower() in input_lower:
+                return team
+
+        return None
+
+    away_normalized = find_team_in_ratings(away)
+    home_normalized = find_team_in_ratings(home)
+
+    # Check if teams were found
+    if not away_normalized:
         sample_teams = ", ".join(
             list(detector.power_ratings.keys())[:5]
         )
         console.print(
-            f"[yellow][WARNING] Away team '{away}' not found. "
-            f"Try: {sample_teams}...[/yellow]"
+            f"[red][ERROR] Away team '{away}' not found. "
+            f"Available teams: {sample_teams}...[/red]"
         )
         return
-    if home_normalized not in detector.power_ratings:
+    if not home_normalized:
         sample_teams = ", ".join(
             list(detector.power_ratings.keys())[:5]
         )
         console.print(
-            f"[yellow][WARNING] Home team '{home}' not found. "
-            f"Try: {sample_teams}...[/yellow]"
+            f"[red][ERROR] Home team '{home}' not found. "
+            f"Available teams: {sample_teams}...[/red]"
         )
         return
+
+    # Show normalized names if different
+    if away_normalized != away:
+        console.print(f"[dim]Normalized: '{away}' -> '{away_normalized}'[/dim]")
+    if home_normalized != home:
+        console.print(f"[dim]Normalized: '{home}' -> '{home_normalized}'[/dim]")
 
     console.print("Analyzing game...")
 
@@ -450,6 +493,82 @@ def analyze_game(
     # E-factors are calculated during edge detection based on team trends
     # Including streaks, desperation, rest advantage, revenge factors
 
+    console.print("Fetching market odds from Overtime.ag...")
+
+    # Fetch market odds from Overtime.ag API
+    spread = None
+    total = None
+    market_moneyline_away = None
+    market_moneyline_home = None
+
+    try:
+        import asyncio
+        from scrapers.overtime.api_client import OvertimeApiClient
+
+        async def fetch_market_odds():
+            """Fetch current market odds from Overtime.ag API."""
+            league_name = "NFL" if sport_lower == "nfl" else "College Football"
+            client = OvertimeApiClient()
+            games = await client.fetch_games(
+                sport_type="Football",
+                sport_sub_type=league_name,
+            )
+
+            # Find matching game
+            for game in games:
+                team1 = game.get("Team1ID", "")
+                team2 = game.get("Team2ID", "")
+
+                # Check if either team1 or team2 matches away team
+                away_match = (
+                    away_normalized.lower() in team1.lower()
+                    or team1.lower() in away_normalized.lower()
+                )
+                # Check if either team1 or team2 matches home team
+                home_match = (
+                    home_normalized.lower() in team2.lower()
+                    or team2.lower() in home_normalized.lower()
+                )
+
+                if away_match and home_match:
+                    # Found the game!
+                    spread = game.get("Spread", 0)
+                    total = game.get("TotalPoints", 47.0)
+                    moneyline_away = game.get("MoneyLine1")
+                    moneyline_home = game.get("MoneyLine2")
+                    return {
+                        "spread": spread,
+                        "total": total,
+                        "moneyline_away": moneyline_away,
+                        "moneyline_home": moneyline_home,
+                        "away_team": team1,
+                        "home_team": team2,
+                    }
+
+            return None
+
+        odds_data = asyncio.run(fetch_market_odds())
+        if odds_data:
+            spread = odds_data["spread"]
+            total = odds_data["total"]
+            market_moneyline_away = odds_data["moneyline_away"]
+            market_moneyline_home = odds_data["moneyline_home"]
+            console.print(
+                f"[green][OK] Found market odds: "
+                f"{away} {spread:+.1f}, Total {total:.1f}[/green]"
+            )
+        else:
+            console.print(
+                f"[yellow][WARNING] Odds not found for "
+                f"{away} @ {home} on Overtime.ag[/yellow]"
+            )
+            spread = None
+            total = None
+    except Exception as e:
+        console.print(f"[yellow]Odds fetch failed: {str(e)[:50]}[/yellow]")
+        spread = None
+        total = None
+
     console.print("Detecting edge...")
 
     # Detect edge
@@ -482,15 +601,21 @@ def analyze_game(
 
     if spread is not None:
         console.print("\n[bold]Line Analysis:[/bold]")
-        console.print(f"  Current Market Spread: {spread:+.1f}")
+        console.print(f"  [dim]Source: Overnight.ag API[/dim]")
+        console.print(f"  Market Spread: {spread:+.1f} (Total: {total:.1f})")
         console.print(f"  Our Calculated Line: {predicted_spread:+.1f}")
+        edge_value = predicted_spread - spread
+        console.print(f"  Edge vs Market: {edge_value:+.1f} pts")
         if edge:
             console.print(
-                f"  Edge: {edge.edge_points:.1f} pts "
-                f"({edge.edge_strength.upper()})"
+                f"  Strength: {edge.edge_strength.upper()}"
             )
+            if edge.recommended_bet:
+                bet_symbol = "[green]>>> BET[/green]" if edge.edge_points >= 3.5 else "[yellow]~ LEAN[/yellow]"
+                bet_team = edge.away_team if edge.recommended_bet == "away" else edge.home_team
+                console.print(f"  Recommendation: {bet_symbol} {bet_team}")
         else:
-            console.print("  Edge: No significant edge detected")
+            console.print("  Edge: No edge >= 3.5 pts")
 
     console.print("\n[bold]S-Factors (Situational):[/bold]")
     if situational:
