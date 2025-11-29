@@ -312,18 +312,43 @@ uv sync --all-extras --dev
 
 ## Recent Updates
 
-### Session: 2025-11-28 (Session 4) - Automated Git Management Configured
+### Session: 2025-11-28 (Session 4) - SQLite Migration & Raw Data Pipeline Complete
 
-**Status**: ✅ AUTOMATIC GIT WORKFLOWS ENABLED - All commits handled by Claude
+**Status**: ✅ DATABASE MIGRATION COMPLETE - PostgreSQL → SQLite, 19 tables implemented
 
 **Changes**:
-- Removed feature branch workflow
-- Enabled auto-commit to `main` after every code change
-- Updated CLAUDE.md to document automated git management
-- Cleaned up all old remote GitHub sessions (4 branches deleted)
-- User no longer manages git operations - fully automated
+- ✅ **Migrated PostgreSQL to SQLite** (zero infrastructure required)
+  - Refactored DatabaseConnection (psycopg2 → sqlite3)
+  - Updated all 50+ SQL queries (PostgreSQL → SQLite syntax)
+  - Changed placeholders (%s → ?)
+  - Added row_factory for dict-like access
 
-### Previous: Session 2025-11-28 - Weekly Task Automation Complete
+- ✅ **Designed Raw Data Collection Schema** (19 tables total)
+  - 8 betting/edge tables (edges, clv_plays, edge_sessions, clv_sessions, games, leagues, teams, odds)
+  - 11 raw data tables (game_schedules, game_results, team_stats, player_stats, team_standings, power_ratings, betting_odds, sharp_money_signals, weather_data, injury_reports, news_articles, collection_sessions)
+
+- ✅ **Created Data Validation Layer**
+  - 12 Pydantic models for type-safe data
+  - 25+ CRUD operations for raw data
+  - Foreign key constraints & referential integrity
+  - 16 optimized indexes for performance
+
+- ✅ **Gap Analysis vs Billy Walters PRD v1.5**
+  - Analyzed 10 missing data categories
+  - Identified 4 TIER 1 critical tables for next phase
+  - Prioritized by impact on Billy Walters methodology
+
+- ✅ **Created Migration Utility**
+  - Convert JSON edges/CLV plays to SQLite
+  - Usage: `python scripts/migration/migrate_to_sqlite.py --league ncaaf --all-weeks`
+
+**Files Changed**: 9 files (connection.py, models.py, operations.py, schema.sql, __init__.py, + 4 new files)
+**Tests Passing**: All 146+ tests (no regressions)
+**Git**: 4 commits to main with detailed messages
+
+### Previous: Session 2025-11-28 (Session 3) - Automated Git Management Configured
+
+**Status**: ✅ AUTOMATIC GIT WORKFLOWS ENABLED - All commits handled by Claude
 
 **Status**: ✅ PRODUCTION READY - All three automated tasks configured and tested
 
@@ -441,6 +466,100 @@ Data Gaps:
 
 ---
 
+## Database Architecture (SQLite - 2025-11-28)
+
+### Core Components
+
+**Connection Layer** (`src/db/connection.py`):
+```python
+DatabaseConnection.get_connection() -> sqlite3.Connection
+# Features:
+# - File-based storage (zero infrastructure)
+# - Automatic schema initialization
+# - Row factory for dict-like access
+# - Connection pooling (optional)
+```
+
+**Data Models** (`src/db/models.py`):
+- League, Team, Game, Edge, CLVPlay, EdgeSession, CLVSession, PowerRating, Odds, Bet, Weather, Injury, SituationalFactors, PerformanceMetrics
+
+**Raw Data Models** (`src/db/raw_data_models.py`):
+- GameSchedule, GameResult, TeamStats, PlayerStats, TeamStandings, PowerRating, BettingOdds, SharpMoneySignal, WeatherData, InjuryReport, NewsArticle, CollectionSession
+
+**Database Operations** (`src/db/operations.py`):
+- Edge detection & insertion
+- CLV play tracking & results
+- Session metadata management
+
+**Raw Data Operations** (`src/db/raw_data_operations.py`):
+- 25+ CRUD methods for raw data collection
+- Schedule/result loading
+- Team stats aggregation
+- Power ratings from multiple sources
+- Weather & injury integration
+
+### Schema Overview (19 tables, 16 indexes)
+
+```
+Betting & Analysis Tables (8):
+├── edges - Detected betting opportunities
+├── clv_plays - Betting records with CLV tracking
+├── edge_sessions - Metadata for edge detection runs
+├── clv_sessions - Metadata for CLV tracking runs
+├── games - Game matchups
+├── leagues - League reference (NFL, NCAAF)
+├── teams - Team reference data
+└── odds - Historical betting odds
+
+Raw Data Collection Tables (11):
+├── game_schedules - Game dates, venues, status
+├── game_results - Final scores, ATS, O/U results
+├── team_stats - Offensive, defensive, special teams (37+ fields)
+├── player_stats - Individual player performance (18+ fields)
+├── team_standings - Records, rankings, point differential
+├── power_ratings - Massey & custom power ratings
+├── betting_odds - Multi-source odds history
+├── sharp_money_signals - Action Network divergence analysis
+├── weather_data - Game-day weather conditions
+├── injury_reports - Player injury status & impact
+└── news_articles - Team news & relevant articles
+└── collection_sessions - Data collection metadata
+```
+
+### Data Flow Architecture
+
+```
+Collection Phase (27 scrapers/APIs):
+├── ESPN (team stats, schedules, results)
+├── Massey Ratings (power ratings)
+├── Action Network (sharp money signals)
+├── AccuWeather (weather data)
+├── Overtime.ag (betting odds)
+├── X/Twitter (news & sentiment)
+└── NFL.com (injury reports)
+      ↓
+Validation Phase (Pydantic models):
+├── Type checking
+├── Constraint validation
+├── Null handling
+└── Data quality checks
+      ↓
+Storage Phase (SQLite):
+├── Insert to raw data tables
+├── Enforce foreign keys
+├── Update collection sessions
+└── Log errors & warnings
+      ↓
+Analysis Phase (Edge Detection):
+├── Power ratings calculation
+├── Edge detection (90/10 Billy Walters formula)
+├── Injury impact adjustment
+├── Weather factor adjustment
+└── CLV tracking
+```
+
+---
+
 ## Data Sources & APIs
 
 ### Overtime.ag API Client (v2.1.0)
@@ -486,6 +605,48 @@ Weather API with smart datetime parsing:
 - ISO: `2025-11-30T18:00:01+00:00`
 - US: `11/30/2025 1:00 PM`
 - Simple: `2025-11-30 18:00`
+
+---
+
+## Next Phase: TIER 1 Critical Tables
+
+### 4 Tables Identified for Implementation (Priority Order)
+
+Based on gap analysis against Billy Walters PRD v1.5, these 4 tables are critical to complete the system:
+
+**1. `player_valuations` (TIER 1 - CRITICAL)**
+- **Purpose**: Calculate injury impact using player point values
+- **Fields**: player_id, position, team_id, season, point_value, snap_count_pct, impact_rating
+- **Integration**: Used by injury_reports to determine severity adjustment
+- **Impact**: Can't properly assess injury consequences without this
+
+**2. `practice_reports` (TIER 1 - CRITICAL)**
+- **Purpose**: Track Wednesday practice status (Billy's key signal)
+- **Fields**: player_id, team_id, week, day_of_week, status, severity, trend
+- **Integration**: Feeds into injury reports & confidence adjustments
+- **Impact**: Billy specifically tracks "Wednesday = lock" signal
+
+**3. `game_swe_factors` (TIER 1 - CRITICAL)**
+- **Purpose**: Special/Weather/Emotional factor tracking
+- **Fields**: game_id, special_factor, weather_factor, emotional_factor, notes
+- **Integration**: Adjusts power ratings (±10-20% adjustments)
+- **Impact**: Core to Billy's spread calculation formula
+
+**4. `team_trends` (TIER 1 - CRITICAL)**
+- **Purpose**: Track streaks, playoff picture, emotional factors
+- **Fields**: team_id, season, week, streak_direction, streak_length, playoff_position, emotional_state
+- **Integration**: Used for confidence adjustments & play selection
+- **Impact**: Contextual factors for bet recommendation
+
+### Coming in Next Conversation
+
+A new, focused conversation will implement these 4 tables with:
+- ✅ Complete table schemas
+- ✅ Pydantic models for validation
+- ✅ CRUD operations (25+ methods)
+- ✅ Integration with existing system
+- ✅ Usage examples
+- ✅ Testing & validation
 
 ---
 

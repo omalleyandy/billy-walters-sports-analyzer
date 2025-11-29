@@ -2,7 +2,7 @@
 
 This index provides quick navigation to all project documentation organized by topic.
 
-**Last Update**: 2025-11-28 - Overtime.ag API Client v2.1.0: Added UTC datetime parsing, week extraction, timezone info
+**Last Update**: 2025-11-28 - SQLite Migration Complete: PostgreSQL → SQLite, 19 raw data tables, gap analysis finished
 
 ---
 
@@ -93,8 +93,8 @@ This index provides quick navigation to all project documentation organized by t
 → See [CI/CD Prevention Guide](guides/ci_cd_prevention_guide.md#prevention-checklist)
 
 **Q: Where is the database documentation?**
-→ **Start here**: [PostgreSQL Data Loading Workflow](technical/database/POSTGRES_DATA_LOADING_WORKFLOW.md) (NEW - 2025-11-24)
-→ Also see: [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) and [Quick Start Database](technical/database/QUICK_START_DATABASE.md)
+→ **Start here**: [SQLite Database Schema](technical/database/SQLITE_DATABASE_SCHEMA.md) - Complete schema with 19 tables (NEW - 2025-11-28)
+→ Also see: [Raw Data Collection Pipeline](technical/database/RAW_DATA_COLLECTION_PIPELINE.md) and [Database Operations Guide](technical/database/DATABASE_OPERATIONS_GUIDE.md)
 
 **Q: How do I interpret edge detection results?**
 → 7+ pts = MAX BET, 4-7 = STRONG, 2-4 = MODERATE, 1-2 = LEAN, <1 = NO PLAY
@@ -313,40 +313,56 @@ uv run python scripts/analysis/check_betting_results.py --league ncaaf --week 13
 
 ## Database & Data Storage
 
-### PostgreSQL Data Loading (NEW - 2025-11-24) ✨
-**Complete end-to-end data loading pipeline from collection to database**
+### SQLite Raw Data Pipeline (NEW - 2025-11-28) ✨
+**Complete end-to-end data collection and storage pipeline with 19 integrated tables**
 
-- **[PostgreSQL Data Loading Workflow](technical/database/POSTGRES_DATA_LOADING_WORKFLOW.md)** - **START HERE** - Complete guide covering:
-  - GameIDMapper: Intelligent game ID mapping between Overtime.ag and ESPN
-  - Data flow: Collection → JSON → Database insertion
-  - Table schemas: espn_schedules, games, odds, team_stats
-  - Week-by-week workflow: Tuesday collection → Wednesday analysis
-  - Verification queries and error handling
-  - Performance benchmarks and next steps
+- **[SQLite Database Schema](technical/database/SQLITE_DATABASE_SCHEMA.md)** - **START HERE** - Complete guide covering:
+  - 19 tables: 8 betting/edges + 11 raw data collection
+  - Foreign key constraints & referential integrity
+  - 16 optimized indexes for performance
+  - Complete schema design documentation
 
-- [Database Setup Guide](technical/database/DATABASE_SETUP_GUIDE.md) - PostgreSQL installation and schema creation
-- [Quick Start Database](technical/database/QUICK_START_DATABASE.md) - 5-minute database setup
-- [PostgreSQL Implementation Complete](technical/database/POSTGRES_IMPLEMENTATION_COMPLETE.md) - Technical implementation details
+- [Raw Data Collection Pipeline](technical/database/RAW_DATA_COLLECTION_PIPELINE.md) - **NEW** - Complete data flow:
+  - Data sources: ESPN, Massey, Action Network, AccuWeather, Overtime.ag
+  - Collection methods: 27 scrapers & API clients across 6 packages
+  - Storage: Pydantic models → SQLite tables
+  - Weekly workflow: Tuesday collection → Wednesday analysis
 
-**Key Features (NEW):**
-- ✅ **GameIDMapper**: Maps Overtime.ag game IDs to ESPN IDs with 2-day fuzzy matching
-  - Handles timezone differences (Thursday/Sunday/Monday night games)
-  - 100% success rate on NFL Week 13 (15/15 games)
-  - Fast cached lookup (~100K games in memory)
-- ✅ **Full Odds Loading**: Extracts nested dict odds format and stores with valid FK references
-  - Handles spread: {home: -2.5, away: 2.5}
-  - Handles moneyline: {home: -145, away: 125}
-  - Handles total: {points: 49.0}
-- ✅ **Games Table Population**: Copies schedules with league column for FK constraints
-- ✅ **Data Verification**: ON CONFLICT DO NOTHING handles duplicates gracefully
-- ✅ **Complete Pipeline**: Collection → Load → Validation in < 10 seconds
+- [Database Operations Guide](technical/database/DATABASE_OPERATIONS_GUIDE.md) - CRUD operations and queries
+- [SQLite Migration Utility](../scripts/migration/migrate_to_sqlite.py) - Convert JSON to SQLite
 
-**Example Results (Week 13 NFL):**
-- Schedules: 16 records
-- Games table: 16 records
-- Team stats: 32 records
-- Odds: 15 records with complete betting data
-- Errors: 0
+**Raw Data Tables (19 total):**
+- ✅ **Games & Schedules** (2 tables): game_schedules, game_results
+- ✅ **Team Analysis** (3 tables): team_stats, team_standings, power_ratings
+- ✅ **Player Analysis** (1 table): player_stats
+- ✅ **Betting Data** (2 tables): betting_odds, sharp_money_signals
+- ✅ **Environmental** (2 tables): weather_data, injury_reports
+- ✅ **Information** (2 tables): news_articles, collection_sessions
+- ✅ **Analytics** (6 tables): edges, clv_plays, edge_sessions, clv_sessions, leagues, teams
+
+**Key Features:**
+- ✅ **Zero Infrastructure**: SQLite (file-based) vs PostgreSQL (server required)
+- ✅ **Complete Data Model**: 37+ field team_stats, 18+ field player_stats
+- ✅ **Multi-source Integration**: ESPN, Massey, Action Network, Weather, etc.
+- ✅ **Type Safe**: Pydantic validation on all inserts
+- ✅ **Referential Integrity**: Foreign keys enforce data consistency
+- ✅ **Optimized Queries**: 16 indexes on common access patterns
+
+**Data Architecture:**
+```
+Collection Phase:          Storage Phase:              Analysis Phase:
+ESPN ──┐                 ┌─ team_stats              ┌─ Edge Detection
+Massey ├─ 27 Scrapers ──┤  game_schedules          ├─ Power Ratings
+Weather├─ API Clients ──┤  player_stats      ──────┤─ Injury Impact
+Action ├─             └─ weather_data            ├─ CLV Tracking
+Network└─                 power_ratings            └─ Performance
+                         betting_odds               Analytics
+```
+
+**Pydantic Models** (Type-safe data validation):
+- GameSchedule, GameResult, TeamStats, PlayerStats
+- TeamStandings, PowerRating, BettingOdds, SharpMoneySignal
+- WeatherData, InjuryReport, NewsArticle, CollectionSession
 
 ## Development
 
@@ -572,11 +588,23 @@ Historical documentation is organized in `docs/archive/`:
 
 ---
 
-**Last Updated**: 2025-11-25
-**Project Status**: Production-ready with active development
-**Documentation Reorganization**: Phase 4 complete! 125+ files migrated from docs root to categorized subdirectories. Root directory now contains only `_INDEX.md` and `README.md`.
+**Last Updated**: 2025-11-28
+**Project Status**: Production-ready - SQLite migration complete, raw data pipeline operational
+**Latest Phase**: Database Infrastructure Complete (Session 4)
 
-**New Structure Summary**:
+**Session 4 Deliverables (2025-11-28)**:
+- ✅ SQLite migration from PostgreSQL complete
+- ✅ 19 raw data tables designed and implemented
+- ✅ 12 Pydantic models for data validation
+- ✅ 25+ CRUD operations for raw data
+- ✅ Gap analysis vs Billy Walters PRD v1.5 complete
+- ✅ 4 TIER 1 tables identified for next phase:
+  - player_valuations - Player point values for injury impact
+  - practice_reports - Wednesday practice tracking (Billy's key signal)
+  - game_swe_factors - Special/Weather/Emotional factor tracking
+  - team_trends - Streak tracking, playoff picture, emotional factors
+
+**Documentation Structure**:
 - `api/espn/` - 22 ESPN docs
 - `api/action_network/` - 5 Action Network docs
 - `features/ncaaf/` - 7 NCAAF docs
@@ -585,10 +613,9 @@ Historical documentation is organized in `docs/archive/`:
 - `features/results_checker/` - 5 Results Checker docs
 - `features/power_ratings/` - 3 Power Rating docs
 - `technical/mcp/` - 6 MCP docs
-- `technical/database/` - 4 Database docs
+- `technical/database/` - 7 Database docs (updated with SQLite)
 - `data_sources/overtime/` - 6 Overtime docs
 - `guides/methodology/` - 8 Billy Walters methodology docs
-- `archive/sessions/` - 13+ session reports
-- `archive/fixes/` - CI/CD and bug fix docs
+- `archive/sessions/` - 14+ session reports
 
 For the most current development guidelines, always refer to [CLAUDE.md](../CLAUDE.md).
