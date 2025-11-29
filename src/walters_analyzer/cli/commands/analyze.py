@@ -155,6 +155,9 @@ def analyze_game(
     bankroll: float = typer.Option(
         20000.0, "--bankroll", "-b", help="Bankroll amount"
     ),
+    sport: str = typer.Option(
+        "nfl", "--sport", "-s", help="Sport: nfl or ncaaf"
+    ),
     research: bool = typer.Option(
         False, "--research", "-r", help="Fetch live injury/weather data"
     ),
@@ -165,9 +168,13 @@ def analyze_game(
     """
     Analyze a single game using full Billy Walters methodology.
 
-    Example:
+    Examples:
+        walters analyze game "Detroit" "Chicago" \\
+          --spread 2.5 --total 44.5 --sport nfl --verbose
+
         walters analyze game "Ohio State" "Michigan" \\
-          --spread -10 --total 43.5 --venue "Michigan Stadium" --research
+          --spread -10 --total 43.5 --venue "Michigan Stadium" \\
+          --sport ncaaf --verbose
     """
     import json
     import glob
@@ -193,13 +200,17 @@ def analyze_game(
 
     # Find and load latest power ratings
     console.print("Loading power ratings...")
-    ratings_files = sorted(
-        glob.glob("data/power_ratings/nfl_2025_week_*.json")
-    )
+    sport_lower = sport.lower()
+    if sport_lower not in ["nfl", "ncaaf"]:
+        console.print(f"[red][ERROR] Invalid sport: {sport}[/red]")
+        return
+
+    pattern = f"data/power_ratings/{sport_lower}_2025_week_*.json"
+    ratings_files = sorted(glob.glob(pattern))
     if not ratings_files:
         console.print(
-            "[red][ERROR] No power rating files found. "
-            "Run: uv run python scripts/analysis/"
+            f"[red][ERROR] No {sport.upper()} power rating "
+            "files found. Run: uv run python scripts/analysis/"
             "update_power_ratings_from_massey.py[/red]"
         )
         return
