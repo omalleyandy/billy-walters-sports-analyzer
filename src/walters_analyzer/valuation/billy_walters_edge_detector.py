@@ -1360,7 +1360,7 @@ def main():
     from pathlib import Path
 
     overtime_dir = Path("output/overtime/nfl/pregame")
-    overtime_files = sorted(overtime_dir.glob("api_walters_*.json"))
+    overtime_files = sorted(overtime_dir.glob("nfl_odds_*.json"))
 
     if overtime_files:
         # Use latest Overtime.ag file
@@ -1401,18 +1401,21 @@ def main():
 
             # Fetch weather data for the game
             weather_impact = None
-            game_time_str = game.get("game_time", "")
+            # Prefer ISO format datetime fields from Overtime API
+            game_time_str = (
+                game.get("game_datetime_utc")
+                or game.get("game_datetime_et")
+                or game.get("game_time", "")
+            )
             if weather_client.api_key and game_time_str:
                 try:
-                    # Parse game time (Overtime.ag format: "11/27/2025 13:00")
-                    game_time = datetime.strptime(game_time_str, "%m/%d/%Y %H:%M")
-
                     # Get weather for home team's location
+                    # AccuWeather client now handles datetime parsing internally
                     # (async call - run synchronously)
                     async def fetch_weather():
                         await weather_client.connect()
                         return await weather_client.get_game_weather(
-                            home_team, game_time
+                            home_team, game_time_str
                         )
 
                     weather_data = asyncio.run(fetch_weather())

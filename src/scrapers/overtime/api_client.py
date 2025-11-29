@@ -280,7 +280,7 @@ class OvertimeApiClient:
         if save_converted:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             converted_file = (
-                self.output_dir / "nfl" / "pregame" / f"api_walters_{timestamp}.json"
+                self.output_dir / "nfl" / "pregame" / f"nfl_odds_{timestamp}.json"
             )
             converted_file.parent.mkdir(parents=True, exist_ok=True)
             converted_file.write_text(json.dumps(converted, indent=2))
@@ -317,7 +317,7 @@ class OvertimeApiClient:
         if save_converted:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             converted_file = (
-                self.output_dir / "ncaaf" / "pregame" / f"api_walters_{timestamp}.json"
+                self.output_dir / "ncaaf" / "pregame" / f"ncaaf_odds_{timestamp}.json"
             )
             converted_file.parent.mkdir(parents=True, exist_ok=True)
             converted_file.write_text(json.dumps(converted, indent=2))

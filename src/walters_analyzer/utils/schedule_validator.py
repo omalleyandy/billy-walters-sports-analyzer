@@ -365,7 +365,7 @@ class ScheduleValidator:
 
         # Find latest odds file
         if odds_dir.exists():
-            odds_files = sorted(odds_dir.glob("api_walters_*.json"))
+            odds_files = sorted(odds_dir.glob(f"{league.lower()}_odds_*.json"))
             if odds_files:
                 latest_odds = odds_files[-1]
                 logger.info(f"\nLatest Odds: {latest_odds.name}")

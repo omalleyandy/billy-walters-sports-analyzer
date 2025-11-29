@@ -1,7 +1,7 @@
 # Billy Walters Commands & Hooks - Implementation Summary
 
-**Date:** 2025-11-13
-**Version:** 2.0
+**Date:** 2025-11-28
+**Version:** 3.0
 
 ## Overview
 
@@ -43,12 +43,18 @@ Comprehensive slash commands and automation hooks have been created to support t
 
 ### Odds & Market Commands
 6. **`/scrape-overtime`** - Overtime.ag odds scraper
-   - Playwright automation
-   - Spreads, totals, moneylines
-   - Line movement tracking
+   - Direct API (no browser needed)
+   - Output: `output/overtime/{league}/pregame/{league}_odds_*.json`
+   - ~2-3 seconds per league
    - Billy Walters format conversion
 
-7. **`/odds-analysis`** - Line movement analysis (existing, kept)
+7. **`/scrape-x-news`** - X (Twitter) news integration ⭐ NEW
+   - Official sports sources (@NFL, @AdamSchefter, etc.)
+   - Breaking injury news
+   - E-Factor integration
+   - Output: `output/x_news/integrated/`
+
+8. **`/odds-analysis`** - Line movement analysis (existing, kept)
    - Public vs sharp action
    - Reverse line movement
    - Implied probabilities
@@ -82,7 +88,7 @@ Comprehensive slash commands and automation hooks have been created to support t
 ## New Automation Hooks Created
 
 ### 1. Pre-Data Collection Hook
-**File:** `.claude/hooks/pre_data_collection.py`
+**File:** `.claude/hooks/pre_data_collection_validator.py`
 
 **Purpose:** Validate environment before data collection
 
@@ -105,7 +111,7 @@ python .claude/hooks/pre_data_collection.py
 ---
 
 ### 2. Post-Data Collection Hook
-**File:** `.claude/hooks/post_data_collection.py`
+**File:** `.claude/hooks/post_data_collection_validator.py`
 
 **Purpose:** Validate data quality after collection
 
@@ -530,6 +536,16 @@ Each command has detailed markdown file:
 
 ## Changelog
 
+### Version 3.0 (2025-11-28)
+- Added `/scrape-x-news` slash command for X (Twitter) news integration
+- Fixed hook file references (`pre_data_collection.py` → `pre_data_collection_validator.py`)
+- Standardized Overtime output filenames (`{league}_odds_*.json`)
+- Enhanced `session_start.py` with NCAAF week detection and data gaps summary
+- Fixed AccuWeather datetime parsing (supports ISO, US, simple formats)
+- Added post-tool hooks for `/scrape-overtime` and `/scrape-x-news`
+- Updated edge detectors to use `game_datetime_utc` for weather
+- Both NFL and NCAAF fully supported in all commands
+
 ### Version 2.0 (2025-11-13)
 - Created 8 new slash commands
 - Created 3 automation hooks
@@ -546,5 +562,5 @@ Each command has detailed markdown file:
 ---
 
 **Status:** ✅ COMPLETE
-**Ready for Testing:** YES
-**Next Action:** Test `/collect-all-data` on Tuesday
+**Ready for Production:** YES
+**Supported Leagues:** NFL + NCAAF

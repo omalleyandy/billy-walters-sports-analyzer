@@ -13,6 +13,7 @@
 
     "allow": [
       // Core git introspection (safe, read-only-ish)
+      "Bash(git status)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -67,6 +68,13 @@
       "SlashCommand(/document-lesson)",
       "SlashCommand(/edge-detector)",
       "SlashCommand(/betting-card)",
+      "SlashCommand(/scrape-overtime)",
+      "SlashCommand(/scrape-x-news)",
+      "SlashCommand(/pre-validate)",
+      "SlashCommand(/post-validate)",
+      "SlashCommand(/check-results)",
+      "SlashCommand(/clv-tracker)",
+      "SlashCommand(/security-review)",
 
       // Narrowed WebFetch allowance for ESPN only
       "WebFetch(domain:www.espn.com)",
@@ -153,7 +161,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "command": "uv run python .claude/hooks/pre_data_collection_validator.py",
             "timeout": 30
           }
         ]
@@ -163,7 +171,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "command": "uv run python .claude/hooks/pre_data_collection_validator.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "/scrape-x-news",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/pre_data_collection_validator.py",
             "timeout": 30
           }
         ]
@@ -173,7 +191,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "command": "uv run python .claude/hooks/pre_data_collection_validator.py",
             "timeout": 30
           }
         ]
@@ -183,7 +201,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run python .claude/hooks/pre_data_collection.py",
+            "command": "uv run python .claude/hooks/pre_data_collection_validator.py",
             "timeout": 30
           }
         ]
@@ -217,8 +235,28 @@
         "hooks": [
           {
             "type": "command",
-            "command": "uv run python .claude/hooks/post_data_collection.py",
+            "command": "uv run python .claude/hooks/post_data_collection_validator.py",
             "timeout": 60
+          }
+        ]
+      },
+      {
+        "matcher": "SlashCommand(/scrape-overtime)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/auto_edge_detector.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "SlashCommand(/scrape-x-news)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python .claude/hooks/post_data_collection_validator.py --source x_news",
+            "timeout": 30
           }
         ]
       }

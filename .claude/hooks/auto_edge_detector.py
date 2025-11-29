@@ -22,7 +22,7 @@ def check_for_new_nfl_odds() -> tuple[bool, dict]:
 
     # Find most recent NFL odds file
     overtime_files = sorted(
-        output_dir.glob("api_walters_*.json"),
+        output_dir.glob("nfl_odds_*.json"),
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )
@@ -53,7 +53,7 @@ def check_for_new_ncaaf_odds() -> tuple[bool, dict]:
 
     # Find most recent NCAAF odds file
     overtime_files = sorted(
-        output_dir.glob("api_walters_*.json"),
+        output_dir.glob("ncaaf_odds_*.json"),
         key=lambda f: f.stat().st_mtime,
         reverse=True,
     )

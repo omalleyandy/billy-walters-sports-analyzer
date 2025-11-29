@@ -459,6 +459,70 @@ class AccuWeatherClient:
         )
         return closest_forecast
 
+    def _parse_game_time(self, game_time_str: str) -> datetime | None:
+        """
+        Parse game time string to datetime object.
+
+        Handles multiple formats:
+        - ISO format: "2025-11-30T18:00:01+00:00"
+        - US format: "11/30/2024 1:00:01 PM"
+        - Simple format: "2025-11-30 18:00"
+
+        Args:
+            game_time_str: Game time as string
+
+        Returns:
+            datetime object (UTC) or None if parsing fails
+        """
+        from datetime import timezone
+
+        if not game_time_str:
+            return None
+
+        # Try ISO format first (from Overtime API game_datetime_utc)
+        try:
+            if "T" in game_time_str:
+                # Handle timezone-aware ISO format
+                dt = datetime.fromisoformat(game_time_str.replace("Z", "+00:00"))
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt
+        except ValueError:
+            pass
+
+        # Try US date format: "11/30/2024 1:00:01 PM"
+        try:
+            dt = datetime.strptime(game_time_str, "%m/%d/%Y %I:%M:%S %p")
+            # Assume Eastern Time, convert to UTC
+            from zoneinfo import ZoneInfo
+
+            eastern = ZoneInfo("America/New_York")
+            dt = dt.replace(tzinfo=eastern)
+            return dt.astimezone(timezone.utc)
+        except ValueError:
+            pass
+
+        # Try US date format without seconds: "11/30/2024 1:00 PM"
+        try:
+            dt = datetime.strptime(game_time_str, "%m/%d/%Y %I:%M %p")
+            from zoneinfo import ZoneInfo
+
+            eastern = ZoneInfo("America/New_York")
+            dt = dt.replace(tzinfo=eastern)
+            return dt.astimezone(timezone.utc)
+        except ValueError:
+            pass
+
+        # Try simple format: "2025-11-30 18:00"
+        try:
+            dt = datetime.strptime(game_time_str, "%Y-%m-%d %H:%M")
+            return dt.replace(tzinfo=timezone.utc)
+        except ValueError:
+            pass
+
+        logger.warning(f"Could not parse game_time: {game_time_str}")
+        return None
+
     def _normalize_team_name(self, team: str) -> str:
         """
         Normalize ESPN full team names to stadium lookup format.
@@ -517,14 +581,14 @@ class AccuWeatherClient:
         return team
 
     async def get_game_weather(
-        self, team: str, game_time: datetime, max_retries: int = 3
+        self, team: str, game_time: datetime | str, max_retries: int = 3
     ) -> dict[str, Any] | None:
         """
         Get weather forecast for a specific NFL game using team name.
 
         Args:
             team: Home team name (e.g., "Green Bay Packers" or "Green Bay")
-            game_time: Game start time
+            game_time: Game start time (datetime object or ISO/string format)
             max_retries: Maximum retry attempts
 
         Returns:
@@ -533,6 +597,15 @@ class AccuWeatherClient:
         Raises:
             RuntimeError: If request fails
         """
+        # Parse game_time if string
+        from datetime import timezone
+
+        if isinstance(game_time, str):
+            game_time = self._parse_game_time(game_time)
+            if game_time is None:
+                logger.warning(f"Could not parse game_time string for team {team}")
+                return None
+
         # Normalize team name to stadium lookup format
         normalized_team = self._normalize_team_name(team)
 

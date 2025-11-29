@@ -384,7 +384,7 @@ class NCAAFEdgeDetector:
                 logger.warning(f"Odds directory not found: {odds_dir}")
                 return {}
 
-            odds_files = sorted(odds_dir.glob("api_walters_*.json"))
+            odds_files = sorted(odds_dir.glob("ncaaf_odds_*.json"))
             if not odds_files:
                 logger.warning("No odds files found")
                 return {}
@@ -574,10 +574,15 @@ class NCAAFEdgeDetector:
             if self._is_indoor_stadium(home_team):
                 return 0.0
 
-            # Get weather for game
-            weather = await self.weather_client.get_game_weather(
-                home_team, game.get("game_time", "")
+            # Get game time - prefer ISO format if available
+            game_time = (
+                game.get("game_datetime_utc")
+                or game.get("game_datetime_et")
+                or game.get("game_time", "")
             )
+
+            # Get weather for game
+            weather = await self.weather_client.get_game_weather(home_team, game_time)
 
             if not weather or weather.get("temperature") is None:
                 return 0.0

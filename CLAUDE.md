@@ -385,6 +385,52 @@ cd C:\Users\omall\Documents\python_projects\billy-walters-sports-analyzer
 
 ---
 
+## Data Collection Orchestration
+
+### Complete Data Pipeline (Both Leagues)
+
+Run `/collect-all-data` for complete weekly data collection, or use individual commands:
+
+| Data Source | NFL Command | NCAAF Command | Output Path |
+|-------------|-------------|---------------|-------------|
+| **Power Ratings** | `update_power_ratings_from_massey.py` | Same (both leagues) | `data/current/{league}_power_ratings.json` |
+| **Odds** | Overtime API (auto) | Overtime API (auto) | `output/overtime/{league}/pregame/{league}_odds_*.json` |
+| **Schedule** | `scrape_massey_games.py --league nfl` | `scrape_massey_games.py --league ncaaf` | `data/current/{league}_week_N_games.json` |
+| **Team Stats** | `scrape_espn_team_stats.py --nfl` | `scrape_espn_team_stats.py --ncaaf` | `output/espn/stats/{league}/` |
+| **Injuries** | ESPN (NFL only) | N/A | `data/current/nfl_week_N_injuries.json` |
+| **Weather** | AccuWeather (outdoor) | AccuWeather (outdoor) | `data/current/{league}_week_N_weather.json` |
+| **X News** | `scrape_x_news_integrated.py` | Same | `output/x_news/integrated/` |
+| **Action Network** | `scrape_action_network_live.py --nfl` | `scrape_action_network_live.py --ncaaf` | `output/action_network/{league}/` |
+
+### Session Start Data Check
+
+When you start a session, the hook automatically checks data freshness:
+
+```
+======================================================================
+BILLY WALTERS SESSION START
+======================================================================
+Current Week: NFL Week 13 | NCAAF Week 14
+
+NFL Data Status:
+  [OK] Power Ratings: 0.4h old (FRESH)
+  [OK] Odds: 0.2h old (FRESH)
+  [OK] Schedule: 12.0h old (FRESH)
+  [X] Injuries: MISSING
+  [X] Weather: MISSING
+
+NCAAF Data Status:
+  [OK] Power Ratings: 12.0h old (FRESH)
+  [OK] Odds: 0.2h old (FRESH)
+  [OK] Schedule: 12.0h old (FRESH)
+
+Data Gaps:
+  [!] NFL Week 13 missing: injuries, weather
+======================================================================
+```
+
+---
+
 ## Data Sources & APIs
 
 ### Overtime.ag API Client (v2.1.0)
@@ -399,7 +445,7 @@ The internal `OvertimeApiClient` is the primary odds source:
 | Week Extraction | ✅ | From NFL comments field |
 | Timezone Info | ✅ | America/New_York (ET) |
 
-**Output Format** (`output/overtime/{league}/pregame/api_walters_*.json`):
+**Output Format** (`output/overtime/{league}/pregame/{league}_odds_*.json`):
 ```json
 {
   "metadata": {"source": "overtime.ag", "week": 13, "converter_version": "2.1.0"},
@@ -416,67 +462,83 @@ The internal `OvertimeApiClient` is the primary odds source:
 }
 ```
 
+### AccuWeather Integration (v1.1.0)
+Weather API with smart datetime parsing:
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| DateTime Parsing | ✅ | Handles ISO, US format, simple format |
+| Indoor Detection | ✅ | Skips dome stadiums |
+| Rate Limiting | ✅ | 1 req/sec |
+| Hourly Forecast | ✅ | 12h (starter plan limit) |
+
+**Supported DateTime Formats**:
+- ISO: `2025-11-30T18:00:01+00:00`
+- US: `11/30/2025 1:00 PM`
+- Simple: `2025-11-30 18:00`
+
 ---
 
-## Session Summary: 2025-11-28 (Session 2)
+## Session Summary: 2025-11-28 (Session 3)
 
 ### What Was Accomplished
 
-**Overtime.ag API Client Enhancement - COMPLETE**
-1. ✅ Enhanced `OvertimeApiClient` (v2.0.0 → v2.1.0)
-2. ✅ Added proper UTC datetime parsing from .NET timestamps
-3. ✅ Added Eastern Time conversion for display
-4. ✅ Added timezone info field (`America/New_York`)
-5. ✅ Added week extraction from NFL comments
-6. ✅ Maintained backward compatibility with edge detector
+**1. Hooks & Slash Commands Configuration**
+- ✅ Fixed hook file references (`pre_data_collection.py` → `pre_data_collection_validator.py`)
+- ✅ Added `/scrape-x-news` slash command
+- ✅ Added post-tool hooks for `/scrape-overtime` and `/scrape-x-news`
+- ✅ Updated slash command permissions in `settings.local.json`
 
-**Integration Decision**
-- ✅ Chose internal API client over external browser-based client
-- Internal: ~2-3 sec, no auth, reliable
-- External: ~70 sec, requires login, has timeout bugs
+**2. Overtime Output Filename Standardization**
+- ✅ Changed `api_walters_*.json` → `nfl_odds_*.json` (NFL)
+- ✅ Changed `api_walters_*.json` → `ncaaf_odds_*.json` (NCAAF)
+- ✅ Updated all consumers: edge detectors, schedule validator, hooks
 
-**Production Validation**
-- ✅ NFL Week 13: 8 edges detected
-- ✅ NCAAF Week 14: 11 edges detected
-- ✅ Full pipeline tested end-to-end
+**3. Weather API Integration Fix**
+- ✅ Fixed datetime parsing error (`str` vs `datetime` type mismatch)
+- ✅ Added `_parse_game_time()` method to AccuWeather client
+- ✅ Supports multiple formats: ISO, US, simple
+- ✅ Edge detectors now prefer `game_datetime_utc` field
+
+**4. Session Start Hook Enhancement**
+- ✅ Added NCAAF week detection
+- ✅ Expanded data source checks (injuries, weather, team stats, ESPN)
+- ✅ Organized output by league (NFL/NCAAF)
+- ✅ Added "Data Gaps" summary section
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `src/data/overtime_api_client.py` | Output filenames: `{league}_odds_*.json` |
+| `src/data/accuweather_client.py` | Added `_parse_game_time()`, updated `get_game_weather()` signature |
+| `src/walters_analyzer/valuation/ncaaf_edge_detector.py` | Use `game_datetime_utc` for weather |
+| `src/walters_analyzer/valuation/billy_walters_edge_detector.py` | Use `game_datetime_utc` for weather |
+| `src/walters_analyzer/utils/schedule_validator.py` | Dynamic odds filename pattern |
+| `.claude/hooks/session_start.py` | NCAAF week, expanded data checks, data gaps |
+| `.claude/hooks/auto_edge_detector.py` | Updated odds filename patterns |
+| `.claude/settings.local.json` | Fixed hook references, added permissions |
+| `.claude/commands/scrape-x-news.md` | New slash command |
 
 ### Edge Detection Results (Current Week)
 
-**NFL Week 13** (8 edges):
+**NCAAF Week 14** (12 edges with weather):
 | # | Matchup | Edge | Strength | Bet |
 |---|---------|------|----------|-----|
-| 1 | New Orleans @ Miami | 9.6 pts | VERY_STRONG | HOME |
-| 2 | NY Giants @ New England | 8.9 pts | VERY_STRONG | HOME |
-| 3 | San Francisco @ Cleveland | 8.1 pts | VERY_STRONG | AWAY |
-| 4 | Chicago @ Philadelphia | 8.0 pts | VERY_STRONG | HOME |
-| 5 | Denver @ Washington | 7.3 pts | VERY_STRONG | AWAY |
-
-**NCAAF Week 14** (11 edges):
-| # | Matchup | Edge | Strength | Bet |
-|---|---------|------|----------|-----|
-| 1 | Central Florida @ BYU | 19.4 pts | VERY_STRONG | AWAY |
-| 2 | Arizona @ Arizona State | 16.5 pts | VERY_STRONG | HOME |
-| 3 | Ohio State @ Michigan | 11.9 pts | VERY_STRONG | HOME |
-| 4 | Mississippi @ Miss State | 11.8 pts | VERY_STRONG | HOME |
-| 5 | Texas Tech @ West Virginia | 10.0 pts | VERY_STRONG | HOME |
-
-### Key Files Modified
-
-**Enhanced**:
-- `src/data/overtime_api_client.py` - Added datetime/week parsing (v2.1.0)
-
-**Documentation**:
-- `CLAUDE.md` - Added API client docs and current edges
+| 1 | Charlotte @ Tulane | 20.5 pts | VERY_STRONG | HOME |
+| 2 | Notre Dame @ Stanford | 20.0 pts | VERY_STRONG | AWAY |
+| 3 | UCLA @ USC | 11.6 pts | VERY_STRONG | HOME |
+| 4 | Alabama @ Auburn | 9.4 pts | VERY_STRONG | AWAY |
+| 5 | Central Florida @ BYU | 8.4 pts | VERY_STRONG | AWAY |
 
 ### Production Checklist
 
-- ✅ Overtime.ag API client enhanced (v2.1.0)
-- ✅ Proper UTC/ET datetime parsing
-- ✅ Week extraction working (NFL)
-- ✅ Edge detection pipeline validated
-- ✅ NFL Week 13: 8 edges
-- ✅ NCAAF Week 14: 11 edges
-- ✅ Automated tasks configured
-- ✅ Documentation updated
+- ✅ Hooks configured and validated
+- ✅ Slash commands updated
+- ✅ Overtime output standardized (`{league}_odds_*.json`)
+- ✅ Weather API datetime parsing fixed
+- ✅ Session start shows data gaps
+- ✅ Edge detection working with weather adjustments
+- ✅ Both leagues (NFL/NCAAF) fully supported
 
 **System Ready for Production Use**
