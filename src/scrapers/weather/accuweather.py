@@ -243,6 +243,58 @@ class AccuWeatherClient:
         logger.info(f"Location key for {city}, {state}: {location_key}")
         return location_key
 
+    async def get_location_key_by_zipcode(
+        self, zipcode: str, max_retries: int = 3
+    ) -> str | None:
+        """
+        Get AccuWeather location key for a US zipcode.
+
+        This is the authoritative method for looking up location keys
+        from zipcode (from ESPN schedule links).
+
+        Args:
+            zipcode: US postal code (5 digits)
+            max_retries: Maximum retry attempts
+
+        Returns:
+            Location key string or None if not found
+
+        Raises:
+            RuntimeError: If request fails
+        """
+        if not zipcode or len(str(zipcode)) != 5:
+            logger.warning(f"Invalid zipcode: {zipcode}")
+            return None
+
+        logger.info(f"Getting location key for zipcode: {zipcode}")
+
+        try:
+            # Search by postal code
+            data = await self._make_request(
+                "/locations/v1/postalcodes/search",
+                params={"q": zipcode},
+                max_retries=max_retries,
+            )
+
+            if not data or not isinstance(data, list):
+                logger.warning(f"No location found for zipcode {zipcode}")
+                return None
+
+            # Get first result
+            location = data[0]
+            location_key = location.get("Key")
+
+            if location_key:
+                logger.info(f"Location key for zipcode {zipcode}: {location_key}")
+                return location_key
+            else:
+                logger.warning(f"No location key in response for zipcode {zipcode}")
+                return None
+
+        except RuntimeError as e:
+            logger.warning(f"Failed to get location key for {zipcode}: {e}")
+            return None
+
     async def get_current_conditions(
         self, location_key: str, max_retries: int = 3
     ) -> dict[str, Any]:

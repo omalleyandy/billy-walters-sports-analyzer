@@ -84,10 +84,7 @@ class PracticeReportsScraper:
     def __init__(self):
         """Initialize scraper."""
         self.output_dir = (
-            Path(__file__).parent.parent.parent
-            / "output"
-            / "practice_reports"
-            / "nfl"
+            Path(__file__).parent.parent.parent / "output" / "practice_reports" / "nfl"
         )
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -116,9 +113,7 @@ class PracticeReportsScraper:
 
         return wednesday, friday
 
-    def parse_participation_status(
-        self, status_text: Optional[str]
-    ) -> Dict[str, any]:
+    def parse_participation_status(self, status_text: Optional[str]) -> Dict[str, any]:
         """
         Parse participation status text.
 
@@ -206,9 +201,7 @@ class PracticeReportsScraper:
         if week <= 1:
             return {}
 
-        prev_file = (
-            self.output_dir / f"week_{week - 1}_practices.json"
-        )
+        prev_file = self.output_dir / f"week_{week - 1}_practices.json"
         if not prev_file.exists():
             return {}
 
@@ -224,9 +217,7 @@ class PracticeReportsScraper:
                         lookup[player_id] = participation
                 return lookup
         except Exception as e:
-            logger.warning(
-                f"Could not load previous week reports: {e}"
-            )
+            logger.warning(f"Could not load previous week reports: {e}")
             return {}
 
     def scrape_team_practices(
@@ -271,9 +262,7 @@ class PracticeReportsScraper:
         )
         return []
 
-    def scrape_week(
-        self, season: int, week: int
-    ) -> Dict[str, any]:
+    def scrape_week(self, season: int, week: int) -> Dict[str, any]:
         """
         Scrape all practice reports for a week.
 
@@ -284,19 +273,14 @@ class PracticeReportsScraper:
         Returns:
             Dictionary with all practice data
         """
-        logger.info(
-            f"Scraping practice reports for "
-            f"NFL {season} Week {week}"
-        )
+        logger.info(f"Scraping practice reports for NFL {season} Week {week}")
 
         wednesday, friday = self.get_nfl_week_dates(season, week)
         if not wednesday:
             logger.error(f"Invalid week number: {week}")
             return {"practices": []}
 
-        logger.info(
-            f"Practice week: {wednesday.date()} - {friday.date()}"
-        )
+        logger.info(f"Practice week: {wednesday.date()} - {friday.date()}")
 
         # Load previous week's data for trend analysis
         prev_reports = self.load_previous_reports(season, week)
@@ -312,13 +296,10 @@ class PracticeReportsScraper:
                 all_practices.extend(practices)
                 scraped_teams += 1
             except Exception as e:
-                logger.warning(
-                    f"Error scraping {team_name}: {e}"
-                )
+                logger.warning(f"Error scraping {team_name}: {e}")
 
         logger.info(
-            f"Scraped {scraped_teams} teams, "
-            f"{len(all_practices)} practice reports"
+            f"Scraped {scraped_teams} teams, {len(all_practices)} practice reports"
         )
 
         return {
@@ -334,9 +315,7 @@ class PracticeReportsScraper:
             "practices": all_practices,
         }
 
-    def save_reports(
-        self, data: Dict, season: int, week: int
-    ) -> Path:
+    def save_reports(self, data: Dict, season: int, week: int) -> Path:
         """
         Save practice reports to JSON file.
 
@@ -359,15 +338,11 @@ class PracticeReportsScraper:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Scrape NFL.com practice reports"
-    )
+    parser = argparse.ArgumentParser(description="Scrape NFL.com practice reports")
     parser.add_argument(
         "--season", type=int, default=2025, help="Season (default 2025)"
     )
-    parser.add_argument(
-        "--week", type=int, required=True, help="Week number (1-18)"
-    )
+    parser.add_argument("--week", type=int, required=True, help="Week number (1-18)")
     parser.add_argument(
         "--verbose",
         action="store_true",
@@ -388,8 +363,7 @@ def main():
     scraper.save_reports(data, args.season, args.week)
 
     logger.info(
-        f"Practice reports scraping complete "
-        f"({len(data['practices'])} reports)"
+        f"Practice reports scraping complete ({len(data['practices'])} reports)"
     )
 
 

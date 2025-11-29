@@ -76,9 +76,7 @@ def analyze_edges(
 
     except ImportError:
         # Fallback if modules not yet implemented
-        console.print(
-            "[yellow]Using placeholder data[/yellow]"
-        )
+        console.print("[yellow]Using placeholder data[/yellow]")
         games = []
 
     # Step 2: Calculate edges
@@ -146,12 +144,8 @@ def analyze_game(
     venue: Optional[str] = typer.Option(
         None, "--venue", "-v", help="Stadium/venue name"
     ),
-    bankroll: float = typer.Option(
-        20000.0, "--bankroll", "-b", help="Bankroll amount"
-    ),
-    sport: str = typer.Option(
-        "nfl", "--sport", "-s", help="Sport: nfl or ncaaf"
-    ),
+    bankroll: float = typer.Option(20000.0, "--bankroll", "-b", help="Bankroll amount"),
+    sport: str = typer.Option("nfl", "--sport", "-s", help="Sport: nfl or ncaaf"),
     research: bool = typer.Option(
         False, "--research", "-r", help="Fetch live injury/weather data"
     ),
@@ -280,18 +274,14 @@ def analyze_game(
 
     # Check if teams were found
     if not away_normalized:
-        sample_teams = ", ".join(
-            list(detector.power_ratings.keys())[:5]
-        )
+        sample_teams = ", ".join(list(detector.power_ratings.keys())[:5])
         console.print(
             f"[red][ERROR] Away team '{away}' not found. "
             f"Available teams: {sample_teams}...[/red]"
         )
         return
     if not home_normalized:
-        sample_teams = ", ".join(
-            list(detector.power_ratings.keys())[:5]
-        )
+        sample_teams = ", ".join(list(detector.power_ratings.keys())[:5])
         console.print(
             f"[red][ERROR] Home team '{home}' not found. "
             f"Available teams: {sample_teams}...[/red]"
@@ -315,9 +305,7 @@ def analyze_game(
     console.print("Calculating power ratings...")
     away_rating = detector.power_ratings[away_normalized].rating
     home_rating = detector.power_ratings[home_normalized].rating
-    hfa = (
-        detector.power_ratings[home_normalized].home_field_advantage
-    )
+    hfa = detector.power_ratings[home_normalized].home_field_advantage
     predicted_spread = home_rating - away_rating + hfa
     differential = home_rating - away_rating
 
@@ -356,9 +344,7 @@ def analyze_game(
     }
 
     # Detect if this is a rivalry game
-    is_rivalry = (
-        away_normalized, home_normalized
-    ) in KNOWN_RIVALRIES
+    is_rivalry = (away_normalized, home_normalized) in KNOWN_RIVALRIES
 
     # Detect if divisional (NFL)
     is_divisional = False
@@ -389,9 +375,7 @@ def analyze_game(
             ("Lions", "Vikings"),
             ("Vikings", "Lions"),
         }
-        is_divisional = (
-            away_normalized, home_normalized
-        ) in NFL_DIVISIONS
+        is_divisional = (away_normalized, home_normalized) in NFL_DIVISIONS
 
     if is_rivalry:
         console.print("[bold][yellow]RIVALRY GAME DETECTED![/yellow][/bold]")
@@ -416,68 +400,47 @@ def analyze_game(
         from data.espn_weather_scraper import (
             ESPNWeatherLinkScraper,
         )
-        from data.stadium_accuweather_keys import get_location_key
         from scrapers.weather import AccuWeatherClient
 
-        async def fetch_weather_with_location_key():
-            """Fetch weather using authoritative AccuWeather location key."""
-            # First, try authoritative stadium mapping
-            location_key = get_location_key(
-                home_normalized, sport_lower
-            )
-
-            if location_key:
-                console.print(
-                    f"[dim]Using authoritative location key: {location_key}[/dim]"
-                )
-                client = AccuWeatherClient()
-                if client.api_key:
-                    await client.connect()
-                    try:
-                        return (
-                            await client.get_weather_by_location_key(
-                                location_key
-                            )
-                        )
-                    finally:
-                        await client.close()
-
-            # Fallback: Get location keys from ESPN schedule
+        async def fetch_weather_with_zipcode():
+            """Fetch weather using zipcode from ESPN schedule."""
+            # Get stadium zipcodes from ESPN schedule
             sport_name = "cfb" if sport_lower == "ncaaf" else "nfl"
-            locations = (
-                await ESPNWeatherLinkScraper.get_location_keys(
-                    sport_name
-                )
+            stadium_zipcodes = await ESPNWeatherLinkScraper.get_stadium_zipcodes(
+                sport_name
             )
 
-            if not locations:
-                console.print(
-                    "[dim]ESPN weather links unavailable[/dim]"
-                )
+            if not stadium_zipcodes:
+                console.print("[dim]ESPN weather links unavailable[/dim]")
                 return None
 
-            # Try to match home team stadium to ESPN location
-            for stadium_name, location_key in locations.items():
+            # Try to match home team stadium to find zipcode
+            for stadium_name, zipcode in stadium_zipcodes.items():
                 if home_normalized.lower() in stadium_name.lower():
                     console.print(
-                        f"[dim]Found: {stadium_name} (ESPN)[/dim]"
+                        f"[dim]Found: {stadium_name} (Zipcode: {zipcode})[/dim]"
                     )
-                    # Use AccuWeather with location key
+                    # Use AccuWeather to get location key from zipcode
                     client = AccuWeatherClient()
                     if client.api_key:
                         await client.connect()
                         try:
-                            return (
-                                await client.get_weather_by_location_key(
+                            location_key = await client.get_location_key_by_zipcode(
+                                zipcode
+                            )
+                            if location_key:
+                                console.print(
+                                    f"[dim]Location key: {location_key}[/dim]"
+                                )
+                                return await client.get_weather_by_location_key(
                                     location_key
                                 )
-                            )
                         finally:
                             await client.close()
 
             return None
 
-        weather_data = asyncio.run(fetch_weather_with_location_key())
+        weather_data = asyncio.run(fetch_weather_with_zipcode())
         if weather_data:
             temperature = weather_data.get("temperature")
             wind_speed = weather_data.get("wind_speed")
@@ -507,9 +470,7 @@ def analyze_game(
                 indoor=indoor,
             )
     except Exception as e:
-        console.print(
-            f"[dim]Weather: {str(e)[:40]}[/dim]"
-        )
+        console.print(f"[dim]Weather: {str(e)[:40]}[/dim]")
 
     console.print("Calculating E-factors (emotional/trends)...")
     # E-factors are calculated during edge detection based on team trends
@@ -617,23 +578,18 @@ def analyze_game(
     console.print(f"  {home}: {home_rating:.2f}")
     favored_team = home if differential > 0 else away
     console.print(
-        f"  Differential: {abs(differential):+.2f} pts "
-        f"({favored_team} favored)"
+        f"  Differential: {abs(differential):+.2f} pts ({favored_team} favored)"
     )
 
     if spread is not None:
         console.print("\n[bold]Line Analysis:[/bold]")
         console.print("  [dim]Source: Overtime.ag API[/dim]")
-        console.print(
-            f"  Market Spread: {spread:+.1f} (Total: {total:.1f})"
-        )
+        console.print(f"  Market Spread: {spread:+.1f} (Total: {total:.1f})")
         console.print(f"  Our Calculated Line: {predicted_spread:+.1f}")
         edge_value = predicted_spread - spread
         console.print(f"  Edge vs Market: {edge_value:+.1f} pts")
         if edge:
-            console.print(
-                f"  Strength: {edge.edge_strength.upper()}"
-            )
+            console.print(f"  Strength: {edge.edge_strength.upper()}")
             if edge.recommended_bet:
                 symbol = (
                     "[green]>>> BET[/green]"
@@ -641,9 +597,7 @@ def analyze_game(
                     else "[yellow]~ LEAN[/yellow]"
                 )
                 bet_team = (
-                    edge.away_team
-                    if edge.recommended_bet == "away"
-                    else edge.home_team
+                    edge.away_team if edge.recommended_bet == "away" else edge.home_team
                 )
                 console.print(f"  Recommendation: {symbol} {bet_team}")
         else:
@@ -655,9 +609,7 @@ def analyze_game(
             f"  Rest Days: {situational.rest_days} "
             f"(Advantage: {situational.rest_advantage:+.1f} pts)"
         )
-        console.print(
-            f"  Travel Penalty: {situational.travel_penalty:+.1f} pts"
-        )
+        console.print(f"  Travel Penalty: {situational.travel_penalty:+.1f} pts")
         if situational.divisional_game:
             console.print("  Divisional Game: Yes (-1.5 pts)")
         if situational.rivalry_game and sport_lower == "nfl":
@@ -679,17 +631,17 @@ def analyze_game(
                 )
         if weather_impact.wind_speed is not None:
             console.print(f"  Wind: {weather_impact.wind_speed} MPH")
-        if weather_impact.precipitation and weather_impact.precipitation.lower() != "none":
+        if (
+            weather_impact.precipitation
+            and weather_impact.precipitation.lower() != "none"
+        ):
             console.print(f"  Precipitation: {weather_impact.precipitation}")
 
         total_w = weather_impact.total_adjustment + w_factor_adjustment
-        console.print(
-            f"  Total W-Factor Adjustment: {total_w:+.2f} pts"
-        )
+        console.print(f"  Total W-Factor Adjustment: {total_w:+.2f} pts")
         if weather_impact.spread_adjustment != 0:
             console.print(
-                f"  Spread Adjustment: "
-                f"{weather_impact.spread_adjustment:+.2f} pts"
+                f"  Spread Adjustment: {weather_impact.spread_adjustment:+.2f} pts"
             )
     else:
         if w_factor_adjustment > 0:
@@ -697,31 +649,23 @@ def analyze_game(
             console.print(
                 f"  Billy Walters Cold Bonus (Home): +{w_factor_adjustment:.2f} pts"
             )
-            console.print(f"  Total W-Factor Adjustment: +{w_factor_adjustment:.2f} pts")
+            console.print(
+                f"  Total W-Factor Adjustment: +{w_factor_adjustment:.2f} pts"
+            )
         else:
             console.print("  [dim]No weather data available[/dim]")
 
     console.print("\n[bold]E-Factors (Emotional/Trends):[/bold]")
     if edge:
-        console.print(
-            f"  Emotional: {edge.emotional_adjustment:+.1f} pts"
-        )
-        console.print(
-            f"  Injury Impact: {edge.injury_adjustment:+.1f} pts"
-        )
+        console.print(f"  Emotional: {edge.emotional_adjustment:+.1f} pts")
+        console.print(f"  Injury Impact: {edge.injury_adjustment:+.1f} pts")
         console.print(f"  Confidence Impact: {edge.sharp_action.confidence:.2f}")
     else:
-        console.print(
-            "  [dim]Emotional factors calculated with valid edge[/dim]"
-        )
+        console.print("  [dim]Emotional factors calculated with valid edge[/dim]")
 
     # Build recommendation panel
     if edge and edge.recommended_bet:
-        bet_team = (
-            edge.away_team
-            if edge.recommended_bet == "away"
-            else edge.home_team
-        )
+        bet_team = edge.away_team if edge.recommended_bet == "away" else edge.home_team
         bet_display = f"BET {edge.recommended_bet.upper()}: {bet_team}"
         bet_amount = int(bankroll * edge.kelly_fraction)
         bet_odds = edge.best_odds
@@ -740,14 +684,11 @@ def analyze_game(
             f"Confidence: {edge.confidence_score:.0f}/100"
         )
         border_color = (
-            "green"
-            if edge.edge_strength in ["strong", "very_strong"]
-            else "yellow"
+            "green" if edge.edge_strength in ["strong", "very_strong"] else "yellow"
         )
     else:
         recommendation_text = (
-            "[yellow]No significant edge detected[/yellow]\n"
-            "Pass on this game."
+            "[yellow]No significant edge detected[/yellow]\nPass on this game."
         )
         border_color = "yellow"
 
@@ -764,9 +705,7 @@ def analyze_game(
         console.print("\n[bold]Detailed Breakdown:[/bold]")
         console.print(f"  Edge Type: {edge.edge_type}")
         if edge.crosses_key_number:
-            console.print(
-                f"  [KEY] Crosses key number: {edge.key_number_value}"
-            )
+            console.print(f"  [KEY] Crosses key number: {edge.key_number_value}")
         if edge.away_injuries and edge.away_injuries.total_impact != 0:
             console.print(
                 f"  {edge.away_team} injuries: "

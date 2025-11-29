@@ -49,9 +49,7 @@ class TestPlayerValuationsCRUD:
             notes="Elite starter QB",
         )
 
-    def test_insert_single_player_valuation(
-        self, db_ops, sample_valuation
-    ):
+    def test_insert_single_player_valuation(self, db_ops, sample_valuation):
         """Test inserting single player valuation."""
         # Insert
         db_ops.insert_player_valuation(sample_valuation)

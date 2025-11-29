@@ -51,9 +51,7 @@ class TestTeamTrendsCRUD:
         """Test inserting single team trend."""
         db_ops.insert_team_trends(sample_trends)
 
-        retrieved = db_ops.get_team_trends(
-            league_id=1, team_id=1, season=2025, week=13
-        )
+        retrieved = db_ops.get_team_trends(league_id=1, team_id=1, season=2025, week=13)
 
         assert retrieved is not None
         assert retrieved["streak_direction"] == "W"
@@ -99,11 +97,7 @@ class TestTeamTrendsCRUD:
                 streak_direction="L",
                 streak_length=week_offset + 1,
                 recent_form_pct=0.0,  # All losses
-                emotional_state=(
-                    "desperate"
-                    if (week_offset + 1) >= 3
-                    else "neutral"
-                ),
+                emotional_state=("desperate" if (week_offset + 1) >= 3 else "neutral"),
             )
 
             db_ops.insert_team_trends(trends)
@@ -262,9 +256,7 @@ class TestTeamTrendsCRUD:
 
         db_ops.insert_team_trends(trends)
 
-        retrieved = db_ops.get_team_trends(
-            league_id=1, team_id=1, season=2025, week=13
-        )
+        retrieved = db_ops.get_team_trends(league_id=1, team_id=1, season=2025, week=13)
 
         assert retrieved["divisional_rank"] == 1
         assert retrieved["conference_rank"] == 2
@@ -281,9 +273,7 @@ class TestTeamTrendsCRUD:
 
         db_ops.insert_team_trends(trends)
 
-        retrieved = db_ops.get_team_trends(
-            league_id=1, team_id=1, season=2025, week=13
-        )
+        retrieved = db_ops.get_team_trends(league_id=1, team_id=1, season=2025, week=13)
 
         assert retrieved["home_field_consistency"] == 0.85
 
@@ -310,9 +300,7 @@ class TestTeamTrendsCRUD:
         db_ops.insert_team_trends(trends1)
         db_ops.insert_team_trends(trends2)  # Should replace
 
-        retrieved = db_ops.get_team_trends(
-            league_id=1, team_id=1, season=2025, week=13
-        )
+        retrieved = db_ops.get_team_trends(league_id=1, team_id=1, season=2025, week=13)
 
         assert retrieved["streak_direction"] == "L"
         assert retrieved["streak_length"] == 2

@@ -1,11 +1,12 @@
 """
 ESPN College Football Schedule Weather Link Scraper
 
-Extracts AccuWeather location keys from ESPN's college football schedule.
+Extracts zipcode from AccuWeather links in ESPN's college football schedule.
 ESPN embeds direct links to AccuWeather in the schedule HTML:
-  http://www.accuweather.com/en/us/michigan-stadium-mi/48104/hourly-weather-forecast/53592_poi
+  https://www.accuweather.com/en/us/brooks-stadium/29526/hourly-weather-forecast/209212_poi
 
-The location key (53592_poi) can be used directly with AccuWeather API.
+From the URL we extract the ZIPCODE (29526), which is used to look up the
+correct AccuWeather location key. This is more reliable than using POI keys.
 """
 
 import logging
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class ESPNWeatherLinkScraper:
-    """Scrapes AccuWeather location keys from ESPN schedule pages."""
+    """Scrapes zipcode from AccuWeather links in ESPN schedule pages."""
 
     ESPN_CFB_SCHEDULE_URL = "https://www.espn.com/college-football/schedule"
     ESPN_NFL_SCHEDULE_URL = "https://www.espn.com/nfl/schedule"
@@ -60,20 +61,23 @@ class ESPNWeatherLinkScraper:
             return None
 
     @staticmethod
-    def extract_accuweather_links(html: str) -> dict[str, str]:
+    def extract_stadium_zipcodes(html: str) -> dict[str, str]:
         """
-        Extract AccuWeather location keys from ESPN schedule HTML.
+        Extract stadium zipcodes from AccuWeather links in ESPN schedule.
 
         Looks for links like:
-        http://www.accuweather.com/en/us/michigan-stadium-mi/48104/
-        hourly-weather-forecast/53592_poi?day=1&hbhhour=12
+        https://www.accuweather.com/en/us/brooks-stadium/29526/
+        hourly-weather-forecast/209212_poi?day=1&lang=en-us&partner=espn_gc
+
+        Extracts the ZIPCODE (29526) from the URL path, which is authoritative
+        and can be used to look up the correct AccuWeather location key.
 
         Args:
             html: HTML content from ESPN schedule
 
         Returns:
-            Dictionary mapping stadium names to location keys
-            Example: {'Michigan Stadium, Ann Arbor, MI': '53592_poi'}
+            Dictionary mapping stadium names to zipcodes
+            Example: {'Brooks Stadium, South Carolina': '29526'}
         """
         soup = BeautifulSoup(html, "html.parser")
         locations = {}
@@ -83,41 +87,36 @@ class ESPNWeatherLinkScraper:
             href = link.get("href", "")
             text = link.get_text(strip=True)
 
-            # Extract location key from URL
-            # Pattern: /hourly-weather-forecast/53592_poi?...
-            match = re.search(r"/hourly-weather-forecast/([a-z0-9_]+)", href)
+            # Extract zipcode from URL
+            # Pattern: /en/us/stadium-name/ZIPCODE/hourly-weather-forecast/
+            match = re.search(r"/en/us/[^/]+/(\d{5})/hourly-weather-forecast", href)
             if match and text:
-                location_key = match.group(1)
-                locations[text] = location_key
-                logger.debug(
-                    f"Found stadium: {text} -> {location_key}"
-                )
+                zipcode = match.group(1)
+                locations[text] = zipcode
+                logger.debug(f"Found stadium: {text} -> Zipcode {zipcode}")
 
         return locations
 
     @staticmethod
-    async def get_location_keys(
+    async def get_stadium_zipcodes(
         sport: str = "cfb",
     ) -> dict[str, str]:
         """
-        Get AccuWeather location keys for all stadiums in ESPN schedule.
+        Get stadium zipcodes from ESPN schedule.
 
         Args:
             sport: 'cfb' for college football or 'nfl' for NFL
 
         Returns:
-            Dictionary mapping stadium names to AccuWeather location keys
+            Dictionary mapping stadium names to zipcodes
+            Example: {'Delaware Stadium, Newark, DE': '19711'}
         """
-        html = await ESPNWeatherLinkScraper.fetch_schedule_html(
-            sport
-        )
+        html = await ESPNWeatherLinkScraper.fetch_schedule_html(sport)
         if not html:
-            logger.warning(
-                f"Could not fetch ESPN {sport} schedule"
-            )
+            logger.warning(f"Could not fetch ESPN {sport} schedule")
             return {}
 
-        return ESPNWeatherLinkScraper.extract_accuweather_links(html)
+        return ESPNWeatherLinkScraper.extract_stadium_zipcodes(html)
 
 
 if __name__ == "__main__":
@@ -126,11 +125,9 @@ if __name__ == "__main__":
 
     async def test():
         """Test ESPN weather link scraper."""
-        locations = await ESPNWeatherLinkScraper.get_location_keys(
-            "cfb"
-        )
-        print(f"\nFound {len(locations)} stadiums:")
-        for stadium, key in sorted(locations.items())[:10]:
-            print(f"  {stadium}: {key}")
+        zipcodes = await ESPNWeatherLinkScraper.get_stadium_zipcodes("cfb")
+        print(f"\nFound {len(zipcodes)} stadiums:")
+        for stadium, zipcode in sorted(zipcodes.items())[:10]:
+            print(f"  {stadium}: {zipcode}")
 
     asyncio.run(test())

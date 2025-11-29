@@ -196,7 +196,7 @@ class TestGameSWEFactorsCRUD:
     def test_special_factors(self, db_ops):
         """Test special factor tracking (rivalry, revenge, playoff)."""
         special_scenarios = [
-            ("Playoff game","+0.5", "high"),
+            ("Playoff game", "+0.5", "high"),
             ("Rivalry game", "+0.3", "medium"),
             ("Revenge scenario", "+0.2", "low"),
             ("Neutral", "0.0", "minimal"),

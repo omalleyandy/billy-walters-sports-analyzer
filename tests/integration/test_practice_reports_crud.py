@@ -46,9 +46,7 @@ class TestPracticeReportsCRUD:
             notes="Full practice participation",
         )
 
-    def test_insert_single_practice_report(
-        self, db_ops, sample_report
-    ):
+    def test_insert_single_practice_report(self, db_ops, sample_report):
         """Test inserting single practice report."""
         db_ops.insert_practice_report(sample_report)
 
@@ -58,9 +56,7 @@ class TestPracticeReportsCRUD:
         )
 
         assert len(retrieved) > 0
-        assert any(
-            r["player_id"] == "mahomes_pat" for r in retrieved
-        )
+        assert any(r["player_id"] == "mahomes_pat" for r in retrieved)
 
     def test_insert_multiple_practice_reports(self, db_ops):
         """Test inserting multiple reports for different players."""
@@ -159,11 +155,7 @@ class TestPracticeReportsCRUD:
             )
 
             status_report = next(
-                (
-                    r
-                    for r in results
-                    if r["player_id"] == f"status_{participation}"
-                ),
+                (r for r in results if r["player_id"] == f"status_{participation}"),
                 None,
             )
 
@@ -225,9 +217,7 @@ class TestPracticeReportsCRUD:
             league_id=1, team_id=1, season=2025, week=13
         )
 
-        w13_report = next(
-            (r for r in results if r["player_id"] == player_id), None
-        )
+        w13_report = next((r for r in results if r["player_id"] == player_id), None)
 
         assert w13_report is not None
         assert w13_report["trend"] == "improving"
@@ -286,9 +276,7 @@ class TestPracticeReportsCRUD:
             league_id=1, team_id=1, season=2025, week=13
         )
 
-        w13_report = next(
-            (r for r in results if r["player_id"] == player_id), None
-        )
+        w13_report = next((r for r in results if r["player_id"] == player_id), None)
 
         assert w13_report is not None
         assert w13_report["trend"] == "declining"
@@ -306,8 +294,7 @@ class TestPracticeReportsCRUD:
         player_reports = [
             r
             for r in results
-            if r["player_id"] == "mahomes_pat"
-            and r["practice_date"] == "2025-11-26"
+            if r["player_id"] == "mahomes_pat" and r["practice_date"] == "2025-11-26"
         ]
 
         assert len(player_reports) > 0

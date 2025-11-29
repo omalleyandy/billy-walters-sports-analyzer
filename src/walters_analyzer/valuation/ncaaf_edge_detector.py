@@ -238,7 +238,10 @@ class NCAAFEdgeDetector:
             )
 
             # Positive signal: Key players practicing
-            if fully_participating >= 2 or (fully_participating + limited_participating) >= 3:
+            if (
+                fully_participating >= 2
+                or (fully_participating + limited_participating) >= 3
+            ):
                 return (True, 1.15)  # +15% confidence
 
             # Negative signal: Key player didn't participate
@@ -741,7 +744,9 @@ class NCAAFEdgeDetector:
 
             # Apply TIER 1 database-driven adjustments (SWE factors)
             swe_adjustments = await self.get_game_swe_adjustments_ncaaf(
-                game_id, 2025, week  # Using 2025 as default season
+                game_id,
+                2025,
+                week,  # Using 2025 as default season
             )
 
             # Use database-driven adjustments if available, else use calculated ones
@@ -767,11 +772,23 @@ class NCAAFEdgeDetector:
             confidence = min(confidence * swe_adjustments["confidence_impact"], 100.0)
 
             # Apply Wednesday signal confidence adjustment
-            away_wed_signal_detected, away_wed_multiplier = await self.check_wednesday_signal_ncaaf(
-                1, away_team, 2025, week  # team_id=1 is placeholder (would need actual ID)
+            (
+                away_wed_signal_detected,
+                away_wed_multiplier,
+            ) = await self.check_wednesday_signal_ncaaf(
+                1,
+                away_team,
+                2025,
+                week,  # team_id=1 is placeholder (would need actual ID)
             )
-            home_wed_signal_detected, home_wed_multiplier = await self.check_wednesday_signal_ncaaf(
-                1, home_team, 2025, week  # team_id=1 is placeholder
+            (
+                home_wed_signal_detected,
+                home_wed_multiplier,
+            ) = await self.check_wednesday_signal_ncaaf(
+                1,
+                home_team,
+                2025,
+                week,  # team_id=1 is placeholder
             )
 
             if recommended_bet == "away" and away_wed_signal_detected:
@@ -780,8 +797,12 @@ class NCAAFEdgeDetector:
                 confidence = min(confidence * home_wed_multiplier, 100.0)
 
             # Apply team trend adjustments
-            trend_adj_away = await self.calculate_team_trend_adjustment_ncaaf(1, 2025, week)
-            trend_adj_home = await self.calculate_team_trend_adjustment_ncaaf(1, 2025, week)
+            trend_adj_away = await self.calculate_team_trend_adjustment_ncaaf(
+                1, 2025, week
+            )
+            trend_adj_home = await self.calculate_team_trend_adjustment_ncaaf(
+                1, 2025, week
+            )
 
             if recommended_bet == "away":
                 confidence = min(confidence * trend_adj_away, 100.0)

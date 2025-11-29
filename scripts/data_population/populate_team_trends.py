@@ -116,9 +116,7 @@ class TeamTrendsPopulator:
             ORDER BY week DESC
             LIMIT 1
         """
-        results = self.db_conn.execute_query(
-            query, (league_id, team_id, season)
-        )
+        results = self.db_conn.execute_query(query, (league_id, team_id, season))
 
         if not results:
             return None, None, None
@@ -207,8 +205,7 @@ class TeamTrendsPopulator:
     def populate_week(self, league: str, season: int, week: int) -> None:
         """Populate team_trends for a specific week."""
         logger.info(
-            f"Populating team trends for {league.upper()} Season {season}, "
-            f"Week {week}"
+            f"Populating team trends for {league.upper()} Season {season}, Week {week}"
         )
 
         league_id = self.get_league_id(league)
@@ -233,7 +230,9 @@ class TeamTrendsPopulator:
                 ) = self.get_standings_data(league_id, team_id, season, week)
 
                 desperation_level = self.calculate_desperation_level(
-                    playoff_position, 0, 0  # Would need actual win/loss counts
+                    playoff_position,
+                    0,
+                    0,  # Would need actual win/loss counts
                 )
 
                 emotional_state = self.calculate_emotional_state(
@@ -265,8 +264,7 @@ class TeamTrendsPopulator:
                     desperation_level=desperation_level,
                     rest_advantage=rest_advantage,
                     source="game_results_standings",
-                    notes=f"{streak_str} streak, {emotional_state.title()} "
-                    f"mode",
+                    notes=f"{streak_str} streak, {emotional_state.title()} mode",
                 )
 
                 # Insert to database
@@ -279,14 +277,10 @@ class TeamTrendsPopulator:
                 )
 
             except Exception as e:
-                logger.error(
-                    f"  Error processing {team_name} (ID {team_id}): {e}"
-                )
+                logger.error(f"  Error processing {team_name} (ID {team_id}): {e}")
                 errors += 1
 
-        logger.info(
-            f"Completed: {inserted} teams updated, {errors} errors"
-        )
+        logger.info(f"Completed: {inserted} teams updated, {errors} errors")
 
     def populate_all_weeks(self, league: str, season: int) -> None:
         """Populate team_trends for all weeks in a season."""

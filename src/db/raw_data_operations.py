@@ -633,9 +633,7 @@ class RawDataOperations:
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
             ORDER BY point_value DESC
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return [dict(row) for row in results] if results else []
 
     def get_starters_by_position(
@@ -709,9 +707,7 @@ class RawDataOperations:
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
             ORDER BY practice_date DESC
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return [dict(row) for row in results] if results else []
 
     def get_player_practice_history(
@@ -745,9 +741,7 @@ class RawDataOperations:
             AND day_of_week = 2
             ORDER BY player_name
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return [dict(row) for row in results] if results else []
 
     def update_practice_trend(
@@ -767,7 +761,8 @@ class RawDataOperations:
             AND season = ? AND week = ?
         """
         self.db.execute_query(
-            query, (trend, league_id, team_id, player_id, season, week),
+            query,
+            (trend, league_id, team_id, player_id, season, week),
             fetch=False,
         )
 
@@ -817,9 +812,7 @@ class RawDataOperations:
             fetch=False,
         )
 
-    def get_game_swe_factors(
-        self, league_id: int, game_id: str
-    ) -> Optional[Dict]:
+    def get_game_swe_factors(self, league_id: int, game_id: str) -> Optional[Dict]:
         """Get SWE factors for a game."""
         query = """
             SELECT * FROM game_swe_factors
@@ -837,9 +830,7 @@ class RawDataOperations:
             WHERE league_id = ? AND season = ? AND week = ?
             ORDER BY game_id
         """
-        results = self.db.execute_query(
-            query, (league_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, season, week))
         return [dict(row) for row in results] if results else []
 
     def get_weather_impact(self, league_id: int, game_id: str) -> Optional[float]:
@@ -862,9 +853,7 @@ class RawDataOperations:
             WHERE league_id = ? AND week = ?
             AND (away_team_id = ? OR home_team_id = ?)
         """
-        results = self.db.execute_query(
-            query, (league_id, week, team_id, team_id)
-        )
+        results = self.db.execute_query(query, (league_id, week, team_id, team_id))
         return dict(results[0]) if results else None
 
     # TEAM TRENDS
@@ -916,9 +905,7 @@ class RawDataOperations:
             SELECT * FROM team_trends
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return dict(results[0]) if results else None
 
     def get_streak_info(
@@ -930,14 +917,10 @@ class RawDataOperations:
             FROM team_trends
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return dict(results[0]) if results else None
 
-    def get_playoff_context(
-        self, league_id: int, season: int, week: int
-    ) -> List[Dict]:
+    def get_playoff_context(self, league_id: int, season: int, week: int) -> List[Dict]:
         """Get playoff context for all teams in a week."""
         query = """
             SELECT team_id, playoff_position, playoff_probability,
@@ -946,9 +929,7 @@ class RawDataOperations:
             WHERE league_id = ? AND season = ? AND week = ?
             ORDER BY playoff_probability DESC
         """
-        results = self.db.execute_query(
-            query, (league_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, season, week))
         return [dict(row) for row in results] if results else []
 
     def calculate_desperation(
@@ -959,9 +940,7 @@ class RawDataOperations:
             SELECT desperation_level FROM team_trends
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return results[0]["desperation_level"] if results else None
 
     def get_recent_form(
@@ -972,9 +951,7 @@ class RawDataOperations:
             SELECT recent_form_pct FROM team_trends
             WHERE league_id = ? AND team_id = ? AND season = ? AND week = ?
         """
-        results = self.db.execute_query(
-            query, (league_id, team_id, season, week)
-        )
+        results = self.db.execute_query(query, (league_id, team_id, season, week))
         return results[0]["recent_form_pct"] if results else None
 
     # ============================================================
@@ -1127,9 +1104,7 @@ class RawDataOperations:
 
         return total_pct
 
-    def get_buying_power_cost(
-        self, point_spread: float
-    ) -> Optional[str]:
+    def get_buying_power_cost(self, point_spread: float) -> Optional[str]:
         """Get the recommended max cost to buy a half point.
 
         From Billy Walters' Buying Points section.

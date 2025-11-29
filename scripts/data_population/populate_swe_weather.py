@@ -81,9 +81,7 @@ class WeatherSWEPopulator:
             return result[0]["id"]
         raise ValueError(f"League not found: {league}")
 
-    def get_games_for_week(
-        self, league_id: int, season: int, week: int
-    ) -> list:
+    def get_games_for_week(self, league_id: int, season: int, week: int) -> list:
         """Get all games for a week."""
         query = """
             SELECT id, game_id, away_team_id, home_team_id
@@ -91,14 +89,10 @@ class WeatherSWEPopulator:
             WHERE league_id = ? AND season = ? AND week = ?
             ORDER BY game_datetime
         """
-        results = self.db_conn.execute_query(
-            query, (league_id, season, week)
-        )
+        results = self.db_conn.execute_query(query, (league_id, season, week))
         return [dict(row) for row in results] if results else []
 
-    def get_weather_data(
-        self, game_id: str
-    ) -> Optional[Dict]:
+    def get_weather_data(self, game_id: str) -> Optional[Dict]:
         """Get weather data for a game."""
         query = """
             SELECT *
@@ -110,9 +104,7 @@ class WeatherSWEPopulator:
         results = self.db_conn.execute_query(query, (game_id,))
         return dict(results[0]) if results else None
 
-    def calculate_temperature_impact(
-        self, temperature_f: Optional[float]
-    ) -> float:
+    def calculate_temperature_impact(self, temperature_f: Optional[float]) -> float:
         """
         Calculate impact of temperature on game.
 
@@ -145,9 +137,7 @@ class WeatherSWEPopulator:
 
         return 0.0  # Comfortable
 
-    def calculate_wind_impact(
-        self, wind_speed_mph: Optional[float]
-    ) -> float:
+    def calculate_wind_impact(self, wind_speed_mph: Optional[float]) -> float:
         """
         Calculate impact of wind on game.
 
@@ -170,9 +160,7 @@ class WeatherSWEPopulator:
 
         return 0.0  # Calm
 
-    def calculate_precipitation_impact(
-        self, conditions: Optional[str]
-    ) -> float:
+    def calculate_precipitation_impact(self, conditions: Optional[str]) -> float:
         """
         Calculate impact of precipitation.
 
@@ -202,8 +190,7 @@ class WeatherSWEPopulator:
 
         # Clear conditions
         if any(
-            word in conditions_lower
-            for word in ["clear", "sunny", "partly", "cloudy"]
+            word in conditions_lower for word in ["clear", "sunny", "partly", "cloudy"]
         ):
             return 0.0
 

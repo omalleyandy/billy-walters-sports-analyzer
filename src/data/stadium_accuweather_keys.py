@@ -79,9 +79,7 @@ def get_location_key(stadium_name: str, sport: str = "ncaaf") -> str | None:
     Returns:
         AccuWeather location key (city-level) or None if not found
     """
-    stadium_map = (
-        COLLEGE_STADIUM_KEYS if sport.lower() == "ncaaf" else NFL_STADIUM_KEYS
-    )
+    stadium_map = COLLEGE_STADIUM_KEYS if sport.lower() == "ncaaf" else NFL_STADIUM_KEYS
 
     stadium_lower = stadium_name.lower().strip()
 

@@ -373,7 +373,10 @@ class BillyWaltersEdgeDetector:
             )
 
             # Positive signal: Multiple key players practicing
-            if fully_participating >= 2 or (fully_participating + limited_participating) >= 3:
+            if (
+                fully_participating >= 2
+                or (fully_participating + limited_participating) >= 3
+            ):
                 logger.info(
                     f"{team_name}: Wednesday signal POSITIVE "
                     f"({fully_participating} FP, {limited_participating} LP)"
@@ -392,9 +395,7 @@ class BillyWaltersEdgeDetector:
 
         return (False, 1.0)
 
-    def get_swe_adjustments(
-        self, game_id: str, season: int, week: int
-    ) -> dict:
+    def get_swe_adjustments(self, game_id: str, season: int, week: int) -> dict:
         """
         Retrieve S-W-E (Special/Weather/Emotional) factors from database.
 
@@ -1072,7 +1073,9 @@ class BillyWaltersEdgeDetector:
             logger.error(f"Error loading injury data: {e}")
             return {}
 
-    def calculate_team_injury_impact(self, team_name: str, team_id: int = None, season: int = None, week: int = None) -> InjuryImpact:
+    def calculate_team_injury_impact(
+        self, team_name: str, team_id: int = None, season: int = None, week: int = None
+    ) -> InjuryImpact:
         """
         Calculate total injury impact for a team
 

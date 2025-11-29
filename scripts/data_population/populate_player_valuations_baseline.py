@@ -72,9 +72,7 @@ class PlayerValuationsBaselinePopulator:
     def get_league_id(self, league: str) -> int:
         """Get league ID from name."""
         query = "SELECT id FROM leagues WHERE name = ?"
-        result = self.db_conn.execute_query(
-            query, (league.upper(),)
-        )
+        result = self.db_conn.execute_query(query, (league.upper(),))
         if result:
             return result[0]["id"]
         raise ValueError(f"League not found: {league}")
@@ -107,9 +105,7 @@ class PlayerValuationsBaselinePopulator:
             return 1.0  # Unknown position
 
         # Determine tier from depth position
-        tier = self.DEPTH_CHART_TIERS.get(
-            depth_position, "average"
-        )
+        tier = self.DEPTH_CHART_TIERS.get(depth_position, "average")
 
         # Get value from tier
         values = self.POSITION_DEFAULTS[position_upper]
@@ -149,9 +145,7 @@ class PlayerValuationsBaselinePopulator:
             ]
         }
 
-    def populate_season(
-        self, league: str, season: int
-    ) -> None:
+    def populate_season(self, league: str, season: int) -> None:
         """
         Populate baseline player valuations for a season.
 
@@ -160,8 +154,7 @@ class PlayerValuationsBaselinePopulator:
             season: Season year
         """
         logger.info(
-            f"Populating baseline player valuations for "
-            f"{league.upper()} {season}"
+            f"Populating baseline player valuations for {league.upper()} {season}"
         )
 
         league_id = self.get_league_id(league)
@@ -190,9 +183,7 @@ class PlayerValuationsBaselinePopulator:
                         break
 
                 if not team_roster:
-                    logger.debug(
-                        f"No roster data found for {team_name}"
-                    )
+                    logger.debug(f"No roster data found for {team_name}")
                     continue
 
                 # Process each player
@@ -202,9 +193,7 @@ class PlayerValuationsBaselinePopulator:
                     depth_position = player_data.get("depth_position", 1)
 
                     # Calculate point value
-                    point_value = self.get_point_value(
-                        position, depth_position
-                    )
+                    point_value = self.get_point_value(position, depth_position)
 
                     # Create player valuation
                     valuation = PlayerValuation(
@@ -221,8 +210,7 @@ class PlayerValuationsBaselinePopulator:
                         is_starter=(depth_position == 1),
                         depth_chart_position=depth_position,
                         source="depth_chart_baseline",
-                        notes=f"Baseline from {depth_position} "
-                        f"depth chart position",
+                        notes=f"Baseline from {depth_position} depth chart position",
                     )
 
                     # Insert to database
@@ -231,26 +219,20 @@ class PlayerValuationsBaselinePopulator:
 
                 teams_processed += 1
                 logger.info(
-                    f"  {team_name}: "
-                    f"{len(team_roster.get('players', []))} players"
+                    f"  {team_name}: {len(team_roster.get('players', []))} players"
                 )
 
             except Exception as e:
-                logger.error(
-                    f"Error processing {team_name} (ID {team_id}): {e}"
-                )
+                logger.error(f"Error processing {team_name} (ID {team_id}): {e}")
 
         logger.info(
-            f"Completed: {teams_processed} teams, "
-            f"{total_inserted} players inserted"
+            f"Completed: {teams_processed} teams, {total_inserted} players inserted"
         )
 
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Populate baseline player valuations"
-    )
+    parser = argparse.ArgumentParser(description="Populate baseline player valuations")
     parser.add_argument(
         "--league",
         choices=["nfl", "ncaaf"],
