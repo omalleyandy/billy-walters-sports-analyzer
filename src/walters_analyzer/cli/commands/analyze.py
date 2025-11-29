@@ -278,7 +278,56 @@ def analyze_game(
     predicted_spread = home_rating - away_rating + hfa
     differential = home_rating - away_rating
 
-    console.print("Applying S-factors...")
+    console.print("Calculating S-factors (situational)...")
+    situational = detector.calculate_situational_factors(
+        team=away_normalized,
+        opponent=home_normalized,
+        week=ratings_data.get("week", 0),
+        game_date=None,
+        last_game_date=None,
+        is_divisional=False,
+        is_rivalry=False,
+    )
+
+    console.print("Calculating W-factors (weather)...")
+    weather_impact = None
+    if research:
+        try:
+            import asyncio
+            from scrapers.weather import AccuWeatherClient
+
+            weather_client = AccuWeatherClient()
+            if weather_client.api_key:
+
+                async def fetch_weather_data():
+                    await weather_client.connect()
+                    try:
+                        return await weather_client.get_game_weather(
+                            home_normalized, ""
+                        )
+                    finally:
+                        await weather_client.close()
+
+                weather_data = asyncio.run(fetch_weather_data())
+                if weather_data:
+                    weather_impact = detector.calculate_weather_impact(
+                        temperature=weather_data.get("temperature"),
+                        wind_speed=weather_data.get("wind_speed"),
+                        precipitation=weather_data.get(
+                            "precipitation"
+                        ),
+                        indoor=weather_data.get("indoor", False),
+                    )
+        except Exception as e:
+            console.print(
+                f"[dim]Weather data unavailable: {e}[/dim]"
+            )
+
+    console.print("Calculating E-factors (emotional/trends)...")
+    # E-factors are calculated during edge detection based on team trends
+    # Including streaks, desperation, rest advantage, revenge factors
+
+    console.print("Detecting edge...")
 
     # Detect edge
     if spread is not None:
@@ -290,6 +339,8 @@ def analyze_game(
             market_total=total or 47.0,
             week=ratings_data.get("week", 0),
             game_time="",
+            situational=situational,
+            weather=weather_impact,
         )
     else:
         edge = None
@@ -318,23 +369,57 @@ def analyze_game(
         else:
             console.print("  Edge: No significant edge detected")
 
-    console.print("\n[bold]S-Factors:[/bold]")
-    if edge:
+    console.print("\n[bold]S-Factors (Situational):[/bold]")
+    if situational:
         console.print(
-            f"  Situational: {edge.situational_adjustment:+.1f} pts"
+            f"  Rest Days: {situational.rest_days} "
+            f"(Advantage: {situational.rest_advantage:+.1f} pts)"
         )
-        console.print(f"  Weather: {edge.weather_adjustment:+.1f} pts")
+        console.print(
+            f"  Travel Penalty: {situational.travel_penalty:+.1f} pts"
+        )
+        if situational.divisional_game:
+            console.print("  Divisional Game: Yes (-1.5 pts)")
+        if situational.rivalry_game:
+            console.print("  Rivalry Game: Yes (+1.0 pts)")
+        console.print(
+            f"  Total Adjustment: {situational.total_adjustment:+.1f} pts"
+        )
+    else:
+        console.print("  Rest: TBD")
+        console.print("  Travel: TBD")
+
+    console.print("\n[bold]W-Factors (Weather):[/bold]")
+    if weather_impact:
+        if weather_impact.temperature is not None:
+            console.print(f"  Temperature: {weather_impact.temperature}°F")
+        if weather_impact.wind_speed is not None:
+            console.print(f"  Wind: {weather_impact.wind_speed} MPH")
+        if weather_impact.precipitation:
+            console.print(f"  Precipitation: {weather_impact.precipitation}")
+        console.print(
+            f"  Total Adjustment: {weather_impact.total_adjustment:+.2f} pts"
+        )
+        console.print(
+            f"  Spread Adjustment: "
+            f"{weather_impact.spread_adjustment:+.2f} pts"
+        )
+    else:
+        console.print("  [dim]No weather data (use --research to fetch)[/dim]")
+
+    console.print("\n[bold]E-Factors (Emotional/Trends):[/bold]")
+    if edge:
         console.print(
             f"  Emotional: {edge.emotional_adjustment:+.1f} pts"
         )
         console.print(
             f"  Injury Impact: {edge.injury_adjustment:+.1f} pts"
         )
+        console.print(f"  Confidence Impact: {edge.sharp_action.confidence:.2f}")
     else:
-        console.print("  Situational: TBD")
-        console.print("  Weather: TBD")
-        console.print("  Emotional: TBD")
-        console.print("  Injury Impact: TBD")
+        console.print(
+            "  [dim]Emotional factors calculated with valid edge[/dim]"
+        )
 
     # Build recommendation panel
     if edge and edge.recommended_bet:
