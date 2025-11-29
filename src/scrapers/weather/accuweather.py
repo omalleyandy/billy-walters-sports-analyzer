@@ -381,6 +381,39 @@ class AccuWeatherClient:
             "source": "accuweather",
         }
 
+    async def get_weather_by_location_key(
+        self,
+        location_key: str,
+        max_retries: int = 3,
+    ) -> dict[str, Any]:
+        """
+        Get current weather for a location using AccuWeather location key.
+
+        This is the main method used when you have the location key directly
+        (from ESPN schedule links).
+
+        Args:
+            location_key: AccuWeather location key (e.g., '53592_poi')
+            max_retries: Maximum retry attempts
+
+        Returns:
+            Weather data dictionary with temperature, wind, precipitation, etc.
+
+        Raises:
+            RuntimeError: If request fails
+        """
+        logger.info(f"Getting weather for location key: {location_key}")
+
+        try:
+            conditions = await self.get_current_conditions(
+                location_key, max_retries=max_retries
+            )
+            logger.info(f"Successfully fetched weather for {location_key}")
+            return conditions
+        except RuntimeError as e:
+            logger.error(f"Failed to get weather for {location_key}: {e}")
+            raise
+
     async def get_game_forecast(
         self,
         city: str,

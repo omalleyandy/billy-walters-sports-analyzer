@@ -367,55 +367,84 @@ def analyze_game(
     weather_impact = None
     w_factor_adjustment = 0.0
 
-    # Always try to get weather data
+    # Always try to get weather data from ESPN schedule links
     try:
         import asyncio
+        from data.espn_weather_scraper import (
+            ESPNWeatherLinkScraper,
+        )
         from scrapers.weather import AccuWeatherClient
 
-        weather_client = AccuWeatherClient()
-        if weather_client.api_key:
-
-            async def fetch_weather_data():
-                await weather_client.connect()
-                try:
-                    # Query stadium directly
-                    return await weather_client.get_game_weather(
-                        home_normalized, ""
-                    )
-                finally:
-                    await weather_client.close()
-
-            weather_data = asyncio.run(fetch_weather_data())
-            if weather_data:
-                temperature = weather_data.get("temperature")
-                wind_speed = weather_data.get("wind_speed")
-                precipitation = weather_data.get("precipitation")
-                indoor = weather_data.get("indoor", False)
-
-                # Calculate Billy Walters W-Factor (Cold Outdoor Environment)
-                # From Advanced Master Class Section 3, lines 154-160
-                if not indoor and temperature is not None:
-                    if temperature <= 10:
-                        w_factor_adjustment = 1.75
-                    elif temperature <= 15:
-                        w_factor_adjustment = 1.25
-                    elif temperature <= 20:
-                        w_factor_adjustment = 1.00
-                    elif temperature <= 25:
-                        w_factor_adjustment = 0.75
-                    elif temperature <= 30:
-                        w_factor_adjustment = 0.50
-                    elif temperature <= 35:
-                        w_factor_adjustment = 0.25
-
-                weather_impact = detector.calculate_weather_impact(
-                    temperature=temperature,
-                    wind_speed=wind_speed,
-                    precipitation=precipitation,
-                    indoor=indoor,
+        async def fetch_weather_with_location_key():
+            """Fetch weather using AccuWeather location key from ESPN."""
+            # Get location keys from ESPN schedule
+            sport_name = "cfb" if sport_lower == "ncaaf" else "nfl"
+            locations = (
+                await ESPNWeatherLinkScraper.get_location_keys(
+                    sport_name
                 )
+            )
+
+            if not locations:
+                console.print(
+                    "[dim]ESPN weather links unavailable[/dim]"
+                )
+                return None
+
+            # Try to match home team stadium to ESPN location
+            for stadium_name, location_key in locations.items():
+                if home_normalized.lower() in stadium_name.lower():
+                    console.print(
+                        f"[dim]Found: {stadium_name}[/dim]"
+                    )
+                    # Use AccuWeather with location key
+                    client = AccuWeatherClient()
+                    if client.api_key:
+                        await client.connect()
+                        try:
+                            return (
+                                await client.get_weather_by_location_key(
+                                    location_key
+                                )
+                            )
+                        finally:
+                            await client.close()
+
+            return None
+
+        weather_data = asyncio.run(fetch_weather_with_location_key())
+        if weather_data:
+            temperature = weather_data.get("temperature")
+            wind_speed = weather_data.get("wind_speed")
+            precipitation = weather_data.get("precipitation")
+            indoor = weather_data.get("indoor", False)
+
+            # Calculate Billy Walters W-Factor (Cold Outdoor Environment)
+            # From Advanced Master Class Section 3, lines 154-160
+            if not indoor and temperature is not None:
+                if temperature <= 10:
+                    w_factor_adjustment = 1.75
+                elif temperature <= 15:
+                    w_factor_adjustment = 1.25
+                elif temperature <= 20:
+                    w_factor_adjustment = 1.00
+                elif temperature <= 25:
+                    w_factor_adjustment = 0.75
+                elif temperature <= 30:
+                    w_factor_adjustment = 0.50
+                elif temperature <= 35:
+                    w_factor_adjustment = 0.25
+
+            weather_impact = detector.calculate_weather_impact(
+                temperature=temperature,
+                wind_speed=wind_speed,
+                precipitation=precipitation,
+                indoor=indoor,
+            )
     except Exception as e:
-        console.print(f"[dim]Weather fetch issue: {str(e)[:50]}[/dim]")
+        console.print(
+            f"[dim]Weather: {str(e)[:40]}[/dim]"
+        )
 
     console.print("Calculating E-factors (emotional/trends)...")
     # E-factors are calculated during edge detection based on team trends
