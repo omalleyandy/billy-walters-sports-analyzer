@@ -147,23 +147,31 @@ def analyze_game(
         None, "--spread", "-l", help="Current spread (home perspective)"
     ),
     total: Optional[float] = typer.Option(None, "--total", "-t", help="Current total"),
+    venue: Optional[str] = typer.Option(
+        None, "--venue", "-v", help="Stadium/venue name"
+    ),
     bankroll: float = typer.Option(20000.0, "--bankroll", "-b", help="Bankroll amount"),
     research: bool = typer.Option(
         False, "--research", "-r", help="Fetch live injury/weather data"
     ),
     verbose: bool = typer.Option(
-        False, "--verbose", "-v", help="Show detailed breakdown"
+        False, "--verbose", "-vb", help="Show detailed breakdown"
     ),
 ):
     """
     Analyze a single game using full Billy Walters methodology.
 
     Example:
-        walters analyze game "Bears" "Lions" --spread -6.5 --research
+        walters analyze game "Ohio State Buckeyes" "Michigan Wolverines" \\
+          --spread -10 --total 43.5 --venue "Michigan Stadium" --research
     """
+    game_title = f"[bold]{away} @ {home}[/bold]"
+    if venue:
+        game_title += f"\n[dim]{venue}[/dim]"
+
     console.print(
         Panel(
-            f"[bold]{away} @ {home}[/bold]",
+            game_title,
             title="[OK] Game Analysis",
             border_style="blue",
         )
