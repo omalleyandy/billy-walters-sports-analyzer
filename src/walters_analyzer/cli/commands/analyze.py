@@ -11,11 +11,9 @@ Commands:
 
 import typer
 from typing import Optional
-from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from pathlib import Path
 
 app = typer.Typer(
@@ -59,40 +57,39 @@ def analyze_edges(
         Panel(
             f"[bold]Edge Analysis[/bold]\n"
             f"Sport: {sport.upper()} | Week: {week or 'Current'} | Min Edge: {min_edge}%",
-            title="🎯 Finding Opportunities",
+            title="[OK] Finding Opportunities",
             border_style="green",
         )
     )
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
-        # Step 1: Load data
-        task = progress.add_task("Loading game data...", total=None)
+    # Step 1: Load data
+    console.print("Loading game data...")
 
-        try:
-            from walters_analyzer.core.edge_detection import EdgeDetector
-            from walters_analyzer.data.loaders import load_week_games
+    try:
+        from walters_analyzer.core.edge_detection import (
+            EdgeDetector,  # noqa: F401
+        )
+        from walters_analyzer.data.loaders import load_week_games
 
-            games = load_week_games(sport=sport, week=week)
-            progress.update(task, description=f"Loaded {len(games)} games")
+        games = load_week_games(sport=sport, week=week)
+        console.print(f"[green]Loaded {len(games)} games[/green]")
 
-        except ImportError:
-            # Fallback if modules not yet implemented
-            progress.update(task, description="[yellow]Using placeholder data[/yellow]")
-            games = []
+    except ImportError:
+        # Fallback if modules not yet implemented
+        console.print(
+            "[yellow]Using placeholder data[/yellow]"
+        )
+        games = []
 
-        # Step 2: Calculate edges
-        progress.update(task, description="Calculating edges...")
+    # Step 2: Calculate edges
+    console.print("Calculating edges...")
 
-        opportunities = []
+    opportunities = []
 
-        # TODO: Implement actual edge calculation
-        # For now, show the structure
+    # TODO: Implement actual edge calculation
+    # For now, show the structure
 
-        progress.update(task, description="[green]✓ Analysis complete[/green]")
+    console.print("[green][OK] Analysis complete[/green]")
 
     # Display results
     if not opportunities and not show_all:
@@ -133,7 +130,7 @@ def analyze_edges(
             f"Games Analyzed: {len(games) if games else 'N/A'}\n"
             f"Opportunities: {len(opportunities)}\n"
             f"Highest Edge: N/A",
-            title="📊 Results",
+            title="[OK] Results",
             border_style="blue",
         )
     )
@@ -167,32 +164,26 @@ def analyze_game(
     console.print(
         Panel(
             f"[bold]{away} @ {home}[/bold]",
-            title="🏈 Game Analysis",
+            title="[OK] Game Analysis",
             border_style="blue",
         )
     )
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
-        task = progress.add_task("Analyzing game...", total=None)
+    console.print("Analyzing game...")
+    if research:
+        console.print("Fetching injury data...")
+        # TODO: Implement research data fetching
 
-        if research:
-            progress.update(task, description="Fetching injury data...")
-            # TODO: Implement research data fetching
+        console.print("Fetching weather data...")
+        # TODO: Implement weather data fetching
 
-            progress.update(task, description="Fetching weather data...")
-            # TODO: Implement weather data fetching
+    console.print("Calculating power ratings...")
+    # TODO: Implement power rating lookup
 
-        progress.update(task, description="Calculating power ratings...")
-        # TODO: Implement power rating lookup
+    console.print("Applying S-factors...")
+    # TODO: Implement S-factor calculation
 
-        progress.update(task, description="Applying S-factors...")
-        # TODO: Implement S-factor calculation
-
-        progress.update(task, description="[green]✓ Analysis complete[/green]")
+    console.print("[green][OK] Analysis complete[/green]")
 
     # Display results
     console.print("\n[bold]Power Ratings:[/bold]")
@@ -217,7 +208,7 @@ def analyze_game(
             "[bold]RECOMMENDATION[/bold]\n\n"
             "[yellow]Implementation in progress...[/yellow]\n"
             "This will show bet recommendation with Kelly sizing.",
-            title="💰 Verdict",
+            title="[OK] Verdict",
             border_style="green" if spread else "yellow",
         )
     )

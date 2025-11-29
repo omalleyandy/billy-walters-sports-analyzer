@@ -5,19 +5,23 @@ This document provides comprehensive reference for all CLI commands in the Billy
 ## Table of Contents
 
 ### Analysis Commands
+
 - [analyze-game](#analyze-game) - NEW! Full Billy Walters game analysis
 - [wk-card](#wk-card) - Week card betting workflow
 
 ### Data Collection Commands
+
 - [scrape-overtime](#scrape-overtime) - Scrape odds from overtime.ag
 - [scrape-injuries](#scrape-injuries) - Scrape injury reports
 - [scrape-highlightly](#scrape-highlightly) - Scrape data from Highlightly API
 
 ### Data Management Commands
+
 - [view-odds](#view-odds) - View scraped odds data
 - [monitor-sharp](#monitor-sharp) - Monitor sharp money movements
 
 ### TIER 1 Data Population Scripts
+
 - [populate-team-trends](#populate-team-trends) - Calculate team streaks and desperation levels
 - [populate-swe-weather](#populate-swe-weather) - Calculate weather-based SWE adjustments
 - [scrape-practice-reports](#scrape-practice-reports) - Collect practice reports for Wednesday signal
@@ -30,6 +34,7 @@ This document provides comprehensive reference for all CLI commands in the Billy
 **NEW!** Analyze a single game using the complete Billy Walters methodology with bankroll-aware recommendations.
 
 ### Features
+
 - Power rating-based predictions
 - Injury impact analysis (point values)
 - Key number detection (3, 7, 6, 10, 14)
@@ -61,18 +66,18 @@ uv run walters-analyzer analyze-game \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--home` | string | Yes | - | Home team name |
-| `--away` | string | Yes | - | Away team name |
-| `--spread` | float | No | - | Current spread (home perspective) |
-| `--total` | float | No | - | Current total |
-| `--home-price` | int | No | -110 | Home spread price (American odds) |
-| `--away-price` | int | No | -110 | Away spread price (American odds) |
-| `--venue` | string | No | - | Stadium/venue for weather lookup |
-| `--date` | string | No | - | Game date (YYYY-MM-DD format) |
-| `--bankroll` | float | No | 10000.0 | Starting bankroll amount |
-| `--research` | flag | No | false | Fetch live injury/weather data |
+| Argument       | Type   | Required | Default | Description                       |
+| -------------- | ------ | -------- | ------- | --------------------------------- |
+| `--home`       | string | Yes      | -       | Home team name                    |
+| `--away`       | string | Yes      | -       | Away team name                    |
+| `--spread`     | float  | No       | -       | Current spread (home perspective) |
+| `--total`      | float  | No       | -       | Current total                     |
+| `--home-price` | int    | No       | -110    | Home spread price (American odds) |
+| `--away-price` | int    | No       | -110    | Away spread price (American odds) |
+| `--venue`      | string | No       | -       | Stadium/venue for weather lookup  |
+| `--date`       | string | No       | -       | Game date (YYYY-MM-DD format)     |
+| `--bankroll`   | float  | No       | 10000.0 | Starting bankroll amount          |
+| `--research`   | flag   | No       | false   | Fetch live injury/weather data    |
 
 ### Example Output
 
@@ -120,16 +125,17 @@ Notes:
 
 ### Confidence Levels
 
-| Edge (pts) | Confidence Level | Kelly Stake |
-|-----------|------------------|-------------|
-| < 1.0 | No Play | 0% |
-| 1.0-1.9 | Slight Edge | 0.5-1.5% |
-| 2.0-2.9 | Elevated Confidence | 1.5-3.0% |
-| ≥ 3.0 | High Confidence | 3.0% (max) |
+| Edge (pts) | Confidence Level    | Kelly Stake |
+| ---------- | ------------------- | ----------- |
+| < 1.0      | No Play             | 0%          |
+| 1.0-1.9    | Slight Edge         | 0.5-1.5%    |
+| 2.0-2.9    | Elevated Confidence | 1.5-3.0%    |
+| ≥ 3.0      | High Confidence     | 3.0% (max)  |
 
 ### Research Integration
 
 When `--research` flag is used:
+
 1. **Injury Data**: Fetches from ProFootballDoc cache or live scraping
 2. **Weather Data**: Queries AccuWeather API for venue conditions
 3. **Point Values**: Each injury assigned point impact based on position/status
@@ -141,6 +147,7 @@ When `--research` flag is used:
 Run or preview a week card JSON with betting entries.
 
 ### NEW Features
+
 - `--show-bankroll` - Display Kelly Criterion stake recommendations
 - `--bankroll` - Specify starting bankroll amount
 
@@ -160,12 +167,12 @@ uv run walters-analyzer wk-card \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--file` | path | Yes | - | Path to week card JSON |
-| `--dry-run` | flag | No | false | Preview without placing bets |
-| `--show-bankroll` | flag | No | false | Show Kelly stake percentages |
-| `--bankroll` | float | No | 10000.0 | Starting bankroll amount |
+| Argument          | Type  | Required | Default | Description                  |
+| ----------------- | ----- | -------- | ------- | ---------------------------- |
+| `--file`          | path  | Yes      | -       | Path to week card JSON       |
+| `--dry-run`       | flag  | No       | false   | Preview without placing bets |
+| `--show-bankroll` | flag  | No       | false   | Show Kelly stake percentages |
+| `--bankroll`      | float | No       | 10000.0 | Starting bankroll amount     |
 
 ### Example Output
 
@@ -199,11 +206,11 @@ uv run walters-analyzer scrape-overtime \
 
 ### Arguments
 
-| Argument | Type | Choices | Default | Description |
-|----------|------|---------|---------|-------------|
-| `--sport` | string | nfl, cfb, both | both | Sport to scrape |
-| `--live` | flag | - | false | Scrape live odds |
-| `--output-dir` | path | - | auto | Output directory |
+| Argument       | Type   | Choices        | Default | Description      |
+| -------------- | ------ | -------------- | ------- | ---------------- |
+| `--sport`      | string | nfl, cfb, both | both    | Sport to scrape  |
+| `--live`       | flag   | -              | false   | Scrape live odds |
+| `--output-dir` | path   | -              | auto    | Output directory |
 
 ---
 
@@ -228,10 +235,10 @@ uv run walters-analyzer scrape-injuries \
 
 ### Arguments
 
-| Argument | Type | Choices | Default | Description |
-|----------|------|---------|---------|-------------|
-| `--sport` | string | nfl, cfb | cfb | Sport to scrape |
-| `--output-dir` | path | - | auto | Output directory |
+| Argument       | Type   | Choices  | Default | Description      |
+| -------------- | ------ | -------- | ------- | ---------------- |
+| `--sport`      | string | nfl, cfb | cfb     | Sport to scrape  |
+| `--output-dir` | path   | -        | auto    | Output directory |
 
 ---
 
@@ -263,14 +270,14 @@ uv run walters-analyzer scrape-highlightly \
 
 ### Arguments
 
-| Argument | Type | Required | Description |
-|----------|------|----------|-------------|
-| `--endpoint` | string | Yes | API endpoint (teams, matches, odds, etc.) |
-| `--sport` | string | No | Sport (nfl, ncaaf, both) |
-| `--date` | string | No | Date filter (YYYY-MM-DD) |
-| `--match-id` | int | No | Match ID for specific game |
-| `--team-id` | int | No | Team ID for statistics |
-| `--odds-type` | string | No | Odds type (prematch, live) |
+| Argument      | Type   | Required | Description                               |
+| ------------- | ------ | -------- | ----------------------------------------- |
+| `--endpoint`  | string | Yes      | API endpoint (teams, matches, odds, etc.) |
+| `--sport`     | string | No       | Sport (nfl, ncaaf, both)                  |
+| `--date`      | string | No       | Date filter (YYYY-MM-DD)                  |
+| `--match-id`  | int    | No       | Match ID for specific game                |
+| `--team-id`   | int    | No       | Team ID for statistics                    |
+| `--odds-type` | string | No       | Odds type (prematch, live)                |
 
 ---
 
@@ -301,19 +308,19 @@ uv run walters-analyzer view-odds \
 
 ### Arguments
 
-| Argument | Type | Description |
-|----------|------|-------------|
-| `--data-dir` | path | Data directory (default: data/overtime_live) |
-| `--file` | path | Specific JSONL file to load |
-| `--sport` | string | Filter by sport (nfl, college_football) |
-| `--date` | string | Filter by date (YYYY-MM-DD) |
-| `--today` | flag | Show today's games |
-| `--upcoming` | int | Show games in next N days |
-| `--team` | string | Filter by team name (partial match) |
-| `--compare` | string | Compare lines for a team |
-| `--summary` | flag | Show summary only |
-| `--brief` | flag | Brief output (no odds details) |
-| `--export` | path | Export to CSV file |
+| Argument     | Type   | Description                                  |
+| ------------ | ------ | -------------------------------------------- |
+| `--data-dir` | path   | Data directory (default: data/overtime_live) |
+| `--file`     | path   | Specific JSONL file to load                  |
+| `--sport`    | string | Filter by sport (nfl, college_football)      |
+| `--date`     | string | Filter by date (YYYY-MM-DD)                  |
+| `--today`    | flag   | Show today's games                           |
+| `--upcoming` | int    | Show games in next N days                    |
+| `--team`     | string | Filter by team name (partial match)          |
+| `--compare`  | string | Compare lines for a team                     |
+| `--summary`  | flag   | Show summary only                            |
+| `--brief`    | flag   | Brief output (no odds details)               |
+| `--export`   | path   | Export to CSV file                           |
 
 ---
 
@@ -342,13 +349,13 @@ uv run walters-analyzer monitor-sharp \
 
 ### Arguments
 
-| Argument | Type | Choices | Default | Description |
-|----------|------|---------|---------|-------------|
-| `--sport` | string | nfl, ncaaf, nba, mlb, nhl | nfl | Sport to monitor |
-| `--game-id` | string | - | - | Specific game to monitor |
-| `--duration` | int | - | 120 | Duration in minutes |
-| `--interval` | int | - | settings | Check interval in seconds |
-| `--test` | flag | - | false | Test API connection |
+| Argument     | Type   | Choices                   | Default  | Description               |
+| ------------ | ------ | ------------------------- | -------- | ------------------------- |
+| `--sport`    | string | nfl, ncaaf, nba, mlb, nhl | nfl      | Sport to monitor          |
+| `--game-id`  | string | -                         | -        | Specific game to monitor  |
+| `--duration` | int    | -                         | 120      | Duration in minutes       |
+| `--interval` | int    | -                         | settings | Check interval in seconds |
+| `--test`     | flag   | -                         | false    | Test API connection       |
 
 ---
 
@@ -357,6 +364,7 @@ uv run walters-analyzer monitor-sharp \
 ### Overview
 
 The following scripts populate TIER 1 critical tables in the database. These tables enhance edge detection with:
+
 - **Team Trends**: Streaks, desperation levels, emotional factors
 - **Weather SWE Factors**: Special/Weather/Emotional adjustments
 - **Practice Reports**: Wednesday signal for injury tracking
@@ -373,6 +381,7 @@ Calculate team streaks, desperation levels, and emotional state from game result
 ### Purpose
 
 Populates the `team_trends` table with:
+
 - Win/loss streaks (direction and length)
 - Recent form percentage (0.0-1.0)
 - Playoff position and ranking
@@ -400,23 +409,23 @@ uv run python scripts/data_population/populate_team_trends.py \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--league` | string | Yes | - | League: nfl or ncaaf |
-| `--week` | int | No | current | Week number (1-18 NFL, 1-15 NCAAF) |
-| `--season` | int | No | 2025 | Season year |
-| `--verbose` | flag | No | false | Show detailed progress |
+| Argument    | Type   | Required | Default | Description                        |
+| ----------- | ------ | -------- | ------- | ---------------------------------- |
+| `--league`  | string | Yes      | -       | League: nfl or ncaaf               |
+| `--week`    | int    | No       | current | Week number (1-18 NFL, 1-15 NCAAF) |
+| `--season`  | int    | No       | 2025    | Season year                        |
+| `--verbose` | flag   | No       | false   | Show detailed progress             |
 
 ### Data Calculated
 
-| Field | Calculation | Range | Example |
-|-------|-----------|-------|---------|
-| `streak_direction` | W/L from last 6 games | W or L | W |
-| `streak_length` | Consecutive wins/losses | 1-6 | 3 |
-| `recent_form_pct` | Wins/(Wins+Losses) last 4 | 0.0-1.0 | 0.75 |
-| `playoff_position` | Current standings rank | 1-16 | 2 |
-| `desperation_level` | 0=clinched, 10=must-win | 0-10 | 5 |
-| `emotional_state` | confident/neutral/desperate | string | confident |
+| Field               | Calculation                 | Range   | Example   |
+| ------------------- | --------------------------- | ------- | --------- |
+| `streak_direction`  | W/L from last 6 games       | W or L  | W         |
+| `streak_length`     | Consecutive wins/losses     | 1-6     | 3         |
+| `recent_form_pct`   | Wins/(Wins+Losses) last 4   | 0.0-1.0 | 0.75      |
+| `playoff_position`  | Current standings rank      | 1-16    | 2         |
+| `desperation_level` | 0=clinched, 10=must-win     | 0-10    | 5         |
+| `emotional_state`   | confident/neutral/desperate | string  | confident |
 
 ### Example Output
 
@@ -449,6 +458,7 @@ Calculate weather-based Special/Weather/Emotional (SWE) adjustments for games.
 ### Purpose
 
 Populates the `game_swe_factors` table with weather impact on game outcomes:
+
 - Temperature impact (-2.0 to +1.0 pts)
 - Wind impact (-1.5 to 0.0 pts)
 - Precipitation impact (-2.0 to 0.0 pts)
@@ -478,28 +488,28 @@ uv run python scripts/data_population/populate_swe_weather.py \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--league` | string | Yes | - | League: nfl or ncaaf |
-| `--week` | int | No | current | Starting week |
-| `--weeks` | int | No | 1 | Number of weeks to process |
-| `--season` | int | No | 2025 | Season year |
-| `--verbose` | flag | No | false | Show detailed calculations |
+| Argument    | Type   | Required | Default | Description                |
+| ----------- | ------ | -------- | ------- | -------------------------- |
+| `--league`  | string | Yes      | -       | League: nfl or ncaaf       |
+| `--week`    | int    | No       | current | Starting week              |
+| `--weeks`   | int    | No       | 1       | Number of weeks to process |
+| `--season`  | int    | No       | 2025    | Season year                |
+| `--verbose` | flag   | No       | false   | Show detailed calculations |
 
 ### Weather Impact Rules
 
-| Factor | Condition | Impact | Example |
-|--------|-----------|--------|---------|
-| Temperature | <20°F | -2.0 to -1.5 | Extreme cold |
-| | 20-50°F | -1.5 to 0.0 | Cold |
-| | 50-85°F | 0.0 | Comfortable |
-| | >85°F | +0.5 to +1.0 | Hot |
-| Wind | 0-10 mph | 0.0 to -0.5 | Light |
-| | 10-20 mph | -0.5 to -1.5 | Moderate |
-| | >20 mph | -1.5 to -2.5 | Strong |
-| Precipitation | Clear | 0.0 | No impact |
-| | Light rain/snow | -0.5 to -1.0 | Slight |
-| | Heavy rain/snow | -1.5 to -2.0 | Significant |
+| Factor        | Condition       | Impact       | Example      |
+| ------------- | --------------- | ------------ | ------------ |
+| Temperature   | <20°F           | -2.0 to -1.5 | Extreme cold |
+|               | 20-50°F         | -1.5 to 0.0  | Cold         |
+|               | 50-85°F         | 0.0          | Comfortable  |
+|               | >85°F           | +0.5 to +1.0 | Hot          |
+| Wind          | 0-10 mph        | 0.0 to -0.5  | Light        |
+|               | 10-20 mph       | -0.5 to -1.5 | Moderate     |
+|               | >20 mph         | -1.5 to -2.5 | Strong       |
+| Precipitation | Clear           | 0.0          | No impact    |
+|               | Light rain/snow | -0.5 to -1.0 | Slight       |
+|               | Heavy rain/snow | -1.5 to -2.0 | Significant  |
 
 ### Example Output
 
@@ -538,6 +548,7 @@ Collect practice participation reports from NFL.com for Wednesday signal detecti
 ### Purpose
 
 Populates the `practice_reports` table with player participation data:
+
 - Full Participation (FP), Limited (LP), Did Not Practice (DNP)
 - Tracks changes day-by-day (Mon-Fri)
 - Detects trends (improving, declining, stable)
@@ -564,20 +575,20 @@ uv run python scripts/scrapers/scrape_practice_reports.py \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--week` | int | No | current | Starting week |
-| `--weeks` | int | No | 1 | Number of weeks to process |
-| `--season` | int | No | 2025 | Season year |
-| `--verbose` | flag | No | false | Show detailed scraping progress |
+| Argument    | Type | Required | Default | Description                     |
+| ----------- | ---- | -------- | ------- | ------------------------------- |
+| `--week`    | int  | No       | current | Starting week                   |
+| `--weeks`   | int  | No       | 1       | Number of weeks to process      |
+| `--season`  | int  | No       | 2025    | Season year                     |
+| `--verbose` | flag | No       | false   | Show detailed scraping progress |
 
 ### Participation Status Mapping
 
-| Status | Code | Severity | Sessions | Impact |
-|--------|------|----------|----------|--------|
-| Full Participation | FP | mild | 3/3 | Healthy |
-| Limited Participation | LP | moderate | 2/3 | Questionable |
-| Did Not Practice | DNP | severe | 0/3 | Probable/Out |
+| Status                | Code | Severity | Sessions | Impact       |
+| --------------------- | ---- | -------- | -------- | ------------ |
+| Full Participation    | FP   | mild     | 3/3      | Healthy      |
+| Limited Participation | LP   | moderate | 2/3      | Questionable |
+| Did Not Practice      | DNP  | severe   | 0/3      | Probable/Out |
 
 ### Example Output
 
@@ -623,6 +634,7 @@ Generate baseline player point values based on position and depth chart position
 ### Purpose
 
 Populates the `player_valuations` table with baseline impact values:
+
 - Position tiers: elite, above_average, average
 - Point values: 0.4 (reserve) to 4.5 (elite QB)
 - Snap count: 100% (baseline assumption)
@@ -650,33 +662,33 @@ uv run python scripts/data_population/populate_player_valuations_baseline.py \
 
 ### Arguments
 
-| Argument | Type | Required | Default | Description |
-|----------|------|----------|---------|-------------|
-| `--league` | string | Yes | - | League: nfl or ncaaf |
-| `--season` | int | No | 2025 | Season year |
-| `--verbose` | flag | No | false | Show detailed progress |
+| Argument    | Type   | Required | Default | Description            |
+| ----------- | ------ | -------- | ------- | ---------------------- |
+| `--league`  | string | Yes      | -       | League: nfl or ncaaf   |
+| `--season`  | int    | No       | 2025    | Season year            |
+| `--verbose` | flag   | No       | false   | Show detailed progress |
 
 ### Position Point Values
 
-| Position | Elite | Above Average | Average | Use Case |
-|----------|-------|----------------|---------|----------|
-| QB | 4.5 | 3.5 | 2.5 | Tier 1 impact |
-| RB | 2.0 | 1.8 | 1.2 | Starter advantage |
-| WR | 1.5 | 1.2 | 0.8 | Group impact |
-| TE | 1.5 | 1.2 | 0.8 | Premier value |
-| OL | 1.0 | 0.8 | 0.5 | Cumulative |
-| DL | 1.2 | 1.0 | 0.6 | Pass rush |
-| LB | 1.0 | 0.8 | 0.5 | Run defense |
-| DB | 0.8 | 0.6 | 0.4 | Coverage |
-| K/P | 1.0/0.8 | 0.8/0.6 | 0.5/0.4 | Situational |
+| Position | Elite   | Above Average | Average | Use Case          |
+| -------- | ------- | ------------- | ------- | ----------------- |
+| QB       | 4.5     | 3.5           | 2.5     | Tier 1 impact     |
+| RB       | 2.0     | 1.8           | 1.2     | Starter advantage |
+| WR       | 1.5     | 1.2           | 0.8     | Group impact      |
+| TE       | 1.5     | 1.2           | 0.8     | Premier value     |
+| OL       | 1.0     | 0.8           | 0.5     | Cumulative        |
+| DL       | 1.2     | 1.0           | 0.6     | Pass rush         |
+| LB       | 1.0     | 0.8           | 0.5     | Run defense       |
+| DB       | 0.8     | 0.6           | 0.4     | Coverage          |
+| K/P      | 1.0/0.8 | 0.8/0.6       | 0.5/0.4 | Situational       |
 
 ### Depth Chart Position Mapping
 
-| Depth Position | Tier | Point Value | Notes |
-|---|---|---|---|
-| 1 | Elite | Position × elite factor | Starter |
-| 2 | Above Average | Position × above_avg factor | Backup |
-| 3+ | Average | Position × average factor | Third string |
+| Depth Position | Tier          | Point Value                 | Notes        |
+| -------------- | ------------- | --------------------------- | ------------ |
+| 1              | Elite         | Position × elite factor     | Starter      |
+| 2              | Above Average | Position × above_avg factor | Backup       |
+| 3+             | Average       | Position × average factor   | Third string |
 
 ### Example Output
 
@@ -721,6 +733,7 @@ Output: All 896 player valuations inserted to database
 ### Integration with Injury Reports
 
 When a player is injured:
+
 1. Look up `point_value` from `player_valuations` table
 2. Multiply by injury severity (0.5-1.0)
 3. Add to total injury impact for the team
@@ -812,6 +825,7 @@ uv run walters-analyzer monitor-sharp --sport nfl --duration 60
 ### 4. Key Number Awareness
 
 Pay special attention when analysis crosses key numbers:
+
 - **3 & 7**: Most common NFL margins
 - **6**: Two field goals
 - **10**: Touchdown + field goal
@@ -855,8 +869,8 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 ## Support
 
 For issues or questions:
+
 1. Check this documentation
 2. Review `docs/reports/INTEGRATION_ANALYSIS.md`
 3. Check `AGENTS.md` for automation tips
 4. Review logs in `logs/walters-analyzer.log`
-

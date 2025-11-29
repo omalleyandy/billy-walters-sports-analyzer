@@ -1,8 +1,8 @@
-# Money Management & Advanced Master Class  
+# Money Management & Advanced Master Class
 
 ---
 
-## Money Management  
+## Money Management
 
 Properly managing your money is almost as important as handicapping and betting strategy.
 
@@ -18,7 +18,7 @@ Most important: be disciplined.
 
 ---
 
-## Taxes  
+## Taxes
 
 Last and certainly not least, there’s Uncle Sam.
 
@@ -34,7 +34,7 @@ As sports wagering becomes more and more mainstream, I certainly hope we see a m
 
 ---
 
-## Awareness and Discipline  
+## Awareness and Discipline
 
 Unfortunately, I do not believe the U.S. betting public is aware of this and I’m concerned there are thousands of bettors who are going to be getting surprise tax bills. The sports-betting industry needs to be more proactive in protecting its customers.
 
@@ -42,7 +42,7 @@ As I wrap up this chapter, let me make one thing abundantly clear: no system is 
 
 ---
 
-## Advanced Master Class  
+## Advanced Master Class
 
 In the last chapter, I shared the basics of sports betting. In this chapter, I’m going to give you a deeper look at how I handicap sports. In doing so, I’ll reveal the secrets to my success, such as the value of certain numbers and everything that goes into creating a power rating. (We will again use the NFL as an example.) This chapter is not for the faint of heart—there’s a lot of math and statistics involved. You’ll see how much work we do to stay ahead of the game.
 
@@ -58,7 +58,7 @@ After more than six decades of sports wagering, I know the strengths and weaknes
 
 ---
 
-### Power Ratings  
+### Power Ratings
 
 Because of the abundance of information on sports these days—and the ease of access to it—nearly anyone can develop a handicapping system. This would have been extremely difficult just twenty years ago.
 
@@ -72,7 +72,7 @@ Then the next game is played (step 9), and that information is used for the subs
 
 ---
 
-## Sources for Power Ratings  
+## Sources for Power Ratings
 
 To begin, you can easily find some very good sources for power ratings in the NFL, college football, and other sports. In no particular order, they are ESPN, Sagarin, Goldsheet, Massey Ratings, Sonny Moore’s Computer Power Ratings, and Kenny White Sports. Again, these ratings must be in point-spread equivalent units. Most professional handicappers, including me and my team, assemble a new season rating by starting with each team’s rating at the end of the previous season. We then have databases that include values for each player, each coach, each draft choice. We use an addition/subtraction system—essentially a bookkeeping approach—to create a preseason rating.
 
@@ -88,19 +88,19 @@ Each element of a successful handicapping system is important, and the smallest 
 
 ---
 
-### Factors Affecting Power Ratings  
+### Factors Affecting Power Ratings
 
-- Relative strength or power of the competing teams  
-- Each team’s previous performances  
-- Home field advantage  
-- Individual values for each player on each team  
-- Presence of injuries or illnesses  
-- Game factors such as weather, schedule quirks, travel, stadium quirks, turf types  
+- Relative strength or power of the competing teams
+- Each team’s previous performances
+- Home field advantage
+- Individual values for each player on each team
+- Presence of injuries or illnesses
+- Game factors such as weather, schedule quirks, travel, stadium quirks, turf types
 - Motivational factors such as revenge, rivalries, coaching changes, etc.
 
 ---
 
-## Relative Power of Teams  
+## Relative Power of Teams
 
 The first variable to consider when creating a game prediction is the relative strength or power of the opposing teams, aka the power rating. You need to develop or find a power rating that is enumerated in point-spreads/game-equivalent values. ESPN’s NFL rating, for example, is called FPI, Football Power Index.
 
@@ -112,7 +112,7 @@ These expected power ratings are numerical values and are directly transferable 
 
 ---
 
-### Player Rankings  
+### Player Rankings
 
 You need to assign numerical values for all key players—offense and defense. In the NFL, that means keeping values for approximately 1,700 active roster players. It’s not as difficult as it sounds because at least 60 percent of NFL players have a near-zero value. That leaves approximately six hundred players with significant non-zero numerical values.
 
@@ -122,7 +122,7 @@ Consider one such point-spread-consistent system. You could start by estimating 
 
 ---
 
-### Importance of Injuries  
+### Importance of Injuries
 
 It is absolutely critical to know who is playing in each game, who is not playing, and who is playing hurt. If a player is injured, but still playing, you would reduce his point value based on the extent of the injury. If the player is out, you remove his point value, but add back in a point value for his replacement, if that player has a point value.
 
