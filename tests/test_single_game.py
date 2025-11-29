@@ -5,7 +5,7 @@ This tests the core functionality without the schedule page complexity.
 
 import asyncio
 import logging
-from src.data.nfl_game_stats_client import NFLGameStatsClient
+from scrapers.nfl_com import NFLGameStatsClient
 
 logging.basicConfig(
     level=logging.INFO,

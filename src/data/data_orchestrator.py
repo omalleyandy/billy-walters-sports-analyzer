@@ -20,18 +20,17 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Literal
 
-from .action_network_client import ActionNetworkClient
-from .espn_client import ESPNClient
-from .massey_ratings_scraper import MasseyRatingsScraper
-from .nfl_com_client import NFLComClient
-from .overtime_api_client import (
-    OvertimeApiClient as OvertimeAPIClient,
-)  # Updated to use new API client
+from scrapers.action_network import ActionNetworkScraper
+from scrapers.espn import ESPNClient
+from scrapers.massey import MasseyRatingsScraper
+from scrapers.nfl_com import NFLComClient
+from scrapers.overtime import OvertimeApiClient as OvertimeAPIClient
+from scrapers.weather import WeatherClient
+
 from .validated_espn import DataQualityReport, ESPNDataValidator
-from .weather_client import WeatherClient
 
 logger = logging.getLogger(__name__)
-action_network_client = ActionNetworkClient(headless=False)
+action_network_client = ActionNetworkScraper(headless=False)
 
 
 class DataSource(str, Enum):

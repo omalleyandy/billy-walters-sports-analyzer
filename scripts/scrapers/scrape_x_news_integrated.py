@@ -128,9 +128,7 @@ class XNewsCollector:
                         f"(relevance: {post['relevance']:.0%})"
                     )
             else:
-                logger.info(
-                    f"[INFO] No high-relevance {league.upper()} posts found"
-                )
+                logger.info(f"[INFO] No high-relevance {league.upper()} posts found")
 
             return posts
 
@@ -194,7 +192,9 @@ class XNewsCollector:
         try:
             quota = self.integrator.x_news_scraper.get_quota_status()
             logger.info("[OK] X API Quota Status:")
-            logger.info(f"     Calls today: {quota['calls_today']}/{quota['daily_limit']}")
+            logger.info(
+                f"     Calls today: {quota['calls_today']}/{quota['daily_limit']}"
+            )
             logger.info(f"     Remaining: {quota['remaining']}")
             logger.info(f"     Exhausted: {quota['exhausted']}")
             logger.info(f"     Cached items: {quota['cached_items']}")
@@ -280,9 +280,7 @@ async def main() -> int:
         elif args.league:
             leagues_to_collect = [args.league]
         else:
-            logger.error(
-                "[ERROR] Must specify --league, --all, or --quota-status"
-            )
+            logger.error("[ERROR] Must specify --league, --all, or --quota-status")
             return 1
 
         logger.info("\n" + "=" * 70)
@@ -324,9 +322,7 @@ async def main() -> int:
         logger.info(f"Total posts collected: {total_posts}")
         for league, result in results.items():
             status = "[OK]" if result["posts_found"] > 0 else "[NO DATA]"
-            logger.info(
-                f"  {league.upper()}: {result['posts_found']} posts {status}"
-            )
+            logger.info(f"  {league.upper()}: {result['posts_found']} posts {status}")
 
         logger.info("\n[OK] X News collection complete")
         await collector.close()

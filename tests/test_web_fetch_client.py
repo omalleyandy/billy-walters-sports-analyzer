@@ -18,7 +18,7 @@ from datetime import datetime
 from pathlib import Path
 import anthropic
 
-from src.data.web_fetch_client import (
+from data.web_fetch_client import (
     WebFetchClient,
     FetchResult,
     FetchMetadata,

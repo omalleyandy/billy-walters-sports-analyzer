@@ -38,14 +38,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
-# Add parent to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Add project root to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 try:
-    from walters_analyzer.scrapers.action_network_scraper import ActionNetworkScraper
+    from scrapers.action_network.scraper import ActionNetworkScraper
 except ImportError:
     # Fallback for direct execution
-    from action_network_scraper import ActionNetworkScraper
+    from scraper import ActionNetworkScraper
 
 # Configure logging
 LOG_DIR = Path(__file__).parent.parent.parent.parent / "logs"

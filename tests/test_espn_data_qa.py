@@ -214,7 +214,7 @@ class TestESPNAPIClient:
 
     def test_client_initialization(self):
         """Test client initializes with correct base URLs."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -227,7 +227,7 @@ class TestESPNAPIClient:
 
     def test_user_agent_header(self):
         """Test User-Agent header is set."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -238,7 +238,7 @@ class TestESPNAPIClient:
         self, mock_espn_team_stats_response
     ):
         """Test power rating metric extraction returns correct structure."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -272,7 +272,7 @@ class TestESPNAPIClient:
 
     def test_power_rating_metric_values(self, mock_espn_team_stats_response):
         """Test power rating metrics have correct values."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -292,7 +292,7 @@ class TestESPNAPIClient:
 
     def test_total_yards_calculation(self, mock_espn_team_stats_response):
         """Test total yards per game calculation."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -306,7 +306,7 @@ class TestESPNAPIClient:
 
     def test_json_save_with_organized_structure(self, tmp_path):
         """Test JSON save with organized directory structure."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
         test_data = {"test": "data"}
@@ -343,7 +343,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_client_initialization(self):
         """Test async client initializes correctly."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient(rate_limit_delay=0.1, timeout=5.0)
 
@@ -354,7 +354,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_client_context_manager(self):
         """Test async context manager functionality."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         async with ESPNClient() as client:
             assert client._client is not None
@@ -362,7 +362,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_circuit_breaker_initialization(self):
         """Test circuit breaker is initialized."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         async with ESPNClient() as client:
             assert client._circuit_breaker_failures == 0
@@ -372,7 +372,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_rate_limit_enforcement(self):
         """Test rate limiting between requests."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient(rate_limit_delay=0.1)
         await client.connect()
@@ -390,7 +390,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_get_scoreboard_nfl(self):
         """Test getting NFL scoreboard."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient()
         await client.connect()
@@ -409,7 +409,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_get_team_stats_structure(self):
         """Test team stats response has required structure."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient()
         await client.connect()
@@ -436,7 +436,7 @@ class TestESPNClient:
     @pytest.mark.anyio
     async def test_retry_on_http_error(self):
         """Test automatic retry on HTTP errors."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient(max_retries=2)
         await client.connect()
@@ -475,7 +475,7 @@ class TestESPNInjuryScraper:
 
     def test_scraper_initialization(self, tmp_path):
         """Test scraper initializes with correct output directory."""
-        from src.data.espn_injury_scraper import ESPNInjuryScraper
+        from scrapers.espn import ESPNInjuryScraper
 
         scraper = ESPNInjuryScraper(output_dir=str(tmp_path))
 
@@ -484,7 +484,7 @@ class TestESPNInjuryScraper:
 
     def test_injury_scraper_output_format(self, tmp_path):
         """Test injury scraper outputs valid JSON format."""
-        from src.data.espn_injury_scraper import ESPNInjuryScraper
+        from scrapers.espn import ESPNInjuryScraper
 
         scraper = ESPNInjuryScraper(output_dir=str(tmp_path))
 
@@ -520,7 +520,7 @@ class TestESPNInjuryScraper:
 
     def test_injury_jsonl_output(self, tmp_path):
         """Test injury data also saved as JSONL."""
-        from src.data.espn_injury_scraper import ESPNInjuryScraper
+        from scrapers.espn import ESPNInjuryScraper
 
         scraper = ESPNInjuryScraper(output_dir=str(tmp_path))
 
@@ -564,7 +564,7 @@ class TestESPNNCAAFNormalizer:
 
     def test_normalizer_initialization(self, tmp_path):
         """Test normalizer initializes correctly."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
 
@@ -575,7 +575,7 @@ class TestESPNNCAAFNormalizer:
         self, mock_scoreboard_full_response, tmp_path
     ):
         """Test scoreboard normalization returns 3 dataframes."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
         events_df, competitors_df, odds_df = normalizer.normalize_scoreboard(
@@ -588,7 +588,7 @@ class TestESPNNCAAFNormalizer:
 
     def test_events_dataframe_content(self, mock_scoreboard_full_response, tmp_path):
         """Test events dataframe has correct columns."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
         events_df, _, _ = normalizer.normalize_scoreboard(mock_scoreboard_full_response)
@@ -617,7 +617,7 @@ class TestESPNNCAAFNormalizer:
         self, mock_scoreboard_full_response, tmp_path
     ):
         """Test competitors dataframe structure."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
         _, competitors_df, _ = normalizer.normalize_scoreboard(
@@ -642,7 +642,7 @@ class TestESPNNCAAFNormalizer:
 
     def test_odds_dataframe_content(self, mock_scoreboard_full_response, tmp_path):
         """Test odds dataframe structure."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
         _, _, odds_df = normalizer.normalize_scoreboard(mock_scoreboard_full_response)
@@ -663,7 +663,7 @@ class TestESPNNCAAFNormalizer:
 
     def test_save_parquet_format(self, mock_scoreboard_full_response, tmp_path):
         """Test parquet files are saved correctly."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
         events_df, competitors_df, odds_df = normalizer.normalize_scoreboard(
@@ -698,7 +698,7 @@ class TestESPNNCAAFScoreboardClient:
     @pytest.mark.anyio
     async def test_client_initialization(self):
         """Test NCAAF client initializes."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFScoreboardClient
 
         client = ESPNNCAAFScoreboardClient()
 
@@ -709,7 +709,7 @@ class TestESPNNCAAFScoreboardClient:
     @pytest.mark.anyio
     async def test_get_scoreboard_parameters(self):
         """Test scoreboard accepts required parameters."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFScoreboardClient
 
         client = ESPNNCAAFScoreboardClient()
         await client.connect()
@@ -738,7 +738,7 @@ class TestESPNNCAAFScoreboardClient:
     @pytest.mark.anyio
     async def test_verify_scoreboard_valid(self, mock_scoreboard_full_response):
         """Test scoreboard verification on valid data."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFScoreboardClient
 
         client = ESPNNCAAFScoreboardClient()
 
@@ -752,7 +752,7 @@ class TestESPNNCAAFScoreboardClient:
     @pytest.mark.anyio
     async def test_verify_scoreboard_missing_season(self):
         """Test verification fails with missing season."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFScoreboardClient
 
         client = ESPNNCAAFScoreboardClient()
 
@@ -767,7 +767,7 @@ class TestESPNNCAAFScoreboardClient:
         self, mock_scoreboard_full_response, tmp_path
     ):
         """Test saving scoreboard creates JSON file."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFScoreboardClient
 
         client = ESPNNCAAFScoreboardClient()
 
@@ -796,7 +796,7 @@ class TestESPNNcaafTeamScraper:
 
     def test_scraper_initialization(self, tmp_path):
         """Test team scraper initializes."""
-        from src.data.espn_ncaaf_team_scraper import ESPNNcaafTeamScraper
+        from scrapers.espn import ESPNNcaafTeamScraper
 
         scraper = ESPNNcaafTeamScraper(output_dir=str(tmp_path))
 
@@ -805,7 +805,7 @@ class TestESPNNcaafTeamScraper:
 
     def test_build_team_url_construction(self):
         """Test team URL builder for different page types."""
-        from src.data.espn_ncaaf_team_scraper import ESPNNcaafTeamScraper
+        from scrapers.espn import ESPNNcaafTeamScraper
 
         scraper = ESPNNcaafTeamScraper()
 
@@ -832,7 +832,7 @@ class TestESPNNcaafTeamScraper:
 
     def test_parse_injury_page_structure(self):
         """Test injury parsing returns correct structure."""
-        from src.data.espn_ncaaf_team_scraper import ESPNNcaafTeamScraper
+        from scrapers.espn import ESPNNcaafTeamScraper
 
         scraper = ESPNNcaafTeamScraper()
 
@@ -859,7 +859,7 @@ class TestESPNNcaafTeamScraper:
 
     def test_parse_team_stats_returns_dict(self):
         """Test stats parsing returns dictionary."""
-        from src.data.espn_ncaaf_team_scraper import ESPNNcaafTeamScraper
+        from scrapers.espn import ESPNNcaafTeamScraper
 
         scraper = ESPNNcaafTeamScraper()
 
@@ -887,8 +887,8 @@ class TestDataPipelineIntegration:
     @pytest.mark.anyio
     async def test_full_ncaaf_data_collection_flow(self, mock_scoreboard_full_response):
         """Test complete NCAAF data collection workflow."""
-        from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFScoreboardClient
+        from scrapers.espn import ESPNNCAAFNormalizer
         from pathlib import Path
         import tempfile
 
@@ -935,7 +935,7 @@ class TestDataPipelineIntegration:
 
     def test_team_stats_required_metrics(self, mock_espn_team_stats_response):
         """Test team stats contain all required metrics."""
-        from src.data.espn_api_client import ESPNAPIClient
+        from scrapers.espn import ESPNClient as ESPNAPIClient
 
         client = ESPNAPIClient()
 
@@ -968,7 +968,7 @@ class TestDataCollectionPerformance:
     @pytest.mark.anyio
     async def test_rate_limiting_performance(self):
         """Test rate limiting doesn't exceed specified delay."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient(rate_limit_delay=0.1)
         await client.connect()
@@ -988,7 +988,7 @@ class TestDataCollectionPerformance:
 
     def test_normalizer_large_dataset(self, tmp_path):
         """Test normalizer handles large datasets efficiently."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         # Create large mock scoreboard with 50 games
         large_scoreboard = {
@@ -1077,7 +1077,7 @@ class TestErrorHandlingAndRecovery:
     @pytest.mark.anyio
     async def test_client_handles_network_error(self):
         """Test client handles network errors gracefully."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient(max_retries=1)
         await client.connect()
@@ -1094,7 +1094,7 @@ class TestErrorHandlingAndRecovery:
     @pytest.mark.anyio
     async def test_circuit_breaker_opens_after_threshold(self):
         """Test circuit breaker opens after failure threshold."""
-        from src.data.espn_client import ESPNClient
+        from scrapers.espn import ESPNClient
 
         client = ESPNClient()
         await client.connect()
@@ -1110,7 +1110,7 @@ class TestErrorHandlingAndRecovery:
 
     def test_injury_scraper_handles_missing_data(self):
         """Test injury scraper handles missing fields gracefully."""
-        from src.data.espn_injury_scraper import ESPNInjuryScraper
+        from scrapers.espn import ESPNInjuryScraper
 
         scraper = ESPNInjuryScraper()
 
@@ -1130,7 +1130,7 @@ class TestErrorHandlingAndRecovery:
 
     def test_normalizer_handles_missing_fields(self, tmp_path):
         """Test normalizer handles missing optional fields."""
-        from src.data.espn_ncaaf_normalizer import ESPNNCAAFNormalizer
+        from scrapers.espn import ESPNNCAAFNormalizer
 
         normalizer = ESPNNCAAFNormalizer(tmp_path)
 

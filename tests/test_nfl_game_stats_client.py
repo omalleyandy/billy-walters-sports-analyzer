@@ -23,7 +23,7 @@ class TestNFLGameStatsClient:
 
     def test_client_initialization(self):
         """Test client can be initialized with default settings."""
-        from src.data.nfl_game_stats_client import NFLGameStatsClient
+        from scrapers.nfl_com import NFLGameStatsClient
 
         client = NFLGameStatsClient()
         assert client.headless is True
@@ -32,14 +32,14 @@ class TestNFLGameStatsClient:
 
     def test_client_initialization_with_headless_false(self):
         """Test client initialization with headless=False."""
-        from src.data.nfl_game_stats_client import NFLGameStatsClient
+        from scrapers.nfl_com import NFLGameStatsClient
 
         client = NFLGameStatsClient(headless=False)
         assert client.headless is False
 
     def test_base_urls_are_correct(self):
         """Test that base URLs are correctly configured."""
-        from src.data.nfl_game_stats_client import NFLGameStatsClient
+        from scrapers.nfl_com import NFLGameStatsClient
 
         assert NFLGameStatsClient.BASE_URL == "https://www.nfl.com"
         assert (
@@ -184,7 +184,7 @@ class TestNFLGameStatsClient:
     @pytest.mark.asyncio
     async def test_context_manager_usage(self):
         """Test client can be used as async context manager."""
-        from src.data.nfl_game_stats_client import NFLGameStatsClient
+        from scrapers.nfl_com import NFLGameStatsClient
 
         # Mock the browser connection
         with patch.object(NFLGameStatsClient, "connect"):
@@ -312,7 +312,7 @@ class TestNFLGameStatsClient:
 
     def test_browser_headless_configuration(self):
         """Test browser can be configured for headless/headful mode."""
-        from src.data.nfl_game_stats_client import NFLGameStatsClient
+        from scrapers.nfl_com import NFLGameStatsClient
 
         client_headless = NFLGameStatsClient(headless=True)
         client_headful = NFLGameStatsClient(headless=False)

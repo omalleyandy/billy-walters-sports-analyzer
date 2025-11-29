@@ -22,7 +22,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 import logging
 
-from data.accuweather_client import AccuWeatherClient
+from scrapers.weather import AccuWeatherClient
 from walters_analyzer.valuation.ncaaf_situational_factors import (
     NCAAFSituationalFactors,
 )

@@ -16,7 +16,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from src.data.espn_ncaaf_scoreboard_client import ESPNNCAAFScoreboardClient
+from scrapers.espn import ESPNNCAAFScoreboardClient
 
 # Configure pytest-anyio to only use asyncio
 pytestmark = pytest.mark.anyio(backends=["asyncio"])

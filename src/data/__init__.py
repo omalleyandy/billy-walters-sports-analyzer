@@ -1,37 +1,65 @@
 """
 Billy Walters Sports Analyzer - Data Integration Package
 
-API clients for fetching odds, game data, and weather information.
+This package provides backwards compatibility re-exports from the new
+src.scrapers package. New code should import directly from scrapers.
+
+Example:
+    # Old (still works for backwards compatibility):
+    from src.data import ESPNClient
+
+    # New (preferred):
+    from scrapers.espn import ESPNClient
 """
 
-from .action_network_client import ActionNetworkClient
+import sys
+from pathlib import Path
+
+# Ensure project root is in path for absolute imports
+_project_root = Path(__file__).parent.parent.parent
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+
+# Re-export scrapers from new locations for backwards compatibility
+from scrapers.action_network import ActionNetworkScraper
+from scrapers.espn import ESPNClient
+from scrapers.massey import MasseyRatingsScraper
+from scrapers.nfl_com import NFLComClient
+from scrapers.overtime import OvertimeApiClient
+from scrapers.weather import AccuWeatherClient, OpenWeatherClient, WeatherClient
+
+# Local validators and utilities
 from .validated_action_network import ValidatedActionNetworkClient
-from .espn_client import ESPNClient
-from .accuweather_client import AccuWeatherClient
-from .openweather_client import OpenWeatherClient
-from .weather_client import WeatherClient
 from .validated_weather import ValidatedWeatherClient
+
+# Data models
 from .models import (
-    League,
-    Conference,
-    Team,
-    Stadium,
-    WeatherConditions,
-    OddsMovement,
-    Game,
     ActionNetworkResponse,
+    Conference,
+    Game,
+    League,
+    OddsMovement,
+    Stadium,
+    Team,
+    WeatherConditions,
 )
 
+# Backwards compatibility alias
+ActionNetworkClient = ActionNetworkScraper
+
 __all__ = [
-    # ESPN
+    # Scrapers (re-exported from src.scrapers)
     "ESPNClient",
-    # Action Network
-    "ActionNetworkClient",
-    "ValidatedActionNetworkClient",
-    # Weather
+    "ActionNetworkScraper",
+    "ActionNetworkClient",  # Backwards compat alias
+    "MasseyRatingsScraper",
+    "NFLComClient",
+    "OvertimeApiClient",
     "AccuWeatherClient",
     "OpenWeatherClient",
     "WeatherClient",
+    # Validators
+    "ValidatedActionNetworkClient",
     "ValidatedWeatherClient",
     # Models
     "League",

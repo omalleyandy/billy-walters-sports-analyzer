@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from src.data.action_network_client import ActionNetworkClient
+from data.action_network_client import ActionNetworkClient
 
 
 class TestSelectorConfiguration:

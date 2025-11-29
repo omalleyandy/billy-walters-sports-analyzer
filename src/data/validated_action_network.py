@@ -12,7 +12,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
-from .action_network_client import ActionNetworkClient
+from scrapers.action_network import ActionNetworkScraper as ActionNetworkClient
+
 from .models import ActionNetworkResponse, League
 
 logger = logging.getLogger(__name__)

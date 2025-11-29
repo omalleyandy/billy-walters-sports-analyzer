@@ -10,10 +10,10 @@ from datetime import datetime, timedelta
 import httpx
 import pytest
 
-from src.data.data_orchestrator import CollectionStatus, DataOrchestrator
-from src.data.espn_client import ESPNClient
-from src.data.health_monitor import AlertLevel, HealthCheck, HealthMonitor, HealthStatus
-from src.data.validated_espn import ESPNDataValidator
+from data.data_orchestrator import CollectionStatus, DataOrchestrator
+from data.health_monitor import AlertLevel, HealthCheck, HealthMonitor, HealthStatus
+from data.validated_espn import ESPNDataValidator
+from scrapers.espn import ESPNClient
 
 
 class TestESPNClient:
@@ -376,7 +376,7 @@ class TestDataOrchestrator:
     @pytest.mark.asyncio
     async def test_collection_report_metrics(self):
         """Test collection report metrics calculation."""
-        from src.data.data_orchestrator import (
+        from data.data_orchestrator import (
             CollectionReport,
             CollectionTask,
             DataSource,

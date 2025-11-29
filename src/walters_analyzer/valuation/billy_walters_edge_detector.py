@@ -24,8 +24,7 @@ from dataclasses import dataclass, asdict
 from enum import Enum
 import logging
 
-from data.accuweather_client import AccuWeatherClient
-from data.openweather_client import OpenWeatherClient
+from scrapers.weather import AccuWeatherClient, OpenWeatherClient
 
 # Import weather alert mapper and injury/player valuation modules
 from walters_analyzer.valuation.weather_alert_mapper import WeatherAlertMapper
